@@ -9,7 +9,7 @@ Arches Reference Data Manager Application
 ```
 arches-project create $PROJECT_NAME
 ```
-3. add package to INSTALLED_APPS and ARCHES_APPLICATIONS
+3. Add package to INSTALLED_APPS and ARCHES_APPLICATIONS
 ```
 INSTALLED_APPS = (
     ...,
@@ -20,18 +20,18 @@ ARCHES_APPLICATIONS = (
     'arches_rdm',
 )
 ```
-4. add arches_applications to dependencies in package.json
+4. Add arches_applications to dependencies in package.json
 ```
 "dependencies": {
- "arches": "archesproject/arches#stable/7.4.0",
- "arches_rdm": "archesproject/arches-rdm"
+    "arches": "archesproject/arches#stable/7.4.0",
+    "arches_rdm": "archesproject/arches-rdm"
 }
 ```
 5. Install arches_application dependencies
 ```
 yarn install
 ```
-6.
+6. Add the application urls to the project's `urls.py`
 ```
 urlpatterns = [
     url(r'^', include('arches.urls')),
