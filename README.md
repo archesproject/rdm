@@ -5,7 +5,7 @@ Arches Reference Data Manager Application
 1.
     a. if working locally, run `pip install .` inside arches application to copy files into ENV or `pip install -e .` to create an egg link to a local arches application.
     b. if not working locally run `pip install arches-rdm`
-2.  ( optional ) create a project
+2.  Create a project if not installing into already-existing project.
 ```
 arches-project create $PROJECT_NAME
 ```
