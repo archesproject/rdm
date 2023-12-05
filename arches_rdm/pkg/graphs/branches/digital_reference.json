@@ -1,0 +1,168 @@
+{
+    "graph": [
+        {
+            "author": "",
+            "cards": [
+                {
+                    "active": true,
+                    "cardid": "8d31ea8c-4b15-11ee-8a8d-11afefc4bff7",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": "skipfirst",
+                    "description": "",
+                    "graph_id": "8d31ea89-4b15-11ee-8a8d-11afefc4bff7",
+                    "helpenabled": false,
+                    "helptext": null,
+                    "helptitle": null,
+                    "instructions": null,
+                    "is_editable": true,
+                    "name": "digital_reference",
+                    "nodegroup_id": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                    "sortorder": 14,
+                    "visible": true
+                }
+            ],
+            "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "8d31ea8c-4b15-11ee-8a8d-11afefc4bff7",
+                    "config": {
+                        "defaultValue": "",
+                        "label": "Digital Reference Type",
+                        "options": [],
+                        "placeholder": "Select an option"
+                    },
+                    "id": "8d31ea8e-4b15-11ee-8a8d-11afefc4bff7",
+                    "label": "Digital Reference Type",
+                    "node_id": "8d31ea8d-4b15-11ee-8a8d-11afefc4bff7",
+                    "sortorder": 1,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000012"
+                },
+                {
+                    "card_id": "8d31ea8c-4b15-11ee-8a8d-11afefc4bff7",
+                    "config": {
+                        "label": "Digital Reference",
+                        "link_color": "blue",
+                        "url_label_placeholder": "Enter URL Label... ",
+                        "url_placeholder": "Enter URL... "
+                    },
+                    "id": "8d31ea8f-4b15-11ee-8a8d-11afefc4bff7",
+                    "label": "Digital Reference",
+                    "node_id": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "ca0c43ff-af73-4349-bafd-53ff9f22eebd"
+                }
+            ],
+            "color": "rgb(130,195,236)",
+            "config": {},
+            "deploymentdate": null,
+            "deploymentfile": null,
+            "description": "",
+            "edges": [
+                {
+                    "description": null,
+                    "domainnode_id": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                    "edgeid": "8d31ea90-4b15-11ee-8a8d-11afefc4bff7",
+                    "graph_id": "8d31ea89-4b15-11ee-8a8d-11afefc4bff7",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "8d31ea8d-4b15-11ee-8a8d-11afefc4bff7"
+                }
+            ],
+            "functions_x_graphs": [],
+            "graphid": "8d31ea89-4b15-11ee-8a8d-11afefc4bff7",
+            "iconclass": "fa fa-calendar",
+            "is_editable": true,
+            "isactive": true,
+            "isresource": false,
+            "jsonldcontext": "https://linked.art/ns/v1/linked-art.json",
+            "name": "digital_reference",
+            "nodegroups": [
+                {
+                    "cardinality": "n",
+                    "legacygroupid": null,
+                    "nodegroupid": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                    "parentnodegroup_id": null
+                }
+            ],
+            "nodes": [
+                {
+                    "alias": "digital_reference",
+                    "config": null,
+                    "datatype": "url",
+                    "description": "* Collection_id: \n* Field_id: PIRM.44_PIRF.426_digital_reference\n* Category_id: CAT.10_Substance\n",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "8d31ea89-4b15-11ee-8a8d-11afefc4bff7",
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": true,
+                    "name": "digital_reference",
+                    "nodegroup_id": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                    "nodeid": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                    "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D1_Digital_Object",
+                    "parentproperty": "",
+                    "sortorder": 0
+                },
+                {
+                    "alias": "digital_reference_type",
+                    "config": {
+                        "graphs": [],
+                        "rdmCollection": null,
+                        "searchDsl": "",
+                        "searchString": ""
+                    },
+                    "datatype": "concept-list",
+                    "description": "* Collection_id: \n* Field_id: PIRM.44_PIRF.427_digital_reference_type\n* Category_id: CAT.10_Substance\n",
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "8d31ea89-4b15-11ee-8a8d-11afefc4bff7",
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "digital_reference_type",
+                    "nodegroup_id": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                    "nodeid": "8d31ea8d-4b15-11ee-8a8d-11afefc4bff7",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0
+                }
+            ],
+            "ontology_id": "0b1f5462-faa7-11e9-8f09-3af9d3b32b71",
+            "relatable_resource_model_ids": [],
+            "resource_2_resource_constraints": [],
+            "root": {
+                "alias": "digital_reference",
+                "config": null,
+                "datatype": "url",
+                "description": "* Collection_id: \n* Field_id: PIRM.44_PIRF.426_digital_reference\n* Category_id: CAT.10_Substance\n",
+                "exportable": false,
+                "fieldname": null,
+                "graph_id": "8d31ea89-4b15-11ee-8a8d-11afefc4bff7",
+                "is_collector": true,
+                "isrequired": false,
+                "issearchable": true,
+                "istopnode": true,
+                "name": "digital_reference",
+                "nodegroup_id": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                "nodeid": "8d31ea8a-4b15-11ee-8a8d-11afefc4bff7",
+                "ontologyclass": "http://www.ics.forth.gr/isl/CRMdig/D1_Digital_Object",
+                "sortorder": 0
+            },
+            "slug": null,
+            "subtitle": "",
+            "template_id": "50000000-0000-0000-0000-000000000001",
+            "version": ""
+        }
+    ],
+    "metadata": {
+        "db": "PostgreSQL 12.12 (Ubuntu 12.12-1.pgdg22.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0, 64-bit",
+        "git hash": "eae7c6228 2022-06-16 17:04:09 -0700",
+        "os": "Linux",
+        "os version": "6.2.0-1016-aws"
+    }
+}
