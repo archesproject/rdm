@@ -23,7 +23,7 @@ ARCHES_APPLICATIONS = (
 4. Add arches_applications to dependencies in package.json
 ```
 "dependencies": {
-    "arches": "archesproject/arches#stable/7.4.0",
+    "arches": "archesproject/arches#dev/7.5.x",
     "arches_rdm": "archesproject/arches-rdm"
 }
 ```
@@ -34,7 +34,7 @@ yarn install
 6. Add the application urls to the project's `urls.py`
 ```
 urlpatterns = [
-    url(r'^', include('arches.urls')),
-    url(r"^", include("arches_rdm.urls")),
+    path(r'^', include('arches.urls')),
+    path(r"^", include("arches_rdm.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ```
