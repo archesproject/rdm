@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<rdf:RDF xml:lang="en" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+xml:base="https://www.cidoc-crm.org/cidoc-crm/CRMarchaeo/">
+
+<rdfs:Class rdf:about="APC11_has_physical_relation">
+    <rdfs:subClassOf rdf:resource="http://www.cidoc-crm.org/cidoc-crm/PC0_Typed_CRM_Property" />
+  </rdfs:Class>
+  <rdf:Property rdf:about="AP11.1_has_type">
+    <rdfs:domain rdf:resource="APC11_has_physical_relation" />
+    <rdfs:range rdf:resource="http://www.cidoc-crm.org/cidoc-crm/E55_Type" />
+  </rdf:Property>
+  <rdfs:Class rdf:about="APC13_has_stratigraphic_relation">
+    <rdfs:subClassOf rdf:resource="http://www.cidoc-crm.org/cidoc-crm/PC0_Typed_CRM_Property" />
+  </rdfs:Class>
+  <rdf:Property rdf:about="AP13.1_has_type">
+    <rdfs:domain rdf:resource="APC13_has_stratigraphic_relation" />
+    <rdfs:range rdf:resource="http://www.cidoc-crm.org/cidoc-crm/E55_Type" />
+  </rdf:Property>
+
+</rdf:RDF>

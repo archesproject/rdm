@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rdf:RDF xml:lang="en" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xml:base="http://www.cidoc-crm.org/cidoc-crm/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:la="https://linked.art/ns/" xmlns:schema="http://schema.org/" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:ore="http://www.openarchives.org/ore/terms/">
+
+   
+
+
+<!-- These hack in external skos and owl properties to crm -->
+
+<rdf:Property rdf:about="http://www.w3.org/2000/01/rdf-schema#type">
+        <rdfs:label xml:lang="en">is also instance of</rdfs:label>
+        <rdfs:comment xml:lang="en">Indicates that an instance of something is also an instance of something else.</rdfs:comment>
+        <rdfs:domain rdf:resource="E1_CRM_Entity"/>
+        <rdfs:range rdf:resource="E1_CRM_Entity"/>
+</rdf:Property>       
+
+<rdf:Property rdf:about="http://www.w3.org/2004/02/skos/core#broader">
+        <rdfs:label xml:lang="en">hasBroaderMatch</rdfs:label>
+        <rdfs:comment xml:lang="en">Indicates a concept which is broader than this one in a hierarchy.</rdfs:comment>
+        <rdfs:domain rdf:resource="E55_Type"/>
+        <rdfs:range rdf:resource="E55_Type"/>
+</rdf:Property>    
+
+<rdf:Property rdf:about="http://www.w3.org/2004/02/skos/core#narrower">
+        <rdfs:label xml:lang="en">hasNarrower</rdfs:label>
+        <rdfs:comment xml:lang="en">Indicates a concept which is narrower than this one in a hierarchy.</rdfs:comment>
+        <rdfs:domain rdf:resource="E55_Type"/>
+        <rdfs:range rdf:resource="E55_Type"/>
+</rdf:Property>    
+    
+<rdf:Property rdf:about="http://www.w3.org/2004/02/skos/core#related">
+        <rdfs:label xml:lang="en">relatedTo</rdfs:label>
+        <rdfs:comment xml:lang="en">A concept with which there is an associative semantic relationship.</rdfs:comment>
+        <rdfs:domain rdf:resource="E55_Type"/>
+        <rdfs:range rdf:resource="E55_Type"/>
+</rdf:Property>  
+    
+<rdf:Property rdf:about="http://www.w3.org/2002/07/owl#/inverseOf">
+        <rdfs:label xml:lang="en">inverseOf</rdfs:label>
+        <rdfs:comment xml:lang="en">used for properties and concepts to indicate that there is an inverse</rdfs:comment>
+        <rdfs:domain rdf:resource="E55_Type"/>
+        <rdfs:range rdf:resource="E55_Type"/>
+</rdf:Property>    
+
+<rdf:Property rdf:about="http://www.w3.org/2004/02/skos/core#hasTopConcept">
+        <rdfs:label xml:lang="en">hasTopConcept</rdfs:label>
+        <rdfs:comment xml:lang="en">A top level concept in the concept scheme.</rdfs:comment>
+        <rdfs:domain rdf:resource="E33_Linguistic_Object"/>
+        <rdfs:range rdf:resource="E55_Type"/>
+</rdf:Property>
+<rdf:Property rdf:about="http://www.w3.org/2004/02/skos/core#topConceptOf">
+        <rdfs:label xml:lang="en">isTopConceptInScheme</rdfs:label>
+        <rdfs:comment xml:lang="en">is top concept in scheme</rdfs:comment>
+        <rdfs:domain rdf:resource="E55_Type"/>
+        <rdfs:range rdf:resource="E33_Linguistic_Object"/>
+</rdf:Property>
+    
+<rdfs:Class rdf:about="https://takin.solutions/ontologies/rdm/R1_Linguistic_Authority_Document">
+    <rdfs:label xml:lang="en">Linguistic Authority Document</rdfs:label>
+    <rdfs:comment>Just like an authority document but it has language! Actually I can't imagine an authority document that wasn't in a language... go figure.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object" />
+    <rdfs:subClassOf rdf:resource="http://www.cidoc-crm.org/cidoc-crm/E32_Authority_Document" />
+  </rdfs:Class>
+    
+</rdf:RDF>
