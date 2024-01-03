@@ -2,6 +2,7 @@
     "name": "arches_rdm",
     "version": "0.0.1",
     "dependencies": {
+        "primevue": "^3.35.0"
     },
     "devDependencies": {
     },
