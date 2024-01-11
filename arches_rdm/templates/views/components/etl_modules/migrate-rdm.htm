@@ -1,0 +1,30 @@
+{% load i18n %}
+
+{% block task_details %}
+<!-- ko ifnot: loading() -->
+<div class="etl-module-component-container">
+    <div class="etl-module-body">
+        <h2>
+            <span>Hello World!</span>
+        </h2>
+        <p class="pad-btm">
+            {% blocktrans %}This is some content{% endblocktrans %}
+        </p>
+    </div>
+    <div class="tabbed-workflow-footer, etl-module-footer">
+    </div>
+</div>
+<!-- /ko -->
+{% endblock task_details %}
+
+{% block etl_status %}
+<div class="bulk-load-status">
+
+</div>
+{% endblock etl_status %}
+
+{% block loading_status %}
+{% endblock loading_status %}
+
+{% block etl_error_report %}
+{% endblock etl_error_report %}
