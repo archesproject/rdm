@@ -4,14 +4,15 @@
 <!-- ko ifnot: loading() -->
 <div class="etl-module-component-container">
     <div class="etl-module-body">
-        <h2>
-            <span>Hello World!</span>
-        </h2>
+        <h2>RDM Migrator</h2>
         <p class="pad-btm">
-            {% blocktrans %}This is some content{% endblocktrans %}
+            {% blocktrans %}Migrates concepts and schemes from the Reference Data Manager to Arches for Vocalubaries models{% endblocktrans %}
         </p>
     </div>
     <div class="tabbed-workflow-footer, etl-module-footer">
+        <button class="btn btn-success" style="margin-right: 8px;" data-bind="click: runRDMMigration">
+            <span data-bind="text: $root.translations.start"></span>
+        </button>
     </div>
 </div>
 <!-- /ko -->
