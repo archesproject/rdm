@@ -16,13 +16,43 @@ define([
         this.loading = params.loading || ko.observable();
         this.alert = params.alert;
         this.moduleId = params.etlmoduleid;
+        this.loadId = params.loadId || uuid.generate();
+        this.formData = new window.FormData();
+        this.graphs = ko.observable();
         this.selectedLoadEvent = params.selectedLoadEvent || ko.observable();
         this.formatTime = params.formatTime;
         this.timeDifference = params.timeDifference;
 
+        this.getGraphs = function(){
+            self.loading(true);
+            self.submit('get_graphs').then(function(response){
+                self.graphs(response.result);
+                self.loading(false);
+            });
+        };
+        
+        self.runRDMMigration = async function() {
+            self.loading(true);            
+            const response = await self.submit('run_migrate_rdm');
+            self.loading(false);
+        };
+
+        this.submit = function(action) {
+            self.formData.append('action', action);
+            self.formData.append('load_id', self.loadId);
+            self.formData.append('module', self.moduleId);
+            return $.ajax({
+                type: "POST",
+                url: arches.urls.etl_manager,
+                data: self.formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+            });
+        };
+
         this.init = function(){
-            // this.getGraphs();
-            console.log('Hello world');
+            this.getGraphs();
         };
 
         this.init();
