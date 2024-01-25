@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('arches_rdm', '0001_initial'),
+        ('models', '10260_add_iiifmanifest_globalid'),
     ]
 
     add_migrate_rdm = """
@@ -47,10 +48,20 @@ class Migration(migrations.Migration):
         DELETE FROM etl_modules WHERE etlmoduleid = '11cad3ca-e155-44b1-9910-c50b3def47f6';
     """
 
+    show_etl_manager = """
+        UPDATE plugins SET config = '{"show": true}' WHERE pluginid = '7720e9fa-876c-4127-a77a-b099cd2a5d45';
+    """
+    hide_etl_manager = """
+        UPDATE plugins SET config = '{"show": false}' WHERE pluginid = '7720e9fa-876c-4127-a77a-b099cd2a5d45';
+    """
 
     operations = [
         migrations.RunSQL(
             add_migrate_rdm,
             remove_migrate_rdm,
-        )
+        ),
+        migrations.RunSQL(
+            show_etl_manager,
+            hide_etl_manager,
+        ),
     ]
