@@ -43,41 +43,41 @@ class RDMMigrator(BaseBulkEditor):
         breakpoint()
 
 
-                # operation = 'insert'
-                # if user_tileid:
-                #     if nodegroup_cardinality == "n":
-                #         operation = "update" # db will "insert" if tileid does not exist
-                #     elif nodegroup_cardinality == "1":
-                #         if TileModel.objects.filter(pk=tileid).exists():
-                #             operation = "update"
-                # cursor.execute("""
-                #     INSERT INTO load_staging (
-                #         nodegroupid,
-                #         legacyid,
-                #         resourceid,
-                #         tileid,
-                #         parenttileid,
-                #         value,
-                #         loadid,
-                #         nodegroup_depth,
-                #         source_description,
-                #         passes_validation,
-                #         operation
-                #     ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-                #     (
-                #         row_details["nodegroup_id"],
-                #         legacyid,
-                #         resourceid,
-                #         tileid,
-                #         parenttileid,
-                #         tile_value_json,
-                #         self.loadid,
-                #         nodegroup_depth,
-                #         "worksheet:{0}, row:{1}".format(worksheet.title, row[0].row),  # source_description
-                #         passes_validation,
-                #         operation,
-                #     ),
-                # )
+        # operation = 'insert'
+        # if user_tileid:
+        #     if nodegroup_cardinality == "n":
+        #         operation = "update" # db will "insert" if tileid does not exist
+        #     elif nodegroup_cardinality == "1":
+        #         if TileModel.objects.filter(pk=tileid).exists():
+        #             operation = "update"
+        # cursor.execute("""
+        #     INSERT INTO load_staging (
+        #         nodegroupid,
+        #         legacyid,
+        #         resourceid,
+        #         tileid,
+        #         parenttileid,
+        #         value,
+        #         loadid,
+        #         nodegroup_depth,
+        #         source_description,
+        #         passes_validation,
+        #         operation
+        #     ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+        #     (
+        #         row_details["nodegroup_id"],
+        #         legacyid,
+        #         resourceid,
+        #         tileid,
+        #         parenttileid,
+        #         tile_value_json,
+        #         self.loadid,
+        #         nodegroup_depth,
+        #         "worksheet:{0}, row:{1}".format(worksheet.title, row[0].row),  # source_description
+        #         passes_validation,
+        #         operation,
+        #     ),
+        # )
             
         
 
