@@ -22,14 +22,6 @@ define([
         this.selectedLoadEvent = params.selectedLoadEvent || ko.observable();
         this.formatTime = params.formatTime;
         this.timeDifference = params.timeDifference;
-
-        this.getGraphs = function(){
-            self.loading(true);
-            self.submit('get_graphs').then(function(response){
-                self.graphs(response.result);
-                self.loading(false);
-            });
-        };
         
         self.runRDMMigration = async function() {
             self.loading(true);            
@@ -52,7 +44,7 @@ define([
         };
 
         this.init = function(){
-            this.getGraphs();
+            // console.log('init');
         };
 
         this.init();
