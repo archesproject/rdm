@@ -1,15 +1,12 @@
 from datetime import datetime
-import json
 import logging
 from django.core.exceptions import ValidationError
 from django.db import connection
 from arches.app.etl_modules.decorators import load_data_async
-from arches.app.etl_modules.base_data_editor import BaseBulkEditor
+from arches.app.etl_modules.base_import_module import BaseImportModule, FileValidationError
 from arches.app.models import models
 from arches.app.models.concept import Concept, ConceptValue, CORE_CONCEPTS, get_preflabel_from_valueid
 from arches.app.models.models import TileModel
-from arches.app.models.resource import Resource
-from arches.app.models.tile import Tile
 import arches_rdm.tasks as tasks
 from arches.app.utils.index_database import index_resources_by_transaction
 
@@ -23,7 +20,7 @@ SCHEME_MAPPINGS = [
     'identifier_type',
 ]
 
-class RDMMigrator(BaseBulkEditor):
+class RDMMigrator(BaseImportModule):
     def __init__(self, request=None, loadid=None):
         self.request = request if request else None
         self.userid = request.user.id if request else None
