@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             '11cad3ca-e155-44b1-9910-c50b3def47f6',
             'RDM Migration',
             'Migrate concepts and schemes to the new RDM',
-            'edit',
+            'import',
             'views/components/etl_modules/migrate-rdm',
             'migrate-rdm',
             'migrate_rdm.py',
