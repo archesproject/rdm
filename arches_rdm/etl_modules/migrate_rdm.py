@@ -6,19 +6,16 @@ from arches.app.etl_modules.decorators import load_data_async
 from arches.app.etl_modules.base_import_module import BaseImportModule, FileValidationError
 from arches.app.models import models
 from arches.app.models.concept import Concept, ConceptValue, CORE_CONCEPTS, get_preflabel_from_valueid
-from arches.app.models.models import TileModel
+from arches.app.models.models import GraphModel, TileModel
 import arches_rdm.tasks as tasks
 from arches.app.utils.index_database import index_resources_by_transaction
 
 logger = logging.getLogger(__name__)
 
-SCHEME_MAPPINGS = [
-    'name_content',
-    'name_type',
-    'name_language',
-    'identifier_content',
-    'identifier_type',
-]
+#### Constants ####
+CONCEPTS_GRAPH_ID = "bf73e576-4888-11ee-8a8d-11afefc4bff7"
+SCHEMES_GRAPH_ID = "56788995-423b-11ee-8a8d-11afefc4bff7"
+
 
 class RDMMigrator(BaseImportModule):
     def __init__(self, request=None, loadid=None):
@@ -26,18 +23,52 @@ class RDMMigrator(BaseImportModule):
         self.userid = request.user.id if request else None
         self.moduleid = request.POST.get("module") if request else None
         self.loadid = loadid if loadid else None
+    
+    # def create_tile_value(self, tile_values, data_node_lookup, )
 
     def run_migrate_rdm(self, request):
 
-        concept_schemes = []
-        for concept in models.Concept.objects.filter(nodetype='ConceptScheme'):
-            concept_schemes.append(Concept().get(id=concept.pk, include=["label"]))
+        nodegroup_lookup, nodes = self.get_graph_tree(SCHEMES_GRAPH_ID)
+        node_lookup = self.get_node_lookup(nodes)
 
-        concepts = []
-        for concept in models.Concept.objects.filter(nodetype='Concept'):
-            concepts.append(Concept().get(id=concept.pk, include=["label"]))
+        schemes = []
+        for concept in models.Concept.objects.filter(nodetype="ConceptScheme"):
+            scheme = {}
 
-        breakpoint()
+            concept_value = Concept().get(id=concept.pk, include=["label"])
+            for value in concept_value.values:
+                scheme["legacyid"] = value.conceptid
+                scheme["resourceinstanceid"] = value.id # use old valueid as new resourceinstanceid
+
+                scheme["tile_data"] = []
+                name = {}
+                name["name_content"] = value.value
+                name["name_language"] = value.language
+                name["name_type"] = value.type
+                scheme["tile_data"].append({'name': name})
+            
+            schemes.append(scheme)
+
+        tiles = []
+
+        for scheme in schemes:
+            for mock_tile in scheme["tile_data"]:
+                tile_data = {}
+                for nodegroup_id in nodegroup_lookup.keys():
+                    nodegroup_alias = nodegroup_lookup[nodegroup_id]["alias"]
+                    try:
+                        if mock_tile[nodegroup_alias]:
+                            tile_data[nodegroup_id] = {}
+                            for mock_node in list(mock_tile[nodegroup_alias]):
+                                nodeid = node_lookup[mock_node]['nodeid']
+                                tile_data[nodegroup_id][nodeid] = mock_tile[nodegroup_alias][mock_node]
+                    except KeyError:
+                        pass
+
+        # concepts = []
+        # for concept in models.Concept.objects.filter(nodetype='Concept'):
+        #     concepts.append(Concept().get(id=concept.pk, include=["label"]))
+
 
 
         # operation = 'insert'
