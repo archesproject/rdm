@@ -23,10 +23,27 @@ define([
         this.formatTime = params.formatTime;
         this.timeDifference = params.timeDifference;
         
-        self.runRDMMigration = async function() {
+        self.runRDMMigration = function() {
             self.loading(true);            
-            const response = await self.submit('run_migrate_rdm');
-            self.loading(false);
+            self.submit('start').then(data => {
+                params.activeTab("import");
+                self.formData.append('async', true);
+                self.submit('write').then(data => {
+                    console.log(data.results);
+                }).fail(function(err) {
+                    console.log(err);
+                    self.alert(
+                        new JsonErrorAlertViewModel(
+                            'ep-alert-red',
+                            err.responsJSON["data"],
+                            null,
+                            function(){}
+                        )
+                    )
+                }).always(() => {
+                    self.loading(false);
+                });
+            }).fail(error => console.log(error.responseJSON.data));
         };
 
         this.submit = function(action) {
@@ -42,12 +59,6 @@ define([
                 contentType: false,
             });
         };
-
-        this.init = function(){
-            // console.log('init');
-        };
-
-        this.init();
     };
     ko.components.register('migrate-rdm', {
         viewModel: viewModel,
