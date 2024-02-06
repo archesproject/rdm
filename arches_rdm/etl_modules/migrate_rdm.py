@@ -1,5 +1,6 @@
 from datetime import datetime
 import logging
+import uuid
 from django.core.exceptions import ValidationError
 from django.db import connection
 from arches.app.datatypes.datatypes import DataTypeFactory
@@ -24,7 +25,7 @@ class RDMMigrator(BaseImportModule):
         self.request = request if request else None
         self.userid = request.user.id if request else None
         self.moduleid = request.POST.get("module") if request else None
-        self.loadid = loadid if loadid else None
+        self.loadid = request.POST.get("load_id") if request else loadid
         self.datatype_factory = DataTypeFactory()
     
     def etl_schemes(self, nodegroup_lookup, node_lookup):
@@ -33,7 +34,7 @@ class RDMMigrator(BaseImportModule):
             concept_value = Concept().get(id=concept.pk, include=["label"])
 
             for value in concept_value.values:
-                scheme = {}
+                scheme = {"type": "Scheme"}
                 scheme["legacyid"] = value.conceptid
                 scheme["resourceinstanceid"] = value.id # use old valueid as new resourceinstanceid
 
@@ -43,16 +44,62 @@ class RDMMigrator(BaseImportModule):
                 # name["name_language"] = value.language
                 # name["name_type"] = value.type
                 scheme["tile_data"].append({"name": name})
-            
-                for mock_tile in scheme["tile_data"]:
-                    tile_value_json, passes_validation = self.create_tile_value(mock_tile, nodegroup_lookup, node_lookup)
-                    breakpoint()
 
-    def create_tile_value(self, mock_tile, nodegroup_lookup, node_lookup):
+                self.populate_staging_table(scheme, nodegroup_lookup, node_lookup)
+
+    def populate_staging_table(self, concept_to_load, nodegroup_lookup, node_lookup):
+        for mock_tile in concept_to_load["tile_data"]:
+            nodegroup_alias = next(iter(mock_tile.keys()), None)
+            nodegroup_id = node_lookup[nodegroup_alias]["nodeid"]
+            nodegroup_depth = nodegroup_lookup[nodegroup_id]["depth"]
+            tile_id = uuid.uuid4()
+            parent_tile_id = None
+            tile_value_json, passes_validation = self.create_tile_value(mock_tile, nodegroup_alias, nodegroup_lookup, node_lookup)
+            operation = "insert"
+
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    INSERT INTO load_staging (
+                        nodegroupid,
+                        legacyid,
+                        resourceid,
+                        tileid,
+                        parenttileid,
+                        value,
+                        loadid,
+                        nodegroup_depth,
+                        source_description,
+                        passes_validation,
+                        operation
+                    ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+                    (
+                        nodegroup_id,
+                        concept_to_load["legacyid"],
+                        concept_to_load["resourceinstanceid"],
+                        tile_id,
+                        parent_tile_id,
+                        tile_value_json,
+                        self.loadid,
+                        nodegroup_depth,
+                        "{0}: {1}".format(concept_to_load["type"], nodegroup_alias),  # source_description
+                        passes_validation,
+                        operation,
+                    ),
+                )
+        cursor.execute("""CALL __arches_check_tile_cardinality_violation_for_load(%s)""", [self.loadid])
+        cursor.execute(
+            """
+            INSERT INTO load_errors (type, source, error, loadid, nodegroupid)
+            SELECT 'tile', source_description, error_message, loadid, nodegroupid
+            FROM load_staging
+            WHERE loadid = %s AND passes_validation = false AND error_message IS NOT null
+            """,
+            [self.loadid],
+        )
+
+    def create_tile_value(self, mock_tile, nodegroup_alias, nodegroup_lookup, node_lookup):
         tile_value = {}
         tile_valid = True
-        nodegroup_alias = next(iter(mock_tile.keys()), None)
-        nodegroup_id = node_lookup[nodegroup_alias]["nodeid"]
         for node_alias in mock_tile[nodegroup_alias].keys():
             try:
                 nodeid = node_lookup[node_alias]["nodeid"]
@@ -95,51 +142,12 @@ class RDMMigrator(BaseImportModule):
 
         # concepts = []
         # for concept in models.Concept.objects.filter(nodetype='Concept'):
-        #     concepts.append(Concept().get(id=concept.pk, include=["label"]))
-
-
-
-        # operation = 'insert'
-        # if user_tileid:
-        #     if nodegroup_cardinality == "n":
-        #         operation = "update" # db will "insert" if tileid does not exist
-        #     elif nodegroup_cardinality == "1":
-        #         if TileModel.objects.filter(pk=tileid).exists():
-        #             operation = "update"
-        # cursor.execute("""
-        #     INSERT INTO load_staging (
-        #         nodegroupid,
-        #         legacyid,
-        #         resourceid,
-        #         tileid,
-        #         parenttileid,
-        #         value,
-        #         loadid,
-        #         nodegroup_depth,
-        #         source_description,
-        #         passes_validation,
-        #         operation
-        #     ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-        #     (
-        #         row_details["nodegroup_id"],
-        #         legacyid,
-        #         resourceid,
-        #         tileid,
-        #         parenttileid,
-        #         tile_value_json,
-        #         self.loadid,
-        #         nodegroup_depth,
-        #         "worksheet:{0}, row:{1}".format(worksheet.title, row[0].row),  # source_description
-        #         passes_validation,
-        #         operation,
-        #     ),
-        # )
-            
+        #     concepts.append(Concept().get(id=concept.pk, include=["label"])) 
         
 
     @load_data_async
     def run_load_task_async(self, request):
-        self.loadid = request.POST.get("load_id")
+        self.loadid = request.POST.get("loadid")
         # graph_id = request.POST.get("graph_id", None)
         # graph_name = request.POST.get("graph_name", None)
         # resource_ids = request.POST.get("resource_ids", None)
