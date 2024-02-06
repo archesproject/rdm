@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import logging
 import uuid
 from django.core.exceptions import ValidationError
@@ -25,10 +26,10 @@ class RDMMigrator(BaseImportModule):
         self.request = request if request else None
         self.userid = request.user.id if request else None
         self.moduleid = request.POST.get("module") if request else None
-        self.loadid = request.POST.get("load_id") if request else loadid
+        self.loadid = request.POST.get("loadid") if request else loadid
         self.datatype_factory = DataTypeFactory()
     
-    def etl_schemes(self, nodegroup_lookup, node_lookup):
+    def etl_schemes(self, cursor, nodegroup_lookup, node_lookup):
         schemes = []
         for concept in models.Concept.objects.filter(nodetype="ConceptScheme"):
             concept_value = Concept().get(id=concept.pk, include=["label"])
@@ -45,47 +46,46 @@ class RDMMigrator(BaseImportModule):
                 # name["name_type"] = value.type
                 scheme["tile_data"].append({"name": name})
 
-                self.populate_staging_table(scheme, nodegroup_lookup, node_lookup)
+                self.populate_staging_table(cursor, scheme, nodegroup_lookup, node_lookup)
 
-    def populate_staging_table(self, concept_to_load, nodegroup_lookup, node_lookup):
+    def populate_staging_table(self, cursor, concept_to_load, nodegroup_lookup, node_lookup):
         for mock_tile in concept_to_load["tile_data"]:
             nodegroup_alias = next(iter(mock_tile.keys()), None)
             nodegroup_id = node_lookup[nodegroup_alias]["nodeid"]
             nodegroup_depth = nodegroup_lookup[nodegroup_id]["depth"]
             tile_id = uuid.uuid4()
             parent_tile_id = None
-            tile_value_json, passes_validation = self.create_tile_value(mock_tile, nodegroup_alias, nodegroup_lookup, node_lookup)
+            tile_value_json, passes_validation = self.create_tile_value(cursor, mock_tile, nodegroup_alias, nodegroup_lookup, node_lookup)
             operation = "insert"
 
-            with connection.cursor() as cursor:
-                cursor.execute("""
-                    INSERT INTO load_staging (
-                        nodegroupid,
-                        legacyid,
-                        resourceid,
-                        tileid,
-                        parenttileid,
-                        value,
-                        loadid,
-                        nodegroup_depth,
-                        source_description,
-                        passes_validation,
-                        operation
-                    ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-                    (
-                        nodegroup_id,
-                        concept_to_load["legacyid"],
-                        concept_to_load["resourceinstanceid"],
-                        tile_id,
-                        parent_tile_id,
-                        tile_value_json,
-                        self.loadid,
-                        nodegroup_depth,
-                        "{0}: {1}".format(concept_to_load["type"], nodegroup_alias),  # source_description
-                        passes_validation,
-                        operation,
-                    ),
-                )
+            cursor.execute("""
+                INSERT INTO load_staging (
+                    nodegroupid,
+                    legacyid,
+                    resourceid,
+                    tileid,
+                    parenttileid,
+                    value,
+                    loadid,
+                    nodegroup_depth,
+                    source_description,
+                    passes_validation,
+                    operation
+                ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+                (
+                    nodegroup_id,
+                    concept_to_load["legacyid"],
+                    concept_to_load["resourceinstanceid"],
+                    tile_id,
+                    parent_tile_id,
+                    tile_value_json,
+                    self.loadid,
+                    nodegroup_depth,
+                    "{0}: {1}".format(concept_to_load["type"], nodegroup_alias),  # source_description
+                    passes_validation,
+                    operation,
+                ),
+            )
         cursor.execute("""CALL __arches_check_tile_cardinality_violation_for_load(%s)""", [self.loadid])
         cursor.execute(
             """
@@ -97,7 +97,7 @@ class RDMMigrator(BaseImportModule):
             [self.loadid],
         )
 
-    def create_tile_value(self, mock_tile, nodegroup_alias, nodegroup_lookup, node_lookup):
+    def create_tile_value(self, cursor, mock_tile, nodegroup_alias, nodegroup_lookup, node_lookup):
         tile_value = {}
         tile_valid = True
         for node_alias in mock_tile[nodegroup_alias].keys():
@@ -118,13 +118,10 @@ class RDMMigrator(BaseImportModule):
                 error_message = ""
                 for error in validation_errors:
                     error_message = "{0}|{1}".format(error_message, error["message"]) if error_message != "" else error["message"]
-                    with connection.cursor() as cursor:
-                        cursor.execute(
-                            """
-                            INSERT INTO load_errors (type, value, source, error, message, datatype, loadid, nodeid)
-                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",
-                            ("node", source_value, "", error["title"], error["message"], datatype, self.loadid, nodeid),
-                        )
+                    cursor.execute(
+                        """INSERT INTO load_errors (type, value, source, error, message, datatype, loadid, nodeid) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",
+                        ("node", source_value, "", error["title"], error["message"], datatype, self.loadid, nodeid),
+                    )
                 
                 tile_value[nodeid] = {"value": value, "valid": valid, "source": source_value, "notes": error_message, "datatype": datatype}
             except KeyError:
@@ -133,12 +130,22 @@ class RDMMigrator(BaseImportModule):
         tile_value_json = JSONSerializer().serialize(tile_value)
         return tile_value_json, tile_valid
 
-    def run_migrate_rdm(self, request):
-
+    def start(self, request):
+        load_details = {"operation": "RDM Migration"}
+        cursor = connection.cursor()
+        cursor.execute(
+            """INSERT INTO load_event (loadid, complete, status, etl_module_id, load_details, load_start_time, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+            (self.loadid, False, "running", self.moduleid, json.dumps(load_details), datetime.now(), self.userid),
+        )
+        message = "load event created"
+        
         nodegroup_lookup, nodes = self.get_graph_tree(SCHEMES_GRAPH_ID)
         node_lookup = self.get_node_lookup(nodes)
 
-        schemes = self.etl_schemes(nodegroup_lookup, node_lookup)
+        self.etl_schemes(cursor, nodegroup_lookup, node_lookup)
+        
+        return {"success": True, "data": message}
+
 
         # concepts = []
         # for concept in models.Concept.objects.filter(nodetype='Concept'):
