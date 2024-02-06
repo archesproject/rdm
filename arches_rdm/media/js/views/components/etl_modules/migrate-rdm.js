@@ -31,7 +31,7 @@ define([
 
         this.submit = function(action) {
             self.formData.append('action', action);
-            self.formData.append('load_id', self.loadId);
+            self.formData.append('loadid', self.loadId);
             self.formData.append('module', self.moduleId);
             return $.ajax({
                 type: "POST",
