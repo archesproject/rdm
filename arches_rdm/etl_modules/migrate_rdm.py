@@ -89,10 +89,10 @@ class RDMMigrator(BaseImportModule):
         cursor.execute("""CALL __arches_check_tile_cardinality_violation_for_load(%s)""", [self.loadid])
         cursor.execute(
             """
-            INSERT INTO load_errors (type, source, error, loadid, nodegroupid)
-            SELECT 'tile', source_description, error_message, loadid, nodegroupid
-            FROM load_staging
-            WHERE loadid = %s AND passes_validation = false AND error_message IS NOT null
+                INSERT INTO load_errors (type, source, error, loadid, nodegroupid)
+                SELECT 'tile', source_description, error_message, loadid, nodegroupid
+                FROM load_staging
+                WHERE loadid = %s AND passes_validation = false AND error_message IS NOT null
             """,
             [self.loadid],
         )
