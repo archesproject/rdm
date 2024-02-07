@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             'migrate-rdm',
             6,
             'migrate-rdm-help',
-            false);
+            true);
         """
     remove_migrate_rdm = """
         DELETE FROM load_staging WHERE loadid IN (SELECT loadid FROM load_event WHERE etl_module_id = '11cad3ca-e155-44b1-9910-c50b3def47f6');
