@@ -12,7 +12,7 @@ except ImportError:
     pass
 
 @shared_task
-def migrate_rdm(userid, loadid):
+def migrate_rdm_task(userid, loadid):
     logger = logging.getLogger(__name__)
 
     try:

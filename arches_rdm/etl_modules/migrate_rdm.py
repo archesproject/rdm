@@ -31,13 +31,12 @@ class RDMMigrator(BaseImportModule):
     
     def etl_schemes(self, cursor, nodegroup_lookup, node_lookup):
         schemes = []
-        for concept in models.Concept.objects.filter(nodetype="ConceptScheme"):
-            concept_value = Concept().get(id=concept.pk, include=["label"])
+        for concept in models.Concept.objects.filter(nodetype="ConceptScheme").prefetch_related("value_set"):
 
-            for value in concept_value.values:
+            for value in concept.value_set.all():
                 scheme = {"type": "Scheme"}
-                scheme["legacyid"] = value.conceptid
-                scheme["resourceinstanceid"] = value.id # use old valueid as new resourceinstanceid
+                scheme["legacyid"] = value.concept_id
+                scheme["resourceinstanceid"] = value.valueid # use old valueid as new resourceinstanceid
 
                 scheme["tile_data"] = []
                 name = {}
@@ -46,7 +45,24 @@ class RDMMigrator(BaseImportModule):
                 # name["name_type"] = value.type
                 scheme["tile_data"].append({"name": name})
 
-                self.populate_staging_table(cursor, scheme, nodegroup_lookup, node_lookup)
+                self.populate_staging_table(cursor, scheme, nodegroup_lookup, node_lookup)        
+
+    def etl_concepts(self, cursor, nodegroup_lookup, node_lookup):
+        concepts = []
+        for concept in models.Concept.objects.filter(nodetype="Concept").prefetch_related("value_set"):
+            for value in concept.value_set.all():
+                concept = {"type": "Concept"}
+                concept["legacyid"] = value.concept_id
+                concept["resourceinstanceid"] = value.valueid # use old valueid as new resourceinstanceid
+
+                concept["tile_data"] = []
+                name = {}
+                name["name_content"] = value.value
+                # name["name_language"] = value.language
+                # name["name_type"] = value.type
+                concept["tile_data"].append({"name": name})
+
+                self.populate_staging_table(cursor, concept, nodegroup_lookup, node_lookup)      
 
     def populate_staging_table(self, cursor, concept_to_load, nodegroup_lookup, node_lookup):
         for mock_tile in concept_to_load["tile_data"]:
@@ -139,21 +155,21 @@ class RDMMigrator(BaseImportModule):
         )
         message = "load event created"
         
-        nodegroup_lookup, nodes = self.get_graph_tree(SCHEMES_GRAPH_ID)
-        node_lookup = self.get_node_lookup(nodes)
+        schemes_nodegroup_lookup, schemes_nodes = self.get_graph_tree(SCHEMES_GRAPH_ID)
+        schemes_node_lookup = self.get_node_lookup(schemes_nodes)
+        self.etl_schemes(cursor, schemes_nodegroup_lookup, schemes_node_lookup)
 
-        self.etl_schemes(cursor, nodegroup_lookup, node_lookup)
+        concepts_nodegroup_lookup, concepts_nodes = self.get_graph_tree(CONCEPTS_GRAPH_ID)
+        concepts_node_lookup = self.get_node_lookup(concepts_nodes)
+        self.etl_concepts(cursor, concepts_nodegroup_lookup, concepts_node_lookup)
         
         return {"success": True, "data": message}
-
-
-        # concepts = []
-        # for concept in models.Concept.objects.filter(nodetype='Concept'):
-        #     concepts.append(Concept().get(id=concept.pk, include=["label"])) 
 
     def write(self, request):
         self.loadid = request.POST.get("loadid")
         response = self.run_load_task_async(request, self.loadid)
+        message = "RDM Migration Complete"
+        return {"success": True, "data": message}
 
     def run_load_task(self, userid, loadid):
         validation = self.validate(loadid)
@@ -185,7 +201,7 @@ class RDMMigrator(BaseImportModule):
         self.userid = request.user.id
         self.loadid = request.POST.get("loadid")
 
-        migrate_rdm_task = tasks.migrate_rdm.apply_async(
+        migrate_rdm_task = tasks.migrate_rdm_task.apply_async(
             (self.userid, self.loadid),
         )
         with connection.cursor() as cursor:
