@@ -153,7 +153,7 @@ class RDMMigrator(BaseImportModule):
 
     def write(self, request):
         self.loadid = request.POST.get("loadid")
-        response = self.run_load_task(self.userid, self.loadid)
+        response = self.run_load_task_async(request, self.loadid)
 
     def run_load_task(self, userid, loadid):
         validation = self.validate(loadid)
