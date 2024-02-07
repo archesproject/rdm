@@ -5,14 +5,14 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.db import connection
 from arches.app.datatypes.datatypes import DataTypeFactory
+from arches.app.etl_modules.save import save_to_tiles
 from arches.app.etl_modules.decorators import load_data_async
 from arches.app.etl_modules.base_import_module import BaseImportModule, FileValidationError
 from arches.app.models import models
-from arches.app.models.concept import Concept, ConceptValue, CORE_CONCEPTS, get_preflabel_from_valueid
+from arches.app.models.concept import Concept
 from arches.app.models.models import GraphModel, TileModel
 from arches.app.utils.betterJSONSerializer import JSONSerializer
 import arches_rdm.tasks as tasks
-from arches.app.utils.index_database import index_resources_by_transaction
 
 logger = logging.getLogger(__name__)
 
@@ -150,22 +150,46 @@ class RDMMigrator(BaseImportModule):
         # concepts = []
         # for concept in models.Concept.objects.filter(nodetype='Concept'):
         #     concepts.append(Concept().get(id=concept.pk, include=["label"])) 
-        
+
+    def write(self, request):
+        self.loadid = request.POST.get("loadid")
+        response = self.run_load_task(self.userid, self.loadid)
+
+    def run_load_task(self, userid, loadid):
+        validation = self.validate(loadid)
+        if len(validation["data"]) == 0:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """UPDATE load_event SET status = %s WHERE loadid = %s""",
+                    ("validated", loadid),
+                )
+            self.loadid = loadid  # currently redundant, but be certain
+            response = save_to_tiles(userid, loadid)
+            with connection.cursor() as cursor:
+                cursor.execute("""CALL __arches_update_resource_x_resource_with_graphids();""")
+                cursor.execute("""SELECT __arches_refresh_spatial_views();""")
+                refresh_successful = cursor.fetchone()[0]
+            if not refresh_successful:
+                raise Exception('Unable to refresh spatial views')
+            return response
+        else:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """UPDATE load_event SET status = %s, load_end_time = %s WHERE loadid = %s""",
+                    ("failed", datetime.now(), loadid),
+                )
+            return {"success": False, "data": "failed"}
 
     @load_data_async
     def run_load_task_async(self, request):
+        self.userid = request.user.id
         self.loadid = request.POST.get("loadid")
-        # graph_id = request.POST.get("graph_id", None)
-        # graph_name = request.POST.get("graph_name", None)
-        # resource_ids = request.POST.get("resource_ids", None)
 
-        migrate_task = tasks.migrate_rdm.apply_async(
+        migrate_rdm_task = tasks.migrate_rdm.apply_async(
             (self.userid, self.loadid),
-            # (self.userid, self.loadid, graph_id, graph_name, resource_ids),
         )
-
         with connection.cursor() as cursor:
             cursor.execute(
                 """UPDATE load_event SET taskid = %s WHERE loadid = %s""",
-                (migrate_task.task_id, self.loadid),
+                (migrate_rdm_task.task_id, self.loadid),
             )
