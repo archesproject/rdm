@@ -128,8 +128,7 @@ class RDMMigrator(BaseImportModule):
             except KeyError:
                 pass 
 
-        tile_value_json = JSONSerializer().serialize(tile_value)
-        return tile_value_json, tile_valid
+        return tile_value, tile_valid
 
     def start(self, request):
         load_details = {"operation": "RDM Migration"}
