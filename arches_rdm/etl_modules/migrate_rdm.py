@@ -10,7 +10,7 @@ from arches.app.etl_modules.decorators import load_data_async
 from arches.app.etl_modules.base_import_module import BaseImportModule, FileValidationError
 from arches.app.models import models
 from arches.app.models.concept import Concept
-from arches.app.models.models import GraphModel, TileModel
+from arches.app.models.models import LoadStaging, NodeGroup, LoadEvent
 from arches.app.utils.betterJSONSerializer import JSONSerializer
 import arches_rdm.tasks as tasks
 
@@ -32,76 +32,61 @@ class RDMMigrator(BaseImportModule):
     def etl_schemes(self, cursor, nodegroup_lookup, node_lookup):
         schemes = []
         for concept in models.Concept.objects.filter(nodetype="ConceptScheme").prefetch_related("value_set"):
-
+            scheme_to_load = {"type": "Scheme", "tile_data": []}
             for value in concept.value_set.all():
-                scheme = {"type": "Scheme"}
-                scheme["legacyid"] = value.concept_id
-                scheme["resourceinstanceid"] = value.valueid # use old valueid as new resourceinstanceid
+                # scheme_to_load["legacyid"] = value.concept_id
+                scheme_to_load["resourceinstanceid"] = value.valueid # use old valueid as new resourceinstanceid
 
-                scheme["tile_data"] = []
                 name = {}
                 name["name_content"] = value.value
                 # name["name_language"] = value.language
                 # name["name_type"] = value.type
-                scheme["tile_data"].append({"name": name})
-
-                self.populate_staging_table(cursor, scheme, nodegroup_lookup, node_lookup)        
+                scheme_to_load["tile_data"].append({"name": name})
+            schemes.append(scheme_to_load)
+        self.populate_staging_table(cursor, schemes, nodegroup_lookup, node_lookup)       
 
     def etl_concepts(self, cursor, nodegroup_lookup, node_lookup):
         concepts = []
         for concept in models.Concept.objects.filter(nodetype="Concept").prefetch_related("value_set"):
+            concept_to_load = {"type": "Concept", "tile_data": []}
             for value in concept.value_set.all():
-                concept = {"type": "Concept"}
-                concept["legacyid"] = value.concept_id
-                concept["resourceinstanceid"] = value.valueid # use old valueid as new resourceinstanceid
+                # concept_to_load["legacyid"] = value.concept_id
+                concept_to_load["resourceinstanceid"] = value.valueid # use old valueid as new resourceinstanceid
 
-                concept["tile_data"] = []
                 name = {}
                 name["name_content"] = value.value
                 # name["name_language"] = value.language
                 # name["name_type"] = value.type
-                concept["tile_data"].append({"name": name})
+                concept_to_load["tile_data"].append({"name": name})
+            concepts.append(concept_to_load)
+        self.populate_staging_table(cursor, concepts, nodegroup_lookup, node_lookup)
 
-                self.populate_staging_table(cursor, concept, nodegroup_lookup, node_lookup)      
 
-    def populate_staging_table(self, cursor, concept_to_load, nodegroup_lookup, node_lookup):
-        for mock_tile in concept_to_load["tile_data"]:
-            nodegroup_alias = next(iter(mock_tile.keys()), None)
-            nodegroup_id = node_lookup[nodegroup_alias]["nodeid"]
-            nodegroup_depth = nodegroup_lookup[nodegroup_id]["depth"]
-            tile_id = uuid.uuid4()
-            parent_tile_id = None
-            tile_value_json, passes_validation = self.create_tile_value(cursor, mock_tile, nodegroup_alias, nodegroup_lookup, node_lookup)
-            operation = "insert"
-
-            cursor.execute("""
-                INSERT INTO load_staging (
-                    nodegroupid,
-                    legacyid,
-                    resourceid,
-                    tileid,
-                    parenttileid,
-                    value,
-                    loadid,
-                    nodegroup_depth,
-                    source_description,
-                    passes_validation,
-                    operation
-                ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-                (
-                    nodegroup_id,
-                    concept_to_load["legacyid"],
-                    concept_to_load["resourceinstanceid"],
-                    tile_id,
-                    parent_tile_id,
-                    tile_value_json,
-                    self.loadid,
-                    nodegroup_depth,
-                    "{0}: {1}".format(concept_to_load["type"], nodegroup_alias),  # source_description
-                    passes_validation,
-                    operation,
-                ),
-            )
+    def populate_staging_table(self, cursor, concepts_to_load, nodegroup_lookup, node_lookup):
+        tiles_to_load = []
+        for concept_to_load in concepts_to_load:
+            for mock_tile in concept_to_load["tile_data"]:
+                nodegroup_alias = next(iter(mock_tile.keys()), None)
+                nodegroup_id = node_lookup[nodegroup_alias]["nodeid"]
+                nodegroup_depth = nodegroup_lookup[nodegroup_id]["depth"]
+                tile_id = uuid.uuid4()
+                parent_tile_id = None
+                tile_value_json, passes_validation = self.create_tile_value(cursor, mock_tile, nodegroup_alias, nodegroup_lookup, node_lookup)
+                operation = "insert"
+                tiles_to_load.append(LoadStaging(
+                    load_event=LoadEvent(self.loadid),
+                    nodegroup=NodeGroup(nodegroup_id),
+                    resourceid=concept_to_load["resourceinstanceid"],
+                    tileid=tile_id,
+                    parenttileid=parent_tile_id,
+                    value=tile_value_json,
+                    nodegroup_depth=nodegroup_depth,
+                    source_description="{0}: {1}".format(concept_to_load["type"], nodegroup_alias),  # source_description
+                    passes_validation=passes_validation,
+                    operation=operation,
+                ))
+        staged_tiles = LoadStaging.objects.bulk_create(tiles_to_load)
+        
         cursor.execute("""CALL __arches_check_tile_cardinality_violation_for_load(%s)""", [self.loadid])
         cursor.execute(
             """
