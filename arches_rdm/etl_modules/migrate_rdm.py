@@ -139,6 +139,50 @@ class RDMMigrator(BaseImportModule):
                 pass 
 
         return tile_value, tile_valid
+    
+    def init_relationships(self, cursor, loadid):
+        cursor.execute("""
+            DO $$
+            BEGIN
+                IF NOT EXISTS (
+                    SELECT schema_name
+                    FROM information_schema.schemata
+                    WHERE schema_name in ('scheme', 'concept_')
+                ) THEN
+                    select __arches_create_resource_model_views(graphid)
+                    from graphs
+                    where name->>'en' in ('Scheme', 'Concept ');
+                END IF;
+            END $$;
+        """)
+
+        cursor.execute("""
+           insert into concept_.top_concept_of (
+                resourceinstanceid,
+                top_concept_of,
+                transactionid
+            )
+            select
+                conceptidto as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
+                json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')) as top_concept_of,
+                %s::uuid as transactionid
+            from relations
+            where relationtype = 'hasTopConcept';
+        """, (loadid,))
+
+        cursor.execute("""
+            insert into concept_.broader (
+                resourceinstanceid,
+                broader,
+                transactionid
+            )
+            select
+                conceptidto as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
+                json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')) as top_concept_of,
+                %s::uuid as transactionid
+            from relations
+            where relationtype = 'narrower';
+        """, (loadid,))
 
     def start(self, request):
         load_details = {"operation": "RDM Migration"}
@@ -176,6 +220,7 @@ class RDMMigrator(BaseImportModule):
             self.loadid = loadid  # currently redundant, but be certain
             response = save_to_tiles(userid, loadid)
             with connection.cursor() as cursor:
+                self.init_relationships(cursor, loadid)
                 cursor.execute("""CALL __arches_update_resource_x_resource_with_graphids();""")
                 cursor.execute("""SELECT __arches_refresh_spatial_views();""")
                 refresh_successful = cursor.fetchone()[0]
