@@ -34,14 +34,19 @@ class RDMMigrator(BaseImportModule):
         for concept in models.Concept.objects.filter(nodetype="ConceptScheme").prefetch_related("value_set"):
             scheme_to_load = {"type": "Scheme", "tile_data": []}
             for value in concept.value_set.all():
-                # scheme_to_load["legacyid"] = value.concept_id
-                scheme_to_load["resourceinstanceid"] = value.valueid # use old valueid as new resourceinstanceid
+                scheme_to_load["resourceinstanceid"] = concept.pk # use old conceptid as new resourceinstanceid
 
                 name = {}
-                name["name_content"] = value.value
-                # name["name_language"] = value.language
-                # name["name_type"] = value.type
-                scheme_to_load["tile_data"].append({"name": name})
+                identifier = {}
+                if value.valuetype_id == "prefLabel":
+                    name["name_content"] = value.value
+                    name["name_language"] = value.language_id
+                    name["name_type"] = value.valuetype_id
+                    scheme_to_load["tile_data"].append({"name": name})
+                elif value.valuetype_id == "identifier":
+                    identifier["identifier_content"] = value.value
+                    identifier["identifier_type"] = value.valuetype_id
+                    scheme_to_load["tile_data"].append({"identifier": identifier})
             schemes.append(scheme_to_load)
         self.populate_staging_table(cursor, schemes, nodegroup_lookup, node_lookup)       
 
@@ -50,14 +55,19 @@ class RDMMigrator(BaseImportModule):
         for concept in models.Concept.objects.filter(nodetype="Concept").prefetch_related("value_set"):
             concept_to_load = {"type": "Concept", "tile_data": []}
             for value in concept.value_set.all():
-                # concept_to_load["legacyid"] = value.concept_id
-                concept_to_load["resourceinstanceid"] = value.valueid # use old valueid as new resourceinstanceid
+                concept_to_load["resourceinstanceid"] = concept.pk # use old conceptid as new resourceinstanceid
 
                 name = {}
-                name["name_content"] = value.value
-                # name["name_language"] = value.language
-                # name["name_type"] = value.type
-                concept_to_load["tile_data"].append({"name": name})
+                identifier = {}
+                if value.valuetype_id == "prefLabel":
+                    name["name_content"] = value.value
+                    name["name_language"] = value.language_id
+                    name["name_type"] = value.valuetype_id
+                    concept_to_load["tile_data"].append({"name": name})
+                elif value.valuetype_id == "identifier":
+                    identifier["identifier_content"] = value.value
+                    identifier["identifier_type"] = value.valuetype_id
+                    concept_to_load["tile_data"].append({"identifier": identifier})
             concepts.append(concept_to_load)
         self.populate_staging_table(cursor, concepts, nodegroup_lookup, node_lookup)
 
@@ -118,7 +128,7 @@ class RDMMigrator(BaseImportModule):
                     tile_valid = False
                 error_message = ""
                 for error in validation_errors:
-                    error_message = "{0}|{1}".format(error_message, error["message"]) if error_message != "" else error["message"]
+                    error_message = error["message"]
                     cursor.execute(
                         """INSERT INTO load_errors (type, value, source, error, message, datatype, loadid, nodeid) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",
                         ("node", source_value, "", error["title"], error["message"], datatype, self.loadid, nodeid),
