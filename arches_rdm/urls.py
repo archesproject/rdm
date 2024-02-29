@@ -15,5 +15,8 @@ Including another URLconf
 """
 from django.urls import path
 
+from arches_rdm.views import ConceptTreeView
 
-urlpatterns = []
+urlpatterns = [
+    path("concept_trees/", ConceptTreeView.as_view(), name="concept_trees"),
+]
