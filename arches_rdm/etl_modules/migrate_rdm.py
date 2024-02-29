@@ -17,8 +17,10 @@ import arches_rdm.tasks as tasks
 logger = logging.getLogger(__name__)
 
 #### Constants ####
-CONCEPTS_GRAPH_ID = "bf73e576-4888-11ee-8a8d-11afefc4bff7"
-SCHEMES_GRAPH_ID = "56788995-423b-11ee-8a8d-11afefc4bff7"
+SCHEMES_GRAPH_ID = uuid.UUID("56788995-423b-11ee-8a8d-11afefc4bff7")
+CONCEPTS_GRAPH_ID = uuid.UUID("bf73e576-4888-11ee-8a8d-11afefc4bff7")
+CONCEPTS_TOP_CONCEPT_OF_NODEGROUP_ID = uuid.UUID("bf73e5b9-4888-11ee-8a8d-11afefc4bff7")
+CONCEPTS_BROADER_NODEGROUP_ID = uuid.UUID("bf73e5f5-4888-11ee-8a8d-11afefc4bff7")
 
 
 class RDMMigrator(BaseImportModule):
@@ -141,48 +143,75 @@ class RDMMigrator(BaseImportModule):
         return tile_value, tile_valid
     
     def init_relationships(self, cursor, loadid):
+        # Create top concept of scheme relationships (derived from relations with 'hasTopConcept' relationtype)
         cursor.execute("""
-            DO $$
-            BEGIN
-                IF NOT EXISTS (
-                    SELECT schema_name
-                    FROM information_schema.schemata
-                    WHERE schema_name in ('scheme', 'concept_')
-                ) THEN
-                    select __arches_create_resource_model_views(graphid)
-                    from graphs
-                    where name->>'en' in ('Scheme', 'Concept ');
-                END IF;
-            END $$;
-        """)
-
-        cursor.execute("""
-           insert into concept_.top_concept_of (
-                resourceinstanceid,
-                top_concept_of,
-                transactionid
+           insert into load_staging(
+                value,
+                resourceid,
+                tileid,
+                passes_validation,
+                nodegroup_depth,
+                source_description,
+                loadid,
+                nodegroupid,
+                operation
             )
-            select
+            select 
+                json_build_object(%s::uuid,
+                    json_build_object(
+                        'notes', '',
+                        'valid', true,
+                        'value', json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')),
+                        'source', conceptidfrom,
+                        'datatype', 'resource-instance-list'
+                    )
+                ) as value,
                 conceptidto as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
-                json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')) as top_concept_of,
-                %s::uuid as transactionid
+                uuid_generate_v4() as tileid,
+                true as passes_validation,
+                0 as nodegroup_depth,
+                'Scheme: top_concept_of' as source_description,
+                %s::uuid as loadid,
+                %s::uuid as nodegroupid,
+                'insert' as operation
             from relations
             where relationtype = 'hasTopConcept';
-        """, (loadid,))
+        """, (CONCEPTS_TOP_CONCEPT_OF_NODEGROUP_ID, loadid, CONCEPTS_TOP_CONCEPT_OF_NODEGROUP_ID))
 
+        # Create broader relationships (derived from relations with 'narrower' relationtype)
         cursor.execute("""
-            insert into concept_.broader (
-                resourceinstanceid,
-                broader,
-                transactionid
+           insert into load_staging(
+                value,
+                resourceid,
+                tileid,
+                passes_validation,
+                nodegroup_depth,
+                source_description,
+                loadid,
+                nodegroupid,
+                operation
             )
-            select
+            select 
+                json_build_object(%s::uuid,
+                    json_build_object(
+                        'notes', '',
+                        'valid', true,
+                        'value', json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')),
+                        'source', conceptidfrom,
+                        'datatype', 'resource-instance-list'
+                    )
+                ) as value,
                 conceptidto as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
-                json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')) as top_concept_of,
-                %s::uuid as transactionid
+                uuid_generate_v4() as tileid,
+                true as passes_validation,
+                0 as nodegroup_depth,
+                'Scheme: top_concept_of' as source_description,
+                %s::uuid as loadid,
+                %s::uuid as nodegroupid,
+                'insert' as operation
             from relations
             where relationtype = 'narrower';
-        """, (loadid,))
+        """, (CONCEPTS_BROADER_NODEGROUP_ID, loadid, CONCEPTS_BROADER_NODEGROUP_ID))
 
     def start(self, request):
         load_details = {"operation": "RDM Migration"}
@@ -210,30 +239,28 @@ class RDMMigrator(BaseImportModule):
         return {"success": True, "data": message}
 
     def run_load_task(self, userid, loadid):
-        validation = self.validate(loadid)
-        if len(validation["data"]) == 0:
-            with connection.cursor() as cursor:
+        self.loadid = loadid  # currently redundant, but be certain
+        with connection.cursor() as cursor:
+            self.init_relationships(cursor, loadid)
+            validation = self.validate(loadid)
+            if len(validation["data"]) == 0:
                 cursor.execute(
                     """UPDATE load_event SET status = %s WHERE loadid = %s""",
                     ("validated", loadid),
                 )
-            self.loadid = loadid  # currently redundant, but be certain
-            response = save_to_tiles(userid, loadid)
-            with connection.cursor() as cursor:
-                self.init_relationships(cursor, loadid)
+                response = save_to_tiles(userid, loadid)
                 cursor.execute("""CALL __arches_update_resource_x_resource_with_graphids();""")
                 cursor.execute("""SELECT __arches_refresh_spatial_views();""")
                 refresh_successful = cursor.fetchone()[0]
-            if not refresh_successful:
-                raise Exception('Unable to refresh spatial views')
-            return response
-        else:
-            with connection.cursor() as cursor:
+                if not refresh_successful:
+                    raise Exception('Unable to refresh spatial views')
+                return response
+            else:
                 cursor.execute(
                     """UPDATE load_event SET status = %s, load_end_time = %s WHERE loadid = %s""",
                     ("failed", datetime.now(), loadid),
                 )
-            return {"success": False, "data": "failed"}
+                return {"success": False, "data": "failed"}
 
     @load_data_async
     def run_load_task_async(self, request):
