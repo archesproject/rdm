@@ -20,8 +20,11 @@ from arches_rdm.const import (
     BROADER_NODE_AND_NODEGROUP,
     CONCEPT_LABEL_NODEGROUP,
     CONCEPT_LABEL_NODE,
+    CONCEPT_LABEL_TYPE_NODE,
     SCHEME_LABEL_NODEGROUP,
     SCHEME_LABEL_NODE,
+    SCHEME_LABEL_TYPE_NODE,
+    PREF_LABEL_VALUE_ID,
 )
 
 
@@ -81,7 +84,10 @@ class ConceptTreeViewTests(TestCase):
         TileModel.objects.create(
             resourceinstance=cls.scheme,
             nodegroup_id=SCHEME_LABEL_NODEGROUP,
-            data={SCHEME_LABEL_NODE: localized_string("Test Scheme")},
+            data={
+                SCHEME_LABEL_NODE: localized_string("Test Scheme"),
+                SCHEME_LABEL_TYPE_NODE: [PREF_LABEL_VALUE_ID],
+            },
         )
 
         MAX_DEPTH = 5
@@ -96,7 +102,10 @@ class ConceptTreeViewTests(TestCase):
             TileModel.objects.create(
                 resourceinstance=concept,
                 nodegroup_id=CONCEPT_LABEL_NODEGROUP,
-                data={CONCEPT_LABEL_NODE: localized_string(f"Concept {i + 1}")},
+                data={
+                    CONCEPT_LABEL_NODE: localized_string(f"Concept {i + 1}"),
+                    CONCEPT_LABEL_TYPE_NODE: [PREF_LABEL_VALUE_ID],
+                },
             )
             # Create top concept/narrower tile
             if i == 0:
