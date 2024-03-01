@@ -17,18 +17,21 @@ from arches_rdm.const import (
     BROADER_NODE_AND_NODEGROUP,
     CONCEPT_LABEL_NODEGROUP,
     CONCEPT_LABEL_NODE,
+    CONCEPT_LABEL_TYPE_NODE,
     SCHEME_LABEL_NODEGROUP,
     SCHEME_LABEL_NODE,
+    SCHEME_LABEL_TYPE_NODE,
+    PREF_LABEL_VALUE_ID,
+    ALT_LABEL_VALUE_ID,
 )
 
 TOP_CONCEPT_OF_LOOKUP = f"data__{TOP_CONCEPT_OF_NODE_AND_NODEGROUP}"
 BROADER_LOOKUP = f"data__{BROADER_NODE_AND_NODEGROUP}"
-CONCEPT_LABEL_LOOKUP = f"data__{CONCEPT_LABEL_NODE}"
-SCHEME_LABEL_LOOKUP = f"data__{SCHEME_LABEL_NODE}"
 
 
 class JsonbArrayElements(Func):
     """https://forum.djangoproject.com/t/django-4-2-behavior-change-when-using-arrayagg-on-unnested-arrayfield-postgresql-specific/21547/5"""
+
     contains_subquery = True
     function = "JSONB_ARRAY_ELEMENTS"
 
@@ -40,11 +43,19 @@ class ConceptTreeView(View):
     def __init__(self):
         self.schemes = ResourceInstance.objects.none()
         # key=scheme resourceid (str) val=set of concept resourceids (str)
-        self.top_concepts: dict[str: set[str]] = defaultdict(set)
+        self.top_concepts: dict[str : set[str]] = defaultdict(set)
         # key=concept resourceid (str) val=set of concept resourceids (str)
-        self.narrower_concepts: dict[str: set[str]] = defaultdict(set)
+        self.narrower_concepts: dict[str : set[str]] = defaultdict(set)
         # key=resourceid (str) val=list of label dicts
-        self.labels: dict[str: list[dict]] = defaultdict(set)
+        self.labels: dict[str : list[dict]] = defaultdict(set)
+
+    @staticmethod
+    def human_label_type(value_id):
+        if value_id == PREF_LABEL_VALUE_ID:
+            return "prefLabel"
+        if value_id == ALT_LABEL_VALUE_ID:
+            return "altLabel"
+        return "unknown"
 
     @staticmethod
     def resources_from_tiles(lookup_expression: str):
@@ -56,8 +67,8 @@ class ConceptTreeView(View):
         )
 
     @staticmethod
-    def labels_subquery(label_lookup):
-        if label_lookup == SCHEME_LABEL_LOOKUP:
+    def labels_subquery(label_nodegroup):
+        if label_nodegroup == SCHEME_LABEL_NODEGROUP:
             # Annotating a ResourceInstance
             outer = OuterRef("resourceinstanceid")
             nodegroup_id = SCHEME_LABEL_NODEGROUP
@@ -69,15 +80,14 @@ class ConceptTreeView(View):
         return ArraySubquery(
             TileModel.objects.filter(
                 resourceinstance_id=outer, nodegroup_id=nodegroup_id
-            )
-            .values(label_lookup)
+            ).values("data")
         )
 
     def top_concepts_map(self):
         top_concept_of_tiles = (
             TileModel.objects.filter(nodegroup_id=TOP_CONCEPT_OF_NODE_AND_NODEGROUP)
             .annotate(top_concept_of=self.resources_from_tiles(TOP_CONCEPT_OF_LOOKUP))
-            .annotate(labels=self.labels_subquery(CONCEPT_LABEL_LOOKUP))
+            .annotate(labels=self.labels_subquery(CONCEPT_LABEL_NODEGROUP))
             .values("resourceinstance_id", "top_concept_of", "labels")
         )
         for tile in top_concept_of_tiles:
@@ -89,7 +99,7 @@ class ConceptTreeView(View):
         broader_concept_tiles = (
             TileModel.objects.filter(nodegroup_id=BROADER_NODE_AND_NODEGROUP)
             .annotate(broader_concept=self.resources_from_tiles(BROADER_LOOKUP))
-            .annotate(labels=self.labels_subquery(CONCEPT_LABEL_LOOKUP))
+            .annotate(labels=self.labels_subquery(CONCEPT_LABEL_NODEGROUP))
             .values("resourceinstance_id", "broader_concept", "labels")
         )
         for tile in broader_concept_tiles:
@@ -101,30 +111,40 @@ class ConceptTreeView(View):
         scheme_id: str = str(scheme.pk)
         return {
             "resourceinstance_id": scheme_id,
-            "labels": [self.serialize_label(label) for label in scheme.labels],
+            "labels": [self.serialize_scheme_label(label) for label in scheme.labels],
             "top_concepts": [
                 self.serialize_concept(concept_id)
                 for concept_id in self.top_concepts[scheme_id]
             ],
         }
 
+    def serialize_scheme_label(self, label_tile: dict):
+        lang, inner_dict = list(label_tile[SCHEME_LABEL_NODE].items())[0]
+        return {
+            "valuetype": self.human_label_type(label_tile[SCHEME_LABEL_TYPE_NODE][0]),
+            "language": lang,  # could get this from the name language node...
+            "value": inner_dict["value"],
+        }
+
     def serialize_concept(self, conceptid: str):
         return {
             "resourceinstance_id": conceptid,
-            "labels": [self.serialize_label(label) for label in self.labels[conceptid]],
+            "labels": [
+                self.serialize_concept_label(label) for label in self.labels[conceptid]
+            ],
             "narrower": [
                 self.serialize_concept(conceptid)
                 for conceptid in self.narrower_concepts[conceptid]
             ],
         }
 
-    def serialize_label(self, label: dict):
-        for language, inner_dict in label.items():
-            return {
-                "valuetype": "prefLabel",  # todo: get real
-                "language": language,
-                "value": inner_dict["value"],
-            }
+    def serialize_concept_label(self, label_tile: dict):
+        lang, inner_dict = list(label_tile[CONCEPT_LABEL_NODE].items())[0]
+        return {
+            "valuetype": self.human_label_type(label_tile[CONCEPT_LABEL_TYPE_NODE][0]),
+            "language": lang,
+            "value": inner_dict["value"],
+        }
 
     def get(self, request):
         self.top_concepts_map()
@@ -132,7 +152,7 @@ class ConceptTreeView(View):
 
         self.schemes = ResourceInstance.objects.filter(
             graph_id=SCHEMES_GRAPH_ID
-        ).annotate(labels=self.labels_subquery(SCHEME_LABEL_LOOKUP))
+        ).annotate(labels=self.labels_subquery(SCHEME_LABEL_NODEGROUP))
 
         data = {
             "schemes": [self.serialize_scheme(scheme) for scheme in self.schemes],
