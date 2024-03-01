@@ -11,25 +11,24 @@ from arches.app.utils.decorators import group_required
 
 from arches.app.utils.response import JSONResponse
 
-TOP_CONCEPT_OF_NODE_AND_NODEGROUP = "bf73e5b9-4888-11ee-8a8d-11afefc4bff7"
+from arches_rdm.const import (
+    SCHEMES_GRAPH_ID,
+    TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
+    BROADER_NODE_AND_NODEGROUP,
+    CONCEPT_LABEL_NODEGROUP,
+    CONCEPT_LABEL_NODE,
+    SCHEME_LABEL_NODEGROUP,
+    SCHEME_LABEL_NODE,
+)
+
 TOP_CONCEPT_OF_LOOKUP = f"data__{TOP_CONCEPT_OF_NODE_AND_NODEGROUP}"
-
-BROADER_NODE_AND_NODEGROUP = "bf73e5f5-4888-11ee-8a8d-11afefc4bff7"
 BROADER_LOOKUP = f"data__{BROADER_NODE_AND_NODEGROUP}"
-
-CONCEPT_LABEL_NODEGROUP = "bf73e616-4888-11ee-8a8d-11afefc4bff7"
-CONCEPT_LABEL_NODE = "bf73e695-4888-11ee-8a8d-11afefc4bff7"
 CONCEPT_LABEL_LOOKUP = f"data__{CONCEPT_LABEL_NODE}"
-
-SCHEME_LABEL_NODE_AND_NODEGROUP = "749a27cf-423c-11ee-8a8d-11afefc4bff7"
-SCHEME_LABEL_NODE = "749a27d5-423c-11ee-8a8d-11afefc4bff7"
 SCHEME_LABEL_LOOKUP = f"data__{SCHEME_LABEL_NODE}"
 
-CONCEPTS_GRAPH_ID = "bf73e576-4888-11ee-8a8d-11afefc4bff7"
-SCHEMES_GRAPH_ID = "56788995-423b-11ee-8a8d-11afefc4bff7"
 
-
-class JsonArrayElements(Func):
+class JsonbArrayElements(Func):
+    """https://forum.djangoproject.com/t/django-4-2-behavior-change-when-using-arrayagg-on-unnested-arrayfield-postgresql-specific/21547/5"""
     contains_subquery = True
     function = "JSONB_ARRAY_ELEMENTS"
 
@@ -40,14 +39,17 @@ class JsonArrayElements(Func):
 class ConceptTreeView(View):
     def __init__(self):
         self.schemes = ResourceInstance.objects.none()
-        self.top_concepts = defaultdict(set)
-        self.narrower_concepts = defaultdict(set)  # str: str
-        self.labels = defaultdict(set)
+        # key=scheme resourceid (str) val=set of concept resourceids (str)
+        self.top_concepts: dict[str: set[str]] = defaultdict(set)
+        # key=concept resourceid (str) val=set of concept resourceids (str)
+        self.narrower_concepts: dict[str: set[str]] = defaultdict(set)
+        # key=resourceid (str) val=list of label dicts
+        self.labels: dict[str: list[dict]] = defaultdict(set)
 
     @staticmethod
     def resources_from_tiles(lookup_expression: str):
         return CombinedExpression(
-            JsonArrayElements(F(lookup_expression)),
+            JsonbArrayElements(F(lookup_expression)),
             "->>",
             Value("resourceId"),
             output_field=CharField(),
@@ -58,7 +60,7 @@ class ConceptTreeView(View):
         if label_lookup == SCHEME_LABEL_LOOKUP:
             # Annotating a ResourceInstance
             outer = OuterRef("resourceinstanceid")
-            nodegroup_id = SCHEME_LABEL_NODE_AND_NODEGROUP
+            nodegroup_id = SCHEME_LABEL_NODEGROUP
         else:
             # Annotating a Tile
             outer = OuterRef("resourceinstance_id")
