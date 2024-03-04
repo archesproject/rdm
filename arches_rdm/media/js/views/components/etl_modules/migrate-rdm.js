@@ -22,6 +22,7 @@ define([
         this.selectedLoadEvent = params.selectedLoadEvent || ko.observable();
         this.formatTime = params.formatTime;
         this.timeDifference = params.timeDifference;
+        this.activeTab = params.activeTab || ko.observable();
         
         self.runRDMMigration = function() {
             self.loading(true);            
@@ -35,7 +36,7 @@ define([
                     self.alert(
                         new JsonErrorAlertViewModel(
                             'ep-alert-red',
-                            err.responsJSON["data"],
+                            err.responseJSON["data"],
                             null,
                             function(){}
                         )
