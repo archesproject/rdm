@@ -221,15 +221,6 @@ class RDMMigrator(BaseImportModule):
             (self.loadid, False, "running", self.moduleid, json.dumps(load_details), datetime.now(), self.userid),
         )
         message = "load event created"
-        
-        schemes_nodegroup_lookup, schemes_nodes = self.get_graph_tree(SCHEMES_GRAPH_ID)
-        schemes_node_lookup = self.get_node_lookup(schemes_nodes)
-        self.etl_schemes(cursor, schemes_nodegroup_lookup, schemes_node_lookup)
-
-        concepts_nodegroup_lookup, concepts_nodes = self.get_graph_tree(CONCEPTS_GRAPH_ID)
-        concepts_node_lookup = self.get_node_lookup(concepts_nodes)
-        self.etl_concepts(cursor, concepts_nodegroup_lookup, concepts_node_lookup)
-        
         return {"success": True, "data": message}
 
     def write(self, request):
@@ -240,8 +231,22 @@ class RDMMigrator(BaseImportModule):
 
     def run_load_task(self, userid, loadid):
         self.loadid = loadid  # currently redundant, but be certain
+        
         with connection.cursor() as cursor:
+
+            # Gather and load schemes and concepts
+            schemes_nodegroup_lookup, schemes_nodes = self.get_graph_tree(SCHEMES_GRAPH_ID)
+            schemes_node_lookup = self.get_node_lookup(schemes_nodes)
+            self.etl_schemes(cursor, schemes_nodegroup_lookup, schemes_node_lookup)
+
+            concepts_nodegroup_lookup, concepts_nodes = self.get_graph_tree(CONCEPTS_GRAPH_ID)
+            concepts_node_lookup = self.get_node_lookup(concepts_nodes)
+            self.etl_concepts(cursor, concepts_nodegroup_lookup, concepts_node_lookup)
+
+            # Create relationships
             self.init_relationships(cursor, loadid)
+
+            # Validate and save to tiles
             validation = self.validate(loadid)
             if len(validation["data"]) == 0:
                 cursor.execute(
