@@ -48,24 +48,9 @@ class Migration(migrations.Migration):
         DELETE FROM etl_modules WHERE etlmoduleid = '11cad3ca-e155-44b1-9910-c50b3def47f6';
     """
 
-    init_adm_model_relational_views = """
-        select __arches_create_resource_model_views(graphid)
-        from graphs
-        where name->>'en' in ('Scheme', 'Concept ');
-    """
-
-    remove_adm_model_relational_views = """
-        drop schema if exists scheme cascade;
-        drop schema if exists concept_ cascade;
-    """
-
     operations = [
         migrations.RunSQL(
             add_migrate_rdm,
             remove_migrate_rdm,
-        ),
-        migrations.RunSQL(
-            init_adm_model_relational_views,
-            remove_adm_model_relational_views,
         ),
     ]
