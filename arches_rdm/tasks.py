@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 from arches.app.models import models
 from arches_rdm.etl_modules import migrate_rdm
+from arches.app.tasks import notify_completion
 
 @shared_task
 def migrate_rdm_task(userid, loadid):
