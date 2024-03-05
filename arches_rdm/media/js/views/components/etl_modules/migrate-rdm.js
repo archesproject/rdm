@@ -23,6 +23,7 @@ define([
         this.formatTime = params.formatTime;
         this.timeDifference = params.timeDifference;
         this.activeTab = params.activeTab || ko.observable();
+        this.editHistoryUrl = `${arches.urls.edit_history}?transactionid=${ko.unwrap(params.selectedLoadEvent)?.loadid}`;
         
         self.runRDMMigration = function() {
             self.loading(true);            
