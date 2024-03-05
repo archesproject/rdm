@@ -6,24 +6,30 @@ from django.test.client import Client
 from django.urls import reverse
 
 from arches.app.models.models import (
+    Concept,
     GraphModel,
     Node,
     NodeGroup,
     ResourceInstance,
     TileModel,
+    Value,
 )
 
 from arches_rdm.const import (
+    AMERICAN_ENGLISH_VALUE_ID,
     CONCEPTS_GRAPH_ID,
+    LANGUAGE_CONCEPT_ID,
     SCHEMES_GRAPH_ID,
     TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
     BROADER_NODE_AND_NODEGROUP,
-    CONCEPT_LABEL_NODEGROUP,
-    CONCEPT_LABEL_NODE,
-    CONCEPT_LABEL_TYPE_NODE,
-    SCHEME_LABEL_NODEGROUP,
-    SCHEME_LABEL_NODE,
-    SCHEME_LABEL_TYPE_NODE,
+    CONCEPT_NAME_NODEGROUP,
+    CONCEPT_NAME_CONTENT_NODE,
+    CONCEPT_NAME_LANGUAGE_NODE,
+    CONCEPT_NAME_TYPE_NODE,
+    SCHEME_NAME_NODEGROUP,
+    SCHEME_NAME_CONTENT_NODE,
+    SCHEME_NAME_LANGUAGE_NODE,
+    SCHEME_NAME_TYPE_NODE,
     PREF_LABEL_VALUE_ID,
 )
 
@@ -34,35 +40,65 @@ def setUpModule():
         GraphModel.objects.create(pk=SCHEMES_GRAPH_ID, isresource=True)
         GraphModel.objects.create(pk=CONCEPTS_GRAPH_ID, isresource=True)
 
-        for nodegroup_id, node_id, datatype in zip(
-            [
+        for nodegroup_id, node_id, node_name, datatype in [
+            (
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
-                BROADER_NODE_AND_NODEGROUP,
-                SCHEME_LABEL_NODEGROUP,
-                CONCEPT_LABEL_NODEGROUP,
-            ],
-            [
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
+                "Top concept of",
+                "concept-list",
+            ),
+            (
                 BROADER_NODE_AND_NODEGROUP,
-                SCHEME_LABEL_NODE,
-                CONCEPT_LABEL_NODE,
-            ],
-            [
+                BROADER_NODE_AND_NODEGROUP,
+                "Broader concept",
                 "concept-list",
+            ),
+            (
+                SCHEME_NAME_NODEGROUP,
+                SCHEME_NAME_CONTENT_NODE,
+                "Name content",
                 "concept-list",
+            ),
+            (
+                SCHEME_NAME_NODEGROUP,
+                SCHEME_NAME_LANGUAGE_NODE,
+                "Name language",
                 "string",
+            ),
+            (
+                CONCEPT_NAME_NODEGROUP,
+                CONCEPT_NAME_CONTENT_NODE,
+                "Name content",
+                "concept-list",
+            ),
+            (
+                CONCEPT_NAME_NODEGROUP,
+                CONCEPT_NAME_LANGUAGE_NODE,
+                "Name language",
                 "string",
-            ],
-        ):
-            NodeGroup.objects.create(pk=nodegroup_id)
+            ),
+        ]:
+            NodeGroup.objects.get_or_create(pk=nodegroup_id)
             Node.objects.create(
                 pk=node_id,
                 graph_id=CONCEPTS_GRAPH_ID,
                 nodegroup_id=nodegroup_id,
+                name=node_name,
                 istopnode=False,
                 datatype=datatype,
                 isrequired=datatype == "string",
             )
+
+    Concept.objects.get_or_create(
+        conceptid=LANGUAGE_CONCEPT_ID,
+        nodetype_id="Concept",
+    )
+    Value.objects.get_or_create(
+        concept_id=LANGUAGE_CONCEPT_ID,
+        valueid=AMERICAN_ENGLISH_VALUE_ID,
+        valuetype_id="prefLabel",
+        value="en-US",
+    )
 
 
 def localized_string(text, language="en", direction="ltr"):
@@ -83,10 +119,11 @@ class ConceptTreeViewTests(TestCase):
         cls.scheme = ResourceInstance.objects.create(graph_id=SCHEMES_GRAPH_ID)
         TileModel.objects.create(
             resourceinstance=cls.scheme,
-            nodegroup_id=SCHEME_LABEL_NODEGROUP,
+            nodegroup_id=SCHEME_NAME_NODEGROUP,
             data={
-                SCHEME_LABEL_NODE: localized_string("Test Scheme"),
-                SCHEME_LABEL_TYPE_NODE: [PREF_LABEL_VALUE_ID],
+                SCHEME_NAME_CONTENT_NODE: localized_string("Test Scheme"),
+                SCHEME_NAME_TYPE_NODE: [PREF_LABEL_VALUE_ID],
+                SCHEME_NAME_LANGUAGE_NODE: [AMERICAN_ENGLISH_VALUE_ID],
             },
         )
 
@@ -101,10 +138,11 @@ class ConceptTreeViewTests(TestCase):
             # Create label tile
             TileModel.objects.create(
                 resourceinstance=concept,
-                nodegroup_id=CONCEPT_LABEL_NODEGROUP,
+                nodegroup_id=CONCEPT_NAME_NODEGROUP,
                 data={
-                    CONCEPT_LABEL_NODE: localized_string(f"Concept {i + 1}"),
-                    CONCEPT_LABEL_TYPE_NODE: [PREF_LABEL_VALUE_ID],
+                    CONCEPT_NAME_CONTENT_NODE: localized_string(f"Concept {i + 1}"),
+                    CONCEPT_NAME_TYPE_NODE: [PREF_LABEL_VALUE_ID],
+                    CONCEPT_NAME_LANGUAGE_NODE: [AMERICAN_ENGLISH_VALUE_ID],
                 },
             )
             # Create top concept/narrower tile
@@ -145,12 +183,13 @@ class ConceptTreeViewTests(TestCase):
 
     def test_get_concept_trees(self):
         self.client.force_login(self.admin)
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             # 1: session
             # 2: auth
-            # 3: select broader tiles, subquery for labels
-            # 4: select top concept tiles, subquery for labels
-            # 5: select schemes, subquery for labels
+            # 3: select languages, subquery for concept values
+            # 4: select broader tiles, subquery for labels
+            # 5: select top concept tiles, subquery for labels
+            # 6: select schemes, subquery for labels
             response = self.client.get(reverse("concept_trees"))
 
         self.assertEqual(response.status_code, 200)
