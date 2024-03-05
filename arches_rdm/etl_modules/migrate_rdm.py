@@ -40,7 +40,7 @@ class RDMMigrator(BaseImportModule):
 
                 name = {}
                 identifier = {}
-                if value.valuetype_id == "prefLabel":
+                if value.valuetype_id == "prefLabel" or value.valuetype_id == "altLabel":
                     name["name_content"] = value.value
                     name["name_language"] = value.language_id
                     name["name_type"] = value.valuetype_id
@@ -61,7 +61,7 @@ class RDMMigrator(BaseImportModule):
 
                 name = {}
                 identifier = {}
-                if value.valuetype_id == "prefLabel":
+                if value.valuetype_id == "prefLabel" or value.valuetype_id == "altLabel":
                     name["name_content"] = value.value
                     name["name_language"] = value.language_id
                     name["name_type"] = value.valuetype_id
@@ -225,7 +225,10 @@ class RDMMigrator(BaseImportModule):
 
     def write(self, request):
         self.loadid = request.POST.get("loadid")
-        response = self.run_load_task_async(request, self.loadid)
+        if len(models.Concept.objects.count()) > 500:
+            response = self.run_load_task(self.userid, self.loadid)
+        else: 
+            response = self.run_load_task_async(request, self.loadid)
         message = "RDM Migration Complete"
         return {"success": True, "data": message}
 
