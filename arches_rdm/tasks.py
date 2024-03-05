@@ -5,12 +5,6 @@ from django.utils.translation import gettext as _
 from arches.app.models import models
 from arches_rdm.etl_modules import migrate_rdm
 
-
-try:
-    from arches.app.tasks import *
-except ImportError:
-    pass
-
 @shared_task
 def migrate_rdm_task(userid, loadid):
     logger = logging.getLogger(__name__)
