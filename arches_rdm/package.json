@@ -1,0 +1,17 @@
+{
+    "name": "arches_rdm",
+    "version": "0.0.1",
+    "dependencies": {
+        "arches": "archesproject/arches#dev/7.6.x"
+    },
+    "devDependencies": {
+        "@vue/cli-service": "~5.0.0",
+        "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/7.6.x"
+    },
+    "license": "AGPL-3.0-only",
+    "scripts": {
+        "serve": "vue-cli-service serve"
+    },
+    "nodeModulesPaths": {
+    }
+}
