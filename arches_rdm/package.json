@@ -6,6 +6,7 @@
     },
     "devDependencies": {
         "@vue/cli-service": "~5.0.0",
+        "@vue/cli-plugin-typescript": "~5.0.8",
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/7.6.x"
     },
     "license": "AGPL-3.0-only",
