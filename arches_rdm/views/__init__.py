@@ -129,7 +129,7 @@ class ConceptTreeView(View):
             .annotate(labels=self.labels_subquery(CONCEPT_NAME_NODEGROUP))
             .values("resourceinstance_id", "broader_concept", "labels")
         )
-        for tile in broader_concept_tiles:
+        for tile in broader_concept_tiles.iterator():
             resource_id: str = str(tile["resourceinstance_id"])
             self.narrower_concepts[tile["broader_concept"]].add(resource_id)
             self.labels[resource_id] = tile["labels"]
@@ -137,7 +137,7 @@ class ConceptTreeView(View):
     def serialize_scheme(self, scheme: ResourceInstance):
         scheme_id: str = str(scheme.pk)
         return {
-            "resourceinstance_id": scheme_id,
+            "id": scheme_id,
             "labels": [self.serialize_scheme_label(label) for label in scheme.labels],
             "top_concepts": [
                 self.serialize_concept(concept_id)
@@ -161,7 +161,7 @@ class ConceptTreeView(View):
 
     def serialize_concept(self, conceptid: str):
         return {
-            "resourceinstance_id": conceptid,
+            "id": conceptid,
             "labels": [
                 self.serialize_concept_label(label) for label in self.labels[conceptid]
             ],
