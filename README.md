@@ -42,8 +42,10 @@ urlpatterns = [
 7. This project currently uses a frontend outside of Arches. To allow it to communicate with Django, add this to your project `settings.py`:
 
 ```
+CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = ["http://localhost:8080"]  # vue frontend
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8080"]  # vue frontend
 ```
 
 NOTE: This rough draft currently assumes the Django backend is served at `https://127.0.0.1:8029/`.

@@ -8,7 +8,7 @@ import ToastService from 'primevue/toastservice';
 
 import LingoApp from '@/App.vue';
 
-export const DJANGO_HOST = new URL('http://127.0.0.1:8029/');
+export const DJANGO_HOST = new URL('http://localhost:8029/');
 
 
 document.title = 'Lingo - Vocabulary Management';

@@ -1,10 +1,15 @@
 from collections import defaultdict
 
+from django.contrib.auth import authenticate, login
 from django.contrib.postgres.expressions import ArraySubquery
 from django.db.models import CharField, F, OuterRef, Subquery, Value
 from django.db.models.expressions import CombinedExpression, Func
+from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.generic import View
+from django_ratelimit.decorators import ratelimit
+
 
 from arches.app.models.models import (
     Language,
@@ -12,9 +17,10 @@ from arches.app.models.models import (
     TileModel,
     Value as ConceptValue,
 )
+from arches.app.models.system_settings import settings
+from arches.app.utils.betterJSONSerializer import JSONDeserializer, JSONSerializer
 from arches.app.utils.decorators import group_required
-
-from arches.app.utils.response import JSONResponse
+from arches.app.utils.response import Http401Response, JSONErrorResponse, JSONResponse
 
 from arches_rdm.const import (
     SCHEMES_GRAPH_ID,
@@ -199,3 +205,35 @@ class ConceptTreeView(View):
         }
         # Todo: filter by nodegroup permissions
         return JSONResponse(data)
+
+
+class CsrfView(View):
+    def get(self, request):
+        token = get_token(request)
+        return JSONResponse({"csrftoken": token})
+
+
+class UserView(View):
+    @method_decorator(ratelimit(key="post:username", rate=settings.RATE_LIMIT))
+    def post(self, request):
+        data = JSONDeserializer().deserialize(request.body)
+        username = data.get("username", None)
+        password = data.get("password", None)
+
+        if not username or not password:
+            return JSONErrorResponse(
+                message=_("Please provide username and password."), status=400
+            )
+
+        user = authenticate(username=username, password=password)
+        if user:
+            userDict = JSONSerializer().serializeToPython(user)
+            userDict["password"] = None
+            response = JSONResponse(userDict)
+            login(request, user)
+        else:
+            response = Http401Response()
+            # Prevent browser auth modal
+            del response["WWW-Authenticate"]
+
+        return response

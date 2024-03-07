@@ -8,8 +8,12 @@ const isAuthenticated = ref(false);
 </script>
 
 <template>
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/primevue/resources/themes/mdc-light-indigo/theme.css"
+    >
     <component
         :is="isAuthenticated ? HomePage : LoginPage"
-        :v-model:is-authenticated="isAuthenticated"
+        v-model="isAuthenticated"
     />
 </template>
