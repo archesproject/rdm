@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import ProgressSpinner from "primevue/progressspinner";
+
+import ConceptTree from "@/components/ConceptTree.vue";
 </script>
 
 <template>
-    <div>You are logged in.</div>
+    <Suspense>
+        <ConceptTree />
+        <template #fallback>
+            <ProgressSpinner style="display: flex" />
+        </template>
+    </Suspense>
 </template>
-
-<style scoped>
-</style>
