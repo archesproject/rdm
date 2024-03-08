@@ -26,6 +26,15 @@ import { DJANGO_HOST } from "@/main";
 
 const schemes: Ref<Scheme[]> = ref([]);
 
+const onNodeExpand = (node: TreeNode) => {
+    node.children.forEach((child: TreeNode) => {
+        const grandchildren = child.children;
+        if ((node.children.length + grandchildren.length) < 7) {
+            expandedKeys.value[child.key] = true;
+        }
+    });
+};
+
 function conceptAsNode(concept: Concept): TreeNode {
     return {
         key: concept.id,
@@ -97,5 +106,6 @@ await fetchSchemes();
             }),
             label: { style: { textWrap: 'nowrap' } },
         }"
+        @node-expand="onNodeExpand"
     />
 </template>
