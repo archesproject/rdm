@@ -13,18 +13,37 @@ import type {
     TreeContext,
     TreeExpandedKeys,
     TreeNode,
+    TreeSelectionKeys,
 } from "primevue/tree/Tree";
 import type { Concept, Scheme } from "@/types";
 
 const expandedKeys: Ref<TreeExpandedKeys> = ref({});
+const selectionKeys: Ref<TreeSelectionKeys> = ref({});
+const filterValue = ref("");
+const schemes: Ref<Scheme[]> = ref([]);
 
 const toast = useToast();
 const { $gettext } = useGettext();
 
+const lightGray = "#f4f4f4";
 const ERROR = "error";
+const SCHEME_LABEL = $gettext("Scheme");
+const GUIDE_LABEL = $gettext("Guide Item");
+const INDEXABLE_LABEL = $gettext("Indexable Item");
+
 import { DJANGO_HOST } from "@/main";
 
-const schemes: Ref<Scheme[]> = ref([]);
+const onFilter = (emitted) => {
+    filterValue.value = emitted.value;
+};
+
+const highlightedLabel = (text: string) => {
+    if (!filterValue.value) {
+        return text;
+    }
+    const regex = new RegExp(`(${filterValue.value})`, "gi");
+    return text.replace(regex, "<b>$1</b>");
+};
 
 const onNodeExpand = (node: TreeNode) => {
     node.children.forEach((child: TreeNode) => {
@@ -41,6 +60,8 @@ function conceptAsNode(concept: Concept): TreeNode {
         label: bestLabel(concept, 'en').value,
         children: concept.narrower.map(child => conceptAsNode(child)),
         data: concept,
+        icon: concept.guide ? "fa fa-folder-open" : "fa fa-hand-pointer-o",
+        iconLabel: concept.guide ? GUIDE_LABEL : INDEXABLE_LABEL,
     };
 }
 
@@ -50,6 +71,8 @@ function schemeAsNode(scheme: Scheme): TreeNode {
         label: bestLabel(scheme, 'en').value,
         children: scheme.top_concepts.map(top => conceptAsNode(top)),
         data: scheme,
+        icon: "fa fa-list",
+        iconLabel: SCHEME_LABEL,
     };
 }
 
@@ -85,6 +108,7 @@ await fetchSchemes();
 
 <template>
     <Tree
+        v-model:selectionKeys="selectionKeys"
         :value="conceptTree"
         :expanded-keys
         :filter="true"
@@ -94,18 +118,24 @@ await fetchSchemes();
             root: { style: { flexGrow: 1 } },
             input: {
                 placeholder: $gettext('Find'),
-                style: { height: '3.5rem', fontSize: '14px' },
+                style: { height: '2rem', fontSize: '14px' },
             },
             container: { style: { fontSize: '14px' } },
             content: ({ context }): { context: TreeContext } => ({
                 style: {
                     background: context.selected ? lightGray : '',
-                    height: '3.5rem',
+                    height: '2rem',
                 },
                 tabindex: '0',
             }),
             label: { style: { textWrap: 'nowrap' } },
         }"
         @node-expand="onNodeExpand"
-    />
+        @filter="onFilter"
+    >
+        <template #default="slotProps">
+            <span v-html="highlightedLabel(slotProps.node.label)">
+            </span>
+        </template>
+    </Tree>
 </template>

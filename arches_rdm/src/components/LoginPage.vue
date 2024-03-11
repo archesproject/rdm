@@ -62,7 +62,7 @@ const submit = async () => {
 </script>
 
 <template>
-    <form class="login-form">
+    <form>
         <h1>{{ $gettext('LINGO') }}</h1>
         <h2>{{ $gettext('Vocabulary management powered by Arches.') }}</h2>
         <InputText
