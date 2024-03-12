@@ -12,7 +12,7 @@ const props: { node: TreeNode } = defineProps(["node"]);
                 :class="node.icon"
                 aria-hidden="true"
             />
-            <h3>{{ node.label }}</h3>
+            <h2>{{ node.label }}</h2>
             <span class="item-type">{{ node.iconLabel }}</span>
         </span>
     </div>
@@ -32,7 +32,7 @@ const props: { node: TreeNode } = defineProps(["node"]);
     border-bottom: 1px solid;
     width: 80%;
 }
-h3 {
+h2 {
     font-size: 1rem;
     margin: 0;
 }

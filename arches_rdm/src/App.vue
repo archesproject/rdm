@@ -23,3 +23,9 @@ const isAuthenticated = ref(false);
         v-model="isAuthenticated"
     />
 </template>
+
+<style>
+body {
+    margin: 0;
+}
+</style>
