@@ -36,6 +36,8 @@ const filterValue = ref("");
 const schemes: Ref<Scheme[]> = ref([]);
 const selectedLanguage: Ref<Language> = ref(ENGLISH);
 
+const selectedNode: Ref<TreeNode> = defineModel({});
+
 const toast = useToast();
 const { $gettext } = useGettext();
 
@@ -47,8 +49,12 @@ const INDEXABLE_LABEL = $gettext("Indexable Item");
 
 import { DJANGO_HOST } from "@/main";
 
-const onFilter = (emitted) => {
-    filterValue.value = emitted.value;
+const onFilter = (event) => {
+    filterValue.value = event.value;
+};
+
+const onSelect = (node: TreeNode) => {
+    selectedNode.value = node;
 };
 
 const highlightedLabel = (text: string) => {
@@ -203,6 +209,7 @@ await fetchSchemes();
         }"
         @node-expand="onNodeExpand"
         @filter="onFilter"
+        @nodeSelect="onSelect"
     >
         <template #default="slotProps">
             <span v-html="highlightedLabel(slotProps.node.label)">
