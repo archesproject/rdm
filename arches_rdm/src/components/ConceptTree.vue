@@ -49,10 +49,6 @@ const INDEXABLE_LABEL = $gettext("Indexable Item");
 
 import { DJANGO_HOST } from "@/main";
 
-const onFilter = (event) => {
-    filterValue.value = event.value;
-};
-
 const onSelect = (node: TreeNode) => {
     selectedNode.value = node;
 };
@@ -204,9 +200,16 @@ await fetchSchemes();
                 tabindex: '0',
             }),
             label: { style: { textWrap: 'nowrap' } },
+            hooks: {
+                onBeforeUpdate() {
+                    // Snoop on the filterValue, because if we wait to react
+                    // to the emitted filter event, the templated rows will
+                    // have already renderd.
+                    filterValue = $el.ownerDocument.getElementsByClassName('p-tree-filter')[0].value;
+                },
+            },
         }"
         @node-expand="onNodeExpand"
-        @filter="onFilter"
         @nodeSelect="onSelect"
     >
         <template #default="slotProps">
