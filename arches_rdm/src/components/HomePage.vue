@@ -27,10 +27,7 @@ const signOut = () => {
     <main>
         <div class="header">
             <h1>{{ $gettext('LINGO') }}</h1>
-            <Button
-                @click="signOut"
-                @keyup:enter="signOut"
-            >
+            <Button @click="signOut">
                 {{ $gettext('Sign out') }}
             </Button>
         </div>

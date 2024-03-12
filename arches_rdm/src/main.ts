@@ -5,6 +5,7 @@ import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
 import ToastService from 'primevue/toastservice';
+import Tooltip from 'primevue/tooltip';
 
 import LingoApp from '@/App.vue';
 
@@ -31,5 +32,6 @@ fetch(new URL('/api/get_frontend_i18n_data', DJANGO_HOST)).then(resp => {
         .use(ConfirmationService)
         .use(DialogService)
         .use(ToastService)
+        .directive('tooltip', Tooltip)
         .mount('#app');
 });

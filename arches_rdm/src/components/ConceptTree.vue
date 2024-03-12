@@ -38,6 +38,7 @@ const schemes: Ref<Scheme[]> = ref([]);
 const selectedLanguage: Ref<Language> = ref(ENGLISH);
 
 const selectedNode: Ref<TreeNode> = defineModel({});
+const focusedNode: Ref<TreeNode> = ref({});
 
 const toast = useToast();
 const { $gettext } = useGettext();
@@ -47,6 +48,8 @@ const ERROR = "error";
 const SCHEME_LABEL = $gettext("Scheme");
 const GUIDE_LABEL = $gettext("Guide Item");
 const INDEXABLE_LABEL = $gettext("Indexable Item");
+const FOCUS = $gettext("Focus");
+const UNFOCUS = $gettext("Unfocus");
 
 import { DJANGO_HOST } from "@/main";
 
@@ -71,8 +74,8 @@ const onNodeExpand = (node: TreeNode) => {
     });
 };
 
-function conceptAsNode(concept: Concept): TreeNode {
-    return {
+function conceptAsNode(concept: Concept, focusedNode: TreeNode): TreeNode {
+    const node = {
         key: concept.id,
         label: bestLabel(concept, 'en').value,
         children: concept.narrower.map(child => conceptAsNode(child)),
@@ -80,21 +83,31 @@ function conceptAsNode(concept: Concept): TreeNode {
         icon: concept.guide ? "fa fa-folder-open" : "fa fa-hand-pointer-o",
         iconLabel: concept.guide ? GUIDE_LABEL : INDEXABLE_LABEL,
     };
+    const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode?.data?.id);
+    if (focalNodeIdx > -1) {
+        node.children = [node.children[focalNodeIdx]];
+    }
+    return node;
 }
 
-function schemeAsNode(scheme: Scheme): TreeNode {
-    return {
+function schemeAsNode(scheme: Scheme, focusedNode: TreeNode): TreeNode {
+    const node = {
         key: scheme.id,
         label: bestLabel(scheme, 'en').value,
-        children: scheme.top_concepts.map(top => conceptAsNode(top)),
+        children: scheme.top_concepts.map(top => conceptAsNode(top, focusedNode)),
         data: scheme,
         icon: "fa fa-list",
         iconLabel: SCHEME_LABEL,
     };
+    const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode?.data?.id);
+    if (focalNodeIdx > -1) {
+        node.children = [node.children[focalNodeIdx]];
+    }
+    return node;
 }
 
 const conceptTree = computed(() => {
-    return schemes.value.map((scheme: Scheme) => schemeAsNode(scheme));
+    return schemes.value.map((scheme: Scheme) => schemeAsNode(scheme, focusedNode.value));
 });
 
 const expandAll = () => {
@@ -114,6 +127,30 @@ const expandNode = (node: TreeNode) => {
         for (const child of node.children) {
             expandNode(child);
         }
+    }
+};
+
+const iconForFocusToggle = (node: TreeNode) => {
+    return (
+        focusedNode.value.data?.id === node.data.id
+        ? 'fa fa-search-minus'
+        : 'fa fa-bullseye'
+    );
+};
+
+const labelForFocusToggle = (node: TreeNode) => {
+    return (
+        focusedNode.value.data?.id === node.data.id
+        ? UNFOCUS
+        : FOCUS
+    );
+};
+
+const toggleFocus = (node: TreeNode) => {
+    if (focusedNode.value.data?.id === node.data.id) {
+        focusedNode.value = {};
+    } else {
+        focusedNode.value = node;
     }
 };
 
@@ -214,8 +251,16 @@ await fetchSchemes();
         @nodeSelect="onSelect"
     >
         <template #default="slotProps">
-            <span v-html="highlightedLabel(slotProps.node.label)">
-            </span>
+            <span v-html="highlightedLabel(slotProps.node.label)"></span>
+            <i
+                v-tooltip="labelForFocusToggle(slotProps.node)"
+                role="button"
+                :class="iconForFocusToggle(slotProps.node)"
+                :aria-label="labelForFocusToggle(slotProps.node)"
+                tabindex="0"
+                @click="toggleFocus(slotProps.node)"
+                @keyup.enter="toggleFocus(slotProps.node)"
+            />
         </template>
     </Tree>
     <ScrollTop/>
@@ -243,5 +288,10 @@ await fetchSchemes();
     justify-content: center;
     font-weight: 200;
     text-wrap: nowrap;
+}
+
+i {
+    margin-left: 0.25rem;
+    padding: 0.5rem;
 }
 </style>

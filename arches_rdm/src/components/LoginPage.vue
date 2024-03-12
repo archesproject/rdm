@@ -83,7 +83,6 @@ const submit = async () => {
             type="button"
             :label="$gettext('Sign in')"
             @click="submit"
-            @keyup:enter="submit"
         />
     </form>
 </template>
