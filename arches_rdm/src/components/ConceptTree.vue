@@ -189,14 +189,12 @@ await fetchSchemes();
         :value="conceptTree"
         :expanded-keys
         :filter="true"
+        :filter-placeholder="$gettext('Search for a concept')"
         filter-mode="lenient"
         selection-mode="single"
         :pt="{
             root: { style: { flexGrow: 1 } },
-            input: {
-                placeholder: $gettext('Find'),
-                style: { height: '2rem', fontSize: '14px' },
-            },
+            input: { style: { height: '2rem', fontSize: '14px' } },
             container: { style: { fontSize: '14px' } },
             content: ({ context }): { context: TreeContext } => ({
                 style: {
