@@ -6,6 +6,7 @@ import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
+import ScrollTop from "primevue/scrolltop";
 import Tree from "primevue/tree";
 
 import { bestLabel } from "@/utils";
@@ -217,6 +218,7 @@ await fetchSchemes();
             </span>
         </template>
     </Tree>
+    <ScrollTop/>
 </template>
 
 <style scoped>
