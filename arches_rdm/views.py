@@ -132,7 +132,8 @@ class ConceptTreeView(View):
             resource_id: str = str(tile["resourceinstance_id"])
             self.top_concepts[tile["top_concept_of"]].add(resource_id)
             self.labels[resource_id] = tile["labels"]
-            self.identifiers[resource_id] = tile["identifiers"][0]
+            if tile["identifiers"]:
+                self.identifiers[resource_id] = tile["identifiers"][0]
 
     def narrower_concepts_map(self):
         broader_concept_tiles = (
@@ -146,7 +147,8 @@ class ConceptTreeView(View):
             resource_id: str = str(tile["resourceinstance_id"])
             self.narrower_concepts[tile["broader_concept"]].add(resource_id)
             self.labels[resource_id] = tile["labels"]
-            self.identifiers[resource_id] = tile["identifiers"][0]
+            if tile["identifiers"]:
+                self.identifiers[resource_id] = tile["identifiers"][0]
 
     def serialize_scheme(self, scheme: ResourceInstance):
         scheme_id: str = str(scheme.pk)
@@ -181,14 +183,18 @@ class ConceptTreeView(View):
             return localized_string["value"]
 
     def serialize_concept(self, conceptid: str):
+        identifier = None
+        if self.identifiers[conceptid]:
+            identifier = list(
+                self.identifiers[conceptid][CONCEPT_IDENTIFIER_CONTENT_NODE].values()
+            )[0]["value"]
+
         return {
             "id": conceptid,
             "labels": [
                 self.serialize_concept_label(label) for label in self.labels[conceptid]
             ],
-            "identifier": list(
-                self.identifiers[conceptid][CONCEPT_IDENTIFIER_CONTENT_NODE].values()
-            )[0]["value"],
+            "identifier": identifier,
             "narrower": [
                 self.serialize_concept(conceptid)
                 for conceptid in self.narrower_concepts[conceptid]
