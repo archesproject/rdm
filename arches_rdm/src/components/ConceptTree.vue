@@ -8,6 +8,8 @@ import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import Tree from "primevue/tree";
 
+import LetterCircle from "@/components/LetterCircle.vue";
+
 import { bestLabel } from "@/utils";
 
 import type { Ref } from "vue";
@@ -46,7 +48,7 @@ const lightGray = "#f4f4f4";
 const ERROR = "error";
 const SCHEME_LABEL = $gettext("Scheme");
 // const GUIDE_LABEL = $gettext("Guide Item");
-const INDEXABLE_LABEL = $gettext("Indexable Item");
+const CONCEPT_LABEL = $gettext("Concept");
 const FOCUS = $gettext("Focus");
 const UNFOCUS = $gettext("Unfocus");
 
@@ -79,10 +81,7 @@ function conceptAsNode(concept: Concept): TreeNode {
         label: bestLabel(concept, 'en').value,
         children: concept.narrower.map(child => conceptAsNode(child)),
         data: concept,
-        // icon: concept.guide ? "fa fa-folder-open" : "fa fa-hand-pointer-o",
-        icon: "fa fa-hand-pointer-o",
-        // iconLabel: concept.guide ? GUIDE_LABEL : INDEXABLE_LABEL,
-        iconLabel: INDEXABLE_LABEL,
+        iconLabel: CONCEPT_LABEL,
     };
     const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
     if (focalNodeIdx > -1) {
@@ -97,7 +96,6 @@ function schemeAsNode(scheme: Scheme): TreeNode {
         label: bestLabel(scheme, 'en').value,
         children: scheme.top_concepts.map(top => conceptAsNode(top)),
         data: scheme,
-        icon: "fa fa-list",
         iconLabel: SCHEME_LABEL,
     };
     const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
@@ -242,7 +240,8 @@ await fetchSchemes();
                 },
                 tabindex: '0',
             }),
-            label: { style: { textWrap: 'nowrap' } },
+            nodeicon: { style: { display: 'none' } },
+            label: { style: { textWrap: 'nowrap', display: 'flex' } },
             hooks: {
                 onBeforeUpdate() {
                     // Snoop on the filterValue, because if we wait to react
@@ -256,6 +255,7 @@ await fetchSchemes();
         @nodeSelect="onSelect"
     >
         <template #default="slotProps">
+            <LetterCircle :node="slotProps.node" />
             <span v-html="highlightedLabel(slotProps.node.label)"></span>
             <i
                 v-tooltip="labelForFocusToggle(slotProps.node)"
@@ -263,6 +263,7 @@ await fetchSchemes();
                 :class="iconForFocusToggle(slotProps.node)"
                 :aria-label="labelForFocusToggle(slotProps.node)"
                 tabindex="0"
+                :style="{ alignSelf: 'center' }"
                 @click="toggleFocus(slotProps.node)"
                 @keyup.enter="toggleFocus(slotProps.node)"
             />
@@ -294,8 +295,7 @@ await fetchSchemes();
     text-wrap: nowrap;
 }
 
-i {
-    margin-left: 0.25rem;
+span {
     padding: 0.5rem;
 }
 </style>

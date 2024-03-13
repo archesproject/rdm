@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LetterCircle from "@/components/LetterCircle.vue";
 
 import type { TreeNode } from "primevue/tree/Tree";
 
@@ -8,10 +9,7 @@ const props: { node: TreeNode } = defineProps(["node"]);
 <template>
     <div class="detail-container">
         <span class="item-header">
-            <i
-                :class="node.icon"
-                aria-hidden="true"
-            />
+            <LetterCircle :node="node"/>
             <h2>{{ node.label }}</h2>
             <span class="item-type">{{ node.iconLabel }}</span>
         </span>
