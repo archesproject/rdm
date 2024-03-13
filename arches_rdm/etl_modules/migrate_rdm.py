@@ -21,6 +21,7 @@ SCHEMES_GRAPH_ID = uuid.UUID("56788995-423b-11ee-8a8d-11afefc4bff7")
 CONCEPTS_GRAPH_ID = uuid.UUID("bf73e576-4888-11ee-8a8d-11afefc4bff7")
 CONCEPTS_TOP_CONCEPT_OF_NODEGROUP_ID = uuid.UUID("bf73e5b9-4888-11ee-8a8d-11afefc4bff7")
 CONCEPTS_BROADER_NODEGROUP_ID = uuid.UUID("bf73e5f5-4888-11ee-8a8d-11afefc4bff7")
+CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID = uuid.UUID("bf73e60a-4888-11ee-8a8d-11afefc4bff7")
 
 
 class RDMMigrator(BaseImportModule):
@@ -212,6 +213,52 @@ class RDMMigrator(BaseImportModule):
             from relations
             where relationtype = 'narrower';
         """, (CONCEPTS_BROADER_NODEGROUP_ID, loadid, CONCEPTS_BROADER_NODEGROUP_ID))
+
+        # Create Part of Scheme relationships - derived by recursively generating concept hierarchy & associating
+        # concepts with their schemes
+        cursor.execute("""
+           insert into load_staging(
+                value,
+                resourceid,
+                tileid,
+                passes_validation,
+                nodegroup_depth,
+                source_description,
+                loadid,
+                nodegroupid,
+                operation
+            )
+            WITH RECURSIVE concept_hierarchy AS (
+                SELECT conceptidfrom AS root, conceptidto AS child, conceptidfrom AS parent_scheme
+                FROM relations
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM relations r2 WHERE r2.conceptidto = relations.conceptidfrom
+                ) AND relationtype != 'member' -- only ETL'ing data into Lingo models, not collections
+                UNION ALL
+                SELECT ch.root, r.conceptidto, ch.parent_scheme
+                FROM concept_hierarchy ch
+                JOIN relations r ON ch.child = r.conceptidfrom
+            )
+            SELECT
+                json_build_object(%s::uuid,
+                    json_build_object(
+                        'notes', '',
+                        'valid', true,
+                        'value', json_build_array(json_build_object('resourceId', parent_scheme, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')), --value
+                        'source', parent_scheme,
+                        'datatype', 'resource-instance-list'
+                    )
+                ) as value,
+                child as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
+                uuid_generate_v4() as tileid,
+                true as passes_validation,
+                0 as nodegroup_depth,
+                'Concept: Part of Scheme' as source_description,
+                %s::uuid as loadid,
+                %s::uuid as nodegroupid,
+                'insert' as operation
+            FROM concept_hierarchy;
+        """, (CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID, loadid, CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID))
 
     def start(self, request):
         load_details = {"operation": "RDM Migration"}
