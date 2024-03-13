@@ -225,7 +225,7 @@ class RDMMigrator(BaseImportModule):
 
     def write(self, request):
         self.loadid = request.POST.get("loadid")
-        if models.Concept.objects.count() > 500:
+        if models.Concept.objects.count() < 500:
             response = self.run_load_task(self.userid, self.loadid)
         else: 
             response = self.run_load_task_async(request, self.loadid)
