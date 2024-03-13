@@ -55,7 +55,7 @@ const signOut = () => {
 
 <style scoped>
 main {
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -84,5 +84,11 @@ h1 {
 .p-splitter {
     border: 0;
     flex-grow: 1;
+    overflow: hidden;
+}
+
+.p-splitter-panel {
+    display: flex;
+    flex-direction: column;
 }
 </style>

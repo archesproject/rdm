@@ -28,4 +28,7 @@ const isAuthenticated = ref(false);
 body {
     margin: 0;
 }
+#app {
+    height: 100vh;
+}
 </style>

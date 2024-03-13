@@ -6,7 +6,6 @@ import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
-import ScrollTop from "primevue/scrolltop";
 import Tree from "primevue/tree";
 
 import { bestLabel } from "@/utils";
@@ -233,7 +232,7 @@ await fetchSchemes();
         filter-mode="lenient"
         selection-mode="single"
         :pt="{
-            root: { style: { flexGrow: 1 } },
+            root: { style: { flexGrow: 1, overflow: 'auto' } },
             input: { style: { height: '2rem', fontSize: '14px' } },
             container: { style: { fontSize: '14px' } },
             content: ({ context }): { context: TreeContext } => ({
@@ -269,7 +268,6 @@ await fetchSchemes();
             />
         </template>
     </Tree>
-    <ScrollTop/>
 </template>
 
 <style scoped>
