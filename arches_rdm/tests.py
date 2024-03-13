@@ -16,7 +16,7 @@ from arches.app.models.models import (
 )
 
 from arches_rdm.const import (
-    AMERICAN_ENGLISH_VALUE_ID,
+    ENGLISH_VALUE_ID,
     CONCEPTS_GRAPH_ID,
     LANGUAGE_CONCEPT_ID,
     SCHEMES_GRAPH_ID,
@@ -95,7 +95,7 @@ def setUpModule():
     )
     Value.objects.get_or_create(
         concept_id=LANGUAGE_CONCEPT_ID,
-        valueid=AMERICAN_ENGLISH_VALUE_ID,
+        valueid=ENGLISH_VALUE_ID,
         valuetype_id="prefLabel",
         value="en-US",
     )
@@ -123,7 +123,7 @@ class ConceptTreeViewTests(TestCase):
             data={
                 SCHEME_NAME_CONTENT_NODE: localized_string("Test Scheme"),
                 SCHEME_NAME_TYPE_NODE: [PREF_LABEL_VALUE_ID],
-                SCHEME_NAME_LANGUAGE_NODE: [AMERICAN_ENGLISH_VALUE_ID],
+                SCHEME_NAME_LANGUAGE_NODE: [ENGLISH_VALUE_ID],
             },
         )
 
@@ -142,7 +142,7 @@ class ConceptTreeViewTests(TestCase):
                 data={
                     CONCEPT_NAME_CONTENT_NODE: localized_string(f"Concept {i + 1}"),
                     CONCEPT_NAME_TYPE_NODE: [PREF_LABEL_VALUE_ID],
-                    CONCEPT_NAME_LANGUAGE_NODE: [AMERICAN_ENGLISH_VALUE_ID],
+                    CONCEPT_NAME_LANGUAGE_NODE: [ENGLISH_VALUE_ID],
                 },
             )
             # Create top concept/narrower tile
