@@ -18,10 +18,10 @@ import type {
     TreeNode,
     TreeSelectionKeys,
 } from "primevue/tree/Tree";
-import type { Concept, Scheme } from "@/types";
+import type { Concept, Language, Scheme } from "@/types";
 
 // todo(jtw): get from server when implementing other languages
-const ENGLISH = {
+const ENGLISH: Language = {
     code: "en",
     default_direction: "ltr",
     id: 1,
@@ -46,7 +46,7 @@ const { $gettext } = useGettext();
 const lightGray = "#f4f4f4";
 const ERROR = "error";
 const SCHEME_LABEL = $gettext("Scheme");
-const GUIDE_LABEL = $gettext("Guide Item");
+// const GUIDE_LABEL = $gettext("Guide Item");
 const INDEXABLE_LABEL = $gettext("Indexable Item");
 const FOCUS = $gettext("Focus");
 const UNFOCUS = $gettext("Unfocus");
@@ -74,32 +74,34 @@ const onNodeExpand = (node: TreeNode) => {
     });
 };
 
-function conceptAsNode(concept: Concept, focusedNode: TreeNode): TreeNode {
+function conceptAsNode(concept: Concept): TreeNode {
     const node = {
         key: concept.id,
         label: bestLabel(concept, 'en').value,
         children: concept.narrower.map(child => conceptAsNode(child)),
         data: concept,
-        icon: concept.guide ? "fa fa-folder-open" : "fa fa-hand-pointer-o",
-        iconLabel: concept.guide ? GUIDE_LABEL : INDEXABLE_LABEL,
+        // icon: concept.guide ? "fa fa-folder-open" : "fa fa-hand-pointer-o",
+        icon: "fa fa-hand-pointer-o",
+        // iconLabel: concept.guide ? GUIDE_LABEL : INDEXABLE_LABEL,
+        iconLabel: INDEXABLE_LABEL,
     };
-    const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode?.data?.id);
+    const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
     if (focalNodeIdx > -1) {
         node.children = [node.children[focalNodeIdx]];
     }
     return node;
 }
 
-function schemeAsNode(scheme: Scheme, focusedNode: TreeNode): TreeNode {
+function schemeAsNode(scheme: Scheme): TreeNode {
     const node = {
         key: scheme.id,
         label: bestLabel(scheme, 'en').value,
-        children: scheme.top_concepts.map(top => conceptAsNode(top, focusedNode)),
+        children: scheme.top_concepts.map(top => conceptAsNode(top)),
         data: scheme,
         icon: "fa fa-list",
         iconLabel: SCHEME_LABEL,
     };
-    const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode?.data?.id);
+    const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
     if (focalNodeIdx > -1) {
         node.children = [node.children[focalNodeIdx]];
     }
@@ -107,7 +109,11 @@ function schemeAsNode(scheme: Scheme, focusedNode: TreeNode): TreeNode {
 }
 
 const conceptTree = computed(() => {
-    return schemes.value.map((scheme: Scheme) => schemeAsNode(scheme, focusedNode.value));
+    const focalNodeIdx = schemes.value.findIndex(scheme => scheme.id === focusedNode.value.data?.id);
+    if (focalNodeIdx > -1) {
+        return [schemeAsNode(schemes.value[focalNodeIdx])];
+    }
+    return schemes.value.map((scheme: Scheme) => schemeAsNode(scheme));
 });
 
 const expandAll = () => {

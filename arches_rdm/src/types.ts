@@ -17,3 +17,13 @@ export type Label = {
 };
 
 export type Labellable = Concept | Scheme;
+
+// Should be imported from arches once it exposes types
+export type Language = {
+    code: string,
+    default_direction: 'ltr' | 'rtl',
+    id: number,
+    isdefault: boolean,
+    name: string,
+    scope: string,
+};
