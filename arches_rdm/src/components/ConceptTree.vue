@@ -19,7 +19,7 @@ import type {
     TreeNode,
     TreeSelectionKeys,
 } from "primevue/tree/Tree";
-import type { Concept, Language, Scheme } from "@/types";
+import type { Concept, Labellable, Language, Scheme } from "@/types";
 
 // todo(jtw): get from server when implementing other languages
 const ENGLISH: Language = {
@@ -75,55 +75,38 @@ const onNodeExpand = (node: TreeNode) => {
     });
 };
 
-function conceptAsNode(concept: Concept): TreeNode {
-    let narrower;
-    const pairs = concept.narrower.map(child => conceptAsNode(child));
+const conceptAsNode = (concept: Concept) : TreeNode => {
+    return conceptOrSchemeAsNode(concept, concept.narrower);
+};
+
+const schemeAsNode = (scheme: Scheme) : TreeNode => {
+    return conceptOrSchemeAsNode(scheme, scheme.top_concepts);
+};
+
+const conceptOrSchemeAsNode = (labellable: Labellable, children: Concept[]) => {
+    let childrenAsNodes: TreeNode[];
+    const pairs = children.map(child => conceptAsNode(child));
     const parentOfFocusedNode = pairs.find(pair => pair.parentShouldHideSiblings);
     if (parentOfFocusedNode) {
-        narrower = [parentOfFocusedNode.node];
+        childrenAsNodes = [parentOfFocusedNode.node];
     } else {
-        narrower = pairs.map(pair => pair.node);
+        childrenAsNodes = pairs.map(pair => pair.node);
     }
-    const node = {
-        key: concept.id,
-        label: bestLabel(concept, 'en').value,
-        children: narrower,
-        data: concept,
-        iconLabel: CONCEPT_LABEL,
+    const iconLabel = (labellable as Scheme).top_concepts ? SCHEME_LABEL : CONCEPT_LABEL;
+
+    const node: TreeNode = {
+        key: labellable.id,
+        label: bestLabel(labellable, 'en').value,
+        children: childrenAsNodes,
+        data: labellable,
+        iconLabel,
     };
 
     let parentShouldHideSiblings = !!parentOfFocusedNode;
     if (!parentShouldHideSiblings) {
-        const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
-        if (focalNodeIdx > -1) {
-            node.children = [node.children[focalNodeIdx]];
-            parentShouldHideSiblings = true;
-        }
-    }
-    
-    return {node, parentShouldHideSiblings};
-}
-
-function schemeAsNode(scheme: Scheme): TreeNode {
-    let top_concepts;
-    const pairs = scheme.top_concepts.map(top => conceptAsNode(top));
-    const parentOfFocusedNode = pairs.find(pair => pair.parentShouldHideSiblings);
-    if (parentOfFocusedNode) {
-        top_concepts = [parentOfFocusedNode.node];
-    } else {
-        top_concepts = pairs.map(pair => pair.node);
-    }
-    const node = {
-        key: scheme.id,
-        label: bestLabel(scheme, 'en').value,
-        children: top_concepts,
-        data: scheme,
-        iconLabel: SCHEME_LABEL,
-    };
-
-    let parentShouldHideSiblings = !!parentOfFocusedNode;
-    if (!parentShouldHideSiblings) {
-        const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
+        const focalNodeIdx = node.children.findIndex(
+            (child: TreeNode) => child.data.id === focusedNode.value.data?.id
+        );
         if (focalNodeIdx > -1) {
             node.children = [node.children[focalNodeIdx]];
             parentShouldHideSiblings = true;
@@ -131,7 +114,7 @@ function schemeAsNode(scheme: Scheme): TreeNode {
     }
 
     return {node, parentShouldHideSiblings};
-}
+};
 
 const conceptTree = computed(() => {
     const focalNodeIdx = schemes.value.findIndex(scheme => scheme.id === focusedNode.value.data?.id);
