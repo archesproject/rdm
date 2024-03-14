@@ -76,33 +76,61 @@ const onNodeExpand = (node: TreeNode) => {
 };
 
 function conceptAsNode(concept: Concept): TreeNode {
+    let narrower;
+    const pairs = concept.narrower.map(child => conceptAsNode(child));
+    const parentOfFocusedNode = pairs.find(pair => pair.parentShouldHideSiblings);
+    if (parentOfFocusedNode) {
+        narrower = [parentOfFocusedNode.node];
+    } else {
+        narrower = pairs.map(pair => pair.node);
+    }
     const node = {
         key: concept.id,
         label: bestLabel(concept, 'en').value,
-        children: concept.narrower.map(child => conceptAsNode(child)),
+        children: narrower,
         data: concept,
         iconLabel: CONCEPT_LABEL,
     };
-    const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
-    if (focalNodeIdx > -1) {
-        node.children = [node.children[focalNodeIdx]];
+
+    let parentShouldHideSiblings = !!parentOfFocusedNode;
+    if (!parentShouldHideSiblings) {
+        const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
+        if (focalNodeIdx > -1) {
+            node.children = [node.children[focalNodeIdx]];
+            parentShouldHideSiblings = true;
+        }
     }
-    return node;
+    
+    return {node, parentShouldHideSiblings};
 }
 
 function schemeAsNode(scheme: Scheme): TreeNode {
+    let top_concepts;
+    const pairs = scheme.top_concepts.map(top => conceptAsNode(top));
+    const parentOfFocusedNode = pairs.find(pair => pair.parentShouldHideSiblings);
+    if (parentOfFocusedNode) {
+        top_concepts = [parentOfFocusedNode.node];
+    } else {
+        top_concepts = pairs.map(pair => pair.node);
+    }
     const node = {
         key: scheme.id,
         label: bestLabel(scheme, 'en').value,
-        children: scheme.top_concepts.map(top => conceptAsNode(top)),
+        children: top_concepts,
         data: scheme,
         iconLabel: SCHEME_LABEL,
     };
-    const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
-    if (focalNodeIdx > -1) {
-        node.children = [node.children[focalNodeIdx]];
+
+    let parentShouldHideSiblings = !!parentOfFocusedNode;
+    if (!parentShouldHideSiblings) {
+        const focalNodeIdx = node.children.findIndex(child => child.data.id === focusedNode.value.data?.id);
+        if (focalNodeIdx > -1) {
+            node.children = [node.children[focalNodeIdx]];
+            parentShouldHideSiblings = true;
+        }
     }
-    return node;
+
+    return {node, parentShouldHideSiblings};
 }
 
 const conceptTree = computed(() => {
@@ -110,7 +138,12 @@ const conceptTree = computed(() => {
     if (focalNodeIdx > -1) {
         return [schemeAsNode(schemes.value[focalNodeIdx])];
     }
-    return schemes.value.map((scheme: Scheme) => schemeAsNode(scheme));
+    const pairs = schemes.value.map((scheme: Scheme) => schemeAsNode(scheme));
+    const parentOfFocusedNode = pairs.find(scheme => scheme.parentShouldHideSiblings)
+    if (parentOfFocusedNode) {
+        return [parentOfFocusedNode.node];
+    }
+    return pairs.map(pair => pair.node);
 });
 
 const expandAll = () => {
@@ -246,7 +279,7 @@ await fetchSchemes();
                 onBeforeUpdate() {
                     // Snoop on the filterValue, because if we wait to react
                     // to the emitted filter event, the templated rows will
-                    // have already renderd.
+                    // have already rendered.
                     filterValue = $el.ownerDocument.getElementsByClassName('p-tree-filter')[0].value;
                 },
             },
