@@ -1,3 +1,5 @@
+import type TreeNode from "primevue/tree/Tree";
+
 export type Concept = {
     id: string,
     labels: Label[],
@@ -17,6 +19,8 @@ export type Label = {
 };
 
 export type Labellable = Concept | Scheme;
+
+export type NodeAndParentInstruction = { node: TreeNode, parentShouldHideSiblings: boolean };
 
 // Should be imported from arches once it exposes types
 export type Language = {

@@ -19,7 +19,7 @@ import type {
     TreeNode,
     TreeSelectionKeys,
 } from "primevue/tree/Tree";
-import type { Concept, Labellable, Language, Scheme } from "@/types";
+import type { Concept, Labellable, Language, NodeAndParentInstruction, Scheme } from "@/types";
 
 // todo(jtw): get from server when implementing other languages
 const ENGLISH: Language = {
@@ -75,22 +75,24 @@ const onNodeExpand = (node: TreeNode) => {
     });
 };
 
-const conceptAsNode = (concept: Concept) : TreeNode => {
-    return conceptOrSchemeAsNode(concept, concept.narrower);
+const conceptAsNodeAndParentInstruction = (concept: Concept) : NodeAndParentInstruction => {
+    return conceptOrSchemeAsNodeAndParentInstruction(concept, concept.narrower);
 };
 
-const schemeAsNode = (scheme: Scheme) : TreeNode => {
-    return conceptOrSchemeAsNode(scheme, scheme.top_concepts);
+const schemeAsNodeAndParentInstruction = (scheme: Scheme) : NodeAndParentInstruction => {
+    return conceptOrSchemeAsNodeAndParentInstruction(scheme, scheme.top_concepts);
 };
 
-const conceptOrSchemeAsNode = (labellable: Labellable, children: Concept[]) => {
+const conceptOrSchemeAsNodeAndParentInstruction = (
+    labellable: Labellable, children: Concept[]
+) : NodeAndParentInstruction => {
     let childrenAsNodes: TreeNode[];
-    const pairs = children.map(child => conceptAsNode(child));
-    const parentOfFocusedNode = pairs.find(pair => pair.parentShouldHideSiblings);
+    const nodesAndInstructions = children.map(child => conceptAsNodeAndParentInstruction(child));
+    const parentOfFocusedNode = nodesAndInstructions.find(obj => obj.parentShouldHideSiblings);
     if (parentOfFocusedNode) {
         childrenAsNodes = [parentOfFocusedNode.node];
     } else {
-        childrenAsNodes = pairs.map(pair => pair.node);
+        childrenAsNodes = nodesAndInstructions.map(obj => obj.node);
     }
     const iconLabel = (labellable as Scheme).top_concepts ? SCHEME_LABEL : CONCEPT_LABEL;
 
@@ -119,14 +121,14 @@ const conceptOrSchemeAsNode = (labellable: Labellable, children: Concept[]) => {
 const conceptTree = computed(() => {
     const focalNodeIdx = schemes.value.findIndex(scheme => scheme.id === focusedNode.value.data?.id);
     if (focalNodeIdx > -1) {
-        return [schemeAsNode(schemes.value[focalNodeIdx])];
+        return [schemeAsNodeAndParentInstruction(schemes.value[focalNodeIdx]).node];
     }
-    const pairs = schemes.value.map((scheme: Scheme) => schemeAsNode(scheme));
-    const parentOfFocusedNode = pairs.find(scheme => scheme.parentShouldHideSiblings)
+    const nodesAndInstructions = schemes.value.map((scheme: Scheme) => schemeAsNodeAndParentInstruction(scheme));
+    const parentOfFocusedNode = nodesAndInstructions.find(obj => obj.parentShouldHideSiblings);
     if (parentOfFocusedNode) {
         return [parentOfFocusedNode.node];
     }
-    return pairs.map(pair => pair.node);
+    return nodesAndInstructions.map(obj => obj.node);
 });
 
 const expandAll = () => {
