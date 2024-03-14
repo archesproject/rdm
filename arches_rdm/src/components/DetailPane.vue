@@ -13,6 +13,18 @@ const props: { node: TreeNode } = defineProps(["node"]);
             <h2>{{ node.label }}</h2>
             <span class="item-type">{{ node.iconLabel }}</span>
         </span>
+        <div
+            v-if="node.data.identifier"
+            class="identifier"
+        >
+            <a
+                :href="node.data.identifier"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {{ node.data.identifier }}
+            </a>
+        </div>
     </div>
 </template>
 
@@ -21,6 +33,7 @@ const props: { node: TreeNode } = defineProps(["node"]);
 .detail-container {
     margin: 1rem;
 }
+
 .item-header {
     display: inline-flex;
     align-items: center;
@@ -30,12 +43,19 @@ const props: { node: TreeNode } = defineProps(["node"]);
     border-bottom: 1px solid;
     width: 80%;
 }
+
 h2 {
     font-size: 1rem;
     margin: 0;
 }
+
 .item-type {
     font-size: small;
     font-weight: 200;
+}
+
+.identifier {
+    margin: 0.5rem;
+    font-size: smaller;
 }
 </style>

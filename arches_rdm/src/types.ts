@@ -2,12 +2,14 @@ import type TreeNode from "primevue/tree/Tree";
 
 export type Concept = {
     id: string,
+    identifier: string | null,
     labels: Label[],
     narrower: Concept[],
 };
 
 export type Scheme = {
     id: string,
+    identifier: string | null,
     labels: Label[],
     top_concepts: Concept[],
 };
