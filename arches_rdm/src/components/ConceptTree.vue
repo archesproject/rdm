@@ -176,7 +176,7 @@ const toggleFocus = (node: TreeNode) => {
 const fetchSchemes = async () => {
     let errorText;
     try {
-        const response = await fetch("concept_trees/", { credentials: "include" });
+        const response = await fetch("/concept_trees/", { credentials: "include" });
         if (!response.ok) {
             errorText = response.statusText;
             const body = await response.json();
