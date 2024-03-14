@@ -44,6 +44,7 @@ class Migration(migrations.Migration):
         """
     remove_migrate_rdm = """
         DELETE FROM load_staging WHERE loadid IN (SELECT loadid FROM load_event WHERE etl_module_id = '11cad3ca-e155-44b1-9910-c50b3def47f6');
+        DELETE FROM load_errors WHERE loadid IN (SELECT loadid FROM load_event WHERE etl_module_id = '11cad3ca-e155-44b1-9910-c50b3def47f6');
         DELETE FROM load_event WHERE etl_module_id = '11cad3ca-e155-44b1-9910-c50b3def47f6';
         DELETE FROM etl_modules WHERE etlmoduleid = '11cad3ca-e155-44b1-9910-c50b3def47f6';
     """
