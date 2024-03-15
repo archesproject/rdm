@@ -241,7 +241,7 @@ await fetchSchemes();
         :value="conceptTree"
         :expanded-keys
         :filter="true"
-        :filter-placeholder="$gettext('Search for a concept')"
+        :filter-placeholder="$gettext('Filter concept hierarchies')"
         filter-mode="lenient"
         selection-mode="single"
         :pt="{
