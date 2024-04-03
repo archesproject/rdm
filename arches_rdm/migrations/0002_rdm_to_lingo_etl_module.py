@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
         ('models', '10260_add_iiifmanifest_globalid'),
     ]
 
-    add_migrate_rdm = """
+    add_migrate_to_lingo = """
         INSERT INTO etl_modules (
             etlmoduleid,
             name,
@@ -28,21 +28,21 @@ class Migration(migrations.Migration):
             reversible)
         VALUES (
             '11cad3ca-e155-44b1-9910-c50b3def47f6',
-            'RDM Migration',
-            'Migrate concepts and schemes to the new RDM',
+            'Migrate to Lingo',
+            'Migrate schemes and concepts from the RDM to Arches Lingo',
             'import',
-            'views/components/etl_modules/migrate-rdm',
-            'migrate-rdm',
-            'migrate_rdm.py',
-            'RDMMigrator',
+            'views/components/etl_modules/migrate-to-lingo',
+            'migrate-to-lingo',
+            'migrate_to_lingo.py',
+            'RDMMtoLingoMigrator',
             '{"bgColor": "#ffa564", "circleColor": "#ffd2b1", "show": true}',
             'fa fa-usb',
-            'migrate-rdm',
+            'migrate-to-lingo',
             6,
-            'migrate-rdm-help',
+            'migrate-to-lingo-help',
             true);
         """
-    remove_migrate_rdm = """
+    remove_migrate_to_lingo = """
         DELETE FROM load_staging WHERE loadid IN (SELECT loadid FROM load_event WHERE etl_module_id = '11cad3ca-e155-44b1-9910-c50b3def47f6');
         DELETE FROM load_errors WHERE loadid IN (SELECT loadid FROM load_event WHERE etl_module_id = '11cad3ca-e155-44b1-9910-c50b3def47f6');
         DELETE FROM load_event WHERE etl_module_id = '11cad3ca-e155-44b1-9910-c50b3def47f6';
@@ -59,8 +59,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunSQL(
-            add_migrate_rdm,
-            remove_migrate_rdm,
+            add_migrate_to_lingo,
+            remove_migrate_to_lingo,
         ),
         migrations.RunSQL(
             show_etl_manager,

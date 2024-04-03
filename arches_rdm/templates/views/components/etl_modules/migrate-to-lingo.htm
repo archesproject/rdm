@@ -29,6 +29,7 @@
     <h4 class="summary-title">{% trans "RDM to Arches-Lingo Migrator Summary" %}</h4>
     <div>
         <span class="etl-loading-metadata-key" data-bind="text: $root.translations.loadingStatus + ':'"></span>
+        <!-- ko if: selectedLoadEvent().status -->
         <span class="etl-loading-metadata-value" data-bind="
             text:
                 selectedLoadEvent().status == 'indexed' ? $root.translations.completed
@@ -39,7 +40,8 @@
                 : selectedLoadEvent().status == 'unloaded' ? $root.translations.unloaded
                 : selectedLoadEvent().status == 'cancelled' ? $root.translations.cancelled
                 : $root.translations.failed
-        "></span>  
+        "></span>
+        <!-- /ko -->
     </div>
     <div style="padding-top: 10px;">
         <span class="etl-loading-metadata-key" data-bind="text: $root.translations.loadingStarted + ':'"></span>

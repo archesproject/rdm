@@ -24,7 +24,7 @@ CONCEPTS_BROADER_NODEGROUP_ID = uuid.UUID("bf73e5f5-4888-11ee-8a8d-11afefc4bff7"
 CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID = uuid.UUID("bf73e60a-4888-11ee-8a8d-11afefc4bff7")
 
 
-class RDMMigrator(BaseImportModule):
+class RDMMtoLingoMigrator(BaseImportModule):
     def __init__(self, request=None, loadid=None):
         self.request = request if request else None
         self.userid = request.user.id if request else None
@@ -261,7 +261,7 @@ class RDMMigrator(BaseImportModule):
         """, (CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID, loadid, CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID))
 
     def start(self, request):
-        load_details = {"operation": "RDM Migration"}
+        load_details = {"operation": "RDM to Lingo Migration"}
         cursor = connection.cursor()
         cursor.execute(
             """INSERT INTO load_event (loadid, complete, status, etl_module_id, load_details, load_start_time, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s)""",
@@ -276,7 +276,7 @@ class RDMMigrator(BaseImportModule):
             response = self.run_load_task(self.userid, self.loadid)
         else: 
             response = self.run_load_task_async(request, self.loadid)
-        message = "RDM Migration Complete"
+        message = "Schemes and Concept Migration to Lingo Models Complete"
         return {"success": True, "data": message}
 
     def run_load_task(self, userid, loadid):
@@ -322,11 +322,11 @@ class RDMMigrator(BaseImportModule):
         self.userid = request.user.id
         self.loadid = request.POST.get("loadid")
 
-        migrate_rdm_task = tasks.migrate_rdm_task.apply_async(
+        migrate_rdm_to_lingo_task = tasks.migrate_rdm_to_lingo_task.apply_async(
             (self.userid, self.loadid),
         )
         with connection.cursor() as cursor:
             cursor.execute(
                 """UPDATE load_event SET taskid = %s WHERE loadid = %s""",
-                (migrate_rdm_task.task_id, self.loadid),
+                (migrate_rdm_to_lingo_task.task_id, self.loadid),
             )

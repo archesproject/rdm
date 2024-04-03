@@ -6,7 +6,7 @@ define([
     'arches',
     'viewmodels/alert',
     'viewmodels/alert-json',
-    'templates/views/components/etl_modules/migrate-rdm.htm',
+    'templates/views/components/etl_modules/migrate-to-lingo.htm',
 ], function(ko, koMapping, $, uuid, arches, AlertViewModel, JsonErrorAlertViewModel, migrateRDMTemplate) {
     const viewModel = function(params) {
         const self = this;
@@ -62,7 +62,7 @@ define([
             });
         };
     };
-    ko.components.register('migrate-rdm', {
+    ko.components.register('migrate-to-lingo', {
         viewModel: viewModel,
         template: migrateRDMTemplate,
     });
