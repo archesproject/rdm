@@ -253,7 +253,6 @@ await fetchSchemes();
                     background: context.selected ? lightGray : '',
                     height: '2rem',
                 },
-                tabindex: '0',
             }),
             nodeicon: { style: { display: 'none' } },
             label: { style: { textWrap: 'nowrap', display: 'flex' } },
