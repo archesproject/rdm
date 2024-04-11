@@ -1,10 +1,24 @@
 {
-    "name": "arches_rdm",
-    "version": "0.0.1",
-    "dependencies": {
-        "primevue": "^3.35.0"
+    "name": "arches_lingo",
+    "license": "AGPL-3.0-only",
+    "scripts": {
+        "build_development": "yarn eslint:check && yarn ts:check && ./arches_lingo/media/node_modules/.bin/cross-env NODE_PATH=./arches_lingo/media/node_modules NODE_OPTIONS=--max-old-space-size=2048 ./arches_lingo/media/node_modules/.bin/webpack --config ./arches_lingo/webpack/webpack.config.dev.js",
+        "build_production": "yarn eslint:check && yarn ts:check && ./arches_lingo/media/node_modules/.bin/cross-env NODE_PATH=./arches_lingo/media/node_modules NODE_OPTIONS=--max-old-space-size=2048 NODE_ENV=production ./arches_lingo/media/node_modules/.bin/webpack --config ./arches_lingo/webpack/webpack.config.prod.js",
+        "build_test": "yarn eslint:check && yarn ts:check && ./arches_lingo/media/node_modules/.bin/cross-env NODE_PATH=./arches_lingo/media/node_modules NODE_OPTIONS=--max-old-space-size=2048 ./arches_lingo/media/node_modules/.bin/webpack --config ./arches_lingo/webpack/webpack.config.dev.js --env test=true",
+        "eslint:check": "./arches_lingo/media/node_modules/.bin/eslint ./arches_lingo/src --resolve-plugins-relative-to ./arches_lingo/media --ext .vue,.ts --parser ./arches_lingo/media/node_modules/vue-eslint-parser/index.js",
+        "eslint:watch": "./arches_lingo/media/node_modules/.bin/nodemon --watch ./arches_lingo/src --ext ts,vue --exec yarn --silent eslint:check",
+        "eslint:fix": "./arches_lingo/media/node_modules/.bin/eslint ./arches_lingo/src --resolve-plugins-relative-to ./arches_lingo/media --ext .vue,.ts --parser ./arches_lingo/media/node_modules/vue-eslint-parser/index.js --fix",
+        "gettext:extract": "./arches_lingo/media/node_modules/.bin/vue-gettext-extract",
+        "gettext:compile": "./arches_lingo/media/node_modules/.bin/vue-gettext-compile",
+        "ts:check": "./arches_lingo/media/node_modules/.bin/vue-tsc --noEmit",
+        "ts:watch": "./arches_lingo/media/node_modules/.bin/vue-tsc --watch --noEmit",
+        "start": "./arches_lingo/media/node_modules/.bin/cross-env NODE_PATH=./arches_lingo/media/node_modules NODE_OPTIONS=--max-old-space-size=2048 ./arches_lingo/media/node_modules/.bin/webpack serve --config ./arches_lingo/webpack/webpack.config.dev.js"
     },
     "devDependencies": {
+        "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/7.6.x"
+    },
+    "dependencies": {
+        "arches": "archesproject/arches#dev/7.6.x"
     },
     "nodeModulesPaths": {
     }
