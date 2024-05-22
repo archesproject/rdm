@@ -110,9 +110,54 @@
                     "nodegroup_id": "8880237a-11e8-11ef-9493-0a58a9feac02",
                     "sortorder": 2,
                     "visible": true
+                },
+                {
+                    "active": true,
+                    "cardid": "e3db2b16-7675-49ba-a416-ca1080a5ea11",
+                    "component_id": "f05e4d3a-53c1-11e8-b0ea-784f435179ea",
+                    "config": null,
+                    "constraints": [],
+                    "cssclass": null,
+                    "description": null,
+                    "graph_id": "ce57ee93-1f08-11ee-9071-214dbb482912",
+                    "helpenabled": false,
+                    "helptext": {
+                        "en": ""
+                    },
+                    "helptitle": {
+                        "en": ""
+                    },
+                    "instructions": {
+                        "en": ""
+                    },
+                    "is_editable": true,
+                    "name": {
+                        "en": "content"
+                    },
+                    "nodegroup_id": "f522c448-1778-11ef-b270-0a58a9feac02",
+                    "sortorder": null,
+                    "visible": true
                 }
             ],
             "cards_x_nodes_x_widgets": [
+                {
+                    "card_id": "e3db2b16-7675-49ba-a416-ca1080a5ea11",
+                    "config": {
+                        "acceptedFiles": "",
+                        "defaultValue": [],
+                        "label": "content",
+                        "maxFilesize": "200",
+                        "rerender": true
+                    },
+                    "id": "1480df75-ef49-4666-9735-94b9ee37ecc5",
+                    "label": {
+                        "en": "content"
+                    },
+                    "node_id": "f522c448-1778-11ef-b270-0a58a9feac02",
+                    "sortorder": 0,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000019"
+                },
                 {
                     "card_id": "78fc2246-11e8-11ef-9493-0a58a9feac02",
                     "config": {
@@ -495,6 +540,15 @@
                 {
                     "description": null,
                     "domainnode_id": "ce57ee92-1f08-11ee-9071-214dbb482912",
+                    "edgeid": "4f36ae10-fa75-4f95-b57d-3a112cdbf334",
+                    "graph_id": "ce57ee93-1f08-11ee-9071-214dbb482912",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P190_has_symbolic_content",
+                    "rangenode_id": "f522c448-1778-11ef-b270-0a58a9feac02"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "ce57ee92-1f08-11ee-9071-214dbb482912",
                     "edgeid": "720d44e7-fd18-4f47-8991-cbd0acf3197c",
                     "graph_id": "ce57ee93-1f08-11ee-9071-214dbb482912",
                     "name": null,
@@ -660,6 +714,12 @@
                     "cardinality": "1",
                     "legacygroupid": null,
                     "nodegroupid": "8880237a-11e8-11ef-9493-0a58a9feac02",
+                    "parentnodegroup_id": null
+                },
+                {
+                    "cardinality": "1",
+                    "legacygroupid": null,
+                    "nodegroupid": "f522c448-1778-11ef-b270-0a58a9feac02",
                     "parentnodegroup_id": null
                 }
             ],
@@ -1063,14 +1123,40 @@
                     "parentproperty": "",
                     "sortorder": 0,
                     "sourcebranchpublication_id": null
+                },
+                {
+                    "alias": "content",
+                    "config": {
+                        "activateMax": false,
+                        "imagesOnly": true,
+                        "maxFileSize": null,
+                        "maxFiles": 1
+                    },
+                    "datatype": "file-list",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "ce57ee93-1f08-11ee-9071-214dbb482912",
+                    "hascustomalias": false,
+                    "is_collector": true,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "content",
+                    "nodegroup_id": "f522c448-1778-11ef-b270-0a58a9feac02",
+                    "nodeid": "f522c448-1778-11ef-b270-0a58a9feac02",
+                    "ontologyclass": "http://www.w3.org/2001/XMLSchema#string",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P190_has_symbolic_content",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": "0b1f5462-faa7-11e9-8f09-3af9d3b32b71",
             "publication": {
                 "graph_id": "ce57ee93-1f08-11ee-9071-214dbb482912",
                 "notes": null,
-                "publicationid": "bc9a18f0-11e8-11ef-9493-0a58a9feac02",
-                "published_time": "2024-05-14T06:54:36.607"
+                "publicationid": "0adfb336-1779-11ef-b270-0a58a9feac02",
+                "published_time": "2024-05-21T08:50:11.268"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -1106,6 +1192,6 @@
         "db": "PostgreSQL 14.10 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6), 64-bit",
         "git hash": "/bin/sh: 1: git: not found",
         "os": "Linux",
-        "os version": "5.10.213-201.855.amzn2.x86_64"
+        "os version": "5.10.215-203.850.amzn2.x86_64"
     }
 }

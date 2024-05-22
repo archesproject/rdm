@@ -798,6 +798,28 @@
                     "widget_id": "10000000-0000-0000-0000-000000000002"
                 },
                 {
+                    "card_id": "0345eabe-11e8-11ef-9493-0a58a9feac02",
+                    "config": {
+                        "defaultValue": "24559510-c6c6-4558-b411-7cd127642657",
+                        "i18n_properties": [
+                            "placeholder"
+                        ],
+                        "label": "Warrant Assertion Type",
+                        "options": [],
+                        "placeholder": {
+                            "en": "Select an option"
+                        }
+                    },
+                    "id": "7c3a0fd9-e56f-4cc0-bc11-5c68daa5cd55",
+                    "label": {
+                        "en": "Warrant Assertion Type"
+                    },
+                    "node_id": "9c54276c-1773-11ef-b270-0a58a9feac02",
+                    "sortorder": 9,
+                    "visible": true,
+                    "widget_id": "10000000-0000-0000-0000-000000000002"
+                },
+                {
                     "card_id": "705c44fe-311c-11ee-8a8d-11afefc4bff7",
                     "config": {
                         "basemap": "streets",
@@ -1273,6 +1295,15 @@
                     "name": null,
                     "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "rangenode_id": "c81876a6-11e6-11ef-9493-0a58a9feac02"
+                },
+                {
+                    "description": null,
+                    "domainnode_id": "0345f04a-11e8-11ef-9493-0a58a9feac02",
+                    "edgeid": "55e58d78-e746-4b66-8b0e-f953cad9e19a",
+                    "graph_id": "06903e8f-1a65-11ee-8f04-cd21e680a247",
+                    "name": null,
+                    "ontologyproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "rangenode_id": "9c54276c-1773-11ef-b270-0a58a9feac02"
                 },
                 {
                     "description": null,
@@ -2304,6 +2335,29 @@
                     "sourcebranchpublication_id": null
                 },
                 {
+                    "alias": "appellative_status_data_assignment_type",
+                    "config": {
+                        "rdmCollection": "6eaa2c6f-af83-464c-9200-051c4cfe7e8e"
+                    },
+                    "datatype": "concept",
+                    "description": null,
+                    "exportable": false,
+                    "fieldname": null,
+                    "graph_id": "06903e8f-1a65-11ee-8f04-cd21e680a247",
+                    "hascustomalias": false,
+                    "is_collector": false,
+                    "isrequired": false,
+                    "issearchable": true,
+                    "istopnode": false,
+                    "name": "appellative_status_data_assignment_type",
+                    "nodegroup_id": "0345e87a-11e8-11ef-9493-0a58a9feac02",
+                    "nodeid": "9c54276c-1773-11ef-b270-0a58a9feac02",
+                    "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
+                    "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
+                    "sortorder": 0,
+                    "sourcebranchpublication_id": null
+                },
+                {
                     "alias": "identifier",
                     "config": {
                         "en": ""
@@ -2442,8 +2496,8 @@
             "publication": {
                 "graph_id": "06903e8f-1a65-11ee-8f04-cd21e680a247",
                 "notes": null,
-                "publicationid": "65cc8ca6-11e8-11ef-9493-0a58a9feac02",
-                "published_time": "2024-05-14T06:52:10.976"
+                "publicationid": "a9cb0c08-1778-11ef-b270-0a58a9feac02",
+                "published_time": "2024-05-21T08:47:28.394"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -2479,6 +2533,6 @@
         "db": "PostgreSQL 14.10 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 7.3.1 20180712 (Red Hat 7.3.1-6), 64-bit",
         "git hash": "/bin/sh: 1: git: not found",
         "os": "Linux",
-        "os version": "5.10.213-201.855.amzn2.x86_64"
+        "os version": "5.10.215-203.850.amzn2.x86_64"
     }
 }
