@@ -31,7 +31,7 @@ APP_NAME = 'arches_lingo'
 APP_ROOT = os.path.dirname(__file__)
 TEST_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "..", "tests"))
 
-ROOT_URLCONF = 'arches_lingo.arches_lingo.urls'
+ROOT_URLCONF = 'arches_lingo.urls'
 
 ARCHES_APPLICATIONS = ()
 
