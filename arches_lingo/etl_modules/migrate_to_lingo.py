@@ -12,7 +12,7 @@ from arches.app.models import models
 from arches.app.models.concept import Concept
 from arches.app.models.models import LoadStaging, NodeGroup, LoadEvent
 from arches.app.utils.betterJSONSerializer import JSONSerializer
-import arches_rdm.tasks as tasks
+import arches_lingo.tasks as tasks
 
 logger = logging.getLogger(__name__)
 

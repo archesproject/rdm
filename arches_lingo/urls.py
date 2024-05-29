@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls import include, path
 
-from arches_rdm.views import ConceptTreeView
+from arches_lingo.views import ConceptTreeView
 
 urlpatterns = [
     path('', include('arches.urls')),

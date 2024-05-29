@@ -16,7 +16,7 @@ from arches.app.utils.decorators import group_required
 
 from arches.app.utils.response import JSONResponse
 
-from arches_rdm.const import (
+from arches_lingo.const import (
     SCHEMES_GRAPH_ID,
     TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
     BROADER_NODE_AND_NODEGROUP,

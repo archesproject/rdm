@@ -3,7 +3,7 @@ import os
 # Depends on /arches being on the python path, as arches.tests is not importable
 from tests.test_settings import *
 
-APP_NAME = "arches_rdm"
+APP_NAME = "arches_lingo"
 APP_ROOT = os.path.dirname(__file__)
 INSTALLED_APPS = (
     "webpack_loader",
@@ -23,9 +23,9 @@ INSTALLED_APPS = (
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
-    "arches_rdm",
+    "arches_lingo",
 )
-ROOT_URLCONF = "arches_rdm.urls"
+ROOT_URLCONF = "arches_lingo.urls"
 
 LOCALE_PATHS = [os.path.join(APP_ROOT, "locale")]
 

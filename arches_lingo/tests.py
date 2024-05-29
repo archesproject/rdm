@@ -15,7 +15,7 @@ from arches.app.models.models import (
     Value,
 )
 
-from arches_rdm.const import (
+from arches_lingo.const import (
     ENGLISH_VALUE_ID,
     CONCEPTS_GRAPH_ID,
     LANGUAGE_CONCEPT_ID,

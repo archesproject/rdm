@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('arches_rdm', '0001_initial'),
+        ('arches_lingo', '0001_initial'),
         ('models', '10260_add_iiifmanifest_globalid'),
     ]
 
