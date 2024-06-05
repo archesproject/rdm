@@ -61,7 +61,7 @@
 
     b. If you're not planning on editing HTML/CSS/JavaScript files, run `npm run build_development`
 
-12. If you ran `npm start` in the previous step, you will need to open a new terminal window and activate the virtual environment in the new terminal window.
+12. If you ran `npm start` in the previous step, you will need to open a new terminal window and activate the virtual environment in the new terminal window. If you ran `npm run build_development` then you can skip this step.
 
 13. Navigate to the arches_lingo top-level directory, and install the ontologies, branches, and resource models from the arches-rdm package.
     ```
