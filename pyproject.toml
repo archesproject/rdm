@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "arches-rdm"
+name = "arches_lingo"
 readme = "README.md"
 authors = [
     {name = "Farallon Geographics, Inc", email = "dev@fargeo.com"}
@@ -30,4 +30,4 @@ dependencies = [
 version = "0.0.1"
 
 [tool.setuptools]
-packages = ["arches_rdm"]
+packages = ["arches_lingo"]
