@@ -23,6 +23,22 @@ CONCEPTS_TOP_CONCEPT_OF_NODEGROUP_ID = uuid.UUID("bf73e5b9-4888-11ee-8a8d-11afef
 CONCEPTS_BROADER_NODEGROUP_ID = uuid.UUID("bf73e5f5-4888-11ee-8a8d-11afefc4bff7")
 CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID = uuid.UUID("bf73e60a-4888-11ee-8a8d-11afefc4bff7")
 
+details = {
+    "etlmoduleid": "11cad3ca-e155-44b1-9910-c50b3def47f6",
+    "name": "Migrate to Lingo",
+    "description": "Migrate schemes and concepts from the RDM to Arches Lingo",
+    "etl_type": "import",
+    "component": "views/components/etl_modules/migrate-to-lingo",
+    "componentname": "migrate-to-lingo",
+    "modulename": "migrate_to_lingo.py",
+    "classname": "RDMMtoLingoMigrator",
+    "config": {"bgColor": "#ffa564", "circleColor": "#ffd2b1", "show": True},
+    "icon": "fa fa-usb",
+    "slug": "migrate-to-lingo",
+    "helpsortorder": 6,
+    "helptemplate": "migrate-to-lingo-help",
+}
+
 
 class RDMMtoLingoMigrator(BaseImportModule):
     def __init__(self, request=None, loadid=None):
