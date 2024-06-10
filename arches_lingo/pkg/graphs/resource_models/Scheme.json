@@ -3157,7 +3157,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P4_has_time-span",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "8c5fefcc-0ebc-11ef-93db-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "creation_timespan_end_of_the_end",

@@ -940,7 +940,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "be6012d2-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "type_metatype",
@@ -963,7 +963,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "be6012d2-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "statement",
