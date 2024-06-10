@@ -2912,7 +2912,7 @@
                     "edgeid": "a2356421-5486-43e4-8a3d-39f6816ba967",
                     "graph_id": "bf73e576-4888-11ee-8a8d-11afefc4bff7",
                     "name": null,
-                    "ontologyproperty": "https://takin.solutions/ontologies/CRMaaa/P5i_is_appellative_subject_of",
+                    "ontologyproperty": "https://takin.solutions/ontologies/CRMaaa/ZP5i_is_appellative_subject_of",
                     "rangenode_id": "ab9fee9c-0eb6-11ef-93db-0a58a9feac02"
                 },
                 {
@@ -4801,7 +4801,7 @@
                     "nodegroup_id": "ab9fee9c-0eb6-11ef-93db-0a58a9feac02",
                     "nodeid": "ab9fee9c-0eb6-11ef-93db-0a58a9feac02",
                     "ontologyclass": "https://takin.solutions/ontologies/CRMaaa/ZE2_Appellative_Status",
-                    "parentproperty": "https://takin.solutions/ontologies/CRMaaa/P5i_is_appellative_subject_of",
+                    "parentproperty": "https://takin.solutions/ontologies/CRMaaa/ZP5i_is_appellative_subject_of",
                     "sortorder": 0,
                     "sourcebranchpublication_id": null
                 },
