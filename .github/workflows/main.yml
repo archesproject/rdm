@@ -145,6 +145,9 @@ jobs:
         with:
           elasticsearch-version: 8
 
+      - name: Debug npm cache
+        run: echo "Hi"
+
       - name: Webpack frontend files
         run: |
           echo "Checking for package.json..."
