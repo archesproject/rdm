@@ -18,7 +18,7 @@
         "vitest": "vitest --run --coverage"
     },
     "devDependencies": {
-        "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/7.6.x"
+        "arches-dev-dependencies": "archesproject/arches-dev-dependencies#d75232c50957237421aece034456b785ad05bb85"
     },
     "dependencies": {
         "arches": "archesproject/arches#dev/7.6.x"
@@ -26,9 +26,11 @@
     "nodeModulesPaths": {
     },
     "overrides": {
+        "glob": "8.1.0",
+        "minimatch": "5.1.2",
         "moment-timezone": "^0.5.45",
         "nomnom": "npm:@gerhobbelt/nomnom",
-        "rimraf": "^5.0.7", 
+        "rimraf": "^5.0.7",
         "underscore": "^1.13.6"
     }
 }
