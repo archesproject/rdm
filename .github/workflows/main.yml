@@ -146,7 +146,7 @@ jobs:
           elasticsearch-version: 8
 
       - name: Debug npm cache
-        run: echo "Hi"
+        run: npm ls eslint-config-prettier
 
       - name: Webpack frontend files
         run: |
