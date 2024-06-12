@@ -279,7 +279,7 @@ Encoding Rules:
     <rdfs:subPropertyOf rdf:resource="ZP1_has_intentional_subject"/>
 </rdf:Property>
 
-<rdf:Property rdf:about="P5i_is_appellative_subject_of">
+<rdf:Property rdf:about="ZP5i_is_appellative_subject_of">
     <rdfs:label xml:lang="en">is appellative subject of</rdfs:label>
 	<rdfs:domain rdf:resource="http://www.cidoc-crm.org/cidoc-crm/E1_CRM_Entity"/>
 	<rdfs:range rdf:resource="ZE2_Appellative_Status"/>
@@ -330,7 +330,7 @@ Encoding Rules:
     <rdfs:label xml:lang="en">is contact subject of</rdfs:label>
 	<rdfs:domain rdf:resource="http://www.cidoc-crm.org/cidoc-crm/E39_Actor"/>
 	<rdfs:range rdf:resource="ZE3_Contact_Point_Status"/>
-    <rdfs:subPropertyOf rdf:resource="P5i_is_appellative_subject_of"/>
+    <rdfs:subPropertyOf rdf:resource="ZP5i_is_appellative_subject_of"/>
 </rdf:Property>
 
     <rdf:Property rdf:about="ZP9_ascribes_contact_point">

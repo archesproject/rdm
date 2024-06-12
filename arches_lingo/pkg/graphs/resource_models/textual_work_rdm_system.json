@@ -784,7 +784,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E42_Identifier",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P48_has_preferred_identifier",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "b49f2fee-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "identifier_type",
@@ -807,7 +807,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "b49f2fee-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "identifier_label",
@@ -828,7 +828,7 @@
                     "ontologyclass": "http://www.w3.org/2001/XMLSchema#string",
                     "parentproperty": "http://www.w3.org/2000/01/rdf-schema#label",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "b49f2fee-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "identifier_content",
@@ -849,7 +849,7 @@
                     "ontologyclass": "http://www.w3.org/2001/XMLSchema#string",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P190_has_symbolic_content",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "b49f2fee-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "also_instance_of",
@@ -1161,7 +1161,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "be6012d2-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "type_metatype",
@@ -1184,7 +1184,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "be6012d2-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": "0b1f5462-faa7-11e9-8f09-3af9d3b32b71",

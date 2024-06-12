@@ -1320,7 +1320,7 @@
                     "edgeid": "7392522a-8e3b-4333-b308-18f019a297d8",
                     "graph_id": "06903e8f-1a65-11ee-8f04-cd21e680a247",
                     "name": null,
-                    "ontologyproperty": "https://takin.solutions/ontologies/CRMaaa/P5i_is_appellative_subject_of",
+                    "ontologyproperty": "https://takin.solutions/ontologies/CRMaaa/ZP5i_is_appellative_subject_of",
                     "rangenode_id": "0345e87a-11e8-11ef-9493-0a58a9feac02"
                 },
                 {
@@ -1474,7 +1474,7 @@
                     "nodegroup_id": "0345e87a-11e8-11ef-9493-0a58a9feac02",
                     "nodeid": "0345e87a-11e8-11ef-9493-0a58a9feac02",
                     "ontologyclass": "https://takin.solutions/ontologies/CRMaaa/ZE2_Appellative_Status",
-                    "parentproperty": "https://takin.solutions/ontologies/CRMaaa/P5i_is_appellative_subject_of",
+                    "parentproperty": "https://takin.solutions/ontologies/CRMaaa/ZP5i_is_appellative_subject_of",
                     "sortorder": 0,
                     "sourcebranchpublication_id": null
                 },
@@ -2466,7 +2466,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "be6012d2-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 },
                 {
                     "alias": "type_metatype",
@@ -2489,7 +2489,7 @@
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E55_Type",
                     "parentproperty": "http://www.cidoc-crm.org/cidoc-crm/P2_has_type",
                     "sortorder": 0,
-                    "sourcebranchpublication_id": "be6012d2-11e5-11ef-9493-0a58a9feac02"
+                    "sourcebranchpublication_id": null
                 }
             ],
             "ontology_id": "0b1f5462-faa7-11e9-8f09-3af9d3b32b71",
