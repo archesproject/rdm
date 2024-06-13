@@ -3,8 +3,9 @@ from celery import shared_task
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 from arches.app.models import models
-from arches_lingo.etl_modules import migrate_to_lingo 
+from arches_lingo.etl_modules import migrate_to_lingo
 from arches.app.tasks import notify_completion
+
 
 @shared_task
 def migrate_rdm_to_lingo_task(userid, loadid):
