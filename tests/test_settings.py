@@ -26,12 +26,12 @@ except ImportError:  # unable to import prior to installing requirements.txt in 
     pass
 
 PACKAGE_NAME = "arches_lingo"
-APP_NAME = 'arches_lingo'
+APP_NAME = "arches_lingo"
 
 APP_ROOT = os.path.dirname(__file__)
 TEST_ROOT = os.path.normpath(os.path.join(ROOT_DIR, "..", "tests"))
 
-ROOT_URLCONF = 'arches_lingo.urls'
+ROOT_URLCONF = "arches_lingo.urls"
 
 ARCHES_APPLICATIONS = ()
 
@@ -67,14 +67,9 @@ DATABASES = {
         "PASSWORD": "postgis",
         "PORT": "5432",
         "POSTGIS_TEMPLATE": "template_postgis",
-        "TEST": {
-            "CHARSET": None,
-            "COLLATION": None,
-            "MIRROR": None,
-            "NAME": None
-        },
+        "TEST": {"CHARSET": None, "COLLATION": None, "MIRROR": None, "NAME": None},
         "TIME_ZONE": None,
-        "USER": "postgres"
+        "USER": "postgres",
     }
 }
 
@@ -93,7 +88,9 @@ LOGGING["loggers"]["arches"]["level"] = "ERROR"
 ELASTICSEARCH_PREFIX = "test"
 
 TEST_RUNNER = "tests.base_test.ArchesTestRunner"
-SILENCED_SYSTEM_CHECKS.append("arches.W001")  # Cache backend does not support rate-limiting
+SILENCED_SYSTEM_CHECKS.append(
+    "arches.W001"
+)  # Cache backend does not support rate-limiting
 
 # could add Chrome, PhantomJS etc... here
 LOCAL_BROWSERS = []  # ['Firefox']
@@ -107,7 +104,9 @@ ENABLE_TWO_FACTOR_AUTHENTICATION = False
 FORCE_TWO_FACTOR_AUTHENTICATION = False
 
 DATATYPE_LOCATIONS.append("tests.fixtures.datatypes")
-ELASTICSEARCH_HOSTS = [{"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}]
+ELASTICSEARCH_HOSTS = [
+    {"scheme": "http", "host": "localhost", "port": ELASTICSEARCH_HTTP_PORT}
+]
 LANGUAGES = [
     ("de", _("German")),
     ("en", _("English")),
