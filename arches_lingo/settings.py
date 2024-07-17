@@ -34,7 +34,7 @@ FUNCTION_LOCATIONS.append("arches_lingo.functions")
 ETL_MODULE_LOCATIONS.append("arches_lingo.etl_modules")
 SEARCH_COMPONENT_LOCATIONS.append("arches_lingo.search_components")
 
-LOCALE_PATHS.append(os.path.join(APP_ROOT, "locale"))
+LOCALE_PATHS.insert(0, os.path.join(APP_ROOT, "locale"))
 
 FILE_TYPE_CHECKING = False
 FILE_TYPES = [
@@ -143,10 +143,10 @@ INSTALLED_APPS = (
     "oauth2_provider",
     "django_celery_results",
     # "silk",
+    "arches.app",
     "arches_lingo",
 )
 
-ARCHES_APPLICATIONS = ()
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -165,17 +165,11 @@ MIDDLEWARE = [
     # "silk.middleware.SilkyMiddleware",
 ]
 
-STATICFILES_DIRS = build_staticfiles_dirs(
-    root_dir=ROOT_DIR,
-    app_root=APP_ROOT,
-    arches_applications=ARCHES_APPLICATIONS,
-)
+STATICFILES_DIRS = build_staticfiles_dirs(app_root=APP_ROOT)
 
 TEMPLATES = build_templates_config(
-    root_dir=ROOT_DIR,
     debug=DEBUG,
     app_root=APP_ROOT,
-    arches_applications=ARCHES_APPLICATIONS,
 )
 
 ALLOWED_HOSTS = []
@@ -436,11 +430,4 @@ except ImportError as e:
 
 # returns an output that can be read by NODEJS
 if __name__ == "__main__":
-    transmit_webpack_django_config(
-        root_dir=ROOT_DIR,
-        app_root=APP_ROOT,
-        arches_applications=ARCHES_APPLICATIONS,
-        public_server_address=PUBLIC_SERVER_ADDRESS,
-        static_url=STATIC_URL,
-        webpack_development_server_port=WEBPACK_DEVELOPMENT_SERVER_PORT,
-    )
+    transmit_webpack_django_config(**locals())
