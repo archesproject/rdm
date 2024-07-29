@@ -6,9 +6,14 @@ from django.urls import include, path
 from arches_lingo.views import ConceptTreeView
 
 urlpatterns = [
-    path("", include("arches.urls")),
     path("concept_trees/", ConceptTreeView.as_view(), name="concept_trees"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# Ensure Arches core urls are superseded by project-level urls
+urlpatterns.append(path("", include("arches.urls")))
+
+# Adds URL pattern to serve media files during development
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Only handle i18n routing in active project. This will still handle the routes provided by Arches core and Arches applications,
 # but handling i18n routes in multiple places causes application errors.
