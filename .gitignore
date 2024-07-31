@@ -1,7 +1,7 @@
 *.pyc
 *.log
 node_modules
-*.coverage
+coverage/
 arches_lingo/logs
 arches_lingo/export_deliverables
 arches_lingo/cantaloupe/*

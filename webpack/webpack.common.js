@@ -296,7 +296,11 @@ module.exports = () => {
                         ...nodeModulesAliases,
                         ...parsedPackageJSONFilepaths,
                         '@': [Path.resolve(__dirname, APP_ROOT, 'src'), ...archesApplicationsVuePaths, Path.resolve(__dirname, ROOT_DIR, 'app', 'src')],
-                        'node_modules': Path.resolve(__dirname, PROJECT_RELATIVE_NODE_MODULES_PATH)
+                        'node_modules': Path.resolve(__dirname, PROJECT_RELATIVE_NODE_MODULES_PATH),
+                        'arches/arches/app': Path.resolve(__dirname, ROOT_DIR, 'app'),  // ensure project-level imports of arches components point to local file
+                        ...Object.fromEntries(ARCHES_APPLICATIONS.map(app => [  // ensure project-level imports of arches application components point to local file
+                            Path.join(app, app), Path.resolve(__dirname, ARCHES_APPLICATIONS_PATHS[app])
+                        ])),
                     },
                 },
                 module: {
@@ -450,26 +454,27 @@ module.exports = () => {
                                         }
                                         else {
                                             if (!isTestEnvironment) {
-                                                loaderContext.emitError(`Unable to fetch ${templatePath} from the Django server.`)
+                                                loaderContext.emitError(Error(`Unable to fetch ${templatePath} from the Django server.`))
                                             }
                                             else {
                                                 console.warn(
                                                     '\x1b[31m%s\x1b[0m',  // red
                                                     `"${templatePath}" has failed to load! Test environment detected, falling back to un-rendered file.`
                                                 );
-                                                resp = {
-                                                    text: () => (
-                                                        new Promise((resolve, _reject) => {
-                                                            /*
-                                                                if run in a test environment, failures will return a empty string which will
-                                                                still allow the bundle to build.
-                                                            */
-    
-                                                            resolve(isTestEnvironment ? '' : content);
-                                                        })
-                                                    )
-                                                };
                                             }
+
+                                            resp = {
+                                                text: () => (
+                                                    new Promise((resolve, _reject) => {
+                                                        /*
+                                                            if run in a test environment, failures will return a empty string which will
+                                                            still allow the bundle to build.
+                                                        */
+
+                                                        resolve(isTestEnvironment ? '' : content);
+                                                    })
+                                                )
+                                            };
                                         }
                                     };
 
