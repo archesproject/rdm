@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     "django_hosts",
     "arches",
     "arches.app.models",
+    "arches_references",
     "arches.management",
     "guardian",
     "captcha",

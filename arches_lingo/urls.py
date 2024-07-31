@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from arches_lingo.views import ConceptTreeView
 
 urlpatterns = [
     path("concept_trees/", ConceptTreeView.as_view(), name="concept_trees"),
+    re_path(r"^", include("arches_references.urls")),
 ]
 
 # Ensure Arches core urls are superseded by project-level urls
