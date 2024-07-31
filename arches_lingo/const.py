@@ -21,13 +21,13 @@ CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID = "bf73e60a-4888-11ee-8a8d-11afefc4bff7"
 SCHEMES_GRAPH_ID = "56788995-423b-11ee-8a8d-11afefc4bff7"
 
 # appellative_status
-SCHEME_NAME_NODEGROUP = "ab9fee9c-0eb6-11ef-93db-0a58a9feac02"
+SCHEME_NAME_NODEGROUP = "ef87ac28-11de-11ef-9493-0a58a9feac02"
 # appellative_status_ascribed_name_content
-SCHEME_NAME_CONTENT_NODE = "a8ecaf54-0eb7-11ef-93db-0a58a9feac02"
+SCHEME_NAME_CONTENT_NODE = "ef87b132-11de-11ef-9493-0a58a9feac02"
 # appellative_status_ascribed_name_language
-SCHEME_NAME_LANGUAGE_NODE = "2deaf45e-d44d-11ee-b78d-0242ac130005"
+SCHEME_NAME_LANGUAGE_NODE = "ef87b43e-11de-11ef-9493-0a58a9feac02"
 # appellative_status_ascribed_relation
-SCHEME_NAME_TYPE_NODE = "1ddffab4-0eb8-11ef-93db-0a58a9feac02"
+SCHEME_NAME_TYPE_NODE = "ef87b588-11de-11ef-9493-0a58a9feac02"
 
 
 PREF_LABEL_VALUE_ID = "3b8a03f1-9047-48e4-9ca0-b3fe887f6f9d"
