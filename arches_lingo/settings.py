@@ -125,6 +125,7 @@ DATABASES = {
 SEARCH_THUMBNAILS = False
 
 INSTALLED_APPS = (
+    "arches_lingo",
     "webpack_loader",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -134,9 +135,9 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "django_hosts",
+    "arches_references",
     "arches",
     "arches.app.models",
-    "arches_references",
     "arches.management",
     "guardian",
     "captcha",
@@ -145,7 +146,6 @@ INSTALLED_APPS = (
     "oauth2_provider",
     "django_celery_results",
     # "silk",
-    "arches_lingo",
 )
 
 INSTALLED_APPS += ("arches.app",)
