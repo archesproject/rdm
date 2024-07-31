@@ -7,7 +7,7 @@ from arches_lingo.views import ConceptTreeView
 
 urlpatterns = [
     path("concept_trees/", ConceptTreeView.as_view(), name="concept_trees"),
-    re_path(r"^", include("arches_references.urls")),
+    path("", include("arches_references.urls")),
 ]
 
 # Ensure Arches core urls are superseded by project-level urls
