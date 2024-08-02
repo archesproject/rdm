@@ -3,9 +3,10 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls import include, path
 
-from arches_lingo.views import ConceptTreeView
+from arches_lingo.views import LingoRootView, ConceptTreeView
 
 urlpatterns = [
+    path("", LingoRootView.as_view(), name="root"),
     path("concept_trees/", ConceptTreeView.as_view(), name="concept_trees"),
     path("", include("arches_references.urls")),
 ]
