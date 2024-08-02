@@ -1,7 +1,4 @@
-from arches.app.models import models
-
-
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
@@ -17,13 +14,15 @@ class Migration(migrations.Migration):
 
         Plugin.objects.update_or_create(
             pluginid="29321ce0-bd95-4357-a2a5-822e9cb06f70",
-            name="Reference Data Manager (RDM)",
-            icon="fa fa-code-fork",
-            component="views/components/plugins/reference-data-manager",
-            componentname="reference-data-manager",
-            config={},
-            slug="reference-data-manager",
-            sortorder=0,
+            defaults={
+                "name": "Lingo",
+                "icon": "fa fa-code-fork",
+                "component": "views/components/plugins/lingo",
+                "componentname": "lingo",
+                "config": {},
+                "slug": "lingo",
+                "sortorder": 0,
+            },
         )
 
     def remove_plugin(apps, schema_editor):
