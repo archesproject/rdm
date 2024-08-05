@@ -9,4 +9,4 @@ class ArchesLingoConfig(AppConfig):
     is_arches_application = True
 
     def ready(self):
-        generate_frontend_configuration()
+        generate_frontend_configuration(self)

@@ -25,7 +25,7 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "arches @ git+https://github.com/archesproject/arches.git@dev/7.6.x",
+    "arches @ git+https://github.com/archesproject/arches.git@11288-cbyrd-run_ready-management-command",
     "arches_references @ git+https://github.com/archesproject/arches-references.git@main",
 ]
 version = "0.0.1"
