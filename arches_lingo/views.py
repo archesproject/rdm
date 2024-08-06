@@ -3,6 +3,8 @@ from collections import defaultdict
 from django.contrib.postgres.expressions import ArraySubquery
 from django.db.models import CharField, F, OuterRef, Subquery, Value
 from django.db.models.expressions import CombinedExpression, Func
+from django.shortcuts import render
+from django.utils.translation import gettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 
@@ -13,8 +15,8 @@ from arches.app.models.models import (
     Value as ConceptValue,
 )
 from arches.app.utils.decorators import group_required
-
 from arches.app.utils.response import JSONResponse
+from arches.app.views.base import BaseManagerView
 
 from arches_lingo.const import (
     SCHEMES_GRAPH_ID,
@@ -199,3 +201,10 @@ class ConceptTreeView(View):
         }
         # Todo: filter by nodegroup permissions
         return JSONResponse(data)
+
+
+class LingoRootView(BaseManagerView):
+    def get(self, request, graphid=None, resourceid=None):
+        context = self.get_context_data(main_script="views/root")
+        context["page_title"] = _("Lingo")
+        return render(request, "arches_lingo/root.htm", context)

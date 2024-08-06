@@ -135,7 +135,6 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "django_hosts",
-    "arches_references",
     "arches",
     "arches.app.models",
     "arches.management",
@@ -145,6 +144,7 @@ INSTALLED_APPS = (
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
+    "arches_references",
     # "silk",
 )
 
@@ -425,6 +425,9 @@ LANGUAGES = [
 # override this to permenantly display/hide the language switcher
 SHOW_LANGUAGE_SWITCH = len(LANGUAGES) > 1
 
+# TODO: remove when finalizing release
+SILENCED_SYSTEM_CHECKS += ["arches.E002"]
+
 try:
     from .package_settings import *
 except ImportError:
@@ -440,7 +443,3 @@ except ImportError as e:
         from settings_local import *
     except ImportError as e:
         pass
-
-# returns an output that can be read by NODEJS
-if __name__ == "__main__":
-    transmit_webpack_django_config(**locals())
