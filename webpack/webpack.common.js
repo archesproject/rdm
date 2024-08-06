@@ -258,6 +258,7 @@ module.exports = () => {
         }
 
         // END create universal constants
+
         resolve({
             entry: {
                 ...archesCoreEntryPointConfiguration,
