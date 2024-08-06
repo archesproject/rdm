@@ -425,6 +425,9 @@ LANGUAGES = [
 # override this to permenantly display/hide the language switcher
 SHOW_LANGUAGE_SWITCH = len(LANGUAGES) > 1
 
+# TODO: remove when finalizing release
+SILENCED_SYSTEM_CHECKS += ["arches.E002"]
+
 try:
     from .package_settings import *
 except ImportError:
