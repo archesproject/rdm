@@ -258,7 +258,6 @@ module.exports = () => {
         }
 
         // END create universal constants
-
         resolve({
             entry: {
                 ...archesCoreEntryPointConfiguration,
@@ -325,7 +324,8 @@ module.exports = () => {
                         loader: Path.join(PROJECT_RELATIVE_NODE_MODULES_PATH, 'ts-loader'),
                         options: {
                             appendTsSuffixTo: [/\.vue$/],
-                            transpileOnly: true
+                            transpileOnly: true,
+                            configFile: Path.resolve(__dirname, '..', 'tsconfig.json')
                         }
                     },
                     {
