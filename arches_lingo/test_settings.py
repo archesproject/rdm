@@ -14,6 +14,9 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "django_hosts",
+    "arches_lingo",
+    "arches_references",
     "arches",
     "arches.app.models",
     "arches.management",
@@ -23,7 +26,6 @@ INSTALLED_APPS = (
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
-    "arches_lingo",
 )
 ROOT_URLCONF = "arches_lingo.urls"
 
