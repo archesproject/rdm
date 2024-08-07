@@ -5,6 +5,9 @@ from django.test import TestCase
 from django.test.client import Client
 from django.urls import reverse
 
+# these tests can be run from the command line via
+# python manage.py test tests.tests --settings="tests.test_settings"
+
 from arches.app.models.models import (
     Concept,
     GraphModel,
@@ -97,7 +100,7 @@ def setUpModule():
         concept_id=LANGUAGE_CONCEPT_ID,
         valueid=ENGLISH_VALUE_ID,
         valuetype_id="prefLabel",
-        value="en-US",
+        value="en",
     )
 
 
