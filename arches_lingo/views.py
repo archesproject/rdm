@@ -149,8 +149,6 @@ class ConceptTreeView(View):
 
     def serialize_scheme_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[SCHEME_NAME_LANGUAGE_NODE][0]]
-        if lang_code in ("en-US", "en-us"):
-            lang_code = "en"  # ETL process currently uses "en" as the language key
         try:
             value = label_tile[SCHEME_NAME_CONTENT_NODE][lang_code]["value"]
         except KeyError:
@@ -175,8 +173,6 @@ class ConceptTreeView(View):
 
     def serialize_concept_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[CONCEPT_NAME_LANGUAGE_NODE][0]]
-        if lang_code in ("en-US", "en-us"):
-            lang_code = "en"  # ETL process currently uses "en" as the language key
         try:
             value = label_tile[CONCEPT_NAME_CONTENT_NODE][lang_code]["value"]
         except KeyError:
