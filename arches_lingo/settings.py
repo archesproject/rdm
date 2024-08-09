@@ -19,8 +19,6 @@ except ImportError:
 APP_NAME = "arches_lingo"
 APP_VERSION = semantic_version.Version(major=0, minor=0, patch=0)
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-MIN_ARCHES_VERSION = arches.__version__
-MAX_ARCHES_VERSION = arches.__version__
 
 
 WEBPACK_LOADER = {
@@ -301,7 +299,7 @@ ENABLE_CAPTCHA = False
 NOCAPTCHA = True
 # RECAPTCHA_PROXY = 'http://127.0.0.1:8000'
 if DEBUG is True:
-    SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+    SILENCED_SYSTEM_CHECKS += ["captcha.recaptcha_test_key_error"]
 
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  #<-- Only need to uncomment this for testing without an actual email server
