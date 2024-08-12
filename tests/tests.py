@@ -135,7 +135,8 @@ class ConceptTreeViewTests(TestCase):
         cls.concepts = [
             ResourceInstance(graph_id=SCHEMES_GRAPH_ID) for _ in range(CONCEPT_COUNT)
         ]
-        ResourceInstance.objects.bulk_create(cls.concepts)
+        for concept in cls.concepts:
+            concept.save()
 
         for i, concept in enumerate(cls.concepts):
             # Create label tile
