@@ -41,3 +41,16 @@ export const logout = async () => {
         throw new Error((error as Error).message || response.statusText);
     }
 };
+
+export const fetchUser = async () => {
+    const response = await fetch(arches.urls.api_user);
+    try {
+        const parsed = await response.json();
+        if (response.ok) {
+            return parsed;
+        }
+        throw new Error(parsed.message);
+    } catch (error) {
+        throw new Error((error as Error).message || response.statusText);
+    }
+};
