@@ -20,6 +20,7 @@ provide(userKey, { user, setUser });
     <component
         :is="user ? HomePage : LoginPage"
         v-model="user"
+        style="font-family: sans-serif"
     />
     <Toast />
 </template>
