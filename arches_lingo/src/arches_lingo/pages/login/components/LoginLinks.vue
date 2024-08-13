@@ -17,7 +17,7 @@ const { $gettext } = useGettext();
         <Button
             as="a"
             :label="$gettext('Multi-factor login')"
-            :href="arches.urls.auth"
+            :href="arches.urls.auth + '?next=/'"
         />
     </div>
 </template>
