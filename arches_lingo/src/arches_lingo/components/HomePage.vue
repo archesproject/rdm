@@ -11,7 +11,7 @@ import { userKey } from "@/arches_lingo/constants.ts";
 
 import type { UserRefAndSetter } from "@/arches_lingo/types";
 
-const { user } = inject(userKey) as UserRefAndSetter;
+const { user, setUser } = inject(userKey) as UserRefAndSetter;
 
 const { $gettext } = useGettext();
 const toast = useToast();
@@ -19,7 +19,7 @@ const toast = useToast();
 const issueLogout = async () => {
     try {
         await logout();
-        user.value = null;
+        setUser(null);
     } catch (error) {
         toast.add({
             severity: ERROR,

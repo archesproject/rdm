@@ -17,10 +17,9 @@ provide(userKey, { user, setUser });
 </script>
 
 <template>
-    <component
-        :is="user ? HomePage : LoginPage"
-        v-model="user"
-        style="font-family: sans-serif"
-    />
+    <div style="font-family: sans-serif">
+        <HomePage v-if="user" />
+        <LoginPage v-else />
+    </div>
     <Toast />
 </template>
