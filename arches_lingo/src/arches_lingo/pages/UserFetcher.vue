@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, ref } from "vue";
+import { inject, ref } from "vue";
 import { useGettext } from "vue3-gettext";
 
 import { useToast } from "primevue/usetoast";
@@ -10,19 +10,16 @@ import {
     ERROR,
     userKey,
 } from "@/arches_lingo/constants.ts";
-import HomePage from "@/arches_lingo/pages/HomePage.vue";
-import LoginPage from "@/arches_lingo/pages/login/LoginPage.vue";
 
-import type { User } from "@/arches_lingo/types";
+import type { UserRefAndSetter } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
 const toast = useToast();
 
-const user = ref<User | null>(null);
-const setUser = (userToSet: User | null) => {
-    user.value = userToSet;
-};
-provide(userKey, { user, setUser });
+const { setUser } = inject(userKey, {
+    user: ref(null),
+    setUser: () => {},
+}) as UserRefAndSetter;
 
 try {
     setUser(await fetchUser());
@@ -37,8 +34,5 @@ try {
 </script>
 
 <template>
-    <div style="font-family: sans-serif">
-        <HomePage v-if="user && user.username !== 'anonymous'" />
-        <LoginPage v-else />
-    </div>
+    <div role="presentation"></div>
 </template>
