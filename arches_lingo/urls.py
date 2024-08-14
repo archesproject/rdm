@@ -7,7 +7,11 @@ from arches_lingo.views import LingoRootView, ConceptTreeView
 
 urlpatterns = [
     path("", LingoRootView.as_view(), name="root"),
-    path("concept_trees/", ConceptTreeView.as_view(), name="concept_trees"),
+    path("login", LingoRootView.as_view(), name="login"),
+    path("search", LingoRootView.as_view(), name="search"),
+    path("advanced-search", LingoRootView.as_view(), name="advanced-search"),
+    path("schemes", LingoRootView.as_view(), name="schemes"),
+    path("api/concept_trees", ConceptTreeView.as_view(), name="concept_trees"),
     path("", include("arches_references.urls")),
 ]
 

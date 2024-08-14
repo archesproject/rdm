@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { inject, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
 import { useToast } from "primevue/usetoast";
@@ -12,13 +13,17 @@ import {
     ERROR,
     userKey,
 } from "@/arches_lingo/constants.ts";
-
-import type { UserRefAndSetter } from "@/arches_lingo/types";
+import { routeNames } from "@/arches_lingo/routes.ts";
 
 const { $gettext } = useGettext();
 const toast = useToast();
+const router = useRouter();
+const route = useRoute();
 
-const { setUser } = inject(userKey) as UserRefAndSetter;
+const { setUser } = inject(userKey, {
+    user: ref(null),
+    setUser: () => {},
+});
 const username = ref();
 const password = ref();
 
@@ -26,6 +31,7 @@ const submit = async () => {
     try {
         const userToSet = await login(username.value, password.value);
         setUser(userToSet);
+        router.push(route.redirectedFrom || { name: routeNames.root });
     } catch (error) {
         toast.add({
             severity: ERROR,

@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed, inject, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
 import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
 
-import { DEFAULT_ERROR_TOAST_LIFE, ERROR } from "@/arches_lingo/constants.ts";
 import { logout } from "@/arches_lingo/api.ts";
-import { userKey } from "@/arches_lingo/constants.ts";
+import {
+    DEFAULT_ERROR_TOAST_LIFE,
+    ERROR,
+    userKey,
+} from "@/arches_lingo/constants.ts";
+import { routeNames } from "@/arches_lingo/routes.ts";
 
-import type { UserRefAndSetter } from "@/arches_lingo/types";
-
-const { user, setUser } = inject(userKey) as UserRefAndSetter;
+const { user, setUser } = inject(userKey, {
+    user: ref(null),
+    setUser: () => {},
+});
 
 const { $gettext } = useGettext();
 const toast = useToast();
+const router = useRouter();
 
 const issueLogout = async () => {
     try {
         await logout();
         setUser(null);
+        router.push({ name: routeNames.login });
     } catch (error) {
         toast.add({
             severity: ERROR,
@@ -43,13 +51,28 @@ const bestName = computed(() => {
 </script>
 
 <template>
-    <main>
-        <div style="display: flex; justify-content: space-between">
-            <h1>{{ $gettext("LINGO") }}</h1>
-            <span>{{ $gettext("Hello %{bestName}", { bestName }) }}</span>
-            <Button @click="issueLogout">
-                {{ $gettext("Sign out") }}
-            </Button>
-        </div>
-    </main>
+    <div style="display: flex; justify-content: space-between">
+        <h1>{{ $gettext("LINGO") }}</h1>
+        <span>{{ $gettext("Hello %{bestName}", { bestName }) }}</span>
+        <Button @click="issueLogout">
+            {{ $gettext("Sign out") }}
+        </Button>
+    </div>
+    <nav>
+        <RouterLink :to="{ name: routeNames.root }">
+            {{ $gettext("Go to Root") }}
+        </RouterLink>
+        <br />
+        <RouterLink :to="{ name: routeNames.schemes }">
+            {{ $gettext("Go to Schemes") }}
+        </RouterLink>
+        <br />
+        <RouterLink :to="{ name: routeNames.search }">
+            {{ $gettext("Go to Search") }}
+        </RouterLink>
+        <br />
+        <RouterLink :to="{ name: routeNames.advancedSearch }">
+            {{ $gettext("Go to Advanced Search") }}
+        </RouterLink>
+    </nav>
 </template>

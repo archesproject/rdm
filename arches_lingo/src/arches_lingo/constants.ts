@@ -1,4 +1,5 @@
 import type { InjectionKey } from "vue";
+
 import type { UserRefAndSetter } from "@/arches_lingo/types";
 
 export const ERROR = "error";

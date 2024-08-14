@@ -21,10 +21,10 @@
         "arches-dev-dependencies": "archesproject/arches-dev-dependencies#dev/8.0.x"
     },
     "dependencies": {
-        "arches": "archesproject/arches#dev/8.0.x"
+        "arches": "archesproject/arches#dev/8.0.x",
+        "vue-router": "^4.4.3"
     },
-    "nodeModulesPaths": {
-    },
+    "nodeModulesPaths": {},
     "overrides": {
         "moment-timezone": "^0.5.45",
         "nomnom": "npm:@gerhobbelt/nomnom",
