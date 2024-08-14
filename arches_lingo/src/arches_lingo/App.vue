@@ -5,7 +5,8 @@ import { useRouter } from "vue-router";
 import ProgressSpinner from "primevue/progressspinner";
 import Toast from "primevue/toast";
 
-import { routeNames, userKey } from "@/arches_lingo/constants.ts";
+import { userKey } from "@/arches_lingo/constants.ts";
+import { routeNames } from "@/arches_lingo/routes.ts";
 import UserFetcher from "@/arches_lingo/components/UserFetcher.vue";
 
 import type { User } from "@/arches_lingo/types";

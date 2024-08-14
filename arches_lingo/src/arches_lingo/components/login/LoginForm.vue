@@ -11,9 +11,9 @@ import { login } from "@/arches_lingo/api.ts";
 import {
     DEFAULT_ERROR_TOAST_LIFE,
     ERROR,
-    routeNames,
     userKey,
 } from "@/arches_lingo/constants.ts";
+import { routeNames } from "@/arches_lingo/routes.ts";
 
 import type { UserRefAndSetter } from "@/arches_lingo/types";
 

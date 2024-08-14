@@ -3,7 +3,7 @@ import createVueApplication from 'arches/arches/app/media/js/utils/create-vue-ap
 import { createRouter, createWebHistory } from 'vue-router';
 
 import LingoApp from '@/arches_lingo/App.vue';
-import { routes } from '@/arches_lingo/constants.ts';
+import { routes } from '@/arches_lingo/routes.ts';
 
 const router = createRouter({
     history: createWebHistory(),
