@@ -14,12 +14,10 @@ import {
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 
-import type { UserRefAndSetter } from "@/arches_lingo/types";
-
 const { user, setUser } = inject(userKey, {
     user: ref(null),
     setUser: () => {},
-}) as UserRefAndSetter;
+});
 
 const { $gettext } = useGettext();
 const toast = useToast();

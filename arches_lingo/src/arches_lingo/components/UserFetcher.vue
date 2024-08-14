@@ -11,15 +11,13 @@ import {
     userKey,
 } from "@/arches_lingo/constants.ts";
 
-import type { UserRefAndSetter } from "@/arches_lingo/types";
-
 const { $gettext } = useGettext();
 const toast = useToast();
 
 const { setUser } = inject(userKey, {
     user: ref(null),
     setUser: () => {},
-}) as UserRefAndSetter;
+});
 
 try {
     setUser(await fetchUser());

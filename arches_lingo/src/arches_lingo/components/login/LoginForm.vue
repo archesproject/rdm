@@ -15,8 +15,6 @@ import {
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 
-import type { UserRefAndSetter } from "@/arches_lingo/types";
-
 const { $gettext } = useGettext();
 const toast = useToast();
 const router = useRouter();
@@ -25,7 +23,7 @@ const route = useRoute();
 const { setUser } = inject(userKey, {
     user: ref(null),
     setUser: () => {},
-}) as UserRefAndSetter;
+});
 const username = ref();
 const password = ref();
 
