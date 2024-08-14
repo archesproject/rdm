@@ -6,7 +6,7 @@ import ProgressSpinner from "primevue/progressspinner";
 import Toast from "primevue/toast";
 
 import { routeNames, userKey } from "@/arches_lingo/constants.ts";
-import UserFetcher from "@/arches_lingo/pages/UserFetcher.vue";
+import UserFetcher from "@/arches_lingo/components/UserFetcher.vue";
 
 import type { User } from "@/arches_lingo/types";
 

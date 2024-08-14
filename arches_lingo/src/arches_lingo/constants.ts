@@ -11,30 +11,27 @@ export const routes = [
     {
         path: "/",
         name: "root",
-        component: () => import("@/arches_lingo/pages/home/HomePage.vue"),
+        component: () => import("@/arches_lingo/pages/HomePage.vue"),
     },
     {
         path: "/login/:next?",
         name: "login",
-        component: () => import("@/arches_lingo/pages/login/LoginPage.vue"),
+        component: () => import("@/arches_lingo/pages/LoginPage.vue"),
     },
     {
         path: "/search",
         name: "search",
-        component: () =>
-            import("@/arches_lingo/pages/search-basic/BasicSearch.vue"),
+        component: () => import("@/arches_lingo/pages/BasicSearch.vue"),
     },
     {
         path: "/advanced-search",
         name: "advanced-search",
-        component: () =>
-            import("@/arches_lingo/pages/search-advanced/AdvancedSearch.vue"),
+        component: () => import("@/arches_lingo/pages/AdvancedSearch.vue"),
     },
     {
         path: "/schemes",
         name: "schemes",
-        component: () =>
-            import("@/arches_lingo/pages/scheme-list/SchemeList.vue"),
+        component: () => import("@/arches_lingo/pages/SchemeList.vue"),
     },
 ];
 
