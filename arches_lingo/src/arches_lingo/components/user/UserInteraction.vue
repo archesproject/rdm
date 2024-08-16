@@ -51,9 +51,12 @@ const bestName = computed(() => {
 </script>
 
 <template>
-    <div style="display: flex; align-items: center;">
+    <div style="display: flex; align-items: center">
         <span>{{ $gettext("Hello %{bestName}", { bestName }) }}</span>
-        <Button style="margin-left: 1rem;" @click="issueLogout">
+        <Button
+            style="margin-left: 1rem"
+            @click="issueLogout"
+        >
             {{ $gettext("Sign out") }}
         </Button>
     </div>

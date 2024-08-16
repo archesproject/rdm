@@ -2,34 +2,35 @@
 import { ref } from "vue";
 import { useGettext } from "vue3-gettext";
 
-import Button from 'primevue/button';
-import Menubar from 'primevue/menubar';
+import Button from "primevue/button";
+import Menubar from "primevue/menubar";
 
 import { routeNames } from "@/arches_lingo/routes.ts";
-import UserInteraction  from "@/arches_lingo/components/user/UserInteraction.vue";
+import UserInteraction from "@/arches_lingo/components/user/UserInteraction.vue";
 
 const { $gettext } = useGettext();
 
-
 const items = ref([
     {
-        label: $gettext('Search'),
-        icon: 'fa fa-search',
-        name: routeNames.search
+        label: $gettext("Search"),
+        icon: "fa fa-search",
+        name: routeNames.search,
     },
     {
-        label: $gettext('Advanced Search'),
-        icon: 'fa fa-file',
-        name: routeNames.advancedSearch
+        label: $gettext("Advanced Search"),
+        icon: "fa fa-file",
+        name: routeNames.advancedSearch,
     },
 ]);
-
 </script>
 
 <template>
-    <Menubar :model="items" style="height: 3rem;">
+    <Menubar
+        :model="items"
+        style="height: 3rem"
+    >
         <template #start>
-            <RouterLink 
+            <RouterLink
                 class="router-link"
                 :to="{ name: routeNames.root }"
                 style="text-decoration: none; color: inherit"
@@ -38,7 +39,7 @@ const items = ref([
             </RouterLink>
         </template>
         <template #item="{ item }">
-            <RouterLink 
+            <RouterLink
                 class="router-link"
                 :to="{ name: item.name }"
             >
@@ -54,5 +55,4 @@ const items = ref([
     </Menubar>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

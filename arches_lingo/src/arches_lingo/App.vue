@@ -38,9 +38,9 @@ router.beforeEach(async (to) => {
 </script>
 
 <template>
-    <main style="font-family: sans-serif; height: 100vh;">
+    <main style="font-family: sans-serif; height: 100vh">
         <PageHeader v-if="route.meta.shouldShowHeader" />
-        <div style="margin: 1rem;">
+        <div style="margin: 1rem">
             <RouterView />
         </div>
     </main>
