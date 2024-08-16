@@ -26,12 +26,11 @@ const items = ref([
 
 <template>
     <Menubar
+        class="page-header"
         :model="items"
-        style="height: 3rem"
     >
         <template #start>
             <RouterLink
-                class="router-link"
                 :to="{ name: routeNames.root }"
                 style="text-decoration: none; color: inherit"
             >
@@ -39,11 +38,8 @@ const items = ref([
             </RouterLink>
         </template>
         <template #item="{ item }">
-            <RouterLink
-                class="router-link"
-                :to="{ name: item.name }"
-            >
-                <Button v-ripple>
+            <RouterLink :to="{ name: item.name }">
+                <Button>
                     <i :class="item.icon"></i>
                     <span>{{ item.label }}</span>
                 </Button>
@@ -55,4 +51,8 @@ const items = ref([
     </Menubar>
 </template>
 
-<style scoped></style>
+<style scoped>
+.page-header {
+    border-radius: 0;
+}
+</style>

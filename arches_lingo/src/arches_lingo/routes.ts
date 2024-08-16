@@ -3,31 +3,31 @@ export const routes = [
         path: "/",
         name: "root",
         component: () => import("@/arches_lingo/pages/HomePage.vue"),
-        meta: { shouldShowHeader: true },
+        meta: { shouldShowNavigation: true },
     },
     {
         path: "/login/:next?",
         name: "login",
         component: () => import("@/arches_lingo/pages/LoginPage.vue"),
-        meta: { shouldShowHeader: false },
+        meta: { shouldShowNavigation: false },
     },
     {
         path: "/search",
         name: "search",
         component: () => import("@/arches_lingo/pages/BasicSearch.vue"),
-        meta: { shouldShowHeader: true },
+        meta: { shouldShowNavigation: true },
     },
     {
         path: "/advanced-search",
         name: "advanced-search",
         component: () => import("@/arches_lingo/pages/AdvancedSearch.vue"),
-        meta: { shouldShowHeader: true },
+        meta: { shouldShowNavigation: true },
     },
     {
         path: "/schemes",
         name: "schemes",
         component: () => import("@/arches_lingo/pages/SchemeList.vue"),
-        meta: { shouldShowHeader: true },
+        meta: { shouldShowNavigation: true },
     },
 ];
 

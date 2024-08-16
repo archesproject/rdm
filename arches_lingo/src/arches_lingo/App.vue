@@ -12,6 +12,7 @@ import UserFetcher from "@/arches_lingo/components/UserFetcher.vue";
 import type { User } from "@/arches_lingo/types";
 
 import PageHeader from "@/arches_lingo/components/header/PageHeader.vue";
+import SideNav from "@/arches_lingo/components/sidenav/SideNav.vue";
 
 const user = ref<User | null>(null);
 const setUser = (userToSet: User | null) => {
@@ -38,10 +39,21 @@ router.beforeEach(async (to) => {
 </script>
 
 <template>
-    <main style="font-family: sans-serif; height: 100vh">
-        <PageHeader v-if="route.meta.shouldShowHeader" />
-        <div style="margin: 1rem">
-            <RouterView />
+    <main
+        style="
+            font-family: sans-serif;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        "
+    >
+        <PageHeader v-if="route.meta.shouldShowNavigation" />
+        <div style="display: flex; flex: auto; flex-direction: row">
+            <SideNav v-if="route.meta.shouldShowNavigation" />
+            <div style="margin: 1rem; flex: auto">
+                <RouterView />
+            </div>
         </div>
     </main>
     <Suspense>
