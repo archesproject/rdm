@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, provide, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 import ProgressSpinner from "primevue/progressspinner";
 import Toast from "primevue/toast";
@@ -11,6 +11,8 @@ import UserFetcher from "@/arches_lingo/components/UserFetcher.vue";
 
 import type { User } from "@/arches_lingo/types";
 
+import PageHeader from "@/arches_lingo/components/header/PageHeader.vue";
+
 const user = ref<User | null>(null);
 const setUser = (userToSet: User | null) => {
     user.value = userToSet;
@@ -18,6 +20,7 @@ const setUser = (userToSet: User | null) => {
 provide(userKey, { user, setUser });
 
 const router = useRouter();
+const route = useRoute();
 
 const isAuthenticated = computed(() => {
     return user.value && user.value.username !== "anonymous";
@@ -35,8 +38,11 @@ router.beforeEach(async (to) => {
 </script>
 
 <template>
-    <main style="font-family: sans-serif">
-        <RouterView />
+    <main style="font-family: sans-serif; height: 100vh;">
+        <PageHeader v-if="route.meta.shouldShowHeader" />
+        <div style="margin: 1rem;">
+            <RouterView />
+        </div>
     </main>
     <Suspense>
         <UserFetcher />
