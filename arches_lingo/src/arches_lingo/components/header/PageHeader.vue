@@ -55,4 +55,10 @@ const items = ref([
 .page-header {
     border-radius: 0;
 }
+
+@media screen and (max-width: 960px) {
+    :deep(.p-menubar-button) {
+        display: none !important;
+    }
+}
 </style>
