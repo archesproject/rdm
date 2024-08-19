@@ -2,8 +2,6 @@
 import { ref } from "vue";
 import { useGettext } from "vue3-gettext";
 
-import Button from "primevue/button";
-
 import { routeNames } from "@/arches_lingo/routes.ts";
 
 const { $gettext } = useGettext();
@@ -28,16 +26,16 @@ const items = ref([
             v-for="item in items"
             :key="item.routeName"
         >
-            <RouterLink :to="{ name: item.routeName }">
-                <Button
-                    v-tooltip="item.linkName"
-                    :aria-label="item.linkName"
-                >
-                    <i
-                        :class="item.icon"
-                        aria-hidden="true"
-                    ></i>
-                </Button>
+            <RouterLink
+                v-tooltip="item.linkName"
+                :to="{ name: item.routeName }"
+                class="p-button p-component p-button-primary"
+                style="text-decoration: none"
+            >
+                <i
+                    :class="item.icon"
+                    aria-hidden="true"
+                ></i>
             </RouterLink>
         </div>
     </aside>
