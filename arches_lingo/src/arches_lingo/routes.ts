@@ -5,7 +5,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/HomePage.vue"),
         meta: {
             shouldShowNavigation: true,
-            requiresAuth: true,
+            requiresAuthentication: false,
         },
     },
     {
@@ -14,7 +14,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/LoginPage.vue"),
         meta: {
             shouldShowNavigation: false,
-            requiresAuth: false,
+            requiresAuthentication: false,
         },
     },
     {
@@ -23,7 +23,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/BasicSearch.vue"),
         meta: {
             shouldShowNavigation: true,
-            requiresAuth: true,
+            requiresAuthentication: true,
         },
     },
     {
@@ -32,7 +32,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/AdvancedSearch.vue"),
         meta: {
             shouldShowNavigation: true,
-            requiresAuth: true,
+            requiresAuthentication: true,
         },
     },
     {
@@ -41,7 +41,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/SchemeList.vue"),
         meta: {
             shouldShowNavigation: true,
-            requiresAuth: true,
+            requiresAuthentication: true,
         },
     },
 ];

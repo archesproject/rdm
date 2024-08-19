@@ -7,10 +7,12 @@ import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 
 import {
+    ANONYMOUS,
     DEFAULT_ERROR_TOAST_LIFE,
     ERROR,
     userKey,
 } from "@/arches_lingo/constants.ts";
+
 import { routeNames } from "@/arches_lingo/routes.ts";
 import { fetchUser } from "@/arches_lingo/api.ts";
 
@@ -32,13 +34,20 @@ const { $gettext } = useGettext();
 
 router.beforeEach(async (to, _from, next) => {
     try {
-        const userData = await fetchUser();
-        setUser(userData);
+        let userData = user.value;
 
-        const requiresAuth = to.matched.some(
-            (record) => record.meta.requiresAuth,
+        if (!userData) {
+            userData = await fetchUser();
+            setUser(userData);
+        }
+
+        const requiresAuthentication = to.matched.some(
+            (record) => record.meta.requiresAuthentication,
         );
-        if (requiresAuth && userData.username === "anonymous") {
+        if (
+            requiresAuthentication &&
+            (!userData || userData.username === ANONYMOUS)
+        ) {
             throw new Error();
         } else {
             next();
