@@ -29,8 +29,14 @@ const items = ref([
             :key="item.routeName"
         >
             <RouterLink :to="{ name: item.routeName }">
-                <Button v-tooltip="item.linkName">
-                    <i :class="item.icon"></i>
+                <Button
+                    v-tooltip="item.linkName"
+                    :aria-label="item.linkName"
+                >
+                    <i
+                        :class="item.icon"
+                        aria-hidden="true"
+                    ></i>
                 </Button>
             </RouterLink>
         </div>
