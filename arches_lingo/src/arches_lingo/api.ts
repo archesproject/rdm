@@ -16,11 +16,11 @@ export const login = async (username: string, password: string) => {
         body: JSON.stringify({ username, password }),
     });
     try {
-        const parsed = await response.json();
+        const responseJson = await response.json();
         if (response.ok) {
-            return parsed;
+            return responseJson;
         }
-        throw new Error(parsed.message);
+        throw new Error(responseJson.message);
     } catch (error) {
         throw new Error((error as Error).message || response.statusText);
     }
@@ -45,11 +45,11 @@ export const logout = async () => {
 export const fetchUser = async () => {
     const response = await fetch(arches.urls.api_user);
     try {
-        const parsed = await response.json();
+        const responseJson = await response.json();
         if (response.ok) {
-            return parsed;
+            return responseJson;
         }
-        throw new Error(parsed.message);
+        throw new Error(responseJson.message);
     } catch (error) {
         throw new Error((error as Error).message || response.statusText);
     }
