@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useGettext } from "vue3-gettext";
 
 import Button from "primevue/button";
 
 import { routeNames } from "@/arches_lingo/routes.ts";
 
+const { $gettext } = useGettext();
+
 const items = ref([
     {
         icon: "fa fa-home",
-        name: routeNames.root,
+        routeName: routeNames.root,
+        linkName: $gettext("Home"),
     },
     {
         icon: "fa fa-search",
-        name: routeNames.search,
+        routeName: routeNames.search,
+        linkName: $gettext("Search"),
     },
 ]);
 </script>
@@ -21,10 +26,10 @@ const items = ref([
     <aside class="sidenav">
         <div
             v-for="item in items"
-            :key="item.name"
+            :key="item.routeName"
         >
-            <RouterLink :to="{ name: item.name }">
-                <Button>
+            <RouterLink :to="{ name: item.routeName }">
+                <Button v-tooltip="item.linkName">
                     <i :class="item.icon"></i>
                 </Button>
             </RouterLink>
