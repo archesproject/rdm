@@ -5,7 +5,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/HomePage.vue"),
         meta: {
             shouldShowNavigation: true,
-            requiresAuthentication: false,
+            requiresAuthentication: true,
         },
     },
     {

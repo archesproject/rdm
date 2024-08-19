@@ -53,12 +53,14 @@ router.beforeEach(async (to, _from, next) => {
             next();
         }
     } catch (error) {
-        toast.add({
-            severity: ERROR,
-            life: DEFAULT_ERROR_TOAST_LIFE,
-            summary: $gettext("Login required."),
-            detail: error instanceof Error ? error.message : undefined,
-        });
+        if (to.name !== routeNames.root) {
+            toast.add({
+                severity: ERROR,
+                life: DEFAULT_ERROR_TOAST_LIFE,
+                summary: $gettext("Login required."),
+                detail: error instanceof Error ? error.message : undefined,
+            });
+        }
         next({ name: routeNames.login });
     }
 });
