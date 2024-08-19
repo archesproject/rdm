@@ -10,7 +10,7 @@ import { logout } from "@/arches_lingo/api.ts";
 import {
     DEFAULT_ERROR_TOAST_LIFE,
     ERROR,
-    userKey,
+    USER_KEY,
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 
@@ -20,7 +20,7 @@ const { $gettext } = useGettext();
 const toast = useToast();
 const router = useRouter();
 
-const { user } = inject(userKey) as UserRefAndSetter;
+const { user } = inject(USER_KEY) as UserRefAndSetter;
 
 const issueLogout = async () => {
     try {

@@ -10,7 +10,7 @@ import {
     ANONYMOUS,
     DEFAULT_ERROR_TOAST_LIFE,
     ERROR,
-    userKey,
+    USER_KEY,
 } from "@/arches_lingo/constants.ts";
 
 import { routeNames } from "@/arches_lingo/routes.ts";
@@ -25,7 +25,7 @@ const user = ref<User | null>(null);
 const setUser = (userToSet: User | null) => {
     user.value = userToSet;
 };
-provide(userKey, { user, setUser });
+provide(USER_KEY, { user, setUser });
 
 const router = useRouter();
 const route = useRoute();
