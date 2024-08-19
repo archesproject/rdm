@@ -36,7 +36,7 @@ router.beforeEach(async (to, _from, next) => {
     try {
         let userData = user.value;
 
-        if (!userData) {
+        if (!userData || userData.username === ANONYMOUS) {
             userData = await fetchUser();
             setUser(userData);
         }
