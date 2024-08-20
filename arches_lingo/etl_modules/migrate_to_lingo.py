@@ -20,7 +20,16 @@ from arches_lingo.const import (
     SCHEMES_GRAPH_ID,
     CONCEPTS_GRAPH_ID,
     TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
-    BROADER_NODE_AND_NODEGROUP,
+    CLASSIFICATION_STATUS_NODEGROUP,
+    CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID,
+    CLASSIFICATION_STATUS_ASCRIBED_RELATION_NODEID,
+    CLASSIFICATION_STATUS_TYPE_NODEID,
+    CLASSIFICATION_STATUS_TYPE_METATYPE_NODEID,
+    CLASSIFICATION_STATUS_ASSIGNMENT_ACTOR_NODEID,
+    CLASSIFICATION_STATUS_ASSIGNMENT_OBJ_USED_NODEID,
+    CLASSIFICATION_STATUS_ASSIGNMENT_TYPE_NODEID,
+    CLASSIFICATION_STATUS_TIMESPAN_END_OF_END_NODEID,
+    CLASSIFICATION_STATUS_TIMESPAN_BEGIN_OF_BEGIN_NODEID,
     CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID,
 )
 
@@ -287,7 +296,15 @@ class RDMMtoLingoMigrator(BaseImportModule):
                         'value', json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')),
                         'source', conceptidfrom,
                         'datatype', 'resource-instance-list'
-                    )
+                    ),
+                    %s, null,
+                    %s, null,
+                    %s, null,
+                    %s, null,
+                    %s, null,
+                    %s, null,
+                    %s, null,
+                    %s, null
                 ) as value,
                 conceptidto as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
                 uuid_generate_v4() as tileid,
@@ -300,7 +317,19 @@ class RDMMtoLingoMigrator(BaseImportModule):
             from relations
             where relationtype = 'narrower';
         """,
-            (BROADER_NODE_AND_NODEGROUP, loadid, BROADER_NODE_AND_NODEGROUP),
+            (
+                CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID,
+                CLASSIFICATION_STATUS_ASCRIBED_RELATION_NODEID,
+                CLASSIFICATION_STATUS_TYPE_NODEID,
+                CLASSIFICATION_STATUS_TYPE_METATYPE_NODEID,
+                CLASSIFICATION_STATUS_ASSIGNMENT_ACTOR_NODEID,
+                CLASSIFICATION_STATUS_ASSIGNMENT_OBJ_USED_NODEID,
+                CLASSIFICATION_STATUS_ASSIGNMENT_TYPE_NODEID,
+                CLASSIFICATION_STATUS_TIMESPAN_END_OF_END_NODEID,
+                CLASSIFICATION_STATUS_TIMESPAN_BEGIN_OF_BEGIN_NODEID,
+                loadid,
+                CLASSIFICATION_STATUS_NODEGROUP
+            ),
         )
 
         # Create Part of Scheme relationships - derived by recursively generating concept hierarchy & associating
