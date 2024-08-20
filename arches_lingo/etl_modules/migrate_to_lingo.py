@@ -71,16 +71,15 @@ class RDMMtoLingoMigrator(BaseImportModule):
                     concept.pk
                 )  # use old conceptid as new resourceinstanceid
 
-                appellative_status = {}
-                identifier = {}
                 if (
                     value.valuetype_id == "prefLabel"
                     or value.valuetype_id == "altLabel"
+                    or value.valuetype_id == "hiddenLabel"
                 ):
+                    appellative_status = {}
                     appellative_status["appellative_status_ascribed_name_content"] = (
                         value.value
                     )
-
                     appellative_status["appellative_status_ascribed_name_language"] = (
                         value.language_id
                     )
@@ -91,9 +90,25 @@ class RDMMtoLingoMigrator(BaseImportModule):
                         {"appellative_status": appellative_status}
                     )
                 elif value.valuetype_id == "identifier":
+                    identifier = {}
                     identifier["identifier_content"] = value.value
                     identifier["identifier_type"] = value.valuetype_id
                     scheme_to_load["tile_data"].append({"identifier": identifier})
+                elif (
+                    value.valuetype_id == "note"
+                    or value.valuetype_id == "changeNote"
+                    or value.valuetype_id == "definition"
+                    or value.valuetype_id == "description"
+                    or value.valuetype_id == "editorialNote"
+                    or value.valuetype_id == "example"
+                    or value.valuetype_id == "historyNote"
+                    or value.valuetype_id == "scopeNote"
+                ):
+                    statement = {}
+                    statement["statement_content"] = value.value
+                    statement["statement_type"] = value.valuetype_id
+                    statement["statement_language"] = value.language_id
+                    scheme_to_load["tile_data"].append({"statement": statement})
             schemes.append(scheme_to_load)
         self.populate_staging_table(cursor, schemes, nodegroup_lookup, node_lookup)
 
@@ -108,12 +123,12 @@ class RDMMtoLingoMigrator(BaseImportModule):
                     concept.pk
                 )  # use old conceptid as new resourceinstanceid
 
-                appellative_status = {}
-                identifier = {}
                 if (
                     value.valuetype_id == "prefLabel"
                     or value.valuetype_id == "altLabel"
+                    or value.valuetype_id == "hiddenLabel"
                 ):
+                    appellative_status = {}
                     appellative_status["appellative_status_ascribed_name_content"] = (
                         value.value
                     )
@@ -127,9 +142,25 @@ class RDMMtoLingoMigrator(BaseImportModule):
                         {"appellative_status": appellative_status}
                     )
                 elif value.valuetype_id == "identifier":
+                    identifier = {}
                     identifier["identifier_content"] = value.value
                     identifier["identifier_type"] = value.valuetype_id
                     concept_to_load["tile_data"].append({"identifier": identifier})
+                elif (
+                    value.valuetype_id == "note"
+                    or value.valuetype_id == "changeNote"
+                    or value.valuetype_id == "definition"
+                    or value.valuetype_id == "description"
+                    or value.valuetype_id == "editorialNote"
+                    or value.valuetype_id == "example"
+                    or value.valuetype_id == "historyNote"
+                    or value.valuetype_id == "scopeNote"
+                ):
+                    statement = {}
+                    statement["statement_content"] = value.value
+                    statement["statement_type"] = value.valuetype_id
+                    statement["statement_language"] = value.language_id
+                    concept_to_load["tile_data"].append({"statement": statement})
             concepts.append(concept_to_load)
         self.populate_staging_table(cursor, concepts, nodegroup_lookup, node_lookup)
 
