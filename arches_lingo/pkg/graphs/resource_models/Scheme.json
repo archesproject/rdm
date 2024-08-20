@@ -2115,7 +2115,7 @@
                     "parentnodegroup_id": null
                 },
                 {
-                    "cardinality": "1",
+                    "cardinality": "n",
                     "legacygroupid": null,
                     "nodegroupid": "7131bc72-11e0-11ef-9493-0a58a9feac02",
                     "parentnodegroup_id": null
@@ -3805,9 +3805,9 @@
             "publication": {
                 "graph_id": "56788995-423b-11ee-8a8d-11afefc4bff7",
                 "most_recent_edit_id": null,
-                "notes": "make appellative status cardinality n",
-                "publicationid": "bf9bfbae-5f04-11ef-9c5b-0aa766c61b65",
-                "published_time": "2024-08-20T09:59:07.095"
+                "notes": "make statement cardinality n",
+                "publicationid": "ac6cef0a-5f10-11ef-8525-0aa766c61b65",
+                "published_time": "2024-08-20T11:24:28.871"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
