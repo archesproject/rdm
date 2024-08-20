@@ -50,6 +50,7 @@ class JsonbArrayElements(Func):
 )
 class ConceptTreeView(View):
     def __init__(self):
+        super().__init__()
         self.schemes = ResourceInstance.objects.none()
 
         # Maps built during a GET call
