@@ -1,54 +1,90 @@
 <script setup lang="ts">
-import { computed, provide, ref } from "vue";
+import { provide, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useGettext } from "vue3-gettext";
 
-import ProgressSpinner from "primevue/progressspinner";
 import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
 
-import { userKey } from "@/arches_lingo/constants.ts";
+import {
+    ANONYMOUS,
+    DEFAULT_ERROR_TOAST_LIFE,
+    ERROR,
+    USER_KEY,
+} from "@/arches_lingo/constants.ts";
+
 import { routeNames } from "@/arches_lingo/routes.ts";
-import UserFetcher from "@/arches_lingo/components/UserFetcher.vue";
+import { fetchUser } from "@/arches_lingo/api.ts";
 
-import type { User } from "@/arches_lingo/types";
+import type { User } from "@/arches_lingo/types.ts";
 
 import PageHeader from "@/arches_lingo/components/header/PageHeader.vue";
+import SideNav from "@/arches_lingo/components/sidenav/SideNav.vue";
 
 const user = ref<User | null>(null);
 const setUser = (userToSet: User | null) => {
     user.value = userToSet;
 };
-provide(userKey, { user, setUser });
+provide(USER_KEY, { user, setUser });
 
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
+const { $gettext } = useGettext();
 
-const isAuthenticated = computed(() => {
-    return user.value && user.value.username !== "anonymous";
-});
+router.beforeEach(async (to, _from, next) => {
+    try {
+        let userData = user.value;
 
-router.beforeEach(async (to) => {
-    if (
-        !isAuthenticated.value &&
-        // Avoid an infinite redirect
-        to.name !== routeNames.login
-    ) {
-        return { name: routeNames.login, params: { next: to.name as string } };
+        if (!userData || userData.username === ANONYMOUS) {
+            userData = await fetchUser();
+            setUser(userData);
+        }
+
+        const requiresAuthentication = to.matched.some(
+            (record) => record.meta.requiresAuthentication,
+        );
+        if (
+            requiresAuthentication &&
+            (!userData || userData.username === ANONYMOUS)
+        ) {
+            throw new Error();
+        } else {
+            next();
+        }
+    } catch (error) {
+        if (to.name !== routeNames.root) {
+            toast.add({
+                severity: ERROR,
+                life: DEFAULT_ERROR_TOAST_LIFE,
+                summary: $gettext("Login required."),
+                detail: error instanceof Error ? error.message : undefined,
+            });
+        }
+        next({ name: routeNames.login });
     }
 });
 </script>
 
 <template>
-    <main style="font-family: sans-serif; height: 100vh">
-        <PageHeader v-if="route.meta.shouldShowHeader" />
-        <div style="margin: 1rem">
-            <RouterView />
+    <main>
+        <PageHeader v-if="route.meta.shouldShowNavigation" />
+        <div style="display: flex; flex: auto; flex-direction: row">
+            <SideNav v-if="route.meta.shouldShowNavigation" />
+            <div style="margin: 1rem; flex: auto">
+                <RouterView />
+            </div>
         </div>
     </main>
-    <Suspense>
-        <UserFetcher />
-        <template #fallback>
-            <ProgressSpinner style="display: flex; margin-top: 8rem" />
-        </template>
-    </Suspense>
     <Toast />
 </template>
+
+<style scoped>
+main {
+    font-family: sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+}
+</style>

@@ -4,12 +4,24 @@ import LoginLinks from "@/arches_lingo/components/login/LoginLinks.vue";
 </script>
 
 <template>
-    <div style="margin: 5%">
+    <div class="login-container">
         <LoginForm />
-        <div
-            class="spacer"
-            style="height: 10rem"
-        ></div>
+        <div class="spacer"></div>
         <LoginLinks />
     </div>
 </template>
+
+<style scoped>
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding-bottom: 12rem;
+}
+
+.spacer {
+    height: 4rem;
+}
+</style>

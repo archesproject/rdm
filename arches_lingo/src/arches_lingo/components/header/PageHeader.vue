@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import { useGettext } from "vue3-gettext";
 
-import Button from "primevue/button";
 import Menubar from "primevue/menubar";
 
 import { routeNames } from "@/arches_lingo/routes.ts";
@@ -38,11 +37,16 @@ const items = ref([
             </RouterLink>
         </template>
         <template #item="{ item }">
-            <RouterLink :to="{ name: item.name }">
-                <Button>
-                    <i :class="item.icon"></i>
-                    <span>{{ item.label }}</span>
-                </Button>
+            <RouterLink
+                :to="{ name: item.name }"
+                class="p-button p-component p-button-primary"
+                style="text-decoration: none"
+            >
+                <i
+                    :class="item.icon"
+                    aria-hidden="true"
+                ></i>
+                <span>{{ item.label }}</span>
             </RouterLink>
         </template>
         <template #end>
