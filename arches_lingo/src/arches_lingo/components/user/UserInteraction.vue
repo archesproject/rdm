@@ -36,21 +36,24 @@ const issueLogout = async () => {
     }
 };
 
-const bestName = computed(() => {
+const greeting = computed(() => {
     if (!user.value) {
         return "";
     }
-    // TODO: determine appropriate i18n for this.
     if (user.value.first_name && user.value.last_name) {
-        return user.value.first_name + " " + user.value.last_name;
+        return $gettext("Hello %{first} %{last}", {
+            first: user.value.first_name,
+            last: user.value.last_name,
+        });
+    } else {
+        return $gettext("Hello %{username}", { username: user.value.username });
     }
-    return user.value.username;
 });
 </script>
 
 <template>
     <div style="display: flex; align-items: center">
-        <span>{{ $gettext("Hello %{bestName}", { bestName }) }}</span>
+        <span v-if="user">{{ greeting }}</span>
         <Button
             style="margin-left: 1rem"
             @click="issueLogout"
