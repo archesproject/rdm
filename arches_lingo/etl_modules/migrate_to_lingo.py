@@ -105,9 +105,9 @@ class RDMMtoLingoMigrator(BaseImportModule):
                     or value.valuetype_id == "scopeNote"
                 ):
                     statement = {}
-                    statement["statement_content"] = value.value
-                    statement["statement_type"] = value.valuetype_id
-                    statement["statement_language"] = value.language_id
+                    statement["statement_content_n1"] = value.value
+                    statement["statement_type_n1"] = value.valuetype_id
+                    statement["statement_language_n1"] = value.language_id
                     scheme_to_load["tile_data"].append({"statement": statement})
             schemes.append(scheme_to_load)
         self.populate_staging_table(cursor, schemes, nodegroup_lookup, node_lookup)
