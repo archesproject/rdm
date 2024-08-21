@@ -1,0 +1,13 @@
+{% extends "javascript.htm" %}
+
+{% load static %}
+{% load l10n %}
+{% load i18n %}
+
+{% block arches_translations %}
+{{ block.super }}
+<div class='arches-translations'
+    selectAThesaurusToMigrate='{% trans "Select a Thesaurus to Migrate to the Lingo Models" as required %} "{{ selectAThesaurusToMigrate|escapejs }}"'
+    schemesMigrated='{% trans "Migrated Scheme" as required %} "{{ schemesMigrated|escapejs }}"'
+></div>
+{% endblock arches_translations %}

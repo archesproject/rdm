@@ -4,6 +4,7 @@ import logging
 import uuid
 from django.core.exceptions import ValidationError
 from django.db import connection
+from django.db.models import OuterRef, Subquery
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.etl_modules.save import save_to_tiles
 from arches.app.etl_modules.decorators import load_data_async
@@ -14,7 +15,7 @@ from arches.app.etl_modules.base_import_module import (
 from arches.app.models import models
 from arches.app.models.concept import Concept
 from arches.app.models.models import LoadStaging, NodeGroup, LoadEvent
-from arches.app.utils.betterJSONSerializer import JSONSerializer
+from arches.app.models.system_settings import settings
 import arches_lingo.tasks as tasks
 from arches_lingo.const import (
     SCHEMES_GRAPH_ID,
@@ -59,11 +60,29 @@ class RDMMtoLingoMigrator(BaseImportModule):
         self.moduleid = request.POST.get("module") if request else None
         self.loadid = request.POST.get("loadid") if request else loadid
         self.datatype_factory = DataTypeFactory()
+        self.scheme_conceptid = request.POST.get("scheme") if request else None
 
-    def etl_schemes(self, cursor, nodegroup_lookup, node_lookup):
+    def get_schemes(self, request):
+        schemes = (
+            models.Concept.objects.filter(nodetype="ConceptScheme")
+            .annotate(
+                prefLabel=Subquery(
+                    models.Value.objects.filter(
+                        valuetype_id="prefLabel",
+                        concept_id=OuterRef("pk"),
+                        language_id=settings.LANGUAGE_CODE,
+                    ).values("value")[:1]
+                )
+            )
+            .order_by("prefLabel")
+        )
+        schemes_json = list(schemes.values("conceptid", "prefLabel"))
+        return {"success": True, "data": schemes_json}
+
+    def etl_schemes(self, cursor, nodegroup_lookup, node_lookup, scheme_conceptid):
         schemes = []
         for concept in models.Concept.objects.filter(
-            nodetype="ConceptScheme"
+            nodetype="ConceptScheme", pk=scheme_conceptid
         ).prefetch_related("value_set"):
             scheme_to_load = {"type": "Scheme", "tile_data": []}
             for value in concept.value_set.all():
@@ -112,10 +131,10 @@ class RDMMtoLingoMigrator(BaseImportModule):
             schemes.append(scheme_to_load)
         self.populate_staging_table(cursor, schemes, nodegroup_lookup, node_lookup)
 
-    def etl_concepts(self, cursor, nodegroup_lookup, node_lookup):
+    def etl_concepts(self, cursor, nodegroup_lookup, node_lookup, concepts_to_migrate):
         concepts = []
         for concept in models.Concept.objects.filter(
-            nodetype="Concept"
+            nodetype="Concept", pk__in=concepts_to_migrate
         ).prefetch_related("value_set"):
             concept_to_load = {"type": "Concept", "tile_data": []}
             for value in concept.value_set.all():
@@ -262,7 +281,50 @@ class RDMMtoLingoMigrator(BaseImportModule):
 
         return tile_value, tile_valid
 
-    def init_relationships(self, cursor, loadid):
+    def build_concept_hierarchy(self, cursor, scheme_conceptid):
+        cursor.execute(
+            """
+            with recursive collection_hierarchy as (
+                select conceptidfrom as root_list,
+                    conceptidto as child,
+                    ARRAY[conceptidfrom] AS path,
+                    0 as depth
+                from relations
+                where not exists (
+                    select 1 from relations r2 where r2.conceptidto = relations.conceptidfrom
+                ) and relationtype != 'member'
+                union all
+                select ch.root_list,
+                    r.conceptidto,
+                    ch.path || r.conceptidfrom,
+                    ch.depth + 1
+                from collection_hierarchy ch
+                join relations r on ch.child = r.conceptidfrom
+                where relationtype != 'member'
+            )
+            select * 
+            from collection_hierarchy
+            where root_list = %s;
+            """,
+            (scheme_conceptid,),
+        )
+        results = cursor.fetchall()
+        concept_hierarchy = []
+        concepts_to_migrate = []
+        for result in results:
+            concept_dict = {
+                "root_list": result[0],
+                "concept": result[1],
+                "path": result[2],
+                "depth": result[3],
+            }
+            concepts_to_migrate.append(result[1])
+            concept_hierarchy.append(concept_dict)
+        return concept_hierarchy, concepts_to_migrate
+
+    def init_relationships(
+        self, cursor, loadid, concepts_to_migrate, concept_hierarchy
+    ):
         # Create top concept of scheme relationships (derived from relations with 'hasTopConcept' relationtype)
         cursor.execute(
             """
@@ -296,12 +358,14 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 %s::uuid as nodegroupid,
                 'insert' as operation
             from relations
-            where relationtype = 'hasTopConcept';
+            where relationtype = 'hasTopConcept'
+            and conceptidto = ANY(%s);
         """,
             (
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
                 loadid,
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
+                concepts_to_migrate,
             ),
         )
 
@@ -346,7 +410,8 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 %s::uuid as nodegroupid,
                 'insert' as operation
             from relations
-            where relationtype = 'narrower';
+            where relationtype = 'narrower'
+            and conceptidto = ANY(%s);
         """,
             (
                 CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID,
@@ -359,68 +424,70 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 CLASSIFICATION_STATUS_TIMESPAN_END_OF_END_NODEID,
                 CLASSIFICATION_STATUS_TIMESPAN_BEGIN_OF_BEGIN_NODEID,
                 loadid,
-                CLASSIFICATION_STATUS_NODEGROUP
+                CLASSIFICATION_STATUS_NODEGROUP,
+                concepts_to_migrate,
             ),
         )
 
         # Create Part of Scheme relationships - derived by recursively generating concept hierarchy & associating
         # concepts with their schemes
-        cursor.execute(
-            """
-           insert into load_staging(
-                value,
-                resourceid,
-                tileid,
-                passes_validation,
-                nodegroup_depth,
-                source_description,
-                loadid,
-                nodegroupid,
-                operation
-            )
-            WITH RECURSIVE concept_hierarchy AS (
-                SELECT conceptidfrom AS root, conceptidto AS child, conceptidfrom AS parent_scheme
-                FROM relations
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM relations r2 WHERE r2.conceptidto = relations.conceptidfrom
-                ) AND relationtype != 'member' -- only ETL'ing data into Lingo models, not collections
-                UNION ALL
-                SELECT ch.root, r.conceptidto, ch.parent_scheme
-                FROM concept_hierarchy ch
-                JOIN relations r ON ch.child = r.conceptidfrom
-            )
-            SELECT
-                json_build_object(%s::uuid,
-                    json_build_object(
-                        'notes', '',
-                        'valid', true,
-                        'value', json_build_array(json_build_object('resourceId', parent_scheme, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')), --value
-                        'source', parent_scheme,
-                        'datatype', 'resource-instance-list'
-                    )
-                ) as value,
-                child as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
-                uuid_generate_v4() as tileid,
-                true as passes_validation,
-                0 as nodegroup_depth,
-                'Concept: Part of Scheme' as source_description,
-                %s::uuid as loadid,
-                %s::uuid as nodegroupid,
-                'insert' as operation
-            FROM concept_hierarchy;
-        """,
-            (
-                CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID,
-                loadid,
-                CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID,
-            ),
+        part_of_scheme_tiles = []
+        load_event = LoadEvent.objects.get(loadid=loadid)
+        part_of_scheme_nodegroup = NodeGroup.objects.get(
+            nodegroupid=CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID
         )
+        for concept in concept_hierarchy:
+            root_list = str(concept["root_list"])
+            resourceinstanceid = concept["concept"]
+
+            value_obj = {
+                str(CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID): {
+                    "notes": "",
+                    "valid": True,
+                    "value": [
+                        {
+                            "resourceId": root_list,
+                            "ontologyProperty": "",
+                            "resourceXresourceId": "",
+                            "inverseOntologyProperty": "",
+                        }
+                    ],
+                    "source": root_list,
+                    "datatype": "resource-instance-list",
+                }
+            }
+
+            staging_tile = LoadStaging(
+                value=value_obj,
+                resourceid=resourceinstanceid,
+                tileid=uuid.uuid4(),
+                passes_validation=True,
+                nodegroup_depth=0,
+                source_description="Concept: Part of Scheme",
+                load_event=load_event,
+                nodegroup=part_of_scheme_nodegroup,
+                operation="insert",
+            )
+            staging_tile.full_clean()
+            part_of_scheme_tiles.append(staging_tile)
+
+        LoadStaging.objects.bulk_create(part_of_scheme_tiles)
 
     def start(self, request):
         load_details = {"operation": "RDM to Lingo Migration"}
         cursor = connection.cursor()
         cursor.execute(
-            """INSERT INTO load_event (loadid, complete, status, etl_module_id, load_details, load_start_time, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+            """INSERT INTO load_event (
+                loadid,
+                complete,
+                status,
+                etl_module_id,
+                load_details,
+                load_start_time,
+                user_id
+                ) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
             (
                 self.loadid,
                 False,
@@ -436,14 +503,19 @@ class RDMMtoLingoMigrator(BaseImportModule):
 
     def write(self, request):
         self.loadid = request.POST.get("loadid")
+        self.scheme_conceptid = request.POST.get("scheme")
         if models.Concept.objects.count() < 500:
-            response = self.run_load_task(self.userid, self.loadid)
+            response = self.run_load_task(
+                self.userid, self.loadid, self.scheme_conceptid
+            )
         else:
-            response = self.run_load_task_async(request, self.loadid)
+            response = self.run_load_task_async(
+                request, self.loadid, self.scheme_conceptid
+            )
         message = "Schemes and Concept Migration to Lingo Models Complete"
         return {"success": True, "data": message}
 
-    def run_load_task(self, userid, loadid):
+    def run_load_task(self, userid, loadid, scheme_conceptid):
         self.loadid = loadid  # currently redundant, but be certain
 
         with connection.cursor() as cursor:
@@ -453,16 +525,29 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 SCHEMES_GRAPH_ID
             )
             schemes_node_lookup = self.get_node_lookup(schemes_nodes)
-            self.etl_schemes(cursor, schemes_nodegroup_lookup, schemes_node_lookup)
+            self.etl_schemes(
+                cursor, schemes_nodegroup_lookup, schemes_node_lookup, scheme_conceptid
+            )
 
             concepts_nodegroup_lookup, concepts_nodes = self.get_graph_tree(
                 CONCEPTS_GRAPH_ID
             )
             concepts_node_lookup = self.get_node_lookup(concepts_nodes)
-            self.etl_concepts(cursor, concepts_nodegroup_lookup, concepts_node_lookup)
+            # Prefetch concept hierarchy to avoid building it multiple times
+            concept_hierarchy, concepts_to_migrate = self.build_concept_hierarchy(
+                cursor, self.scheme_conceptid
+            )
+            self.etl_concepts(
+                cursor,
+                concepts_nodegroup_lookup,
+                concepts_node_lookup,
+                concepts_to_migrate,
+            )
 
             # Create relationships
-            self.init_relationships(cursor, loadid)
+            self.init_relationships(
+                cursor, loadid, concepts_to_migrate, concept_hierarchy
+            )
 
             # Validate and save to tiles
             validation = self.validate(loadid)
@@ -488,12 +573,13 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 return {"success": False, "data": "failed"}
 
     @load_data_async
-    def run_load_task_async(self, request):
+    def run_load_task_async(self, request, scheme_conceptid):
         self.userid = request.user.id
         self.loadid = request.POST.get("loadid")
+        self.scheme_conceptid = request.POST.get("scheme")
 
         migrate_rdm_to_lingo_task = tasks.migrate_rdm_to_lingo_task.apply_async(
-            (self.userid, self.loadid),
+            (self.userid, self.loadid, self.scheme_conceptid),
         )
         with connection.cursor() as cursor:
             cursor.execute(

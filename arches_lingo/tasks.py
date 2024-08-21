@@ -8,7 +8,7 @@ from arches.app.tasks import notify_completion
 
 
 @shared_task
-def migrate_rdm_to_lingo_task(userid, loadid):
+def migrate_rdm_to_lingo_task(userid, loadid, scheme_conceptid):
     logger = logging.getLogger(__name__)
 
     try:
