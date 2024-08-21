@@ -37,6 +37,9 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     },
+    "lingo": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
     "user_permission": {
         "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         "LOCATION": "user_permission_cache",
