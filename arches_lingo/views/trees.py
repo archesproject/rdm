@@ -1,6 +1,7 @@
 from collections import defaultdict
 from http import HTTPStatus
 
+from django.core.cache import caches
 from django.contrib.postgres.expressions import ArraySubquery
 from django.db.models import CharField, F, OuterRef, Subquery, Value
 from django.db.models.expressions import CombinedExpression, Func
@@ -38,6 +39,8 @@ from arches_lingo.const import (
 TOP_CONCEPT_OF_LOOKUP = f"data__{TOP_CONCEPT_OF_NODE_AND_NODEGROUP}"
 BROADER_LOOKUP = f"data__{CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID}"
 
+cache = caches["lingo"]
+
 
 class JsonbArrayElements(Func):
     """https://forum.djangoproject.com/t/django-4-2-behavior-change-when-using-arrayagg-on-unnested-arrayfield-postgresql-specific/21547/5"""
@@ -54,7 +57,6 @@ class ConceptTreeView(View):
         super().__init__()
         self.schemes = ResourceInstance.objects.none()
 
-        # Maps built during a GET call
         # key=concept valueid (str) val=language code
         self.language_concepts: dict[str:str] = {}
         # key=scheme resourceid (str) val=set of concept resourceids (str)
@@ -69,6 +71,46 @@ class ConceptTreeView(View):
         self.broader_concepts: dict[str : set[str]] = defaultdict(set)
         # key=resourceid (str) val=set of scheme resourceids (str)
         self.schemes_by_top_concept: dict[str : set[str]] = defaultdict(set)
+
+        self.read_from_cache()
+
+    def read_from_cache(self):
+        from_cache = cache.get_many(
+            [
+                "language_concepts",
+                "top_concepts",
+                "narrower_concepts",
+                "schemes",
+                "labels",
+                "broader_concepts",
+                "schemes_by_top_concept",
+            ]
+        )
+        try:
+            self.language_concepts = from_cache["language_concepts"]
+            self.top_concepts = from_cache["top_concepts"]
+            self.narrower_concepts = from_cache["narrower_concepts"]
+            self.schemes = from_cache["schemes"]
+            self.labels = from_cache["labels"]
+            self.broader_concepts = from_cache["broader_concepts"]
+            self.schemes_by_top_concepts = from_cache["schemes_by_top_concepts"]
+        except KeyError:
+            self.rebuild_cache()
+
+    def rebuild_cache(self):
+        self.language_concepts_map()
+        self.top_concepts_map()
+        self.narrower_concepts_map()
+        self.populate_schemes()
+
+        cache.set("language_concepts", self.language_concepts)
+        cache.set("top_concepts", self.top_concepts)
+        cache.set("narrower_concepts", self.narrower_concepts)
+        cache.set("schemes", self.schemes)
+        cache.set("labels", self.labels)
+        # Reverse trees.
+        cache.set("broader_concepts", self.broader_concepts)
+        cache.set("schemes_by_top_concept", self.schemes_by_top_concept)
 
     @staticmethod
     def human_label_type(value_id):
@@ -229,11 +271,6 @@ class ConceptTreeView(View):
         }
 
     def get(self, request):
-        self.language_concepts_map()
-        self.top_concepts_map()
-        self.narrower_concepts_map()
-        self.populate_schemes()
-
         data = {
             "schemes": [self.serialize_scheme(scheme) for scheme in self.schemes],
         }
@@ -248,14 +285,9 @@ class ValueSearchView(ConceptTreeView):
     def get(self, request):
         search_term = request.GET.get("search")
         if not search_term:
-            # Treat this as a request to clear & warm the cache.
+            # Useful for warming the cache before a search.
+            self.rebuild_cache()
             return JSONResponse(status=HTTPStatus.IM_A_TEAPOT)
-
-        # TODO: cache this
-        self.language_concepts_map()
-        self.top_concepts_map()
-        self.narrower_concepts_map()
-        self.populate_schemes()
 
         # TODO: fuzzy match, SEARCH_TERM_SENSITIVITY
         concept_ids = (
