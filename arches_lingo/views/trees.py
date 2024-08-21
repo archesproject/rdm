@@ -1,4 +1,5 @@
 from collections import defaultdict
+from http import HTTPStatus
 
 from django.contrib.postgres.expressions import ArraySubquery
 from django.db.models import CharField, F, OuterRef, Subquery, Value
@@ -63,6 +64,12 @@ class ConceptTreeView(View):
         # key=resourceid (str) val=list of label dicts
         self.labels: dict[str : list[dict]] = defaultdict(set)
 
+        # Maps representing a reverse (leaf-first) tree
+        # key=resourceid (str) val=set of concept resourceids (str)
+        self.broader_concepts: dict[str : set[str]] = defaultdict(set)
+        # key=resourceid (str) val=set of scheme resourceids (str)
+        self.schemes_by_top_concept: dict[str : set[str]] = defaultdict(set)
+
     @staticmethod
     def human_label_type(value_id):
         if value_id == PREF_LABEL_VALUE_ID:
@@ -122,9 +129,11 @@ class ConceptTreeView(View):
             .values("resourceinstance_id", "top_concept_of", "labels")
         )
         for tile in top_concept_of_tiles:
-            resource_id: str = str(tile["resourceinstance_id"])
-            self.top_concepts[tile["top_concept_of"]].add(resource_id)
-            self.labels[resource_id] = tile["labels"]
+            scheme_id = tile["top_concept_of"]
+            top_concept_id = str(tile["resourceinstance_id"])
+            self.top_concepts[scheme_id].add(top_concept_id)
+            self.schemes_by_top_concept[top_concept_id].add(scheme_id)
+            self.labels[top_concept_id] = tile["labels"]
 
     def narrower_concepts_map(self):
         broader_concept_tiles = (
@@ -134,9 +143,16 @@ class ConceptTreeView(View):
             .values("resourceinstance_id", "broader_concept", "labels")
         )
         for tile in broader_concept_tiles.iterator():
-            resource_id: str = str(tile["resourceinstance_id"])
-            self.narrower_concepts[tile["broader_concept"]].add(resource_id)
-            self.labels[resource_id] = tile["labels"]
+            broader_concept_id = tile["broader_concept"]
+            narrower_concept_id: str = str(tile["resourceinstance_id"])
+            self.narrower_concepts[broader_concept_id].add(narrower_concept_id)
+            self.broader_concepts[narrower_concept_id].add(broader_concept_id)
+            self.labels[narrower_concept_id] = tile["labels"]
+
+    def populate_schemes(self):
+        self.schemes = ResourceInstance.objects.filter(
+            graph_id=SCHEMES_GRAPH_ID
+        ).annotate(labels=self.labels_subquery(SCHEME_NAME_NODEGROUP))
 
     def serialize_scheme(self, scheme: ResourceInstance):
         scheme_id: str = str(scheme.pk)
@@ -162,8 +178,8 @@ class ConceptTreeView(View):
             "value": value,
         }
 
-    def serialize_concept(self, conceptid: str):
-        return {
+    def serialize_concept(self, conceptid: str, *, parentage=False):
+        data = {
             "id": conceptid,
             "labels": [
                 self.serialize_concept_label(label) for label in self.labels[conceptid]
@@ -173,6 +189,31 @@ class ConceptTreeView(View):
                 for conceptid in self.narrower_concepts[conceptid]
             ],
         }
+        if parentage:
+            # Choose any reverse path back to the scheme (currently indeterminate).
+            path = self.add_broader_concept_recursive([], conceptid)
+            scheme_id, concept_ids = path[0], path[1:]
+            schemes = [scheme for scheme in self.schemes if str(scheme.pk) == scheme_id]
+            data["parentage"] = [self.serialize_scheme(schemes[0])] + [
+                self.serialize_concept(concept_id) for concept_id in concept_ids
+            ]
+
+        return data
+
+    def add_broader_concept_recursive(self, working_parent_list, conceptid):
+        broader_concepts = self.broader_concepts[conceptid]
+        try:
+            arbitrary_broader_conceptid = next(iter(broader_concepts))
+        except StopIteration:
+            schemes = self.schemes_by_top_concept[conceptid]
+            arbitrary_scheme = next(iter(schemes))
+            working_parent_list.insert(0, arbitrary_scheme)
+            return working_parent_list
+        else:
+            working_parent_list.insert(0, arbitrary_broader_conceptid)
+            return self.add_broader_concept_recursive(
+                working_parent_list, arbitrary_broader_conceptid
+            )
 
     def serialize_concept_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[CONCEPT_NAME_LANGUAGE_NODE][0]]
@@ -191,13 +232,49 @@ class ConceptTreeView(View):
         self.language_concepts_map()
         self.top_concepts_map()
         self.narrower_concepts_map()
-
-        self.schemes = ResourceInstance.objects.filter(
-            graph_id=SCHEMES_GRAPH_ID
-        ).annotate(labels=self.labels_subquery(SCHEME_NAME_NODEGROUP))
+        self.populate_schemes()
 
         data = {
             "schemes": [self.serialize_scheme(scheme) for scheme in self.schemes],
         }
+        # Todo: filter by nodegroup permissions
+        return JSONResponse(data)
+
+
+@method_decorator(
+    group_required("RDM Administrator", raise_exception=True), name="dispatch"
+)
+class ValueSearchView(ConceptTreeView):
+    def get(self, request):
+        search_term = request.GET.get("search")
+        if not search_term:
+            # Treat this as a request to clear & warm the cache.
+            return JSONResponse(status=HTTPStatus.IM_A_TEAPOT)
+
+        # TODO: cache this
+        self.language_concepts_map()
+        self.top_concepts_map()
+        self.narrower_concepts_map()
+        self.populate_schemes()
+
+        # TODO: fuzzy match, SEARCH_TERM_SENSITIVITY
+        concept_ids = (
+            TileModel.objects.filter(nodegroup_id=CONCEPT_NAME_NODEGROUP)
+            .annotate(labels=self.labels_subquery(CONCEPT_NAME_NODEGROUP))
+            # TODO: all languages
+            .filter(
+                **{
+                    f"data__{CONCEPT_NAME_CONTENT_NODE}__en__value__icontains": search_term
+                }
+            )
+            .values_list("resourceinstance_id", flat=True)
+        )
+        deduped = set(concept_ids)
+
+        data = [
+            self.serialize_concept(str(concept_uuid), parentage=True)
+            for concept_uuid in deduped
+        ]
+
         # Todo: filter by nodegroup permissions
         return JSONResponse(data)
