@@ -101,8 +101,7 @@ class ConceptTreeView(View):
 
     def language_concepts_map(self):
         languages = (
-            Language.objects.all()
-            .annotate(
+            Language.objects.annotate(
                 concept_value=Subquery(
                     ConceptValue.objects.filter(
                         valuetype="prefLabel", value=OuterRef("code")
