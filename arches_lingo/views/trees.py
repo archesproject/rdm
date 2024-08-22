@@ -214,16 +214,18 @@ class ConceptTreeView(View):
             graph_id=SCHEMES_GRAPH_ID
         ).annotate(labels=self.labels_subquery(SCHEME_NAME_NODEGROUP))
 
-    def serialize_scheme(self, scheme: ResourceInstance):
+    def serialize_scheme(self, scheme: ResourceInstance, *, children=True):
         scheme_id: str = str(scheme.pk)
-        return {
+        data = {
             "id": scheme_id,
             "labels": [self.serialize_scheme_label(label) for label in scheme.labels],
-            "top_concepts": [
+        }
+        if children:
+            data["top_concepts"] = [
                 self.serialize_concept(concept_id)
                 for concept_id in self.top_concepts[scheme_id]
-            ],
-        }
+            ]
+        return data
 
     def serialize_scheme_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[SCHEME_NAME_LANGUAGE_NODE][0]]
@@ -238,25 +240,27 @@ class ConceptTreeView(View):
             "value": value,
         }
 
-    def serialize_concept(self, conceptid: str, *, parentage=False):
+    def serialize_concept(self, conceptid: str, *, parents=False, children=True):
         data = {
             "id": conceptid,
             "labels": [
                 self.serialize_concept_label(label) for label in self.labels[conceptid]
             ],
-            "narrower": [
+        }
+        if children:
+            data["narrower"] = [
                 self.serialize_concept(conceptid)
                 for conceptid in self.narrower_concepts[conceptid]
-            ],
-        }
-        if parentage:
+            ]
+        if parents:
             path = self.add_broader_concept_recursive([], conceptid)
             scheme_id, parent_concept_ids = path[0], path[1:]
             if len(parent_concept_ids) > 1:
                 self.polyhierarchical_concepts.add(conceptid)
             schemes = [scheme for scheme in self.schemes if str(scheme.pk) == scheme_id]
-            data["parentage"] = [self.serialize_scheme(schemes[0])] + [
-                self.serialize_concept(parent_id) for parent_id in parent_concept_ids
+            data["parents"] = [self.serialize_scheme(schemes[0], children=False)] + [
+                self.serialize_concept(parent_id, children=False)
+                for parent_id in parent_concept_ids
             ]
 
             self_and_parent_ids = set([conceptid] + parent_concept_ids)
@@ -332,7 +336,7 @@ class ValueSearchView(ConceptTreeView):
         )
 
         data = [
-            self.serialize_concept(str(concept_uuid), parentage=True)
+            self.serialize_concept(str(concept_uuid), parents=True)
             for concept_uuid in concept_ids
         ]
 
