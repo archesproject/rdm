@@ -2,19 +2,15 @@ from datetime import datetime
 import json
 import logging
 import uuid
-from django.core.exceptions import ValidationError
+
 from django.db import connection
 from django.db.models import OuterRef, Subquery
 from django.db.models.functions import Coalesce
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.etl_modules.save import save_to_tiles
 from arches.app.etl_modules.decorators import load_data_async
-from arches.app.etl_modules.base_import_module import (
-    BaseImportModule,
-    FileValidationError,
-)
+from arches.app.etl_modules.base_import_module import BaseImportModule
 from arches.app.models import models
-from arches.app.models.concept import Concept
 from arches.app.models.models import LoadStaging, NodeGroup, LoadEvent
 from arches.app.models.system_settings import settings
 import arches_lingo.tasks as tasks
