@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 
 from arches.app.models.models import ResourceInstance
@@ -15,4 +14,4 @@ class VwLabelValue(models.Model):
 
     class Meta:
         managed = False
-        db_table = f"{settings.APP_NAME}__vw_label_values"
+        db_table = f"arches_lingo__vw_label_values"
