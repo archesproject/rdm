@@ -5,6 +5,7 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.db.models import OuterRef, Subquery
+from django.db.models.functions import Coalesce
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.etl_modules.save import save_to_tiles
 from arches.app.etl_modules.decorators import load_data_async
@@ -66,12 +67,20 @@ class RDMMtoLingoMigrator(BaseImportModule):
         schemes = (
             models.Concept.objects.filter(nodetype="ConceptScheme")
             .annotate(
-                prefLabel=Subquery(
-                    models.Value.objects.filter(
-                        valuetype_id="prefLabel",
-                        concept_id=OuterRef("pk"),
-                        language_id=settings.LANGUAGE_CODE,
-                    ).values("value")[:1]
+                prefLabel=Coalesce(
+                    Subquery(
+                        models.Value.objects.filter(
+                            valuetype_id="prefLabel",
+                            concept_id=OuterRef("pk"),
+                            language_id=settings.LANGUAGE_CODE,
+                        ).values("value")[:1]
+                    ),
+                    Subquery(
+                        models.Value.objects.filter(
+                            valuetype_id="prefLabel",
+                            concept_id=OuterRef("pk"),
+                        ).values("value")[:1]
+                    ),
                 )
             )
             .order_by("prefLabel")
