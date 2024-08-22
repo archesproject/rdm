@@ -313,7 +313,7 @@ class ConceptTreeView(View):
 )
 class ValueSearchView(ConceptTreeView):
     def get(self, request):
-        if not (search_term := request.GET.get("search")):
+        if not (term := request.GET.get("term")):
             # Useful for warming the cache before a search.
             self.rebuild_cache()
             return JSONResponse(status=HTTPStatus.IM_A_TEAPOT)
@@ -328,7 +328,7 @@ class ValueSearchView(ConceptTreeView):
             VwLabelValue.objects.annotate(
                 edit_distance=LevenshteinLessEqual(
                     F("value"),
-                    Value(search_term),
+                    Value(term),
                     Value(max_edit_distance),
                     output_field=FloatField(),
                 )
