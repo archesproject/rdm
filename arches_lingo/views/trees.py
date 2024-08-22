@@ -1,8 +1,9 @@
 from collections import defaultdict
 from http import HTTPStatus
 
-from django.core.cache import caches
 from django.contrib.postgres.expressions import ArraySubquery
+from django.core.cache import caches
+from django.core.paginator import Paginator
 from django.db.models import (
     CharField,
     FloatField,
@@ -312,16 +313,18 @@ class ConceptTreeView(View):
 )
 class ValueSearchView(ConceptTreeView):
     def get(self, request):
-        search_term = request.GET.get("search")
-        max_edit_distance = request.GET.get(
-            "maxEditDistance", self.default_sensitivity()
-        )
-        if not search_term:
+        if not (search_term := request.GET.get("search")):
             # Useful for warming the cache before a search.
             self.rebuild_cache()
             return JSONResponse(status=HTTPStatus.IM_A_TEAPOT)
 
-        concept_ids = (
+        max_edit_distance = request.GET.get(
+            "maxEditDistance", self.default_sensitivity()
+        )
+        page_number = request.GET.get("page", 1)
+        items_per_page = request.GET.get("items", 25)
+
+        concept_query = (
             VwLabelValue.objects.annotate(
                 edit_distance=LevenshteinLessEqual(
                     F("value"),
@@ -331,13 +334,17 @@ class ValueSearchView(ConceptTreeView):
                 )
             )
             .filter(edit_distance__lte=max_edit_distance)
+            .order_by("edit_distance")
             .values_list("concept_id", flat=True)
             .distinct()
         )
 
+        paginator = Paginator(concept_query, items_per_page)
+        page = paginator.get_page(page_number)
+
         data = [
             self.serialize_concept(str(concept_uuid), parents=True)
-            for concept_uuid in concept_ids
+            for concept_uuid in page
         ]
 
         # Todo: filter by nodegroup permissions
