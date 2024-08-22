@@ -35,6 +35,7 @@ from arches_lingo.const import (
     PREF_LABEL_VALUE_ID,
     ALT_LABEL_VALUE_ID,
 )
+from arches_lingo.models import VwLabelValue
 
 TOP_CONCEPT_OF_LOOKUP = f"data__{TOP_CONCEPT_OF_NODE_AND_NODEGROUP}"
 BROADER_LOOKUP = f"data__{CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID}"
@@ -45,6 +46,7 @@ cache = caches["lingo"]
 class JsonbArrayElements(Func):
     """https://forum.djangoproject.com/t/django-4-2-behavior-change-when-using-arrayagg-on-unnested-arrayfield-postgresql-specific/21547/5"""
 
+    arity = 1
     contains_subquery = True
     function = "JSONB_ARRAY_ELEMENTS"
 
@@ -291,21 +293,14 @@ class ValueSearchView(ConceptTreeView):
 
         # TODO: fuzzy match, SEARCH_TERM_SENSITIVITY
         concept_ids = (
-            TileModel.objects.filter(nodegroup_id=CONCEPT_NAME_NODEGROUP)
-            .annotate(labels=self.labels_subquery(CONCEPT_NAME_NODEGROUP))
-            # TODO: all languages
-            .filter(
-                **{
-                    f"data__{CONCEPT_NAME_CONTENT_NODE}__en__value__icontains": search_term
-                }
-            )
-            .values_list("resourceinstance_id", flat=True)
+            VwLabelValue.objects.filter(value__icontains=search_term)
+            .values_list("concept_id", flat=True)
+            .distinct()
         )
-        deduped = set(concept_ids)
 
         data = [
             self.serialize_concept(str(concept_uuid), parentage=True)
-            for concept_uuid in deduped
+            for concept_uuid in concept_ids
         ]
 
         # Todo: filter by nodegroup permissions
