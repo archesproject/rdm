@@ -89,6 +89,9 @@ class ConceptTreeView(View):
 
         self.read_from_cache()
 
+        # Not currently cached because written to during serialization.
+        self.polyhierarchical_concepts = set()
+
     def read_from_cache(self):
         from_cache = cache.get_many(
             [
@@ -248,11 +251,18 @@ class ConceptTreeView(View):
         }
         if parentage:
             path = self.add_broader_concept_recursive([], conceptid)
-            scheme_id, concept_ids = path[0], path[1:]
+            scheme_id, parent_concept_ids = path[0], path[1:]
+            if len(parent_concept_ids) > 1:
+                self.polyhierarchical_concepts.add(conceptid)
             schemes = [scheme for scheme in self.schemes if str(scheme.pk) == scheme_id]
             data["parentage"] = [self.serialize_scheme(schemes[0])] + [
-                self.serialize_concept(concept_id) for concept_id in concept_ids
+                self.serialize_concept(parent_id) for parent_id in parent_concept_ids
             ]
+
+            self_and_parent_ids = set([conceptid] + parent_concept_ids)
+            data["polyhierarchical"] = bool(
+                self_and_parent_ids.intersection(self.polyhierarchical_concepts)
+            )
 
         return data
 
