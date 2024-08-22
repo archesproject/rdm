@@ -343,7 +343,7 @@ class ValueSearchView(ConceptTreeView):
         page = paginator.get_page(page_number)
 
         data = [
-            self.serialize_concept(str(concept_uuid), parents=True)
+            self.serialize_concept(str(concept_uuid), parents=True, children=False)
             for concept_uuid in page
         ]
 
