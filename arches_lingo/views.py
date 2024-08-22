@@ -154,9 +154,10 @@ class ConceptTreeView(View):
 
     def serialize_scheme_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[SCHEME_NAME_LANGUAGE_NODE][0]]
+        localized_string_objs = label_tile[SCHEME_NAME_CONTENT_NODE].values()
         try:
-            value = label_tile[SCHEME_NAME_CONTENT_NODE][lang_code]["value"]
-        except KeyError:
+            value = next(iter(localized_string_objs))["value"]
+        except (StopIteration, KeyError):
             value = "Unknown"
         return {
             "valuetype": self.human_label_type(label_tile[SCHEME_NAME_TYPE_NODE]),
@@ -178,9 +179,10 @@ class ConceptTreeView(View):
 
     def serialize_concept_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[CONCEPT_NAME_LANGUAGE_NODE][0]]
+        localized_string_objs = label_tile[CONCEPT_NAME_CONTENT_NODE].values()
         try:
-            value = label_tile[CONCEPT_NAME_CONTENT_NODE][lang_code]["value"]
-        except KeyError:
+            value = next(iter(localized_string_objs))["value"]
+        except (StopIteration, KeyError):
             value = "Unknown"
         return {
             "valuetype": self.human_label_type(label_tile[CONCEPT_NAME_TYPE_NODE]),
