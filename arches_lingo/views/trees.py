@@ -247,7 +247,6 @@ class ConceptTreeView(View):
             ],
         }
         if parentage:
-            # Choose any reverse path back to the scheme (currently indeterminate).
             path = self.add_broader_concept_recursive([], conceptid)
             scheme_id, concept_ids = path[0], path[1:]
             schemes = [scheme for scheme in self.schemes if str(scheme.pk) == scheme_id]
@@ -258,18 +257,19 @@ class ConceptTreeView(View):
         return data
 
     def add_broader_concept_recursive(self, working_parent_list, conceptid):
-        broader_concepts = self.broader_concepts[conceptid]
+        # TODO: sort on sortorder at higher stacklevel once captured in original data.
+        broader_concepts = sorted(self.broader_concepts[conceptid])
         try:
-            arbitrary_broader_conceptid = next(iter(broader_concepts))
-        except StopIteration:
-            schemes = self.schemes_by_top_concept[conceptid]
-            arbitrary_scheme = next(iter(schemes))
-            working_parent_list.insert(0, arbitrary_scheme)
+            first_broader_conceptid = broader_concepts[0]
+        except IndexError:
+            # TODO: sort here too.
+            schemes = sorted(self.schemes_by_top_concept[conceptid])
+            working_parent_list.insert(0, schemes[0])
             return working_parent_list
         else:
-            working_parent_list.insert(0, arbitrary_broader_conceptid)
+            working_parent_list.insert(0, first_broader_conceptid)
             return self.add_broader_concept_recursive(
-                working_parent_list, arbitrary_broader_conceptid
+                working_parent_list, first_broader_conceptid
             )
 
     def serialize_concept_label(self, label_tile: dict):
