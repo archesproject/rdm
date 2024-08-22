@@ -3,7 +3,14 @@ from http import HTTPStatus
 
 from django.core.cache import caches
 from django.contrib.postgres.expressions import ArraySubquery
-from django.db.models import CharField, F, OuterRef, Subquery, Value
+from django.db.models import (
+    CharField,
+    FloatField,
+    F,
+    OuterRef,
+    Subquery,
+    Value,
+)
 from django.db.models.expressions import CombinedExpression, Func
 from django.utils.translation import gettext_lazy as _
 from django.utils.decorators import method_decorator
@@ -15,6 +22,7 @@ from arches.app.models.models import (
     TileModel,
     Value as ConceptValue,
 )
+from arches.app.models.system_settings import settings
 from arches.app.utils.decorators import group_required
 from arches.app.utils.response import JSONResponse
 
@@ -49,6 +57,11 @@ class JsonbArrayElements(Func):
     arity = 1
     contains_subquery = True
     function = "JSONB_ARRAY_ELEMENTS"
+
+
+class LevenshteinLessEqual(Func):
+    arity = 3
+    function = "LEVENSHTEIN_LESS_EQUAL"
 
 
 @method_decorator(
@@ -286,14 +299,24 @@ class ConceptTreeView(View):
 class ValueSearchView(ConceptTreeView):
     def get(self, request):
         search_term = request.GET.get("search")
+        max_edit_distance = request.GET.get(
+            "maxEditDistance", self.default_sensitivity()
+        )
         if not search_term:
             # Useful for warming the cache before a search.
             self.rebuild_cache()
             return JSONResponse(status=HTTPStatus.IM_A_TEAPOT)
 
-        # TODO: fuzzy match, SEARCH_TERM_SENSITIVITY
         concept_ids = (
-            VwLabelValue.objects.filter(value__icontains=search_term)
+            VwLabelValue.objects.annotate(
+                edit_distance=LevenshteinLessEqual(
+                    F("value"),
+                    Value(search_term),
+                    Value(max_edit_distance),
+                    output_field=FloatField(),
+                )
+            )
+            .filter(edit_distance__lte=max_edit_distance)
             .values_list("concept_id", flat=True)
             .distinct()
         )
@@ -305,3 +328,17 @@ class ValueSearchView(ConceptTreeView):
 
         # Todo: filter by nodegroup permissions
         return JSONResponse(data)
+
+    @staticmethod
+    def default_sensitivity():
+        """Remains to be seen whether the existing elastic sensitivity setting
+        should be the fallback, but stub something out for now.
+        This sensitivity setting is actually inversely related to edit distance,
+        because it's prefix_length in elastic, not fuzziness, so invert it.
+        """
+        elastic_prefix_length = settings.SEARCH_TERM_SENSITIVITY
+        if elastic_prefix_length <= 0:
+            return 5
+        if elastic_prefix_length >= 5:
+            return 0
+        return int(5 - elastic_prefix_length)

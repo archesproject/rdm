@@ -2,9 +2,15 @@
 import textwrap
 
 from django.conf import settings
+from django.contrib.postgres.operations import CreateExtension
 from django.db import migrations, models
 
 from arches_lingo.const import CONCEPT_NAME_CONTENT_NODE
+
+
+class FuzzyStrMatchExtension(CreateExtension):
+    def __init__(self):
+        self.name = "fuzzystrmatch"
 
 
 class Migration(migrations.Migration):
@@ -52,4 +58,5 @@ class Migration(migrations.Migration):
                 "managed": False,
             },
         ),
+        FuzzyStrMatchExtension(),
     ]
