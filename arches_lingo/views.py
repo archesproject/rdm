@@ -28,6 +28,7 @@ from arches_lingo.const import (
     CONCEPT_NAME_CONTENT_NODE,
     CONCEPT_NAME_LANGUAGE_NODE,
     CONCEPT_NAME_TYPE_NODE,
+    HIDDEN_LABEL_VALUE_ID,
     SCHEME_NAME_NODEGROUP,
     SCHEME_NAME_CONTENT_NODE,
     SCHEME_NAME_LANGUAGE_NODE,
@@ -70,6 +71,8 @@ class ConceptTreeView(View):
             return "prefLabel"
         if value_id == ALT_LABEL_VALUE_ID:
             return "altLabel"
+        if value_id == HIDDEN_LABEL_VALUE_ID:
+            return "hidden"
         return "unknown"
 
     @staticmethod
@@ -156,7 +159,7 @@ class ConceptTreeView(View):
         except KeyError:
             value = "Unknown"
         return {
-            "valuetype": self.human_label_type(label_tile[SCHEME_NAME_TYPE_NODE][0]),
+            "valuetype": self.human_label_type(label_tile[SCHEME_NAME_TYPE_NODE]),
             "language": lang_code,
             "value": value,
         }
@@ -180,7 +183,7 @@ class ConceptTreeView(View):
         except KeyError:
             value = "Unknown"
         return {
-            "valuetype": self.human_label_type(label_tile[CONCEPT_NAME_TYPE_NODE][0]),
+            "valuetype": self.human_label_type(label_tile[CONCEPT_NAME_TYPE_NODE]),
             "language": lang_code,
             "value": value,
         }
