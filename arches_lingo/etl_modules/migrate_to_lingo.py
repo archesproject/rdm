@@ -509,9 +509,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 self.userid, self.loadid, self.scheme_conceptid
             )
         else:
-            response = self.run_load_task_async(
-                request, self.loadid, self.scheme_conceptid
-            )
+            response = self.run_load_task_async(request, self.loadid)
         message = "Schemes and Concept Migration to Lingo Models Complete"
         return {"success": True, "data": message}
 
@@ -573,7 +571,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 return {"success": False, "data": "failed"}
 
     @load_data_async
-    def run_load_task_async(self, request, scheme_conceptid):
+    def run_load_task_async(self, request):
         self.userid = request.user.id
         self.loadid = request.POST.get("loadid")
         self.scheme_conceptid = request.POST.get("scheme")
