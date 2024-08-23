@@ -112,7 +112,7 @@ class ConceptTreeView(View):
             self.schemes = from_cache["schemes"]
             self.labels = from_cache["labels"]
             self.broader_concepts = from_cache["broader_concepts"]
-            self.schemes_by_top_concepts = from_cache["schemes_by_top_concepts"]
+            self.schemes_by_top_concept = from_cache["schemes_by_top_concept"]
         except KeyError:
             self.rebuild_cache()
 
