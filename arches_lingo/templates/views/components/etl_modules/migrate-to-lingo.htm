@@ -13,9 +13,9 @@
             {% blocktrans %}Click the start button to initiate the process for migrating concepts and schemes from the existing RDM to the Lingo resource models. You will need to have Celery running if your instance has more than 500 concepts.{% endblocktrans %}
         </p>
         <div class="etl-module-component-block">
-            <h4>
+            <div class="h4">
                 <label for="resource-model-select" data-bind="text: $root.translations.selectAThesaurusToMigrate"></label>
-            </h4>
+            </div>
             <select id="resource-model-select" data-bind="
                 value: selectedScheme,
                 options: schemes,
