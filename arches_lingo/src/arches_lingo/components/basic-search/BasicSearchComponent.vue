@@ -12,7 +12,8 @@ const delay = 300;
 
 const instance = ref(null);
 const query = ref(null);
-const results = ref<Array<{ name: string; value: any }>[]>([]);
+const queryString = ref('');
+const results = ref([]);
 const isLoading = ref(false);
 const shouldShowClearInputButton = ref(false);
 
@@ -112,20 +113,18 @@ const mockData = () => {
 };
 
 const fetchData = async () => {
-    shouldShowClearInputButton.value = false;
-
-    if (!query.value) return;
-
     isLoading.value = true;
+    shouldShowClearInputButton.value = false;
+    instance.value.overlayVisible = false;
+
     try {
         const data = await mockData();
         results.value = data;
+        shouldShowClearInputButton.value = true;
     } catch (error) {
         console.error('Error fetching data:', error);
-        results.value = [];
     } finally {
         isLoading.value = false;
-        shouldShowClearInputButton.value = true;
     }
 };
 
@@ -140,8 +139,9 @@ let keepOpen = false;
 
 const openDropdown = () => instance.value?.show()
 
-const selectHandler = (foo) => {
-  keepOpen = true;
+const selectHandler = () => {
+    query.value = queryString.value;
+    keepOpen = true;
 };
 
 const beforeHideHandler = () => {
@@ -152,6 +152,14 @@ const beforeHideHandler = () => {
     });
   }
 };
+
+const foo = (value) => {
+    if (!value) {
+        shouldShowClearInputButton.value = false;
+    }
+
+    if (typeof value === 'string') { queryString.value = value;}
+}
 
 </script>
 
@@ -175,6 +183,7 @@ const beforeHideHandler = () => {
             @complete="fetchData" 
             @option-select="selectHandler"
             @before-hide="beforeHideHandler"
+            @update:model-value="foo"
         >
             <template #option="slotProps">
                 <div class="flex items-center">
