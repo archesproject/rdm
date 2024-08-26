@@ -59,7 +59,6 @@ define([
                 params.activeTab("import");
                 self.formData.append('async', true);
                 self.submit('write').then(data => {
-                    console.log(data.results);
                 }).fail(function(err) {
                     console.log(err);
                     self.alert(

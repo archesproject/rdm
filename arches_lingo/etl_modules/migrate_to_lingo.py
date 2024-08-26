@@ -2,18 +2,15 @@ from datetime import datetime
 import json
 import logging
 import uuid
-from django.core.exceptions import ValidationError
+
 from django.db import connection
 from django.db.models import OuterRef, Subquery
+from django.db.models.functions import Coalesce
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.etl_modules.save import save_to_tiles
 from arches.app.etl_modules.decorators import load_data_async
-from arches.app.etl_modules.base_import_module import (
-    BaseImportModule,
-    FileValidationError,
-)
+from arches.app.etl_modules.base_import_module import BaseImportModule
 from arches.app.models import models
-from arches.app.models.concept import Concept
 from arches.app.models.models import LoadStaging, NodeGroup, LoadEvent
 from arches.app.models.system_settings import settings
 import arches_lingo.tasks as tasks
@@ -66,12 +63,22 @@ class RDMMtoLingoMigrator(BaseImportModule):
         schemes = (
             models.Concept.objects.filter(nodetype="ConceptScheme")
             .annotate(
-                prefLabel=Subquery(
-                    models.Value.objects.filter(
-                        valuetype_id="prefLabel",
-                        concept_id=OuterRef("pk"),
-                        language_id=settings.LANGUAGE_CODE,
-                    ).values("value")[:1]
+                prefLabel=Coalesce(
+                    Subquery(
+                        models.Value.objects.filter(
+                            valuetype_id="prefLabel",
+                            concept_id=OuterRef("pk"),
+                            language_id=settings.LANGUAGE_CODE,
+                        ).values("value")[:1]
+                    ),
+                    Subquery(
+                        models.Value.objects.filter(
+                            valuetype_id="prefLabel",
+                            concept_id=OuterRef("pk"),
+                        )
+                        .order_by("language_id")
+                        .values("value")[:1]
+                    ),
                 )
             )
             .order_by("prefLabel")
@@ -82,7 +89,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
     def etl_schemes(self, cursor, nodegroup_lookup, node_lookup, scheme_conceptid):
         schemes = []
         for concept in models.Concept.objects.filter(
-            nodetype="ConceptScheme", pk=scheme_conceptid
+            pk=scheme_conceptid
         ).prefetch_related("value_set"):
             scheme_to_load = {"type": "Scheme", "tile_data": []}
             for value in concept.value_set.all():
@@ -432,7 +439,6 @@ class RDMMtoLingoMigrator(BaseImportModule):
         # Create Part of Scheme relationships - derived by recursively generating concept hierarchy & associating
         # concepts with their schemes
         part_of_scheme_tiles = []
-        load_event = LoadEvent.objects.get(loadid=loadid)
         part_of_scheme_nodegroup = NodeGroup.objects.get(
             nodegroupid=CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID
         )
@@ -464,7 +470,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 passes_validation=True,
                 nodegroup_depth=0,
                 source_description="Concept: Part of Scheme",
-                load_event=load_event,
+                load_event=LoadEvent(self.loadid),
                 nodegroup=part_of_scheme_nodegroup,
                 operation="insert",
             )
@@ -509,14 +515,13 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 self.userid, self.loadid, self.scheme_conceptid
             )
         else:
-            response = self.run_load_task_async(
-                request, self.loadid, self.scheme_conceptid
-            )
+            response = self.run_load_task_async(request, self.loadid)
         message = "Schemes and Concept Migration to Lingo Models Complete"
         return {"success": True, "data": message}
 
     def run_load_task(self, userid, loadid, scheme_conceptid):
         self.loadid = loadid  # currently redundant, but be certain
+        self.scheme_conceptid = scheme_conceptid
 
         with connection.cursor() as cursor:
 
@@ -573,11 +578,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 return {"success": False, "data": "failed"}
 
     @load_data_async
-    def run_load_task_async(self, request, scheme_conceptid):
-        self.userid = request.user.id
-        self.loadid = request.POST.get("loadid")
-        self.scheme_conceptid = request.POST.get("scheme")
-
+    def run_load_task_async(self, request):
         migrate_rdm_to_lingo_task = tasks.migrate_rdm_to_lingo_task.apply_async(
             (self.userid, self.loadid, self.scheme_conceptid),
         )

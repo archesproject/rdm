@@ -22,11 +22,13 @@ from arches.app.views.base import BaseManagerView
 from arches_lingo.const import (
     SCHEMES_GRAPH_ID,
     TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
-    BROADER_NODE_AND_NODEGROUP,
+    CLASSIFICATION_STATUS_NODEGROUP,
+    CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID,
     CONCEPT_NAME_NODEGROUP,
     CONCEPT_NAME_CONTENT_NODE,
     CONCEPT_NAME_LANGUAGE_NODE,
     CONCEPT_NAME_TYPE_NODE,
+    HIDDEN_LABEL_VALUE_ID,
     SCHEME_NAME_NODEGROUP,
     SCHEME_NAME_CONTENT_NODE,
     SCHEME_NAME_LANGUAGE_NODE,
@@ -36,7 +38,7 @@ from arches_lingo.const import (
 )
 
 TOP_CONCEPT_OF_LOOKUP = f"data__{TOP_CONCEPT_OF_NODE_AND_NODEGROUP}"
-BROADER_LOOKUP = f"data__{BROADER_NODE_AND_NODEGROUP}"
+BROADER_LOOKUP = f"data__{CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID}"
 
 
 class JsonbArrayElements(Func):
@@ -69,6 +71,8 @@ class ConceptTreeView(View):
             return "prefLabel"
         if value_id == ALT_LABEL_VALUE_ID:
             return "altLabel"
+        if value_id == HIDDEN_LABEL_VALUE_ID:
+            return "hidden"
         return "unknown"
 
     @staticmethod
@@ -127,7 +131,7 @@ class ConceptTreeView(View):
 
     def narrower_concepts_map(self):
         broader_concept_tiles = (
-            TileModel.objects.filter(nodegroup_id=BROADER_NODE_AND_NODEGROUP)
+            TileModel.objects.filter(nodegroup_id=CLASSIFICATION_STATUS_NODEGROUP)
             .annotate(broader_concept=self.resources_from_tiles(BROADER_LOOKUP))
             .annotate(labels=self.labels_subquery(CONCEPT_NAME_NODEGROUP))
             .values("resourceinstance_id", "broader_concept", "labels")
@@ -150,12 +154,13 @@ class ConceptTreeView(View):
 
     def serialize_scheme_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[SCHEME_NAME_LANGUAGE_NODE][0]]
+        localized_string_objs = label_tile[SCHEME_NAME_CONTENT_NODE].values()
         try:
-            value = label_tile[SCHEME_NAME_CONTENT_NODE][lang_code]["value"]
-        except KeyError:
+            value = next(iter(localized_string_objs))["value"]
+        except (StopIteration, KeyError):
             value = "Unknown"
         return {
-            "valuetype": self.human_label_type(label_tile[SCHEME_NAME_TYPE_NODE][0]),
+            "valuetype": self.human_label_type(label_tile[SCHEME_NAME_TYPE_NODE]),
             "language": lang_code,
             "value": value,
         }
@@ -174,12 +179,13 @@ class ConceptTreeView(View):
 
     def serialize_concept_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[CONCEPT_NAME_LANGUAGE_NODE][0]]
+        localized_string_objs = label_tile[CONCEPT_NAME_CONTENT_NODE].values()
         try:
-            value = label_tile[CONCEPT_NAME_CONTENT_NODE][lang_code]["value"]
-        except KeyError:
+            value = next(iter(localized_string_objs))["value"]
+        except (StopIteration, KeyError):
             value = "Unknown"
         return {
-            "valuetype": self.human_label_type(label_tile[CONCEPT_NAME_TYPE_NODE][0]),
+            "valuetype": self.human_label_type(label_tile[CONCEPT_NAME_TYPE_NODE]),
             "language": lang_code,
             "value": value,
         }
