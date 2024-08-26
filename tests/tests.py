@@ -24,7 +24,8 @@ from arches_lingo.const import (
     LANGUAGE_CONCEPT_ID,
     SCHEMES_GRAPH_ID,
     TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
-    BROADER_NODE_AND_NODEGROUP,
+    CLASSIFICATION_STATUS_NODEGROUP,
+    CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID,
     CONCEPT_NAME_NODEGROUP,
     CONCEPT_NAME_CONTENT_NODE,
     CONCEPT_NAME_LANGUAGE_NODE,
@@ -51,9 +52,9 @@ def setUpModule():
                 "concept-list",
             ),
             (
-                BROADER_NODE_AND_NODEGROUP,
-                BROADER_NODE_AND_NODEGROUP,
-                "Broader concept",
+                CLASSIFICATION_STATUS_NODEGROUP,
+                CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID,
+                "classification_status_ascribed_classification",
                 "concept-list",
             ),
             (
@@ -163,9 +164,9 @@ class ConceptTreeViewTests(TestCase):
             elif i < MAX_DEPTH:
                 TileModel.objects.create(
                     resourceinstance=concept,
-                    nodegroup_id=BROADER_NODE_AND_NODEGROUP,
+                    nodegroup_id=CLASSIFICATION_STATUS_NODEGROUP,
                     data={
-                        BROADER_NODE_AND_NODEGROUP: [
+                        CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID: [
                             # Previous concept
                             {"resourceId": str(cls.concepts[i - 1].pk)},
                             # Also add top concept
@@ -176,9 +177,9 @@ class ConceptTreeViewTests(TestCase):
             else:
                 TileModel.objects.create(
                     resourceinstance=concept,
-                    nodegroup_id=BROADER_NODE_AND_NODEGROUP,
+                    nodegroup_id=CLASSIFICATION_STATUS_NODEGROUP,
                     data={
-                        BROADER_NODE_AND_NODEGROUP: [
+                        CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID: [
                             # Top concept only
                             {"resourceId": str(cls.concepts[0].pk)},
                         ],

@@ -18,20 +18,47 @@ define([
         this.moduleId = params.etlmoduleid;
         this.loadId = params.loadId || uuid.generate();
         this.formData = new window.FormData();
-        this.graphs = ko.observable();
+        this.schemes = ko.observable();
+        this.selectedScheme = ko.observable();
+        this.selectedSchemeName = ko.observable();
         this.selectedLoadEvent = params.selectedLoadEvent || ko.observable();
         this.formatTime = params.formatTime;
         this.timeDifference = params.timeDifference;
         this.activeTab = params.activeTab || ko.observable();
         this.editHistoryUrl = `${arches.urls.edit_history}?transactionid=${ko.unwrap(params.selectedLoadEvent)?.loadid}`;
         
+        this.getSchemes = function(){
+            self.loading(true);
+            self.submit('get_schemes').then(function(response){
+                self.schemes(response.result);
+                self.loading(false);
+            });
+        };
+
+        this.selectedScheme.subscribe(function(newValue) {
+            if (newValue) {
+                const scheme = self.schemes().find(({ conceptid }) => conceptid === newValue);
+                if (scheme) {
+                    self.selectedSchemeName(scheme.prefLabel);
+                }
+            }
+        });
+
+        this.ready = ko.computed(function(){
+            const ready = !!self.selectedScheme();
+            return ready;
+        });
+
         self.runRDMMigration = function() {
-            self.loading(true);            
+            if (!self.ready()) {
+                return;
+            }
+            self.loading(true);
+            self.formData.append('scheme', self.selectedScheme());          
             self.submit('start').then(data => {
                 params.activeTab("import");
                 self.formData.append('async', true);
                 self.submit('write').then(data => {
-                    console.log(data.results);
                 }).fail(function(err) {
                     console.log(err);
                     self.alert(
@@ -61,6 +88,12 @@ define([
                 contentType: false,
             });
         };
+
+        this.init = function(){
+            this.getSchemes();
+        };
+
+        this.init();
     };
     ko.components.register('migrate-to-lingo', {
         viewModel: viewModel,

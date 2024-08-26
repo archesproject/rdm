@@ -12,9 +12,29 @@
         <p class="pad-btm">
             {% blocktrans %}Click the start button to initiate the process for migrating concepts and schemes from the existing RDM to the Lingo resource models. You will need to have Celery running if your instance has more than 500 concepts.{% endblocktrans %}
         </p>
+        <div class="etl-module-component-block">
+            <div class="h4">
+                <label for="resource-model-select" data-bind="text: $root.translations.selectAThesaurusToMigrate"></label>
+            </div>
+            <select id="resource-model-select" data-bind="
+                value: selectedScheme,
+                options: schemes,
+                optionsText: 'prefLabel',
+                optionsValue: 'conceptid',
+                optionsCaption: $root.translations.select + '...',
+                valueAllowUnset: true,
+                chosen: {width: '500px'}"
+            ></select>
+        </div>
     </div>
     <div class="tabbed-workflow-footer, etl-module-footer">
-        <button class="btn btn-success" style="margin-right: 8px;" data-bind="click: runRDMMigration">
+        <button class="btn btn-success"
+            style="margin-right: 8px;"
+            data-bind="
+                click: runRDMMigration,
+                css: {disabled: !ready()},
+                attr: { disabled: !ready()}
+        ">
             <span data-bind="text: $root.translations.start"></span>
         </button>
     </div>
@@ -75,6 +95,8 @@
             </span>
         </h4>
         <div>
+            <span class="etl-loading-metadata-key" data-bind="text: $root.translations.schemesMigrated"></span>
+            <span class="etl-loading-metadata-value" data-bind="text: selectedSchemeName()"></span>
             <!-- ko foreach: loadDetails.number_of_import -->
             <span class="etl-loading-metadata-key" data-bind="text: $data.name + ' ' + $root.translations.instances + ':'"></span>
             <span class="etl-loading-metadata-value" data-bind="text: $data.total"></span>
