@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useGettext } from "vue3-gettext";
 
 import AutoComplete from 'primevue/autocomplete';
@@ -10,7 +10,8 @@ const { $gettext } = useGettext();
 
 const delay = 300;
 
-const query = ref('');
+const instance = ref(null);
+const query = ref(null);
 const results = ref<Array<{ name: string; value: any }>[]>([]);
 const isLoading = ref(false);
 const shouldShowClearInputButton = ref(false);
@@ -134,6 +135,24 @@ const clearInput = () => {
   shouldShowClearInputButton.value = false;
 };
 
+
+let keepOpen = false;
+
+const openDropdown = () => instance.value?.show()
+
+const selectHandler = (foo) => {
+  keepOpen = true;
+};
+
+const beforeHideHandler = () => {
+  if(keepOpen){
+    nextTick(() => {
+      keepOpen = false;
+      openDropdown();
+    });
+  }
+};
+
 </script>
 
 <template>
@@ -148,15 +167,18 @@ const clearInput = () => {
             "
         ></i>
         <AutoComplete 
+            ref="instance"
             v-model="query" 
             :suggestions="results" 
             :placeholder="$gettext('Quick Search')"
             :delay="delay"
             @complete="fetchData" 
+            @option-select="selectHandler"
+            @before-hide="beforeHideHandler"
         >
             <template #option="slotProps">
                 <div class="flex items-center">
-                    {{ console.log(slotProps) }}
+                    <!-- {{ console.log($parent, $props) }} -->
                     <div>{{ slotProps.option.id }}</div>
                 </div>
             </template>
@@ -165,12 +187,7 @@ const clearInput = () => {
             v-if="shouldShowClearInputButton"
             @click="clearInput"
             class="p-button-text p-button-icon-only clear-button"
-            style="
-                position: absolute;
-                right: 0.2rem;
-                background-color: transparent;
-                color: var(--p-input-color)
-            "
+            style="background-color: transparent;"
         >
             <i
                 class="pi pi-times" 
@@ -181,12 +198,19 @@ const clearInput = () => {
 </template>
 
 <style scoped>
+.clear-button {
+    position: absolute;
+    right: 0.2rem;
+    color: var(--p-input-color)
+}
+
 .p-autocomplete {
     width: 100%;
 }
 
 :deep(.p-autocomplete-input) {
     width: 100%;
-    text-indent: 2rem;
+    padding-right: 2.5rem;
+    padding-left: 2.5rem;
 }
 </style>
