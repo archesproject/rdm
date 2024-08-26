@@ -1,5 +1,4 @@
 from collections import defaultdict
-from http import HTTPStatus
 
 from django.contrib.postgres.expressions import ArraySubquery
 from django.core.cache import caches
@@ -313,31 +312,30 @@ class ConceptTreeView(View):
 )
 class ValueSearchView(ConceptTreeView):
     def get(self, request):
-        if not (term := request.GET.get("term")):
-            # Useful for warming the cache before a search.
-            self.rebuild_cache()
-            return JSONResponse(status=HTTPStatus.IM_A_TEAPOT)
-
+        term = request.GET.get("term")
         max_edit_distance = request.GET.get(
             "maxEditDistance", self.default_sensitivity()
         )
         page_number = request.GET.get("page", 1)
         items_per_page = request.GET.get("items", 25)
 
-        concept_query = (
-            VwLabelValue.objects.annotate(
-                edit_distance=LevenshteinLessEqual(
-                    F("value"),
-                    Value(term),
-                    Value(max_edit_distance),
-                    output_field=FloatField(),
+        concept_query = VwLabelValue.objects.all()
+        if term:
+            concept_query = (
+                concept_query.annotate(
+                    edit_distance=LevenshteinLessEqual(
+                        F("value"),
+                        Value(term),
+                        Value(max_edit_distance),
+                        output_field=FloatField(),
+                    )
                 )
+                .filter(edit_distance__lte=max_edit_distance)
+                .order_by("edit_distance")
             )
-            .filter(edit_distance__lte=max_edit_distance)
-            .order_by("edit_distance")
-            .values_list("concept_id", flat=True)
-            .distinct()
-        )
+        else:
+            concept_query = concept_query.order_by("concept_id")
+        concept_query = concept_query.values_list("concept_id", flat=True).distinct()
 
         paginator = Paginator(concept_query, items_per_page)
         page = paginator.get_page(page_number)
