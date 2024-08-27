@@ -47,7 +47,7 @@ const clearInput = () => {
     shouldShowClearInputButton.value = false;
 };
 
-const updateQuery = () => {
+const preventSelection = () => {
     query.value = queryString.value;
 };
 
@@ -91,7 +91,7 @@ const updateQueryString = (value: string | object) => {
                 }),
             }"
             @complete="fetchData"
-            @option-select="updateQuery"
+            @option-select="preventSelection"
             @before-hide="keepOverlayVisible"
             @update:model-value="updateQueryString"
         >

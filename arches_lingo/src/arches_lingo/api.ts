@@ -56,7 +56,8 @@ export const fetchUser = async () => {
 };
 
 export const fetchSearchResults = async (searchTerm: string) => {
-    const url = `${arches.urls.api_search}?query=${encodeURIComponent(searchTerm)}`;
+    // const url = `${arches.urls.api_search}?term=${encodeURIComponent(searchTerm)}`;
+    const url = `${arches.urls.api_search}?term=`;
     const response = await fetch(url);
     try {
         const responseJson = await response.json();
