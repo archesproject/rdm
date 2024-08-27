@@ -5,7 +5,7 @@ from arches_lingo.settings import *
 PACKAGE_NAME = "arches_lingo"
 
 PROJECT_TEST_ROOT = os.path.dirname(__file__)
-MEDIA_ROOT = os.path.join(PROJECT_TEST_ROOT, "fixtures", "data")
+MEDIA_ROOT = os.path.join(PROJECT_TEST_ROOT, "data")
 
 BUSINESS_DATA_FILES = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
