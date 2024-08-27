@@ -2,7 +2,6 @@ import json
 
 from django.contrib.auth.models import User
 from django.test import TestCase
-from django.test.client import Client
 from django.urls import reverse
 
 # these tests can be run from the command line via
@@ -117,15 +116,11 @@ def localized_string(text, language="en", direction="ltr"):
     return {language: {"value": text, "direction": direction}}
 
 
-class ConceptTreeViewTests(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.client = Client()
-        cls.admin = User.objects.get(username="admin")
-
+class ViewTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.admin = User.objects.get(username="admin")
+
         # Create a scheme with five concepts, each one narrower than the last,
         # and each concept after the top concept also narrower than the top.
         cls.scheme = ResourceInstance.objects.create(graph_id=SCHEMES_GRAPH_ID)
@@ -134,7 +129,7 @@ class ConceptTreeViewTests(TestCase):
             nodegroup_id=SCHEME_NAME_NODEGROUP,
             data={
                 SCHEME_NAME_CONTENT_NODE: localized_string("Test Scheme"),
-                SCHEME_NAME_TYPE_NODE: [PREF_LABEL_VALUE_ID],
+                SCHEME_NAME_TYPE_NODE: PREF_LABEL_VALUE_ID,
                 SCHEME_NAME_LANGUAGE_NODE: [ENGLISH_VALUE_ID],
             },
         )
@@ -154,7 +149,7 @@ class ConceptTreeViewTests(TestCase):
                 nodegroup_id=CONCEPT_NAME_NODEGROUP,
                 data={
                     CONCEPT_NAME_CONTENT_NODE: localized_string(f"Concept {i + 1}"),
-                    CONCEPT_NAME_TYPE_NODE: [PREF_LABEL_VALUE_ID],
+                    CONCEPT_NAME_TYPE_NODE: PREF_LABEL_VALUE_ID,
                     CONCEPT_NAME_LANGUAGE_NODE: [ENGLISH_VALUE_ID],
                 },
             )
@@ -199,7 +194,7 @@ class ConceptTreeViewTests(TestCase):
         with self.assertNumQueries(6):
             # 1: session
             # 2: auth
-            # 3: select languages, subquery for concept values
+            # 3: select relations (to find languages)
             # 4: select broader tiles, subquery for labels
             # 5: select top concept tiles, subquery for labels
             # 6: select schemes, subquery for labels
@@ -225,3 +220,18 @@ class ConceptTreeViewTests(TestCase):
             {n["labels"][0]["value"] for n in concept_2["narrower"]},
             {"Concept 3"},
         )
+
+    def test_search(self):
+        self.client.force_login(self.admin)
+
+        cases = (
+            ["term=Concept 1", 5],
+            ["term=Concept 1&maxEditDistance=0", 1],
+            ["term=Concept 1&items=1", 1],
+            ["term=Concept 1&items=2&page=3", 1],
+        )
+        for query, expected_result_count in cases:
+            with self.subTest(query=query):
+                response = self.client.get(reverse("api_search"), QUERY_STRING=query)
+                result = json.loads(response.content)
+                self.assertEqual(len(result), expected_result_count, result)
