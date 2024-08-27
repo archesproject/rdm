@@ -1,5 +1,10 @@
 # Arches Lingo
 
+## About Lingo
+
+### References
+- [1] Contains information from the J. Paul Getty Trust, Getty Research Institute, the Art & Architecture Thesaurus, which is made available under the ODC Attribution License.
+
 ## Setup
 ### Note: This is a guide to set up the project for local development.
 

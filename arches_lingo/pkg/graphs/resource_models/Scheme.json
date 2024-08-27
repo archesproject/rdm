@@ -2096,7 +2096,7 @@
             "group_permissions": {},
             "has_unpublished_changes": false,
             "iconclass": "",
-            "is_active": false,
+            "is_active": true,
             "is_copy_immutable": false,
             "isresource": true,
             "jsonldcontext": null,

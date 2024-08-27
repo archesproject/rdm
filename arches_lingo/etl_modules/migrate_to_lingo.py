@@ -75,7 +75,9 @@ class RDMMtoLingoMigrator(BaseImportModule):
                         models.Value.objects.filter(
                             valuetype_id="prefLabel",
                             concept_id=OuterRef("pk"),
-                        ).values("value")[:1]
+                        )
+                        .order_by("language_id")
+                        .values("value")[:1]
                     ),
                 )
             )
@@ -87,7 +89,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
     def etl_schemes(self, cursor, nodegroup_lookup, node_lookup, scheme_conceptid):
         schemes = []
         for concept in models.Concept.objects.filter(
-            nodetype="ConceptScheme", pk=scheme_conceptid
+            pk=scheme_conceptid
         ).prefetch_related("value_set"):
             scheme_to_load = {"type": "Scheme", "tile_data": []}
             for value in concept.value_set.all():
@@ -437,7 +439,6 @@ class RDMMtoLingoMigrator(BaseImportModule):
         # Create Part of Scheme relationships - derived by recursively generating concept hierarchy & associating
         # concepts with their schemes
         part_of_scheme_tiles = []
-        load_event = LoadEvent.objects.get(loadid=loadid)
         part_of_scheme_nodegroup = NodeGroup.objects.get(
             nodegroupid=CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID
         )
@@ -469,7 +470,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                 passes_validation=True,
                 nodegroup_depth=0,
                 source_description="Concept: Part of Scheme",
-                load_event=load_event,
+                load_event=LoadEvent(self.loadid),
                 nodegroup=part_of_scheme_nodegroup,
                 operation="insert",
             )
@@ -520,6 +521,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
 
     def run_load_task(self, userid, loadid, scheme_conceptid):
         self.loadid = loadid  # currently redundant, but be certain
+        self.scheme_conceptid = scheme_conceptid
 
         with connection.cursor() as cursor:
 
@@ -577,10 +579,6 @@ class RDMMtoLingoMigrator(BaseImportModule):
 
     @load_data_async
     def run_load_task_async(self, request):
-        self.userid = request.user.id
-        self.loadid = request.POST.get("loadid")
-        self.scheme_conceptid = request.POST.get("scheme")
-
         migrate_rdm_to_lingo_task = tasks.migrate_rdm_to_lingo_task.apply_async(
             (self.userid, self.loadid, self.scheme_conceptid),
         )
