@@ -5,7 +5,7 @@ from arches_lingo.settings import *
 PACKAGE_NAME = "arches_lingo"
 
 PROJECT_TEST_ROOT = os.path.dirname(__file__)
-MEDIA_ROOT = os.path.join(PROJECT_TEST_ROOT, "fixtures", "data")
+MEDIA_ROOT = os.path.join(PROJECT_TEST_ROOT, "data")
 
 BUSINESS_DATA_FILES = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -50,6 +50,7 @@ LOGGING["loggers"]["arches"]["level"] = "ERROR"
 
 ELASTICSEARCH_PREFIX = "test"
 
+TEST_RUNNER = "arches.test.runner.ArchesTestRunner"
 SILENCED_SYSTEM_CHECKS.append(
     "arches.W001",  # Cache backend does not support rate-limiting
 )

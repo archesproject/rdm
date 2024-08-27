@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
 
     forward = textwrap.dedent(
         f"""
-    CREATE MATERIALIZED VIEW arches_lingo__vw_label_values AS (
+    CREATE VIEW arches_lingo__vw_label_values AS (
     SELECT
         t.resourceinstanceid AS conceptid,
         ROW_TO_JSON(JSONB_EACH(t.tiledata -> '{CONCEPT_NAME_CONTENT_NODE}'))
@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
     );"""
     )
 
-    reverse = "DROP MATERIALIZED VIEW arches_lingo__vw_label_values;"
+    reverse = "DROP VIEW arches_lingo__vw_label_values;"
 
     operations = [
         migrations.RunSQL(forward, reverse),
