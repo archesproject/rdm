@@ -54,3 +54,16 @@ export const fetchUser = async () => {
         throw new Error((error as Error).message || response.statusText);
     }
 };
+
+export const fetchConcepts = async () => {
+    const response = await fetch(arches.urls.api_concepts);
+    try {
+        const parsed = await response.json();
+        if (response.ok) {
+            return parsed;
+        }
+        throw new Error(parsed.message);
+    } catch (error) {
+        throw new Error((error as Error).message || response.statusText);
+    }
+};

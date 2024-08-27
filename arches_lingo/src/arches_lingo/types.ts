@@ -1,4 +1,5 @@
 import type { Ref } from "vue";
+import type { TreeNode } from "primevue/treenode";
 
 export interface User {
     first_name: string;
@@ -10,4 +11,31 @@ export interface User {
 export interface UserRefAndSetter {
     user: Ref<User | null>;
     setUser: (userToSet: User | null) => void;
+}
+
+export interface Concept {
+    id: string;
+    identifier: string | null;
+    labels: Label[];
+    narrower: Concept[];
+}
+
+export interface Scheme {
+    id: string;
+    identifier: string | null;
+    labels: Label[];
+    top_concepts: Concept[];
+}
+
+export interface Label {
+    value: string;
+    language: string;
+    valuetype: "prefLabel" | "altLabel" | "unknown";
+}
+
+export type Labellable = Concept | Scheme;
+
+export interface NodeAndParentInstruction {
+    node: TreeNode;
+    parentShouldHideSiblings: boolean;
 }
