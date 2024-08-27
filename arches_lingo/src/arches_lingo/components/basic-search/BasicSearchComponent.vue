@@ -1119,7 +1119,7 @@ const updateQueryString = (value: string | object) => {
                 option: () => ({
                     style: {
                         padding: 0,
-                    }
+                    },
                 }),
                 overlay: () => ({
                     style: {
@@ -1130,7 +1130,7 @@ const updateQueryString = (value: string | object) => {
             }"
         >
             <template #option="slotProps">
-                <SearchResult :foo="slotProps"/>
+                <SearchResult :search-result="slotProps"/>
             </template>
         </AutoComplete>
 

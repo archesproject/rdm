@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
 
 const props = defineProps({
-  foo: {
+  searchResult: {
     type: Object,
     required: true
   },
@@ -23,23 +22,32 @@ const getParentLabels = item => {
 
 <template>
     <div 
-        :class="{ 'is-even': foo.index % 2 === 0 }"
-        style="width: 100%; padding: 0.5rem; display: flex;"
+        class="search-result"
+        :class="{ 'is-even': searchResult.index % 2 === 0 }"
     >
-        {{ console.log(foo) }}
         <i class="pi pi-paperclip" />
 
         <div style="margin: 0 0.5rem;">
-            {{ getItemLabel(foo.option) }}
+            {{ getItemLabel(searchResult.option) }}
         </div>
-        
+
         <div style="margin: 0 0.5rem;">
-            {{ getParentLabels(foo.option) }}
+            {{ getParentLabels(searchResult.option) }}
         </div>
     </div>
 </template>
 
 <style scoped>
+.search-result {
+    width: 100%; 
+    padding: 0.5rem; 
+    display: flex;
+}
+
+.p-focus > .search-result {
+    background-color: lightcoral;
+}
+
 .is-even {
     background-color: lightblue;
 }
