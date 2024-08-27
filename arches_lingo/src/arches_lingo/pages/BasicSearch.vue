@@ -3,7 +3,7 @@ import BasicSearchComponent from "@/arches_lingo/components/basic-search/BasicSe
 </script>
 
 <template>
-    <div style="height: 100%; padding: 2rem; padding-top: 6rem">
+    <div style="height: 100%; padding: 8rem 4rem">
         <BasicSearchComponent :search-results-per-page="25" />
     </div>
 </template>
