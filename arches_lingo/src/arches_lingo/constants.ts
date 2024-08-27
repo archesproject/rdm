@@ -11,3 +11,12 @@ export const SEARCH_RESULTS_PER_PAGE = 25;
 export const SEARCH_RESULT_ITEM_SIZE = 38;
 
 export const USER_KEY = Symbol() as InjectionKey<UserRefAndSetter>;
+
+export const ENGLISH = {
+    code: "en",
+    default_direction: "ltr" as const,
+    id: 1,
+    isdefault: true,
+    name: "English",
+    scope: "system",
+};

@@ -1,4 +1,5 @@
 import type { Ref } from "vue";
+import type { TreeNode } from "primevue/treenode";
 
 import type { Label } from "@/arches_vue_utils/types";
 
@@ -21,5 +22,36 @@ export interface Concept {
         id: string;
         labels: Label[];
     }[];
+    narrower: Concept[];
+}
+
+export interface Scheme {
+    id: string;
+    labels: Label[];
+    top_concepts: Concept[];
+}
+
+export interface Label {
+    value: string;
+    language: string;
+    valuetype: "prefLabel" | "altLabel" | "unknown";
+}
+
+export type Labellable = Concept | Scheme;
+
+export interface NodeAndParentInstruction {
+    node: TreeNode;
+    parentShouldHideSiblings: boolean;
+}
+
+export interface IconLabels {
+    concept: string;
+    scheme: string;
+}
+
+export interface SearchResultItem {
+    id: string;
+    labels: Label[];
+    parents: Concept[];
     polyhierarchical: boolean;
 }
