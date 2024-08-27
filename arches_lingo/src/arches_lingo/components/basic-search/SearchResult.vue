@@ -1,37 +1,40 @@
 <script setup lang="ts">
+import type { SearchResultItem } from "@/arches_lingo/types.ts";
 
-const props = defineProps({
-  searchResult: {
-    type: Object,
-    required: true
-  },
-})
+defineProps({
+    searchResult: {
+        type: Object,
+        required: true,
+    },
+});
 
-const getItemLabel = item => item.labels.find(bar => bar.language === 'en')['value'];
+const getItemLabel = (item: SearchResultItem): string | undefined =>
+    item.labels.find((label) => label.language === "en")?.value;
 
-const getParentLabels = item => {
+const getParentLabels = (item: SearchResultItem): string => {
     return item.parents
-        .map(parent => {
-            const enLabel = parent.labels.find(label => label.language === "en-US");
+        .map((parent) => {
+            const enLabel = parent.labels.find(
+                (label) => label.language === "en-US",
+            );
             return enLabel ? enLabel.value : "";
         })
         .join(" > ");
 };
-
 </script>
 
 <template>
-    <div 
+    <div
         class="search-result"
         :class="{ 'is-even': searchResult.index % 2 === 0 }"
     >
         <i class="pi pi-paperclip" />
 
-        <div style="margin: 0 0.5rem;">
+        <div style="margin: 0 0.5rem">
             {{ getItemLabel(searchResult.option) }}
         </div>
 
-        <div style="margin: 0 0.5rem;">
+        <div style="margin: 0 0.5rem">
             {{ getParentLabels(searchResult.option) }}
         </div>
     </div>
@@ -39,8 +42,8 @@ const getParentLabels = item => {
 
 <style scoped>
 .search-result {
-    width: 100%; 
-    padding: 0.5rem; 
+    width: 100%;
+    padding: 0.5rem;
     display: flex;
 }
 
