@@ -5,10 +5,10 @@ from django.core.cache import caches
 from django.core.paginator import Paginator
 from django.db.models import (
     CharField,
+    Exists,
     FloatField,
     F,
     OuterRef,
-    Subquery,
     Value,
 )
 from django.db.models.expressions import CombinedExpression, Func
@@ -17,7 +17,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import View
 
 from arches.app.models.models import (
-    Language,
+    Relation,
     ResourceInstance,
     TileModel,
     Value as ConceptValue,
@@ -36,6 +36,7 @@ from arches_lingo.const import (
     CONCEPT_NAME_LANGUAGE_NODE,
     CONCEPT_NAME_TYPE_NODE,
     HIDDEN_LABEL_VALUE_ID,
+    LANGUAGE_CONCEPT_ID,
     SCHEME_NAME_NODEGROUP,
     SCHEME_NAME_CONTENT_NODE,
     SCHEME_NAME_LANGUAGE_NODE,
@@ -167,19 +168,18 @@ class ConceptTreeView(View):
         )
 
     def language_concepts_map(self):
-        languages = (
-            Language.objects.annotate(
-                concept_value=Subquery(
-                    ConceptValue.objects.filter(
-                        valuetype="prefLabel", value=OuterRef("code")
-                    ).values("valueid")
+        language_preflabels = ConceptValue.objects.filter(
+            Exists(
+                Relation.objects.filter(
+                    conceptfrom=LANGUAGE_CONCEPT_ID,
+                    conceptto=OuterRef("concept_id"),
+                    relationtype="narrower",
                 )
-            )
-            .exclude(concept_value=None)
-            .distinct()
+            ),
+            valuetype="prefLabel",
         )
-        for lang in languages:
-            self.language_concepts[str(lang.concept_value)] = lang.code
+        for language_label in language_preflabels:
+            self.language_concepts[str(language_label.pk)] = language_label.value
 
     def top_concepts_map(self):
         top_concept_of_tiles = (

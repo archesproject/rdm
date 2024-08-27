@@ -13,6 +13,7 @@ from arches.app.models.models import (
     GraphModel,
     Node,
     NodeGroup,
+    Relation,
     ResourceInstance,
     TileModel,
     Value,
@@ -104,6 +105,11 @@ def setUpModule():
         valueid=ENGLISH_VALUE_ID,
         valuetype_id="prefLabel",
         value="en",
+    )
+    Relation.objects.get_or_create(
+        conceptfrom_id=LANGUAGE_CONCEPT_ID,
+        conceptto_id=LANGUAGE_CONCEPT_ID,
+        relationtype_id="narrower",
     )
 
 
