@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Concept } from "@/arches_lingo/types.ts";
+import type { SearchResultItem } from "@/arches_lingo/types.ts";
 import { getItemLabel } from "@/arches_lingo/utils.ts";
 
 defineProps({
@@ -9,11 +9,14 @@ defineProps({
     },
 });
 
-const getParentLabels = (item: Concept, preferredLanguage: string): string => {
+const getParentLabels = (
+    item: SearchResultItem,
+    preferredLanguage: string,
+): string => {
     const arrowIcon = " → ";
 
     return item.parents.reduce((acc, parent, index) => {
-        const label = getItemLabel(parent as Concept, preferredLanguage);
+        const label = getItemLabel(parent, preferredLanguage);
         if (label) {
             return acc + (index > 0 ? arrowIcon : "") + label;
         }
