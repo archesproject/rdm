@@ -538,6 +538,522 @@ const mockData = () => {
                     ],
                     polyhierarchical: false
                 },
+                {
+                    id: "d4e4db86-a948-4d6a-b89f-d1682d038afe",
+                    labels: [
+                        {
+                            language: "de",
+                            value: "Knochen",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "pt",
+                            value: "osso",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "bone (material)",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "fr",
+                            value: "os",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "07dbe013-7dcf-4dd7-9df1-e72a9a855da5",
+                    labels: [
+                        {
+                            language: "fr",
+                            value: "bois",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "wood (plant material)",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "d4e4db86-a948-4d6a-b89f-d1682d038afe",
+                    labels: [
+                        {
+                            language: "de",
+                            value: "Knochen",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "pt",
+                            value: "osso",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "bone (material)",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "fr",
+                            value: "os",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "07dbe013-7dcf-4dd7-9df1-e72a9a855da5",
+                    labels: [
+                        {
+                            language: "fr",
+                            value: "bois",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "wood (plant material)",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "d4e4db86-a948-4d6a-b89f-d1682d038afe",
+                    labels: [
+                        {
+                            language: "de",
+                            value: "Knochen",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "pt",
+                            value: "osso",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "bone (material)",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "fr",
+                            value: "os",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "07dbe013-7dcf-4dd7-9df1-e72a9a855da5",
+                    labels: [
+                        {
+                            language: "fr",
+                            value: "bois",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "wood (plant material)",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "d4e4db86-a948-4d6a-b89f-d1682d038afe",
+                    labels: [
+                        {
+                            language: "de",
+                            value: "Knochen",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "pt",
+                            value: "osso",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "bone (material)",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "fr",
+                            value: "os",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "07dbe013-7dcf-4dd7-9df1-e72a9a855da5",
+                    labels: [
+                        {
+                            language: "fr",
+                            value: "bois",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "wood (plant material)",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "d4e4db86-a948-4d6a-b89f-d1682d038afe",
+                    labels: [
+                        {
+                            language: "de",
+                            value: "Knochen",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "pt",
+                            value: "osso",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "bone (material)",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "fr",
+                            value: "os",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "07dbe013-7dcf-4dd7-9df1-e72a9a855da5",
+                    labels: [
+                        {
+                            language: "fr",
+                            value: "bois",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "wood (plant material)",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "d4e4db86-a948-4d6a-b89f-d1682d038afe",
+                    labels: [
+                        {
+                            language: "de",
+                            value: "Knochen",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "pt",
+                            value: "osso",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "bone (material)",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "fr",
+                            value: "os",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
+                {
+                    id: "07dbe013-7dcf-4dd7-9df1-e72a9a855da5",
+                    labels: [
+                        {
+                            language: "fr",
+                            value: "bois",
+                            valuetype: "prefLabel"
+                        },
+                        {
+                            language: "en",
+                            value: "wood (plant material)",
+                            valuetype: "prefLabel"
+                        }
+                    ],
+                    parents: [
+                        {
+                            id: "b73e741b-46da-496c-8960-55cc1007bec4",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "AAT Entries",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        },
+                        {
+                            id: "7764512c-494b-46e5-ad33-223836c8518b",
+                            labels: [
+                                {
+                                    language: "en-US",
+                                    value: "Materials",
+                                    valuetype: "prefLabel"
+                                }
+                            ]
+                        }
+                    ],
+                    polyhierarchical: false
+                },
             ]);
         }, 1000);
     });
@@ -589,6 +1105,7 @@ const updateQueryString = (value: string | object) => {
 <template>
     <div style="display: flex; align-items: center; position: relative;">
         <i class="pi pi-search search-icon" />
+
         <AutoComplete 
             ref="instance"
             v-model="query" 
@@ -606,7 +1123,8 @@ const updateQueryString = (value: string | object) => {
                 }),
                 overlay: () => ({
                     style: {
-                        transform: 'translateY(2.3rem)'
+                        transform: 'translateY(2.3rem)',
+                        maxHeight: '60vh'
                     }
                 }),
             }"
@@ -615,6 +1133,7 @@ const updateQueryString = (value: string | object) => {
                 <SearchResult :foo="slotProps"/>
             </template>
         </AutoComplete>
+
         <Button 
             aria-label="Clear Input"
             v-if="shouldShowClearInputButton"
@@ -624,6 +1143,7 @@ const updateQueryString = (value: string | object) => {
             icon="pi pi-times"
         />
     </div>
+
     <SortAndFilterControls />
 </template>
 
