@@ -346,7 +346,15 @@ class ValueSearchView(ConceptTreeView):
         ]
 
         # Todo: filter by nodegroup permissions
-        return JSONResponse(data)
+        return JSONResponse(
+            {
+                "current_page": page.number,
+                "total_pages": paginator.num_pages,
+                "results_per_page": paginator.per_page,
+                "total_results": paginator.count,
+                "data": data,
+            }
+        )
 
     @staticmethod
     def default_sensitivity():
