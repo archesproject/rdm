@@ -14,8 +14,8 @@ import { fetchSearchResults } from "@/arches_lingo/api.ts";
 import { DEFAULT_ERROR_TOAST_LIFE, ERROR } from "@/arches_lingo/constants.ts";
 
 import type { VirtualScrollerLazyEvent } from "primevue/virtualscroller";
-
 import type { Concept } from "@/arches_lingo/types.ts";
+import type { SearchResultItem } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
 const toast = useToast();
@@ -38,7 +38,7 @@ const autoCompleteKey = ref(0);
 const computedSearchResultsHeight = ref("");
 const isLoading = ref(false);
 const isLoadingAdditionalResults = ref(false);
-const searchResults = ref<Concept[]>([]);
+const searchResults = ref<SearchResultItem[]>([]);
 const searchResultsPage = ref(1);
 const searchResultsTotalCount = ref(0);
 const query = ref("");
