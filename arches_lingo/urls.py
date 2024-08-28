@@ -4,7 +4,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.urls import include, path
 
 from arches_lingo.views.root import LingoRootView
-from arches_lingo.views.concepts import ConceptTreeView, ValueSearchView
+from arches_lingo.views.api.concepts import ConceptTreeView, ValueSearchView
 
 urlpatterns = [
     path("", LingoRootView.as_view(), name="root"),
@@ -12,7 +12,7 @@ urlpatterns = [
     path("search", LingoRootView.as_view(), name="search"),
     path("advanced-search", LingoRootView.as_view(), name="advanced-search"),
     path("schemes", LingoRootView.as_view(), name="schemes"),
-    path("api/concept_trees", ConceptTreeView.as_view(), name="concept_trees"),
+    path("api/concepts", ConceptTreeView.as_view(), name="api_concepts"),
     path("api/search", ValueSearchView.as_view(), name="api_search"),
     path("", include("arches_references.urls")),
 ]
