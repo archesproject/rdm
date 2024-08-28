@@ -198,7 +198,7 @@ class ViewTests(TestCase):
             # 4: select broader tiles, subquery for labels
             # 5: select top concept tiles, subquery for labels
             # 6: select schemes, subquery for labels
-            response = self.client.get(reverse("concept_trees"))
+            response = self.client.get(reverse("api_concepts"))
 
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
