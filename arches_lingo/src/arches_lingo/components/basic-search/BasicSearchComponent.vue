@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from "vue";
+import { nextTick, ref, watch, onMounted } from "vue";
 import { useGettext } from "vue3-gettext";
 
 import AutoComplete from "primevue/autocomplete";
@@ -89,6 +89,13 @@ const updateQueryString = (value: string | object) => {
         searchTerm.value = value;
     }
 };
+
+onMounted(() => {
+    if (autoCompleteInstance.value) {
+        // focus input on component load
+        autoCompleteInstance.value.$el.querySelector("input").focus();
+    }
+});
 </script>
 
 <template>
@@ -108,8 +115,9 @@ const updateQueryString = (value: string | object) => {
                 }),
                 overlay: () => ({
                     style: {
-                        transform: 'translateY(2.3rem)',
+                        transform: 'translateY(3.5rem)',
                         maxHeight: '60vh',
+                        borderRadius: 0,
                     },
                 }),
             }"
@@ -122,7 +130,10 @@ const updateQueryString = (value: string | object) => {
                 <SearchResult :search-result="slotProps" />
             </template>
             <template #footer>
+                <!-- currently not WCAG 2.0 compliant. See https://github.com/primefaces/primevue/issues/6304 -->
                 <SearchResultsFooter
+                    v-if="shouldShowClearInputButton"
+                    tabindex="0"
                     :search-results-per-page="searchResultsPerPage"
                     :total-search-results-count="totalSearchResultsCount"
                     @page-change="
@@ -165,7 +176,7 @@ const updateQueryString = (value: string | object) => {
 
 :deep(.p-autocomplete .p-autocomplete-input) {
     width: 100%;
-    padding-right: 2.5rem;
-    padding-left: 2.5rem;
+    padding: 1rem 2.5rem;
+    border: none;
 }
 </style>
