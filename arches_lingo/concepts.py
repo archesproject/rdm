@@ -251,11 +251,11 @@ class ConceptBuilder:
             schemes = sorted(self.schemes_by_top_concept[conceptid])
             working_parent_list.insert(0, schemes[0])
             return working_parent_list
-        else:
-            working_parent_list.insert(0, first_broader_conceptid)
-            return self.add_broader_concept_recursive(
-                working_parent_list, first_broader_conceptid
-            )
+
+        working_parent_list.insert(0, first_broader_conceptid)
+        return self.add_broader_concept_recursive(
+            working_parent_list, first_broader_conceptid
+        )
 
     def serialize_concept_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[CONCEPT_NAME_LANGUAGE_NODE][0]]
