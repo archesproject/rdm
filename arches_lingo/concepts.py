@@ -41,7 +41,6 @@ cache = caches["lingo"]
 
 class ConceptBuilder:
     def __init__(self):
-        super().__init__()
         self.schemes = ResourceInstance.objects.none()
 
         # key=concept valueid (str) val=language code
