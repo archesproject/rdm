@@ -28,8 +28,8 @@ class ConceptTreeView(View):
 class ValueSearchView(ConceptTreeView):
     def get(self, request):
         term = request.GET.get("term")
-        max_edit_distance = request.GET.get(
-            "maxEditDistance", self.default_sensitivity()
+        max_edit_distance = int(
+            request.GET.get("maxEditDistance", self.default_sensitivity())
         )
         page_number = request.GET.get("page", 1)
         items_per_page = request.GET.get("items", 25)
@@ -67,4 +67,4 @@ class ValueSearchView(ConceptTreeView):
             return 5
         if elastic_prefix_length >= 5:
             return 0
-        return int(5 - elastic_prefix_length)
+        return 5 - elastic_prefix_length
