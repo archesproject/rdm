@@ -31,10 +31,15 @@ class ValueSearchView(ConceptTreeView):
         max_edit_distance = int(
             request.GET.get("maxEditDistance", self.default_sensitivity())
         )
+        exact = request.GET.get("exact", False)
         page_number = request.GET.get("page", 1)
         items_per_page = request.GET.get("items", 25)
 
-        if term:
+        if exact:
+            concept_query = VwLabelValue.objects.filter(value=term).order_by(
+                "concept_id"
+            )
+        elif term:
             concept_query = VwLabelValue.objects.fuzzy_search(term, max_edit_distance)
         else:
             concept_query = VwLabelValue.objects.all().order_by("concept_id")
