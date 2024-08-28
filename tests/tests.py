@@ -225,10 +225,17 @@ class ViewTests(TestCase):
         self.client.force_login(self.admin)
 
         cases = (
+            # Fuzzy match: finds all 5 concepts
             ["term=Concept 1", 5],
             ["term=Concept 1&maxEditDistance=0", 1],
-            ["term=Concept 1&items=1", 1],
-            ["term=Concept 1&items=2&page=3", 1],
+            ["term=Concept 1&exact=true", 1],
+            ["term=Concept 0&exact=true", 0],
+            ["term=Concept 1&items=4", 4],
+            ["term=Concept 1&items=4&page=2", 1],
+            # Containment
+            ["term=Con", 5],
+            ["term=Con&maxEditDistance=0", 5],
+            ["term=Con&exact=True", 0],
         )
         for query, expected_result_count in cases:
             with self.subTest(query=query):
