@@ -2,19 +2,9 @@ from collections import defaultdict
 
 from django.contrib.postgres.expressions import ArraySubquery
 from django.core.cache import caches
-from django.core.paginator import Paginator
-from django.db.models import (
-    CharField,
-    Exists,
-    FloatField,
-    F,
-    OuterRef,
-    Value,
-)
-from django.db.models.expressions import CombinedExpression, Func
+from django.db.models import CharField, Exists, F, OuterRef, Value
+from django.db.models.expressions import CombinedExpression
 from django.utils.translation import gettext_lazy as _
-from django.utils.decorators import method_decorator
-from django.views.generic import View
 
 from arches.app.models.models import (
     Relation,
@@ -22,9 +12,6 @@ from arches.app.models.models import (
     TileModel,
     Value as ConceptValue,
 )
-from arches.app.models.system_settings import settings
-from arches.app.utils.decorators import group_required
-from arches.app.utils.response import JSONResponse
 
 from arches_lingo.const import (
     SCHEMES_GRAPH_ID,
@@ -44,7 +31,7 @@ from arches_lingo.const import (
     PREF_LABEL_VALUE_ID,
     ALT_LABEL_VALUE_ID,
 )
-from arches_lingo.models import VwLabelValue
+from arches_lingo.query_utils import JsonbArrayElements
 
 TOP_CONCEPT_OF_LOOKUP = f"data__{TOP_CONCEPT_OF_NODE_AND_NODEGROUP}"
 BROADER_LOOKUP = f"data__{CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID}"
@@ -52,25 +39,8 @@ BROADER_LOOKUP = f"data__{CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID}"
 cache = caches["lingo"]
 
 
-class JsonbArrayElements(Func):
-    """https://forum.djangoproject.com/t/django-4-2-behavior-change-when-using-arrayagg-on-unnested-arrayfield-postgresql-specific/21547/5"""
-
-    arity = 1
-    contains_subquery = True
-    function = "JSONB_ARRAY_ELEMENTS"
-
-
-class LevenshteinLessEqual(Func):
-    arity = 3
-    function = "LEVENSHTEIN_LESS_EQUAL"
-
-
-@method_decorator(
-    group_required("RDM Administrator", raise_exception=True), name="dispatch"
-)
-class ConceptTreeView(View):
+class ConceptBuilder:
     def __init__(self):
-        super().__init__()
         self.schemes = ResourceInstance.objects.none()
 
         # key=concept valueid (str) val=language code
@@ -280,11 +250,11 @@ class ConceptTreeView(View):
             schemes = sorted(self.schemes_by_top_concept[conceptid])
             working_parent_list.insert(0, schemes[0])
             return working_parent_list
-        else:
-            working_parent_list.insert(0, first_broader_conceptid)
-            return self.add_broader_concept_recursive(
-                working_parent_list, first_broader_conceptid
-            )
+
+        working_parent_list.insert(0, first_broader_conceptid)
+        return self.add_broader_concept_recursive(
+            working_parent_list, first_broader_conceptid
+        )
 
     def serialize_concept_label(self, label_tile: dict):
         lang_code = self.language_concepts[label_tile[CONCEPT_NAME_LANGUAGE_NODE][0]]
@@ -298,74 +268,3 @@ class ConceptTreeView(View):
             "language": lang_code,
             "value": value,
         }
-
-    def get(self, request):
-        data = {
-            "schemes": [self.serialize_scheme(scheme) for scheme in self.schemes],
-        }
-        # Todo: filter by nodegroup permissions
-        return JSONResponse(data)
-
-
-@method_decorator(
-    group_required("RDM Administrator", raise_exception=True), name="dispatch"
-)
-class ValueSearchView(ConceptTreeView):
-    def get(self, request):
-        term = request.GET.get("term")
-        max_edit_distance = request.GET.get(
-            "maxEditDistance", self.default_sensitivity()
-        )
-        page_number = request.GET.get("page", 1)
-        items_per_page = request.GET.get("items", 25)
-
-        concept_query = VwLabelValue.objects.all()
-        if term:
-            concept_query = (
-                concept_query.annotate(
-                    edit_distance=LevenshteinLessEqual(
-                        F("value"),
-                        Value(term),
-                        Value(max_edit_distance),
-                        output_field=FloatField(),
-                    )
-                )
-                .filter(edit_distance__lte=max_edit_distance)
-                .order_by("edit_distance")
-            )
-        else:
-            concept_query = concept_query.order_by("concept_id")
-        concept_query = concept_query.values_list("concept_id", flat=True).distinct()
-
-        paginator = Paginator(concept_query, items_per_page)
-        page = paginator.get_page(page_number)
-
-        data = [
-            self.serialize_concept(str(concept_uuid), parents=True, children=False)
-            for concept_uuid in page
-        ]
-
-        # Todo: filter by nodegroup permissions
-        return JSONResponse(
-            {
-                "current_page": page.number,
-                "total_pages": paginator.num_pages,
-                "results_per_page": paginator.per_page,
-                "total_results": paginator.count,
-                "data": data,
-            }
-        )
-
-    @staticmethod
-    def default_sensitivity():
-        """Remains to be seen whether the existing elastic sensitivity setting
-        should be the fallback, but stub something out for now.
-        This sensitivity setting is actually inversely related to edit distance,
-        because it's prefix_length in elastic, not fuzziness, so invert it.
-        """
-        elastic_prefix_length = settings.SEARCH_TERM_SENSITIVITY
-        if elastic_prefix_length <= 0:
-            return 5
-        if elastic_prefix_length >= 5:
-            return 0
-        return int(5 - elastic_prefix_length)

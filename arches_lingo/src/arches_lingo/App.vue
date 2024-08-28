@@ -34,20 +34,13 @@ const { $gettext } = useGettext();
 
 router.beforeEach(async (to, _from, next) => {
     try {
-        let userData = user.value;
-
-        if (!userData || userData.username === ANONYMOUS) {
-            userData = await fetchUser();
-            setUser(userData);
-        }
+        let userData = await fetchUser();
+        setUser(userData);
 
         const requiresAuthentication = to.matched.some(
             (record) => record.meta.requiresAuthentication,
         );
-        if (
-            requiresAuthentication &&
-            (!userData || userData.username === ANONYMOUS)
-        ) {
+        if (requiresAuthentication && userData.username === ANONYMOUS) {
             throw new Error();
         } else {
             next();
