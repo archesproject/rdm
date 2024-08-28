@@ -9,6 +9,7 @@ from arches_lingo.const import CONCEPT_NAME_CONTENT_NODE
 
 class FuzzyStrMatchExtension(CreateExtension):
     def __init__(self):
+        super().__init__()
         self.name = "fuzzystrmatch"
 
 
