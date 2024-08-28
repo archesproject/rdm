@@ -23,9 +23,9 @@ const emitPageChangeEvent = (event: typeof PageEvent) => {
 
 <template>
     <Paginator
+        style="position: sticky; bottom: 0"
         :rows="searchResultsPerPage"
         :total-records="totalSearchResultsCount"
-        style="position: sticky; bottom: 0"
         :always-show="false"
         @page="emitPageChangeEvent"
     />

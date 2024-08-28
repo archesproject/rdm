@@ -15,14 +15,17 @@ const querySortPreference = ref();
     <div
         class="p-autocomplete p-inputtext p-component"
         style="
-            height: 2rem;
-            margin-top: 0.2rem;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            border-left: none;
+            border-right: none;
+            border-bottom: none;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            padding: 1rem;
         "
     >
-        <div style="display: flex">
+        <div style="display: flex; align-items: center">
             <div>Placeholder Sorting:</div>
 
             <div style="display: flex">
@@ -30,46 +33,46 @@ const querySortPreference = ref();
                     <RadioButton
                         v-model="querySortPreference"
                         input-id="querySortPreference1"
-                        name="querySortPreference"
+                        name="querySortPreference1"
                         value="Unsorted"
                     />
-                    <label for="querySortPreference1">{{
-                        $gettext("Unsorted")
-                    }}</label>
+                    <label for="querySortPreference1">
+                        {{ $gettext("Unsorted") }}
+                    </label>
                 </div>
                 <div class="query-sort-preference">
                     <RadioButton
                         v-model="querySortPreference"
                         input-id="querySortPreference2"
-                        name="querySortPreference"
+                        name="querySortPreference2"
                         value="A to Z"
                     />
-                    <label for="querySortPreference2">{{
-                        $gettext("A to Z")
-                    }}</label>
+                    <label for="querySortPreference2">
+                        {{ $gettext("A to Z") }}
+                    </label>
                 </div>
                 <div class="query-sort-preference">
                     <RadioButton
                         v-model="querySortPreference"
                         input-id="querySortPreference3"
-                        name="querySortPreference"
+                        name="querySortPreference3"
                         value="Z to A"
                     />
-                    <label for="querySortPreference3">{{
-                        $gettext("Z to A")
-                    }}</label>
+                    <label for="querySortPreference3">
+                        {{ $gettext("Z to A") }}
+                    </label>
                 </div>
             </div>
         </div>
-        <div style="display: flex">
-            <div>Placeholder filters:</div>
+        <div style="display: flex; align-items: center">
+            <div>Placeholder Include:</div>
 
             <div style="display: flex">
                 <div class="query-filter">
                     <Checkbox
                         v-model="queryFilters"
                         input-id="queryFilter1"
-                        name="queryFilters"
+                        name="queryFilter1"
                         value="Concepts"
                     />
                     <label for="queryFilter1">{{ $gettext("Concepts") }}</label>
@@ -78,7 +81,7 @@ const querySortPreference = ref();
                     <Checkbox
                         v-model="queryFilters"
                         input-id="queryFilter2"
-                        name="queryFilters"
+                        name="queryFilter2"
                         value="Places"
                     />
                     <label for="queryFilter2">{{ $gettext("Places") }}</label>
@@ -87,7 +90,7 @@ const querySortPreference = ref();
                     <Checkbox
                         v-model="queryFilters"
                         input-id="queryFilter3"
-                        name="queryFilters"
+                        name="queryFilter3"
                         value="People"
                     />
                     <label for="queryFilter3">{{ $gettext("People") }}</label>
@@ -96,7 +99,7 @@ const querySortPreference = ref();
                     <Checkbox
                         v-model="queryFilters"
                         input-id="queryFilter4"
-                        name="queryFilters"
+                        name="queryFilter4"
                         value="Groups"
                     />
                     <label for="queryFilter4">{{ $gettext("Groups") }}</label>
@@ -104,8 +107,8 @@ const querySortPreference = ref();
                 <div class="query-filter">
                     <Checkbox
                         v-model="queryFilters"
-                        input-id="queryFilter4"
-                        name="queryFilters"
+                        input-id="queryFilter5"
+                        name="queryFilter5"
                         value="Periods"
                     />
                     <label for="queryFilter4">{{ $gettext("Periods") }}</label>
