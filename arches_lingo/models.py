@@ -2,6 +2,8 @@ from django.db import models
 
 from arches.app.models.models import ResourceInstance
 
+from arches_lingo.querysets import LabelValueQuerySet
+
 
 class VwLabelValue(models.Model):
     concept = models.ForeignKey(
@@ -11,6 +13,8 @@ class VwLabelValue(models.Model):
         db_column="conceptid",
     )
     value = models.CharField(db_column="value")
+
+    objects = LabelValueQuerySet.as_manager()
 
     class Meta:
         managed = False
