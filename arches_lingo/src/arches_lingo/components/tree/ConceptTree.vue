@@ -14,7 +14,8 @@ import {
 } from "@/arches_references/constants.ts";
 import { fetchConcepts } from "@/arches_lingo/api.ts";
 import { bestLabel } from "@/arches_lingo/utils.ts";
-import LetterCircle from "arches_lingo/arches_lingo/src/arches_references/components/misc/LetterCircle.vue";
+import LetterCircle from "@/arches_lingo/components/misc/LetterCircle.vue";
+import TreeRow from "@/arches_lingo/components/tree/TreeRow.vue";
 
 import type { Language } from "@/arches/types";
 import type { ComponentPublicInstance, Ref } from "vue";
@@ -33,11 +34,9 @@ const { $gettext } = useGettext();
 
 const SCHEME_LABEL = $gettext("Scheme");
 const CONCEPT_LABEL = $gettext("Concept");
-const FOCUS = $gettext("Focus");
-const UNFOCUS = $gettext("Unfocus");
 
 const schemes: Ref<Scheme[]> = ref([]);
-const focusedNode: Ref<TreeNode> = ref({ key: "dummy" });
+const focusedNode: Ref<TreeNode | null> = ref(null);
 const selectedKeys: Ref<TreeSelectionKeys> = ref({});
 const expandedKeys: Ref<TreeExpandedKeys> = ref({});
 const filterValue = ref("");
@@ -50,18 +49,6 @@ const rerenderTree = ref(0);
 // @ts-expect-error woes with inject
 const { setDisplayedRow } = inject(displayedRowKey) as unknown as {
     setDisplayedRow: RowSetter;
-};
-
-const rowLabel = (data: Labellable) => {
-    if (!data) {
-        return "";
-    }
-    const unstyledLabel = bestLabel(data, selectedLanguage.value.code).value;
-    if (!filterValue.value) {
-        return unstyledLabel;
-    }
-    const regex = new RegExp(`(${filterValue.value})`, "gi");
-    return unstyledLabel.replace(regex, "<b>$1</b>");
 };
 
 const conceptAsNodeAndParentInstruction = (
@@ -106,7 +93,7 @@ const conceptOrSchemeAsNodeAndParentInstruction = (
     let parentShouldHideSiblings = !!parentOfFocusedNode;
     if (!parentShouldHideSiblings) {
         const focalNodeIdx = node.children!.findIndex(
-            (child: TreeNode) => child.data.id === focusedNode.value.data?.id,
+            (child: TreeNode) => child.data.id === focusedNode.value?.data?.id,
         );
         if (focalNodeIdx > -1) {
             node.children = [node.children![focalNodeIdx]];
@@ -118,7 +105,7 @@ const conceptOrSchemeAsNodeAndParentInstruction = (
 
 const tree = computed(() => {
     const focalNodeIdx = schemes.value.findIndex(
-        (scheme) => scheme.id === focusedNode.value.data?.id,
+        (scheme) => scheme.id === focusedNode.value?.data?.id,
     );
     if (focalNodeIdx > -1) {
         return [
@@ -154,24 +141,6 @@ const expandNode = (node: TreeNode) => {
         for (const child of node.children) {
             expandNode(child);
         }
-    }
-};
-
-const iconForFocusToggle = (node: TreeNode) => {
-    return focusedNode.value.data?.id === node.data.id
-        ? "fa fa-search-minus"
-        : "fa fa-bullseye";
-};
-
-const labelForFocusToggle = (node: TreeNode) => {
-    return focusedNode.value.data?.id === node.data.id ? UNFOCUS : FOCUS;
-};
-
-const toggleFocus = (node: TreeNode) => {
-    if (focusedNode.value.data?.id === node.data.id) {
-        focusedNode.value = { key: "dummy" };
-    } else {
-        focusedNode.value = node;
     }
 };
 
@@ -331,18 +300,10 @@ await initializeTree();
             <LetterCircle :labelled="slotProps.node.data" />
         </template>
         <template #default="slotProps">
-            <!-- eslint-disable vue/no-v-html -->
-            <span v-html="rowLabel(slotProps.node.data)" />
-            <!-- eslint-enable vue/no-v-html -->
-            <i
-                v-tooltip="labelForFocusToggle(slotProps.node)"
-                role="button"
-                :class="iconForFocusToggle(slotProps.node)"
-                :aria-label="labelForFocusToggle(slotProps.node)"
-                tabindex="0"
-                :style="{ alignSelf: 'center', marginLeft: '1rem' }"
-                @click="toggleFocus(slotProps.node)"
-                @keyup.enter="toggleFocus(slotProps.node)"
+            <TreeRow
+                v-model:focused-node="focusedNode"
+                v-model:filter-value="filterValue"
+                :node="slotProps.node"
             />
         </template>
     </Tree>
