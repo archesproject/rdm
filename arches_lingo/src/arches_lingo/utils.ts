@@ -72,7 +72,7 @@ export const treeFromSchemes = (
     selectedLanguage: Language,
     iconLabels: IconLabels,
     focusedNode: TreeNode | null,
-) => {
+): TreeNode[] => {
     // Use a closure to avoid passing around params (selectedLanguage, etc).
     const conceptAsNodeAndInstruction = (
         concept: Concept,
