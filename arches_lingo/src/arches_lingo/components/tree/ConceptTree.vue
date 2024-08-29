@@ -5,6 +5,7 @@ import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
 import Tree from "primevue/tree";
 
+import PresentationControls from "@/arches_references/components/tree/PresentationControls.vue";
 import {
     DEFAULT_ERROR_TOAST_LIFE,
     ERROR,
@@ -14,14 +15,14 @@ import {
 import { fetchConcepts } from "@/arches_lingo/api.ts";
 import { bestLabel, treeFromSchemes } from "@/arches_lingo/utils.ts";
 import LetterCircle from "@/arches_lingo/components/misc/LetterCircle.vue";
-import PresentationControls from "@/arches_lingo/components/tree/PresentationControls.vue";
 import TreeRow from "@/arches_lingo/components/tree/TreeRow.vue";
 
 import type { Language } from "@/arches/types";
 import type { ComponentPublicInstance, Ref } from "vue";
 import type { TreeExpandedKeys, TreeSelectionKeys } from "primevue/tree";
 import type { TreeNode } from "primevue/treenode";
-import type { IconLabels, RowSetter, Scheme } from "@/arches_lingo/types";
+import type { RowSetter } from "@/arches_references/types";
+import type { IconLabels, Scheme } from "@/arches_lingo/types";
 
 const toast = useToast();
 const { $gettext } = useGettext();
