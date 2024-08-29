@@ -13,7 +13,7 @@ import {
     selectedLanguageKey,
 } from "@/arches_references/constants.ts";
 import { fetchConcepts } from "@/arches_lingo/api.ts";
-import { bestLabel } from "@/arches_lingo/utils.ts";
+import { bestLabel, treeFromSchemes } from "@/arches_lingo/utils.ts";
 import LetterCircle from "@/arches_lingo/components/misc/LetterCircle.vue";
 import TreeRow from "@/arches_lingo/components/tree/TreeRow.vue";
 
@@ -22,18 +22,15 @@ import type { ComponentPublicInstance, Ref } from "vue";
 import type { TreeExpandedKeys, TreeSelectionKeys } from "primevue/tree";
 import type { TreeNode } from "primevue/treenode";
 import type { RowSetter } from "@/arches_references/types";
-import type {
-    Concept,
-    Labellable,
-    NodeAndParentInstruction,
-    Scheme,
-} from "@/arches_lingo/types";
+import type { IconLabels, Scheme } from "@/arches_lingo/types";
 
 const toast = useToast();
 const { $gettext } = useGettext();
 
-const SCHEME_LABEL = $gettext("Scheme");
-const CONCEPT_LABEL = $gettext("Concept");
+const iconLabels: IconLabels = Object.freeze({
+    concept: $gettext("Concept"),
+    scheme: $gettext("Scheme"),
+});
 
 const schemes: Ref<Scheme[]> = ref([]);
 const focusedNode: Ref<TreeNode | null> = ref(null);
@@ -51,78 +48,14 @@ const { setDisplayedRow } = inject(displayedRowKey) as unknown as {
     setDisplayedRow: RowSetter;
 };
 
-const conceptAsNodeAndParentInstruction = (
-    concept: Concept,
-): NodeAndParentInstruction => {
-    return conceptOrSchemeAsNodeAndParentInstruction(concept, concept.narrower);
-};
-const schemeAsNodeAndParentInstruction = (
-    scheme: Scheme,
-): NodeAndParentInstruction => {
-    return conceptOrSchemeAsNodeAndParentInstruction(
-        scheme,
-        scheme.top_concepts,
-    );
-};
-const conceptOrSchemeAsNodeAndParentInstruction = (
-    labellable: Labellable,
-    children: Concept[],
-): NodeAndParentInstruction => {
-    let childrenAsNodes: TreeNode[];
-    const nodesAndInstructions = children.map((child) =>
-        conceptAsNodeAndParentInstruction(child),
-    );
-    const parentOfFocusedNode = nodesAndInstructions.find(
-        (obj) => obj.parentShouldHideSiblings,
-    );
-    if (parentOfFocusedNode) {
-        childrenAsNodes = [parentOfFocusedNode.node];
-    } else {
-        childrenAsNodes = nodesAndInstructions.map((obj) => obj.node);
-    }
-    const iconLabel = (labellable as Scheme).top_concepts
-        ? SCHEME_LABEL
-        : CONCEPT_LABEL;
-    const node: TreeNode = {
-        key: labellable.id,
-        label: bestLabel(labellable, selectedLanguage.value.code).value,
-        children: childrenAsNodes,
-        data: labellable,
-        iconLabel,
-    };
-    let parentShouldHideSiblings = !!parentOfFocusedNode;
-    if (!parentShouldHideSiblings) {
-        const focalNodeIdx = node.children!.findIndex(
-            (child: TreeNode) => child.data.id === focusedNode.value?.data?.id,
-        );
-        if (focalNodeIdx > -1) {
-            node.children = [node.children![focalNodeIdx]];
-            parentShouldHideSiblings = true;
-        }
-    }
-    return { node, parentShouldHideSiblings };
-};
-
-const tree = computed(() => {
-    const focalNodeIdx = schemes.value.findIndex(
-        (scheme) => scheme.id === focusedNode.value?.data?.id,
-    );
-    if (focalNodeIdx > -1) {
-        return [
-            schemeAsNodeAndParentInstruction(schemes.value[focalNodeIdx]).node,
-        ];
-    }
-    const nodesAndInstructions = schemes.value.map((scheme: Scheme) =>
-        schemeAsNodeAndParentInstruction(scheme),
-    );
-    const parentOfFocusedNode = nodesAndInstructions.find(
-        (obj) => obj.parentShouldHideSiblings,
-    );
-    if (parentOfFocusedNode) {
-        return [parentOfFocusedNode.node];
-    }
-    return nodesAndInstructions.map((obj) => obj.node);
-});
+const tree = computed(() =>
+    treeFromSchemes(
+        schemes.value,
+        selectedLanguage.value,
+        iconLabels,
+        focusedNode.value,
+    ),
+);
 
 const expandAll = () => {
     for (const node of tree.value) {
@@ -230,18 +163,14 @@ const initializeTree = async () => {
     a little clever about resorting the ordered response from the API
     to preserve the existing sort (and avoid confusion).
     */
-    const priorSortedListIds = tree.value.map((node) => node.key);
+    const priorSortedSchemeIds = tree.value.map((node) => node.key);
 
     await fetchConcepts()
         .then(({ schemes: fetchedSchemes }: { schemes: Scheme[] }) => {
             schemes.value = fetchedSchemes.sort(
                 (a, b) =>
-                    priorSortedListIds.indexOf(
-                        schemeAsNodeAndParentInstruction(a).node.key,
-                    ) -
-                    priorSortedListIds.indexOf(
-                        schemeAsNodeAndParentInstruction(b).node.key,
-                    ),
+                    priorSortedSchemeIds.indexOf(a.id) -
+                    priorSortedSchemeIds.indexOf(b.id),
             );
         })
         .catch((error: Error) => {
