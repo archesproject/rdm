@@ -33,6 +33,8 @@ export interface Label {
 
 export type Labellable = Concept | Scheme;
 
+export type RowSetter = (val: Labellable | null) => void;
+
 export interface NodeAndParentInstruction {
     node: TreeNode;
     parentShouldHideSiblings: boolean;
