@@ -32,10 +32,15 @@ const visible = ref(false);
                 },
             }),
         }"
-        style="margin-top: 4rem; border-radius: 0"
+        style="margin-top: 6rem"
         position="top"
     >
-        <BasicSearchComponent :search-results-per-page="25" />
+        <div style="width: 80vw">
+            <BasicSearchComponent
+                :search-results-per-page="25"
+                :search-result-item-size="38"
+            />
+        </div>
     </Dialog>
 </template>
 
