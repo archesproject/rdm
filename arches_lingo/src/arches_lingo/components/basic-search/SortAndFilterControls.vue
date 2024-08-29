@@ -13,7 +13,6 @@ const querySortPreference = ref();
 
 <template>
     <div
-        class="p-autocomplete p-inputtext p-component"
         style="
             display: flex;
             justify-content: space-between;
