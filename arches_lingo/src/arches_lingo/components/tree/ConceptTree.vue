@@ -14,6 +14,7 @@ import {
 } from "@/arches_references/constants.ts";
 import { fetchConcepts } from "@/arches_lingo/api.ts";
 import { bestLabel } from "@/arches_lingo/utils.ts";
+import LetterCircle from "arches_lingo/arches_lingo/src/arches_references/components/misc/LetterCircle.vue";
 
 import type { Language } from "@/arches/types";
 import type { ComponentPublicInstance, Ref } from "vue";
