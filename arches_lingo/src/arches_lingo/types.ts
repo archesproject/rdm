@@ -39,3 +39,8 @@ export interface NodeAndParentInstruction {
     node: TreeNode;
     parentShouldHideSiblings: boolean;
 }
+
+export interface IconLabels {
+    concept: string;
+    scheme: string;
+}
