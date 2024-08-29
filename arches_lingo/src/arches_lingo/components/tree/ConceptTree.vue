@@ -27,6 +27,8 @@ import type { IconLabels, Scheme } from "@/arches_lingo/types";
 const toast = useToast();
 const { $gettext } = useGettext();
 
+const FOCUS = $gettext("Focus");
+const UNFOCUS = $gettext("Unfocus");
 const iconLabels: IconLabels = Object.freeze({
     concept: $gettext("Concept"),
     scheme: $gettext("Scheme"),
@@ -233,6 +235,8 @@ await initializeTree();
                 v-model:focused-node="focusedNode"
                 v-model:filter-value="filterValue"
                 :node="slotProps.node"
+                :focus-label="FOCUS"
+                :unfocus-label="UNFOCUS"
             />
         </template>
     </Tree>
