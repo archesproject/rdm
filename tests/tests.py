@@ -48,7 +48,7 @@ def setUpModule():
             (
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
-                "Top concept of",
+                "top_concept_of",
                 "concept-list",
             ),
             (
@@ -60,29 +60,31 @@ def setUpModule():
             (
                 SCHEME_NAME_NODEGROUP,
                 SCHEME_NAME_CONTENT_NODE,
-                "Name content",
+                "appellative_status_ascribed_name_content",
                 "concept-list",
             ),
             (
                 SCHEME_NAME_NODEGROUP,
                 SCHEME_NAME_LANGUAGE_NODE,
-                "Name language",
+                "appellative_status_ascribed_name_language",
                 "string",
             ),
             (
                 CONCEPT_NAME_NODEGROUP,
                 CONCEPT_NAME_CONTENT_NODE,
-                "Name content",
+                "appellative_status_ascribed_name_content",
                 "concept-list",
             ),
             (
                 CONCEPT_NAME_NODEGROUP,
                 CONCEPT_NAME_LANGUAGE_NODE,
-                "Name language",
+                "appellative_status_ascribed_name_language",
                 "string",
             ),
         ]:
-            NodeGroup.objects.get_or_create(pk=nodegroup_id)
+            NodeGroup.objects.update_or_create(
+                pk=nodegroup_id, defaults={"cardinality": "n"}
+            )
             Node.objects.create(
                 pk=node_id,
                 graph_id=CONCEPTS_GRAPH_ID,

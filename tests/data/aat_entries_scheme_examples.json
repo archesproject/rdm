@@ -22,30 +22,60 @@
                 "tiles": [
                     {
                         "data": {
-                            "0f29e1d0-1771-11ef-b270-0a58a9feac02": null,
-                            "ef87af16-11de-11ef-9493-0a58a9feac02": null,
-                            "ef87afe8-11de-11ef-9493-0a58a9feac02": null,
-                            "ef87b092-11de-11ef-9493-0a58a9feac02": null,
+                            "8e34b483-423c-11ee-8a8d-11afefc4bff7": {
+                                "en": {
+                                    "direction": "ltr",
+                                    "value": "http://localhost:8000/b73e741b-46da-496c-8960-55cc1007bec4"
+                                }
+                            },
+                            "ab983648-0f65-11ef-9493-0a58a9feac02": "fdc26cd0-fa8f-4504-90e9-07a823472671"
+                        },
+                        "nodegroup_id": "8e34b47f-423c-11ee-8a8d-11afefc4bff7",
+                        "parenttile_id": null,
+                        "provisionaledits": null,
+                        "resourceinstance_id": "b73e741b-46da-496c-8960-55cc1007bec4",
+                        "sortorder": null,
+                        "tileid": "77e2615e-2f5a-4765-992e-2adb9a35f242"
+                    },
+                    {
+                        "data": {
                             "ef87b132-11de-11ef-9493-0a58a9feac02": {
                                 "en": {
                                     "direction": "ltr",
                                     "value": "AAT Entries"
                                 }
                             },
-                            "ef87b1d2-11de-11ef-9493-0a58a9feac02": null,
-                            "ef87b268-11de-11ef-9493-0a58a9feac02": null,
                             "ef87b43e-11de-11ef-9493-0a58a9feac02": [
                                 "727dc5e5-fac6-4347-8d38-7b868365714f"
                             ],
-                            "ef87b4de-11de-11ef-9493-0a58a9feac02": null,
                             "ef87b588-11de-11ef-9493-0a58a9feac02": "6ac8e471-476e-4fd0-b276-86e01a17bcc8"
                         },
                         "nodegroup_id": "ef87ac28-11de-11ef-9493-0a58a9feac02",
                         "parenttile_id": null,
                         "provisionaledits": null,
                         "resourceinstance_id": "b73e741b-46da-496c-8960-55cc1007bec4",
-                        "sortorder": 0,
-                        "tileid": "7ca39560-38ea-4799-b5e7-bd3fa58eccc9"
+                        "sortorder": null,
+                        "tileid": "1733d77a-fd0d-478f-95bf-b19962609aea"
+                    },
+                    {
+                        "data": {
+                            "ef87b132-11de-11ef-9493-0a58a9feac02": {
+                                "en": {
+                                    "direction": "ltr",
+                                    "value": "AAT Entries"
+                                }
+                            },
+                            "ef87b43e-11de-11ef-9493-0a58a9feac02": [
+                                "727dc5e5-fac6-4347-8d38-7b868365714f"
+                            ],
+                            "ef87b588-11de-11ef-9493-0a58a9feac02": "6ac8e471-476e-4fd0-b276-86e01a17bcc8"
+                        },
+                        "nodegroup_id": "ef87ac28-11de-11ef-9493-0a58a9feac02",
+                        "parenttile_id": null,
+                        "provisionaledits": null,
+                        "resourceinstance_id": "b73e741b-46da-496c-8960-55cc1007bec4",
+                        "sortorder": null,
+                        "tileid": "fc740a65-1f17-4207-a441-9f20541c99cc"
                     },
                     {
                         "data": {
@@ -55,15 +85,14 @@
                                     "value": "http://localhost:8000/b73e741b-46da-496c-8960-55cc1007bec4"
                                 }
                             },
-                            "8e34b485-423c-11ee-8a8d-11afefc4bff7": null,
                             "ab983648-0f65-11ef-9493-0a58a9feac02": "fdc26cd0-fa8f-4504-90e9-07a823472671"
                         },
                         "nodegroup_id": "8e34b47f-423c-11ee-8a8d-11afefc4bff7",
                         "parenttile_id": null,
                         "provisionaledits": null,
                         "resourceinstance_id": "b73e741b-46da-496c-8960-55cc1007bec4",
-                        "sortorder": 0,
-                        "tileid": "c7c685e3-6163-4394-a21a-f11d94ad20d0"
+                        "sortorder": null,
+                        "tileid": "464ceee1-e651-4121-a095-0872e736cdf4"
                     }
                 ]
             }
