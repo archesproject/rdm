@@ -15,14 +15,12 @@ export interface UserRefAndSetter {
 
 export interface Concept {
     id: string;
-    identifier: string | null;
     labels: Label[];
     narrower: Concept[];
 }
 
 export interface Scheme {
     id: string;
-    identifier: string | null;
     labels: Label[];
     top_concepts: Concept[];
 }
