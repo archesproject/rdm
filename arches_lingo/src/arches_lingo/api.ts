@@ -60,6 +60,8 @@ export const fetchSearchResults = async (
     items: number,
     page: number,
 ) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const url = `
         ${arches.urls.api_search}?term=${encodeURIComponent(searchTerm)}&items=${encodeURIComponent(items)}&page=${encodeURIComponent(page)}
     `;
