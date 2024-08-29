@@ -36,6 +36,7 @@ const query = ref("");
 const results = ref<SearchResultItem[]>([]);
 const totalSearchResultsCount = ref(0);
 const isLoading = ref(false);
+const isLoadingAdditionalResults = ref(false);
 const shouldShowClearInputButton = ref(false);
 const searchResultsPage = ref(1);
 
@@ -101,6 +102,7 @@ const fetchData = async (
         });
     } finally {
         isLoading.value = false;
+        isLoadingAdditionalResults.value = false;
     }
 };
 
@@ -111,12 +113,17 @@ const clearResultsAndFetchData = () => {
     fetchData(searchTerm.value, props.searchResultsPerPage);
 };
 
-const fetchMoreSearchResults = (event: { first: number; last: number }) => {
+const loadAdditionalSearchResults = (event: {
+    first: number;
+    last: number;
+}) => {
     if (
         event.last >= searchResultsPage.value * props.searchResultsPerPage &&
         event.last <= totalSearchResultsCount.value
     ) {
+        isLoadingAdditionalResults.value = true;
         searchResultsPage.value += 1;
+
         fetchData(
             searchTerm.value,
             props.searchResultsPerPage,
@@ -159,14 +166,7 @@ const updateQueryString = (value: string | object) => {
             <AutoComplete
                 ref="autoCompleteInstance"
                 v-model="query"
-                :virtual-scroller-options="{
-                    itemSize: props.searchResultItemSize,
-                    lazy: true,
-                    scrollHeight: computedMinHeight,
-                    style: { minHeight: computedMinHeight },
-                    onLazyLoad: fetchMoreSearchResults,
-                }"
-                :suggestions="results"
+                :loading="isLoading"
                 :placeholder="$gettext('Quick Search')"
                 :pt="{
                     option: () => ({
@@ -179,6 +179,16 @@ const updateQueryString = (value: string | object) => {
                             transform: 'translateY(3.5rem)',
                         },
                     }),
+                }"
+                :suggestions="results"
+                :virtual-scroller-options="{
+                    itemSize: props.searchResultItemSize,
+                    lazy: true,
+                    loading: isLoading && !isLoadingAdditionalResults,
+                    onLazyLoad: loadAdditionalSearchResults,
+                    scrollHeight: computedMinHeight,
+                    showLoader: true,
+                    style: { minHeight: computedMinHeight },
                 }"
                 @complete="clearResultsAndFetchData"
                 @option-select="preventSelection"
@@ -193,9 +203,14 @@ const updateQueryString = (value: string | object) => {
             <Button
                 v-if="shouldShowClearInputButton"
                 aria-label="Clear Input"
-                class="p-button-text clear-button"
-                style="background-color: transparent"
+                class="p-button-text"
                 icon="pi pi-times"
+                style="
+                    background-color: transparent;
+                    position: absolute;
+                    inset-inline-end: 0.2rem;
+                    color: var(--p-input-color);
+                "
                 @click="clearInput"
             />
         </div>
@@ -213,9 +228,6 @@ const updateQueryString = (value: string | object) => {
 }
 
 .clear-button {
-    position: absolute;
-    inset-inline-end: 0.2rem;
-    color: var(--p-input-color);
 }
 
 .p-autocomplete {
