@@ -25,17 +25,9 @@ const querySortPreference = ref();
 </script>
 
 <template>
-    <div
-        style="
-            display: flex;
-            justify-content: space-between;
-            padding: 1.2rem;
-            background-color: #ebeef0;
-            border-top: 1px solid #ddd;
-        "
-    >
-        <div style="display: flex; align-items: center">
-            <div>Placeholder Sorting:</div>
+    <div class="sort-and-filter-controls">
+        <div class="sort-container">
+            <div class="label">Placeholder Sorting:</div>
 
             <div
                 v-for="(sortOption, index) in sortOptions"
@@ -54,8 +46,8 @@ const querySortPreference = ref();
             </div>
         </div>
 
-        <div style="display: flex; align-items: center">
-            <div>Placeholder Include:</div>
+        <div class="filter-container">
+            <div class="label">Placeholder Include:</div>
 
             <div
                 v-for="(filter, index) in filters"
@@ -77,21 +69,62 @@ const querySortPreference = ref();
 </template>
 
 <style scoped>
-.query-sort-preference,
-.query-filter {
-    margin: 0 0.5rem;
+.sort-and-filter-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+    background-color: #ebeef0;
+    border-top: 1px solid #ddd;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.sort-container,
+.filter-container {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
 
-    label {
-        margin: 0 0.25rem;
-        cursor: pointer;
-    }
+.label {
+    min-width: 150px; /* Adjust as necessary */
+    font-weight: bold;
+}
+
+.query-sort-preference,
+.query-filter {
+    display: flex;
+    align-items: center;
+}
+
+label {
+    margin-left: 0.25rem;
+    cursor: pointer;
 }
 
 :deep(.p-radiobutton-box),
 :deep(.p-checkbox-box) {
     background-color: #ebeef0;
     border: 1px solid;
+}
+
+@media screen and (max-width: 960px) {
+    .sort-and-filter-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .sort-container,
+    .filter-container {
+        width: 100%;
+    }
+
+    .label {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
 }
 </style>

@@ -10,6 +10,9 @@ import BasicSearchComponent from "@/arches_lingo/components/basic-search/BasicSe
 const { $gettext } = useGettext();
 
 const visible = ref(false);
+
+const SEARCH_RESULTS_PER_PAGE = 25;
+const SEARCH_RESULT_ITEM_SIZE = 38;
 </script>
 
 <template>
@@ -21,27 +24,41 @@ const visible = ref(false);
 
     <Dialog
         v-model:visible="visible"
+        position="top"
         :dismissable-mask="true"
-        :modal="true"
         :close-on-escape="true"
-        :show-header="false"
+        :modal="true"
         :pt="{
+            root: () => ({
+                class: 'basic-search-dialog',
+            }),
             content: () => ({
                 style: {
                     padding: 0,
                 },
             }),
         }"
-        style="margin-top: 6rem; border-radius: 0"
-        position="top"
+        :show-header="false"
     >
         <div style="width: 80vw">
             <BasicSearchComponent
-                :search-results-per-page="25"
-                :search-result-item-size="38"
+                :search-results-per-page="SEARCH_RESULTS_PER_PAGE"
+                :search-result-item-size="SEARCH_RESULT_ITEM_SIZE"
             />
         </div>
     </Dialog>
 </template>
 
-<style scoped></style>
+<!-- NOT scoped because dialog gets appended to <body> and is unreachable via scoped styles -->
+<style>
+.basic-search-dialog {
+    margin-top: 6rem !important;
+    border-radius: 0 !important;
+}
+
+@media screen and (max-width: 960px) {
+    .basic-search-dialog {
+        margin-top: 0rem !important;
+    }
+}
+</style>

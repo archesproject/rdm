@@ -13,7 +13,7 @@ import SearchResult from "@/arches_lingo/components/basic-search/SearchResult.vu
 import { fetchSearchResults } from "@/arches_lingo/api.ts";
 import { DEFAULT_ERROR_TOAST_LIFE, ERROR } from "@/arches_lingo/constants.ts";
 
-import type { SearchResultItem } from "@/arches_lingo/types.ts";
+import type { Concept } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
 const toast = useToast();
@@ -32,10 +32,10 @@ const props = defineProps({
 const autoCompleteInstance = ref<InstanceType<typeof AutoComplete> | null>(
     null,
 );
-const computedMinHeight = ref("");
+const computedSearchResultsHeight = ref("");
 const isLoading = ref(false);
 const isLoadingAdditionalResults = ref(false);
-const searchResults = ref<SearchResultItem[]>([]);
+const searchResults = ref<Concept[]>([]);
 const searchResultsPage = ref(1);
 const searchResultsTotalCount = ref(0);
 const query = ref("");
@@ -136,18 +136,22 @@ onMounted(focusInput);
  */
 watch(searchResults, (searchResults) => {
     if (searchResults.length) {
-        if (searchResults.length <= 20) {
-            const rootFontSize = parseFloat(
-                getComputedStyle(document.documentElement).fontSize,
-            );
-            const itemHeightInRem = props.searchResultItemSize / rootFontSize; // convert to rem based on the root font size
+        const rootFontSize = parseFloat(
+            getComputedStyle(document.documentElement).fontSize,
+        );
+        const itemHeightInRem = props.searchResultItemSize / rootFontSize; // Convert to rem based on the root font size
+        const computedHeightInRem = searchResults.length * itemHeightInRem;
 
-            computedMinHeight.value = `${searchResults.length * itemHeightInRem}rem`;
+        const viewHeightInPixels = window.innerHeight * 0.6;
+        const viewHeightInRem = viewHeightInPixels / rootFontSize; // Convert 60vh to rem
+
+        if (computedHeightInRem > viewHeightInRem) {
+            computedSearchResultsHeight.value = "60vh";
         } else {
-            computedMinHeight.value = "60vh";
+            computedSearchResultsHeight.value = `${computedHeightInRem}rem`;
         }
     } else {
-        computedMinHeight.value = "unset";
+        computedSearchResultsHeight.value = "unset";
     }
 });
 </script>
@@ -171,12 +175,8 @@ watch(searchResults, (searchResults) => {
                         },
                     }),
                     overlay: () => ({
-                        style: {
-                            transform: 'translateY(3.8rem)',
-                            borderRadius: 0,
-                            fontFamily: 'sans-serif',
-                            backgroundColor: '#ddd',
-                        },
+                        class: 'basic-search-overlay',
+                        style: {},
                     }),
                     list: () => ({
                         style: {
@@ -190,8 +190,11 @@ watch(searchResults, (searchResults) => {
                     itemSize: props.searchResultItemSize,
                     lazy: true,
                     onLazyLoad: loadAdditionalSearchResults,
-                    scrollHeight: computedMinHeight,
-                    style: { minHeight: computedMinHeight },
+                    scrollHeight: computedSearchResultsHeight,
+                    style: {
+                        minHeight: computedSearchResultsHeight,
+                        maxHeight: computedSearchResultsHeight,
+                    },
                     numToleratedItems: 1,
                 }"
                 @complete="
@@ -275,5 +278,19 @@ watch(searchResults, (searchResults) => {
     width: 100%;
     padding: 1rem 2.5rem;
     border: none;
+}
+</style>
+
+<!-- NOT scoped because overlay gets appended to <body> and is unreachable via scoped styles -->
+<style>
+.basic-search-overlay {
+    transform: translateY(3.4rem) !important;
+    border-radius: 0 !important;
+}
+
+@media screen and (max-width: 960px) {
+    .basic-search-overlay {
+        transform: translateY(9rem) !important;
+    }
 }
 </style>
