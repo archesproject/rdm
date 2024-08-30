@@ -42,16 +42,20 @@ const getParentLabels = (item: SearchResultItem): string => {
 
 <style scoped>
 .search-result {
+    height: 100%;
     width: 100%;
     padding: 0.5rem;
     display: flex;
+    align-items: center;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
 }
 
 .p-focus > .search-result {
-    background-color: lightcoral;
+    background-color: #9cc3e4;
 }
 
 .is-even {
-    background-color: lightblue;
+    background-color: #d3e5f4;
 }
 </style>
