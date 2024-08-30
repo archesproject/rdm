@@ -32,7 +32,7 @@ const visible = ref(false);
                 },
             }),
         }"
-        style="margin-top: 6rem"
+        style="margin-top: 6rem; border-radius: 0"
         position="top"
     >
         <div style="width: 80vw">

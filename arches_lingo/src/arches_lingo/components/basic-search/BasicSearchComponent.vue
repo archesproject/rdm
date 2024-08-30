@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { nextTick, ref, watch, onMounted } from "vue";
 import { useGettext } from "vue3-gettext";
 
 import AutoComplete from "primevue/autocomplete";
@@ -38,7 +38,7 @@ const isLoadingAdditionalResults = ref(false);
 const searchResults = ref<SearchResultItem[]>([]);
 const searchResultsPage = ref(1);
 const searchResultsTotalCount = ref(0);
-const searchTerm = ref("");
+const query = ref("");
 const shouldShowClearInputButton = ref(false);
 
 const focusInput = () => {
@@ -58,17 +58,21 @@ const fetchData = async (searchTerm: string, items: number, page: number) => {
             page,
         );
 
-        if (page !== 1) {
-            searchResults.value = [
-                ...searchResults.value,
-                ...parsedResponse.data,
-            ];
-        } else {
-            searchResults.value = parsedResponse.data;
-            searchResultsPage.value = 1;
-        }
+        if (query.value) {
+            // edge case for if user clears query before fetch completes
+            if (page !== 1) {
+                searchResults.value = [
+                    ...searchResults.value,
+                    ...parsedResponse.data,
+                ];
+            } else {
+                searchResults.value = parsedResponse.data;
+                searchResultsPage.value = 1;
+            }
 
-        searchResultsTotalCount.value = parsedResponse.total_results;
+            searchResultsTotalCount.value = parsedResponse.total_results;
+            shouldShowClearInputButton.value = true;
+        }
     } catch (error) {
         toast.add({
             severity: ERROR,
@@ -80,10 +84,10 @@ const fetchData = async (searchTerm: string, items: number, page: number) => {
         searchResults.value = [];
         searchResultsPage.value = 1;
         searchResultsTotalCount.value = 0;
+        shouldShowClearInputButton.value = true;
     } finally {
         isLoading.value = false;
         isLoadingAdditionalResults.value = false;
-        shouldShowClearInputButton.value = true;
     }
 };
 
@@ -99,7 +103,7 @@ const loadAdditionalSearchResults = (event: {
         searchResultsPage.value += 1;
 
         fetchData(
-            searchTerm.value,
+            query.value,
             props.searchResultsPerPage,
             searchResultsPage.value,
         );
@@ -107,22 +111,20 @@ const loadAdditionalSearchResults = (event: {
 };
 
 const clearInput = () => {
-    searchTerm.value = "";
+    query.value = "";
     shouldShowClearInputButton.value = false;
     focusInput();
 };
 
 const navigateToReport = () => {};
 
-const updateQueryString = (value: string | object) => {
-    autoCompleteInstance.value?.hide();
-
-    if (!value) {
-        shouldShowClearInputButton.value = false;
-    }
-
-    if (typeof value === "string") {
-        searchTerm.value = value;
+const keepOverlayVisible = () => {
+    if (
+        query.value &&
+        searchResults.value.length &&
+        isLoading.value === isLoadingAdditionalResults.value
+    ) {
+        nextTick(() => autoCompleteInstance.value?.show());
     }
 };
 
@@ -151,25 +153,35 @@ watch(searchResults, (searchResults) => {
 </script>
 
 <template>
-    <div style="width: 100%">
-        <div style="display: flex; align-items: center; position: relative">
+    <div style="width: 100%; font-family: sans-serif">
+        <div style="display: flex; align-items: center">
             <i class="pi pi-search search-icon" />
 
             <AutoComplete
                 ref="autoCompleteInstance"
-                v-model="searchTerm"
-                :loading="isLoading && !isLoadingAdditionalResults"
+                v-model="query"
                 option-label="id"
+                :loading="isLoading && !isLoadingAdditionalResults"
                 :placeholder="$gettext('Quick Search')"
                 :pt="{
                     option: () => ({
                         style: {
                             padding: 0,
+                            borderRadius: 0,
                         },
                     }),
                     overlay: () => ({
                         style: {
-                            transform: 'translateY(3.5rem)',
+                            transform: 'translateY(3.8rem)',
+                            borderRadius: 0,
+                            fontFamily: 'sans-serif',
+                            backgroundColor: '#ddd',
+                        },
+                    }),
+                    list: () => ({
+                        style: {
+                            padding: 0,
+                            gap: 0,
                         },
                     }),
                 }"
@@ -183,10 +195,20 @@ watch(searchResults, (searchResults) => {
                     numToleratedItems: 1,
                 }"
                 @complete="
-                    () => fetchData(searchTerm, props.searchResultsPerPage, 1)
+                    () => {
+                        autoCompleteInstance?.hide();
+                        fetchData(query, props.searchResultsPerPage, 1);
+                    }
                 "
                 @option-select="navigateToReport"
-                @update:model-value="updateQueryString"
+                @before-hide="keepOverlayVisible"
+                @update:model-value="
+                    (value) => {
+                        if (!value) {
+                            shouldShowClearInputButton = false;
+                        }
+                    }
+                "
             >
                 <template #option="slotProps">
                     <SearchResult :search-result="slotProps" />
@@ -205,7 +227,7 @@ watch(searchResults, (searchResults) => {
 
             <Button
                 v-if="shouldShowClearInputButton"
-                aria-label="Clear Input"
+                :aria-label="$gettext('Clear Input')"
                 class="p-button-text clear-button"
                 icon="pi pi-times"
                 @click="clearInput"
