@@ -12,7 +12,7 @@ export interface UserRefAndSetter {
     setUser: (userToSet: User | null) => void;
 }
 
-export interface SearchResultItem {
+export interface Concept {
     id: string;
     labels: {
         language: string;

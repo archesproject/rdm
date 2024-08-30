@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { SearchResultItem } from "@/arches_lingo/types.ts";
+import type { Concept } from "@/arches_lingo/types.ts";
+import { getItemLabel } from "@/arches_lingo/utils.ts";
 
 defineProps({
     searchResult: {
@@ -8,18 +9,16 @@ defineProps({
     },
 });
 
-const getItemLabel = (item: SearchResultItem): string | undefined =>
-    item.labels.find((label) => label.language === "en")?.value;
+const getParentLabels = (item: Concept, preferredLanguage: string): string => {
+    const arrowIcon = " → ";
 
-const getParentLabels = (item: SearchResultItem): string => {
-    return item.parents
-        .map((parent) => {
-            const enLabel = parent.labels.find(
-                (label) => label.language === "en-US",
-            );
-            return enLabel ? enLabel.value : "";
-        })
-        .join(" > ");
+    return item.parents.reduce((acc, parent, index) => {
+        const label = getItemLabel(parent as Concept, preferredLanguage);
+        if (label) {
+            return acc + (index > 0 ? arrowIcon : "") + label;
+        }
+        return acc;
+    }, "");
 };
 </script>
 
@@ -31,11 +30,11 @@ const getParentLabels = (item: SearchResultItem): string => {
         <i class="pi pi-paperclip" />
 
         <div style="margin: 0 0.5rem">
-            {{ getItemLabel(searchResult.option) }}
+            {{ getItemLabel(searchResult.option, "en-US") }}
         </div>
 
-        <div style="margin: 0 0.5rem">
-            {{ getParentLabels(searchResult.option) }}
+        <div class="search-result-hierarchy">
+            [ {{ getParentLabels(searchResult.option, "en-US") }} ]
         </div>
     </div>
 </template>
@@ -49,6 +48,14 @@ const getParentLabels = (item: SearchResultItem): string => {
     align-items: center;
     background-color: white;
     border-bottom: 1px solid #ddd;
+    text-wrap: pretty;
+    font-family: sans-serif;
+}
+
+.search-result-hierarchy {
+    margin: 0 0.5rem;
+    font-size: small;
+    color: steelblue;
 }
 
 .p-focus > .search-result {
