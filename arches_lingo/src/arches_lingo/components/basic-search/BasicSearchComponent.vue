@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useGettext } from "vue3-gettext";
 
 import AutoComplete from "primevue/autocomplete";
@@ -32,56 +32,24 @@ const props = defineProps({
 const autoCompleteInstance = ref<InstanceType<typeof AutoComplete> | null>(
     null,
 );
-const query = ref("");
-const results = ref<SearchResultItem[]>([]);
-const totalSearchResultsCount = ref(0);
+const computedMinHeight = ref("");
 const isLoading = ref(false);
 const isLoadingAdditionalResults = ref(false);
-const shouldShowClearInputButton = ref(false);
+const searchResults = ref<SearchResultItem[]>([]);
 const searchResultsPage = ref(1);
-
+const searchResultsTotalCount = ref(0);
 const searchTerm = ref("");
-watch(searchTerm, () => {
+const shouldShowClearInputButton = ref(false);
+
+const focusInput = () => {
     if (autoCompleteInstance.value) {
-        // @ts-expect-error: the `AutoComplete` type has `overlayVisible` mapped as a function. It's not.
-        autoCompleteInstance.value.overlayVisible = false;
-    }
-});
-
-/**
- * This isn't fantastic but it's the best way I can find to get around PrimeVue's lack of support for
- * updating the height of a `VirtualScroller` overlay, much less updating the height dynamically.
- */
-const computedMinHeight = ref("");
-watch(results, (results) => {
-    if (results.length) {
-        if (results.length <= 20) {
-            const rootFontSize = parseFloat(
-                getComputedStyle(document.documentElement).fontSize,
-            );
-            const itemHeightInRem = props.searchResultItemSize / rootFontSize; // convert to rem based on the root font size
-
-            computedMinHeight.value = `${results.length * itemHeightInRem}rem`;
-        } else {
-            computedMinHeight.value = "60vh";
-        }
-    }
-});
-
-onMounted(() => {
-    if (autoCompleteInstance.value) {
-        // focus input on component load
         autoCompleteInstance.value.$el.querySelector("input").focus();
     }
-});
+};
 
-const fetchData = async (
-    searchTerm: string,
-    items: number,
-    page: number = 1,
-) => {
+const fetchData = async (searchTerm: string, items: number, page: number) => {
     isLoading.value = true;
-    shouldShowClearInputButton.value = false;
+    shouldShowClearInputButton.value = Boolean(page !== 1);
 
     try {
         const parsedResponse = await fetchSearchResults(
@@ -90,9 +58,17 @@ const fetchData = async (
             page,
         );
 
-        results.value = [...results.value, ...parsedResponse.data];
-        totalSearchResultsCount.value = parsedResponse.total_results;
-        shouldShowClearInputButton.value = true;
+        if (page !== 1) {
+            searchResults.value = [
+                ...searchResults.value,
+                ...parsedResponse.data,
+            ];
+        } else {
+            searchResults.value = parsedResponse.data;
+            searchResultsPage.value = 1;
+        }
+
+        searchResultsTotalCount.value = parsedResponse.total_results;
     } catch (error) {
         toast.add({
             severity: ERROR,
@@ -100,17 +76,15 @@ const fetchData = async (
             summary: $gettext("Failed to fetch data."),
             detail: error instanceof Error ? error.message : undefined,
         });
+
+        searchResults.value = [];
+        searchResultsPage.value = 1;
+        searchResultsTotalCount.value = 0;
     } finally {
         isLoading.value = false;
         isLoadingAdditionalResults.value = false;
+        shouldShowClearInputButton.value = true;
     }
-};
-
-const clearResultsAndFetchData = () => {
-    results.value = [];
-    searchResultsPage.value = 1;
-
-    fetchData(searchTerm.value, props.searchResultsPerPage);
 };
 
 const loadAdditionalSearchResults = (event: {
@@ -119,7 +93,7 @@ const loadAdditionalSearchResults = (event: {
 }) => {
     if (
         event.last >= searchResultsPage.value * props.searchResultsPerPage &&
-        event.last <= totalSearchResultsCount.value
+        event.last <= searchResultsTotalCount.value
     ) {
         isLoadingAdditionalResults.value = true;
         searchResultsPage.value += 1;
@@ -133,21 +107,16 @@ const loadAdditionalSearchResults = (event: {
 };
 
 const clearInput = () => {
-    query.value = "";
+    searchTerm.value = "";
     shouldShowClearInputButton.value = false;
+    focusInput();
 };
 
-const preventSelection = () => {
-    query.value = searchTerm.value;
-};
-
-const keepOverlayVisible = () => {
-    if (query.value && results.value.length) {
-        nextTick(() => autoCompleteInstance.value?.show());
-    }
-};
+const navigateToReport = () => {};
 
 const updateQueryString = (value: string | object) => {
+    autoCompleteInstance.value?.hide();
+
     if (!value) {
         shouldShowClearInputButton.value = false;
     }
@@ -156,6 +125,29 @@ const updateQueryString = (value: string | object) => {
         searchTerm.value = value;
     }
 };
+
+onMounted(focusInput);
+
+/**
+ * This isn't fantastic but it's the best way I can find to get around PrimeVue's lack of support for
+ * updating the height of a `VirtualScroller` overlay, much less updating the height dynamically.
+ */
+watch(searchResults, (searchResults) => {
+    if (searchResults.length) {
+        if (searchResults.length <= 20) {
+            const rootFontSize = parseFloat(
+                getComputedStyle(document.documentElement).fontSize,
+            );
+            const itemHeightInRem = props.searchResultItemSize / rootFontSize; // convert to rem based on the root font size
+
+            computedMinHeight.value = `${searchResults.length * itemHeightInRem}rem`;
+        } else {
+            computedMinHeight.value = "60vh";
+        }
+    } else {
+        computedMinHeight.value = "unset";
+    }
+});
 </script>
 
 <template>
@@ -165,8 +157,9 @@ const updateQueryString = (value: string | object) => {
 
             <AutoComplete
                 ref="autoCompleteInstance"
-                v-model="query"
-                :loading="isLoading"
+                v-model="searchTerm"
+                :loading="isLoading && !isLoadingAdditionalResults"
+                option-label="id"
                 :placeholder="$gettext('Quick Search')"
                 :pt="{
                     option: () => ({
@@ -180,37 +173,41 @@ const updateQueryString = (value: string | object) => {
                         },
                     }),
                 }"
-                :suggestions="results"
+                :suggestions="searchResults"
                 :virtual-scroller-options="{
                     itemSize: props.searchResultItemSize,
                     lazy: true,
-                    loading: isLoading && !isLoadingAdditionalResults,
                     onLazyLoad: loadAdditionalSearchResults,
                     scrollHeight: computedMinHeight,
-                    showLoader: true,
                     style: { minHeight: computedMinHeight },
+                    numToleratedItems: 1,
                 }"
-                @complete="clearResultsAndFetchData"
-                @option-select="preventSelection"
-                @before-hide="keepOverlayVisible"
+                @complete="
+                    () => fetchData(searchTerm, props.searchResultsPerPage, 1)
+                "
+                @option-select="navigateToReport"
                 @update:model-value="updateQueryString"
             >
                 <template #option="slotProps">
                     <SearchResult :search-result="slotProps" />
+                </template>
+                <template
+                    v-if="isLoadingAdditionalResults"
+                    #footer
+                >
+                    <div class="footer">
+                        <i
+                            class="pi pi-spin pi-spinner p-virtualscroller-loader"
+                        />
+                    </div>
                 </template>
             </AutoComplete>
 
             <Button
                 v-if="shouldShowClearInputButton"
                 aria-label="Clear Input"
-                class="p-button-text"
+                class="p-button-text clear-button"
                 icon="pi pi-times"
-                style="
-                    background-color: transparent;
-                    position: absolute;
-                    inset-inline-end: 0.2rem;
-                    color: var(--p-input-color);
-                "
                 @click="clearInput"
             />
         </div>
@@ -220,6 +217,13 @@ const updateQueryString = (value: string | object) => {
 </template>
 
 <style scoped>
+.clear-button {
+    background-color: transparent !important;
+    position: absolute;
+    inset-inline-end: 0.2rem;
+    color: var(--p-input-color);
+}
+
 .search-icon {
     position: absolute;
     inset-inline-start: 1rem;
@@ -227,11 +231,22 @@ const updateQueryString = (value: string | object) => {
     font-weight: bold;
 }
 
-.clear-button {
-}
-
 .p-autocomplete {
     width: 100%;
+}
+
+.footer {
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    inset-inline-end: 0;
+
+    i {
+        font-size: 2rem;
+        background-color: transparent;
+        padding: 1rem;
+        height: 4rem;
+    }
 }
 
 :deep(.p-autocomplete .p-autocomplete-input) {
