@@ -10,6 +10,9 @@ import BasicSearch from "@/arches_lingo/components/basic-search/BasicSearch.vue"
 const { $gettext } = useGettext();
 
 const visible = ref(false);
+const hideModal = () => {
+    visible.value = false;
+};
 
 const SEARCH_RESULTS_PER_PAGE = 25;
 const SEARCH_RESULT_ITEM_SIZE = 38;
