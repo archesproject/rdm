@@ -28,8 +28,7 @@ import type { ComponentPublicInstance, Ref } from "vue";
 import type { RouteLocationNormalizedLoadedGeneric } from "vue-router";
 import type { TreeExpandedKeys, TreeSelectionKeys } from "primevue/tree";
 import type { TreeNode } from "primevue/treenode";
-import type { RowSetter } from "@/arches_references/types";
-import type { IconLabels, Scheme } from "@/arches_lingo/types";
+import type { IconLabels, Labellable, Scheme } from "@/arches_lingo/types";
 
 const toast = useToast();
 const { $gettext } = useGettext();
@@ -53,7 +52,7 @@ const nextFilterChangeNeedsExpandAll = ref(false);
 const expandedKeysSnapshotBeforeSearch = ref<TreeExpandedKeys>({});
 const rerenderTree = ref(0);
 const { setDisplayedRow } = inject(displayedRowKey) as unknown as {
-    setDisplayedRow: RowSetter;
+    setDisplayedRow: (val: Labellable | null) => void;
 };
 
 const tree = computed(() =>
@@ -76,20 +75,23 @@ const navigate = (newRoute: RouteLocationNormalizedLoadedGeneric) => {
                 newRoute.params.id as string,
             );
             if (found) {
-                setDisplayedRow(found.data);
+                // was found.data
+                setDisplayedRow(found as unknown as Labellable);
                 const itemsToExpandIds = path.map(
-                    (itemInPath: TreeNode) => itemInPath.key,
+                    // was no ?? before
+                    (itemInPath: TreeNode) => itemInPath.key ?? itemInPath.id,
                 );
                 expandedKeys.value = {
-                    ...expandedKeys.value,
+                    // ...expandedKeys.value,
                     ...Object.fromEntries(
                         [
-                            //found.data.controlled_list_id,
+                            // found.data.controlled_list_id,
                             ...itemsToExpandIds,
                         ].map((x) => [x, true]),
                     ),
                 };
-                selectedKeys.value = { [found.data.id]: true };
+                // was found.data.id in arches-references
+                selectedKeys.value = { [found.id]: true };
             }
             break;
         }

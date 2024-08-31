@@ -156,10 +156,10 @@ export const findNodeInTree = (
 
     function recurse(items: TreeNode[]): TreeNode | undefined {
         for (const item of items) {
-            if (item.data.id === itemId) {
+            if ((item.data?.id || item.id) === itemId) {
                 return item;
             }
-            for (const child of item.narrower) {
+            for (const child of item.data?.top_concepts ?? item.narrower) {
                 const found = recurse([child]);
                 if (found) {
                     path.push(item);
