@@ -35,6 +35,15 @@ export const routes = [
             requiresAuthentication: true,
         },
     },
+    {
+        path: "/concept/:id",
+        name: "concept",
+        component: () => import("@/arches_lingo/pages/ConceptDetail.vue"),
+        meta: {
+            shouldShowNavigation: true,
+            requiresAuthentication: true,
+        },
+    },
 ];
 
 export const routeNames = {
@@ -43,4 +52,5 @@ export const routeNames = {
     search: "search",
     advancedSearch: "advanced-search",
     schemes: "schemes",
+    concept: "concept",
 };
