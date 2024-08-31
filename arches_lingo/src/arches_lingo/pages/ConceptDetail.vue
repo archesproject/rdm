@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { provide, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
 import Panel from "primevue/panel";
@@ -10,7 +11,8 @@ import {
     selectedLanguageKey,
 } from "@/arches_references/constants.ts";
 import { ENGLISH } from "@/arches_lingo/constants.ts";
-import { bestLabel } from "@/arches_lingo/utils.ts";
+import { routeNames } from "@/arches_lingo/routes.ts";
+import { bestLabel, dataIsConcept } from "@/arches_lingo/utils.ts";
 import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";
 
 import type { Ref } from "vue";
@@ -18,11 +20,18 @@ import type { Language } from "@/arches/types";
 import type { Labellable } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
+const router = useRouter();
 
 // TODO: lift some of this state up?
 const displayedRow: Ref<Labellable | null> = ref(null);
 const setDisplayedRow = (val: Labellable | null) => {
     displayedRow.value = val;
+    if (val === null) {
+        return;
+    }
+    if (dataIsConcept(val)) {
+        router.push({ name: routeNames.concept, params: { id: val.id } });
+    }
 };
 // @ts-expect-error vue-tsc doesn't like arbitrary properties here
 provide(displayedRowKey, { displayedRow, setDisplayedRow });
