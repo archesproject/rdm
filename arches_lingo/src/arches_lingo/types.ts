@@ -19,6 +19,13 @@ export interface Concept {
     narrower: Concept[];
 }
 
+export interface SearchResultItem {
+    id: string;
+    labels: Label[];
+    parents: Concept[];
+    polyhierarchical: boolean;
+}
+
 export interface Scheme {
     id: string;
     labels: Label[];
