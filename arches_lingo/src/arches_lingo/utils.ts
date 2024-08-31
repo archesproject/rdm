@@ -142,3 +142,37 @@ export const treeFromSchemes = (
     }
     return nodesAndInstructions.map((obj) => obj.node);
 };
+
+// Finders
+// This could probably be generalized and shared with arches-references.
+export const findNodeInTree = (
+    tree: TreeNode[],
+    itemId: string,
+): {
+    found: TreeNode | undefined;
+    path: TreeNode[];
+} => {
+    const path: TreeNode[] = [];
+
+    function recurse(items: TreeNode[]): TreeNode | undefined {
+        for (const item of items) {
+            if (item.data.id === itemId) {
+                return item;
+            }
+            for (const child of item.narrower) {
+                const found = recurse([child]);
+                if (found) {
+                    path.push(item);
+                    return found;
+                }
+            }
+        }
+    }
+
+    const found = recurse(tree);
+    if (!found) {
+        throw new Error();
+    }
+
+    return { found, path };
+};

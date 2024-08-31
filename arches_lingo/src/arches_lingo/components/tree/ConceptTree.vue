@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
 import { useToast } from "primevue/usetoast";
@@ -13,12 +14,18 @@ import {
     selectedLanguageKey,
 } from "@/arches_references/constants.ts";
 import { fetchConcepts } from "@/arches_lingo/api.ts";
-import { bestLabel, treeFromSchemes } from "@/arches_lingo/utils.ts";
+import {
+    bestLabel,
+    findNodeInTree,
+    treeFromSchemes,
+} from "@/arches_lingo/utils.ts";
+import { routeNames } from "@/arches_lingo/routes.ts";
 import LetterCircle from "@/arches_lingo/components/misc/LetterCircle.vue";
 import TreeRow from "@/arches_lingo/components/tree/TreeRow.vue";
 
 import type { Language } from "@/arches/types";
 import type { ComponentPublicInstance, Ref } from "vue";
+import type { RouteLocationNormalizedLoadedGeneric } from "vue-router";
 import type { TreeExpandedKeys, TreeSelectionKeys } from "primevue/tree";
 import type { TreeNode } from "primevue/treenode";
 import type { RowSetter } from "@/arches_references/types";
@@ -26,6 +33,7 @@ import type { IconLabels, Scheme } from "@/arches_lingo/types";
 
 const toast = useToast();
 const { $gettext } = useGettext();
+const route = useRoute();
 
 const FOCUS = $gettext("Focus");
 const UNFOCUS = $gettext("Unfocus");
@@ -56,6 +64,52 @@ const tree = computed(() =>
         focusedNode.value,
     ),
 );
+
+const navigate = (newRoute: RouteLocationNormalizedLoadedGeneric) => {
+    switch (newRoute.name) {
+        case routeNames.concept: {
+            if (!tree.value.length) {
+                return;
+            }
+            const { found, path } = findNodeInTree(
+                tree.value,
+                newRoute.params.id as string,
+            );
+            if (found) {
+                setDisplayedRow(found.data);
+                const itemsToExpandIds = path.map(
+                    (itemInPath: TreeNode) => itemInPath.key,
+                );
+                expandedKeys.value = {
+                    ...expandedKeys.value,
+                    ...Object.fromEntries(
+                        [
+                            //found.data.controlled_list_id,
+                            ...itemsToExpandIds,
+                        ].map((x) => [x, true]),
+                    ),
+                };
+                selectedKeys.value = { [found.data.id]: true };
+            }
+            break;
+        }
+    }
+};
+
+// React to route changes.
+watch(
+    [
+        () => {
+            return { ...route };
+        },
+    ],
+    ([newRoute]) => {
+        navigate(newRoute);
+    },
+);
+
+// Navigate on initial load of the tree.
+watch(tree, () => navigate(route), { once: true });
 
 const expandAll = () => {
     for (const node of tree.value) {
