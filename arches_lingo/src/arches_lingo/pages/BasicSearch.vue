@@ -29,14 +29,14 @@ const SEARCH_RESULT_ITEM_SIZE = 38;
         :close-on-escape="true"
         :modal="true"
         :pt="{
-            root: () => ({
-                class: 'basic-search-dialog',
-            }),
-            content: () => ({
+            content: {
                 style: {
                     padding: 0,
                 },
-            }),
+            },
+            root: {
+                class: 'basic-search-dialog',
+            },
         }"
         :show-header="false"
     >

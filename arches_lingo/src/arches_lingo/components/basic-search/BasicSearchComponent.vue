@@ -60,17 +60,16 @@ const fetchData = async (searchTerm: string, items: number, page: number) => {
         );
 
         if (query.value) {
-            // edge case for if user clears query before fetch completes
-            if (page !== 1) {
+            if (page === 1) {
+                searchResults.value = parsedResponse.data;
+            } else {
                 searchResults.value = [
                     ...searchResults.value,
                     ...parsedResponse.data,
                 ];
-            } else {
-                searchResults.value = parsedResponse.data;
-                searchResultsPage.value = 1;
             }
 
+            searchResultsPage.value = parsedResponse.current_page;
             searchResultsTotalCount.value = parsedResponse.total_results;
             shouldShowClearInputButton.value = true;
         }
@@ -162,7 +161,7 @@ watch(searchResults, (searchResults) => {
             computedSearchResultsHeight.value = `${computedHeightInRem}rem`;
         }
     } else {
-        computedSearchResultsHeight.value = "unset";
+        computedSearchResultsHeight.value = "2.25rem";
     }
 });
 </script>
@@ -225,6 +224,11 @@ watch(searchResults, (searchResults) => {
                     }
                 "
             >
+                <template #empty>
+                    <div style="font-family: sans-serif; text-align: center">
+                        {{ $gettext("No search results found") }}
+                    </div>
+                </template>
                 <template #option="slotProps">
                     <SearchResult :search-result="slotProps" />
                 </template>
@@ -242,9 +246,9 @@ watch(searchResults, (searchResults) => {
 
             <Button
                 v-if="shouldShowClearInputButton"
-                :aria-label="$gettext('Clear Input')"
                 class="p-button-text clear-button"
                 icon="pi pi-times"
+                :aria-label="$gettext('Clear Input')"
                 @click="clearInput"
             />
         </div>
