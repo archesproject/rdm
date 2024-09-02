@@ -5,14 +5,11 @@ import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 
-import BasicSearchComponent from "@/arches_lingo/components/basic-search/BasicSearchComponent.vue";
+import BasicSearch from "@/arches_lingo/components/basic-search/BasicSearch.vue";
 
 const { $gettext } = useGettext();
 
 const visible = ref(false);
-const hideModal = () => {
-    visible.value = false;
-};
 
 const SEARCH_RESULTS_PER_PAGE = 25;
 const SEARCH_RESULT_ITEM_SIZE = 38;
@@ -43,12 +40,12 @@ const SEARCH_RESULT_ITEM_SIZE = 38;
         }"
         :show-header="false"
     >
-        <BasicSearchComponent
-            :search-results-per-page="SEARCH_RESULTS_PER_PAGE"
-            :search-result-item-size="SEARCH_RESULT_ITEM_SIZE"
-            :hide-modal
-            style="width: 80vw"
-        />
+        <div style="width: 80vw">
+            <BasicSearch
+                :search-results-per-page="SEARCH_RESULTS_PER_PAGE"
+                :search-result-item-size="SEARCH_RESULT_ITEM_SIZE"
+            />
+        </div>
     </Dialog>
 </template>
 
