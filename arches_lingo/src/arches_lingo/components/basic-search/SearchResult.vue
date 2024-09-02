@@ -48,7 +48,6 @@ const getParentLabels = (item: Concept, preferredLanguage: string): string => {
     align-items: center;
     background-color: white;
     border-bottom: 1px solid #ddd;
-    text-wrap: pretty;
     font-family: sans-serif;
 }
 

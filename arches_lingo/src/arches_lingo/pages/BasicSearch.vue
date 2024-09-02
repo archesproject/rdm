@@ -58,7 +58,7 @@ const SEARCH_RESULT_ITEM_SIZE = 38;
 
 @media screen and (max-width: 960px) {
     .basic-search-dialog {
-        margin-top: 0rem !important;
+        margin-top: 1rem !important;
     }
 }
 </style>
