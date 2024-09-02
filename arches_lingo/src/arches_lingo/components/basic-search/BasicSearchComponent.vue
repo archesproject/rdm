@@ -32,6 +32,7 @@ const props = defineProps<Props>();
 const autoCompleteInstance = ref<InstanceType<typeof AutoComplete> | null>(
     null,
 );
+const autoCompleteKey = ref(0);
 const computedSearchResultsHeight = ref("");
 const isLoading = ref(false);
 const isLoadingAdditionalResults = ref(false);
@@ -41,10 +42,10 @@ const searchResultsTotalCount = ref(0);
 const query = ref("");
 const shouldShowClearInputButton = ref(false);
 
-const focusInput = () => {
-    if (autoCompleteInstance.value) {
-        autoCompleteInstance.value.$el.querySelector("input").focus();
-    }
+const clearInput = () => {
+    query.value = "";
+    shouldShowClearInputButton.value = false;
+    focusInput();
 };
 
 const fetchData = async (searchTerm: string, items: number, page: number) => {
@@ -59,17 +60,16 @@ const fetchData = async (searchTerm: string, items: number, page: number) => {
         );
 
         if (query.value) {
-            // edge case for if user clears query before fetch completes
-            if (page !== 1) {
+            if (page === 1) {
+                searchResults.value = parsedResponse.data;
+            } else {
                 searchResults.value = [
                     ...searchResults.value,
                     ...parsedResponse.data,
                 ];
-            } else {
-                searchResults.value = parsedResponse.data;
-                searchResultsPage.value = 1;
             }
 
+            searchResultsPage.value = parsedResponse.current_page;
             searchResultsTotalCount.value = parsedResponse.total_results;
             shouldShowClearInputButton.value = true;
         }
@@ -88,6 +88,22 @@ const fetchData = async (searchTerm: string, items: number, page: number) => {
     } finally {
         isLoading.value = false;
         isLoadingAdditionalResults.value = false;
+    }
+};
+
+const focusInput = () => {
+    if (autoCompleteInstance.value) {
+        autoCompleteInstance.value.$el.querySelector("input").focus();
+    }
+};
+
+const keepOverlayVisible = () => {
+    if (
+        query.value &&
+        searchResults.value.length &&
+        isLoading.value === isLoadingAdditionalResults.value
+    ) {
+        nextTick(() => autoCompleteInstance.value?.show());
     }
 };
 
@@ -110,28 +126,22 @@ const loadAdditionalSearchResults = (event: {
     }
 };
 
-const clearInput = () => {
-    query.value = "";
-    shouldShowClearInputButton.value = false;
-    focusInput();
-};
-
 const navigateToReport = (event: AutoCompleteOptionSelectEvent) => {
     props.hideModal();
     router.push({ name: routeNames.concept, params: { id: event.value.id } });
 };
 
-const keepOverlayVisible = () => {
-    if (
-        query.value &&
-        searchResults.value.length &&
-        isLoading.value === isLoadingAdditionalResults.value
-    ) {
-        nextTick(() => autoCompleteInstance.value?.show());
-    }
-};
-
 onMounted(focusInput);
+
+// handles the edge case of inputting a query then clearing the input before the data is fetched.
+watch(query, (query) => {
+    if (!query) {
+        autoCompleteKey.value += 1;
+        nextTick(() => {
+            focusInput();
+        });
+    }
+});
 
 /**
  * This isn't fantastic but it's the best way I can find to get around PrimeVue's lack of support for
@@ -154,7 +164,7 @@ watch(searchResults, (searchResults) => {
             computedSearchResultsHeight.value = `${computedHeightInRem}rem`;
         }
     } else {
-        computedSearchResultsHeight.value = "unset";
+        computedSearchResultsHeight.value = "2.25rem";
     }
 });
 </script>
@@ -166,27 +176,28 @@ watch(searchResults, (searchResults) => {
 
             <AutoComplete
                 ref="autoCompleteInstance"
+                :key="autoCompleteKey"
                 v-model="query"
                 option-label="id"
                 :loading="isLoading && !isLoadingAdditionalResults"
                 :placeholder="$gettext('Quick Search')"
                 :pt="{
-                    option: () => ({
+                    option: {
                         style: {
-                            padding: 0,
-                            borderRadius: 0,
+                            padding: '0',
+                            borderRadius: '0',
                         },
-                    }),
-                    overlay: () => ({
+                    },
+                    overlay: {
                         class: 'basic-search-overlay',
                         style: {},
-                    }),
-                    list: () => ({
+                    },
+                    list: {
                         style: {
-                            padding: 0,
-                            gap: 0,
+                            padding: '0',
+                            gap: '0',
                         },
-                    }),
+                    },
                 }"
                 :suggestions="searchResults"
                 :virtual-scroller-options="{
@@ -216,6 +227,11 @@ watch(searchResults, (searchResults) => {
                     }
                 "
             >
+                <template #empty>
+                    <div style="font-family: sans-serif; text-align: center">
+                        {{ $gettext("No search results found") }}
+                    </div>
+                </template>
                 <template #option="slotProps">
                     <SearchResult :search-result="slotProps" />
                 </template>
@@ -233,9 +249,9 @@ watch(searchResults, (searchResults) => {
 
             <Button
                 v-if="shouldShowClearInputButton"
-                :aria-label="$gettext('Clear Input')"
                 class="p-button-text clear-button"
                 icon="pi pi-times"
+                :aria-label="$gettext('Clear Input')"
                 @click="clearInput"
             />
         </div>
@@ -293,7 +309,7 @@ watch(searchResults, (searchResults) => {
 
 @media screen and (max-width: 960px) {
     .basic-search-overlay {
-        transform: translateY(9rem) !important;
+        transform: translateY(10rem) !important;
     }
 }
 </style>

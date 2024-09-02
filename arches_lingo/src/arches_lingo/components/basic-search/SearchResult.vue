@@ -51,7 +51,6 @@ const getParentLabels = (
     align-items: center;
     background-color: white;
     border-bottom: 1px solid #ddd;
-    text-wrap: pretty;
     font-family: sans-serif;
 }
 

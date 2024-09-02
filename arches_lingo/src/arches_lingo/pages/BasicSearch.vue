@@ -32,14 +32,14 @@ const SEARCH_RESULT_ITEM_SIZE = 38;
         :close-on-escape="true"
         :modal="true"
         :pt="{
-            root: () => ({
-                class: 'basic-search-dialog',
-            }),
-            content: () => ({
+            content: {
                 style: {
                     padding: 0,
                 },
-            }),
+            },
+            root: {
+                class: 'basic-search-dialog',
+            },
         }"
         :show-header="false"
     >
@@ -61,7 +61,7 @@ const SEARCH_RESULT_ITEM_SIZE = 38;
 
 @media screen and (max-width: 960px) {
     .basic-search-dialog {
-        margin-top: 0rem !important;
+        margin-top: 1rem !important;
     }
 }
 </style>
