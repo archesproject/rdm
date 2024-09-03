@@ -26,7 +26,7 @@ const toast = useToast();
 interface Props {
     searchResultsPerPage: number;
     searchResultItemSize: number;
-    hideModal: () => void;
+    toggleModal: () => void;
 }
 const props = defineProps<Props>();
 
@@ -125,7 +125,7 @@ const loadAdditionalSearchResults = (event: VirtualScrollerLazyEvent) => {
 };
 
 const navigateToReport = (event: AutoCompleteOptionSelectEvent) => {
-    props.hideModal();
+    props.toggleModal();
     router.push({ name: routeNames.concept, params: { id: event.value.id } });
 };
 
