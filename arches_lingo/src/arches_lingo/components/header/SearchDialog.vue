@@ -15,13 +15,16 @@ import {
 const { $gettext } = useGettext();
 
 const visible = ref(false);
+const toggleModal = () => {
+    visible.value = !visible.value;
+};
 </script>
 
 <template>
     <Button
         icon="pi pi-search"
         :label="$gettext('Search')"
-        @click="visible = true"
+        @click="toggleModal"
     />
 
     <Dialog
@@ -48,6 +51,7 @@ const visible = ref(false);
             <BasicSearch
                 :search-results-per-page="SEARCH_RESULTS_PER_PAGE"
                 :search-result-item-size="SEARCH_RESULT_ITEM_SIZE"
+                :toggle-modal="toggleModal"
             />
         </div>
     </Dialog>
