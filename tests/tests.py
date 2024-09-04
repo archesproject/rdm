@@ -199,7 +199,7 @@ class ViewTests(TestCase):
             # 4: select broader tiles, subquery for labels
             # 5: select top concept tiles, subquery for labels
             # 6: select schemes, subquery for labels
-            response = self.client.get(reverse("api_concepts"))
+            response = self.client.get(reverse("api-concepts"))
 
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
@@ -240,7 +240,7 @@ class ViewTests(TestCase):
         )
         for query, expected_result_count in cases:
             with self.subTest(query=query):
-                response = self.client.get(reverse("api_search"), QUERY_STRING=query)
+                response = self.client.get(reverse("api-search"), QUERY_STRING=query)
                 result = json.loads(response.content)
                 self.assertEqual(len(result), expected_result_count, result)
 
@@ -248,7 +248,7 @@ class ViewTests(TestCase):
         self.client.force_login(self.admin)
         with self.assertLogs("django.request", level="WARNING"):
             response = self.client.get(
-                reverse("api_search"), QUERY_STRING="term=" + ("!" * 256)
+                reverse("api-search"), QUERY_STRING="term=" + ("!" * 256)
             )
         self.assertContains(
             response,
@@ -260,7 +260,7 @@ class ViewTests(TestCase):
         self.client.force_login(self.admin)
         with self.assertLogs("django.request", level="WARNING"):
             response = self.client.get(
-                reverse("api_search"), QUERY_STRING="term=test&maxEditDistance=?"
+                reverse("api-search"), QUERY_STRING="term=test&maxEditDistance=?"
             )
         self.assertContains(
             response,

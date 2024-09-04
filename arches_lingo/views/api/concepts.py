@@ -10,7 +10,7 @@ from arches.app.utils.decorators import group_required
 from arches.app.utils.response import JSONErrorResponse, JSONResponse
 
 from arches_lingo.models import VwLabelValue
-from arches_lingo.concepts import ConceptBuilder
+from arches_lingo.utils.concept_builder import ConceptBuilder
 
 
 @method_decorator(
@@ -55,20 +55,21 @@ class ValueSearchView(ConceptTreeView):
                 )
         else:
             concept_query = VwLabelValue.objects.all().order_by("concept_id")
-        concept_query = concept_query.values_list("concept_id", flat=True).distinct()
+        concept_ids = concept_query.values_list("concept_id", flat=True).distinct()
 
-        paginator = Paginator(concept_query, items_per_page)
+        paginator = Paginator(concept_ids, items_per_page)
         page = paginator.get_page(page_number)
 
         data = []
-        if page:
-            builder = ConceptBuilder()
-            data = [
-                builder.serialize_concept(
-                    str(concept_uuid), parents=True, children=False
-                )
-                for concept_uuid in page
-            ]
+        if not page:
+            # No results: don't bother building the concept tree.
+            return JSONResponse(data)
+
+        builder = ConceptBuilder()
+        data = [
+            builder.serialize_concept(str(concept_uuid), parents=True, children=False)
+            for concept_uuid in page
+        ]
 
         return JSONResponse(data)
 
