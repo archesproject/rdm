@@ -1,10 +1,13 @@
+from http import HTTPStatus
+
 from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.generic import View
 
 from arches.app.models.system_settings import settings
 from arches.app.utils.decorators import group_required
-from arches.app.utils.response import JSONResponse
+from arches.app.utils.response import JSONErrorResponse, JSONResponse
 
 from arches_lingo.models import VwLabelValue
 from arches_lingo.concepts import ConceptBuilder
@@ -40,7 +43,16 @@ class ValueSearchView(ConceptTreeView):
                 "concept_id"
             )
         elif term:
-            concept_query = VwLabelValue.objects.fuzzy_search(term, max_edit_distance)
+            try:
+                concept_query = VwLabelValue.objects.fuzzy_search(
+                    term, max_edit_distance
+                )
+            except ValueError as ve:
+                return JSONErrorResponse(
+                    title=_("Unable to perform search."),
+                    message=ve.args[0],
+                    status=HTTPStatus.BAD_REQUEST,
+                )
         else:
             concept_query = VwLabelValue.objects.all().order_by("concept_id")
         concept_query = concept_query.values_list("concept_id", flat=True).distinct()

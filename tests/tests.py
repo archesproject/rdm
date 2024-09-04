@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -242,3 +243,27 @@ class ViewTests(TestCase):
                 response = self.client.get(reverse("api_search"), QUERY_STRING=query)
                 result = json.loads(response.content)
                 self.assertEqual(len(result), expected_result_count, result)
+
+    def test_invalid_search_term(self):
+        self.client.force_login(self.admin)
+        with self.assertLogs("django.request", level="WARNING"):
+            response = self.client.get(
+                reverse("api_search"), QUERY_STRING="term=" + ("!" * 256)
+            )
+        self.assertContains(
+            response,
+            "Fuzzy search terms cannot exceed 255 characters.",
+            status_code=HTTPStatus.BAD_REQUEST,
+        )
+
+    def test_invalid_edit_distance(self):
+        self.client.force_login(self.admin)
+        with self.assertLogs("django.request", level="WARNING"):
+            response = self.client.get(
+                reverse("api_search"), QUERY_STRING="term=test&maxEditDistance=?"
+            )
+        self.assertContains(
+            response,
+            "Edit distance could not be converted to an integer.",
+            status_code=HTTPStatus.BAD_REQUEST,
+        )
