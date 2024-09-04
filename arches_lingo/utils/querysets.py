@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext as _
 
-from arches_lingo.query_utils import LevenshteinLessEqual
+from arches_lingo.utils.query_expressions import LevenshteinLessEqual
 
 
 class LabelValueQuerySet(models.QuerySet):

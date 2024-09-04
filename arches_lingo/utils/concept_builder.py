@@ -31,7 +31,7 @@ from arches_lingo.const import (
     PREF_LABEL_VALUE_ID,
     ALT_LABEL_VALUE_ID,
 )
-from arches_lingo.query_utils import JsonbArrayElements
+from arches_lingo.utils.query_expressions import JsonbArrayElements
 
 TOP_CONCEPT_OF_LOOKUP = f"data__{TOP_CONCEPT_OF_NODE_AND_NODEGROUP}"
 BROADER_LOOKUP = f"data__{CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID}"
