@@ -1,6 +1,6 @@
-import type { InjectionKey } from "vue";
-
-import type { UserRefAndSetter } from "@/arches_lingo/types.ts";
+import type { InjectionKey, Ref } from "vue";
+import type { Language } from "@/arches/types";
+import type { Concept, UserRefAndSetter } from "@/arches_lingo/types.ts";
 
 export const ANONYMOUS = "anonymous";
 export const ERROR = "error";
@@ -10,7 +10,10 @@ export const DEFAULT_ERROR_TOAST_LIFE = 8000;
 export const SEARCH_RESULTS_PER_PAGE = 25;
 export const SEARCH_RESULT_ITEM_SIZE = 38;
 
+// Injection keys
 export const USER_KEY = Symbol() as InjectionKey<UserRefAndSetter>;
+export const displayedRowKey = Symbol() as InjectionKey<Ref<Concept | null>>;
+export const selectedLanguageKey = Symbol() as InjectionKey<Ref<Language>>;
 
 export const ENGLISH = {
     code: "en",

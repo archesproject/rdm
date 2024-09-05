@@ -9,8 +9,8 @@ import ProgressSpinner from "primevue/progressspinner";
 import {
     displayedRowKey,
     selectedLanguageKey,
-} from "@/arches_references/constants.ts";
-import { ENGLISH } from "@/arches_lingo/constants.ts";
+    ENGLISH,
+} from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 import { bestLabel, dataIsConcept } from "@/arches_lingo/utils.ts";
 import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";

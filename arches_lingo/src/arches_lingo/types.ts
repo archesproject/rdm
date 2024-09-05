@@ -14,6 +14,10 @@ export interface UserRefAndSetter {
     user: Ref<User | null>;
     setUser: (userToSet: User | null) => void;
 }
+export interface DisplayedRowRefAndSetter {
+    displayedRow: Ref<Concept | null>;
+    setDisplayedRow: (val: Labellable | null) => void;
+}
 
 export interface Concept {
     id: string;
