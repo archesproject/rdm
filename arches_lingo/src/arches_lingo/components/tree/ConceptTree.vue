@@ -28,8 +28,8 @@ import type { TreeExpandedKeys, TreeSelectionKeys } from "primevue/tree";
 import type { TreeNode } from "primevue/treenode";
 import type { Language } from "@/arches/types";
 import type {
+    DisplayedRowRefAndSetter,
     IconLabels,
-    Labellable,
     Scheme,
 } from "@/arches_lingo/types";
 
@@ -50,15 +50,13 @@ const selectedKeys: Ref<TreeSelectionKeys> = ref({});
 const expandedKeys: Ref<TreeExpandedKeys> = ref({});
 const filterValue = ref("");
 const treeDOMRef: Ref<ComponentPublicInstance | null> = ref(null);
-// @ts-expect-error woes with inject
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const nextFilterChangeNeedsExpandAll = ref(false);
 const expandedKeysSnapshotBeforeSearch = ref<TreeExpandedKeys>({});
 const rerenderTree = ref(0);
-// @ts-expect-error woes with inject
-const { setDisplayedRow } = inject(displayedRowKey) as unknown as {
-    setDisplayedRow: (val: Labellable | null) => void;
-};
+const { setDisplayedRow } = inject(
+    displayedRowKey,
+) as unknown as DisplayedRowRefAndSetter;
 
 const tree = computed(() =>
     treeFromSchemes(
