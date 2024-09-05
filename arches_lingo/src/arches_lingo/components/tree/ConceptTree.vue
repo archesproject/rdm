@@ -10,10 +10,12 @@ import PresentationControls from "@/arches_references/components/tree/Presentati
 import {
     DEFAULT_ERROR_TOAST_LIFE,
     ERROR,
-    displayedRowKey,
-    selectedLanguageKey,
 } from "@/arches_references/constants.ts";
 import { fetchConcepts } from "@/arches_lingo/api.ts";
+import {
+    displayedRowKey,
+    selectedLanguageKey,
+} from "@/arches_lingo/constants.ts";
 import {
     bestLabel,
     findNodeInTree,
@@ -23,12 +25,17 @@ import { routeNames } from "@/arches_lingo/routes.ts";
 import LetterCircle from "@/arches_lingo/components/misc/LetterCircle.vue";
 import TreeRow from "@/arches_lingo/components/tree/TreeRow.vue";
 
-import type { Language } from "@/arches/types";
 import type { ComponentPublicInstance, Ref } from "vue";
 import type { RouteLocationNormalizedLoadedGeneric } from "vue-router";
 import type { TreeExpandedKeys, TreeSelectionKeys } from "primevue/tree";
 import type { TreeNode } from "primevue/treenode";
-import type { IconLabels, Labellable, Scheme } from "@/arches_lingo/types";
+import type { Language } from "@/arches/types";
+import type {
+    DisplayedRowRefAndSetter,
+    IconLabels,
+    Labellable,
+    Scheme,
+} from "@/arches_lingo/types";
 
 const toast = useToast();
 const { $gettext } = useGettext();
@@ -51,9 +58,9 @@ const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const nextFilterChangeNeedsExpandAll = ref(false);
 const expandedKeysSnapshotBeforeSearch = ref<TreeExpandedKeys>({});
 const rerenderTree = ref(0);
-const { setDisplayedRow } = inject(displayedRowKey) as unknown as {
-    setDisplayedRow: (val: Labellable | null) => void;
-};
+const { setDisplayedRow } = inject(
+    displayedRowKey,
+) as unknown as DisplayedRowRefAndSetter;
 
 const tree = computed(() =>
     treeFromSchemes(
