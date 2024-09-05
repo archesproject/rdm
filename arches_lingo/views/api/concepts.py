@@ -58,17 +58,13 @@ class ValueSearchView(ConceptTreeView):
         concept_ids = concept_query.values_list("concept_id", flat=True).distinct()
 
         paginator = Paginator(concept_ids, items_per_page)
-        page = paginator.get_page(page_number)
-
-        data = []
-        if not page:
-            # No results: don't bother building the concept tree.
-            return JSONResponse(data)
+        if not paginator.count:
+            return JSONResponse([])
 
         builder = ConceptBuilder()
         data = [
             builder.serialize_concept(str(concept_uuid), parents=True, children=False)
-            for concept_uuid in page
+            for concept_uuid in paginator.get_page(page_number)
         ]
 
         return JSONResponse(data)
