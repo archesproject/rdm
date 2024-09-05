@@ -14,7 +14,6 @@ const { node, focusLabel, unfocusLabel } = defineProps<{
     focusLabel: string;
     unfocusLabel: string;
 }>();
-// @ts-expect-error red herring with double language inside ref
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 
 const filterValue = defineModel<string>("filterValue");
