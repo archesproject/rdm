@@ -40,10 +40,12 @@ const selectedKeys: Ref<TreeSelectionKeys> = ref({});
 const expandedKeys: Ref<TreeExpandedKeys> = ref({});
 const filterValue = ref("");
 const treeDOMRef: Ref<ComponentPublicInstance | null> = ref(null);
+// @ts-expect-error woes with inject
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const nextFilterChangeNeedsExpandAll = ref(false);
 const expandedKeysSnapshotBeforeSearch = ref<TreeExpandedKeys>({});
 const rerenderTree = ref(0);
+// @ts-expect-error woes with inject
 const { setDisplayedRow } = inject(displayedRowKey) as unknown as {
     setDisplayedRow: RowSetter;
 };
@@ -195,8 +197,8 @@ await initializeTree();
         v-if="tree"
         ref="treeDOMRef"
         :key="rerenderTree"
-        v-model:selectionKeys="selectedKeys"
-        v-model:expandedKeys="expandedKeys"
+        v-model:selection-keys="selectedKeys"
+        v-model:expanded-keys="expandedKeys"
         :value="tree"
         :filter="true"
         :filter-by="filterCallbackWrapped as unknown as string"

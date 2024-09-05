@@ -9,7 +9,10 @@ defineProps({
     },
 });
 
-const getParentLabels = (item: SearchResultItem, preferredLanguage: string): string => {
+const getParentLabels = (
+    item: SearchResultItem,
+    preferredLanguage: string,
+): string => {
     const arrowIcon = " → ";
 
     return item.parents.reduce((acc, parent, index) => {

@@ -25,7 +25,6 @@ const setDisplayedRow = (val: Labellable | null) => {
     displayedRow.value = val;
     // TODO: routing
 };
-// @ts-expect-error vue-tsc doesn't like arbitrary properties here
 provide(displayedRowKey, { displayedRow, setDisplayedRow });
 
 const selectedLanguage: Ref<Language> = ref(ENGLISH);

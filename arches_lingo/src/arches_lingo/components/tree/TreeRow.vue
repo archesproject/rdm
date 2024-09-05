@@ -14,6 +14,7 @@ const { node, focusLabel, unfocusLabel } = defineProps<{
     focusLabel: string;
     unfocusLabel: string;
 }>();
+// @ts-expect-error woes with inject
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 
 const filterValue = defineModel<string>("filterValue");
