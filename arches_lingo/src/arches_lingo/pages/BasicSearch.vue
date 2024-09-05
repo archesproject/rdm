@@ -10,8 +10,8 @@ import BasicSearch from "@/arches_lingo/components/basic-search/BasicSearch.vue"
 const { $gettext } = useGettext();
 
 const visible = ref(false);
-const hideModal = () => {
-    visible.value = false;
+const toggleModal = () => {
+    visible.value = !!visible.value;
 };
 
 const SEARCH_RESULTS_PER_PAGE = 25;
@@ -43,12 +43,12 @@ const SEARCH_RESULT_ITEM_SIZE = 38;
         }"
         :show-header="false"
     >
-        <div style="width: 80vw">
-            <BasicSearch
-                :search-results-per-page="SEARCH_RESULTS_PER_PAGE"
-                :search-result-item-size="SEARCH_RESULT_ITEM_SIZE"
-            />
-        </div>
+        <BasicSearch
+            :search-results-per-page="SEARCH_RESULTS_PER_PAGE"
+            :search-result-item-size="SEARCH_RESULT_ITEM_SIZE"
+            :toggle-modal
+            style="width: 80vw"
+        />
     </Dialog>
 </template>
 
