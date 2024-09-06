@@ -23,7 +23,7 @@ const rowLabel = (data: Labellable) => {
     if (!data) {
         return "";
     }
-    const unstyledLabel = bestLabel(data, selectedLanguage.value.code).value;
+    const unstyledLabel = bestLabel(data, selectedLanguage?.value?.code).value;
     if (!filterValue.value) {
         return unstyledLabel;
     }
