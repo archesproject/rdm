@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, ref } from "vue";
+import { inject, provide, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
@@ -9,7 +9,6 @@ import ProgressSpinner from "primevue/progressspinner";
 import {
     displayedRowKey,
     selectedLanguageKey,
-    ENGLISH,
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 import { bestLabel, dataIsConcept } from "@/arches_lingo/utils.ts";
@@ -17,12 +16,12 @@ import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";
 
 import type { Ref } from "vue";
 import type { Language } from "@/arches/types";
-import type { Labellable } from "@/arches_lingo/types.ts";
+import type { Labellable } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
 const router = useRouter();
+const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 
-// TODO: lift some of this state up?
 const displayedRow: Ref<Labellable | null> = ref(null);
 const setDisplayedRow = (val: Labellable | null) => {
     displayedRow.value = val;
@@ -34,9 +33,6 @@ const setDisplayedRow = (val: Labellable | null) => {
     }
 };
 provide(displayedRowKey, { displayedRow, setDisplayedRow });
-
-const selectedLanguage: Ref<Language> = ref(ENGLISH);
-provide(selectedLanguageKey, selectedLanguage);
 </script>
 
 <template>
