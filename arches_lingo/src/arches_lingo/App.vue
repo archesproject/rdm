@@ -9,23 +9,29 @@ import { useToast } from "primevue/usetoast";
 import {
     ANONYMOUS,
     DEFAULT_ERROR_TOAST_LIFE,
+    ENGLISH,
     ERROR,
     USER_KEY,
+    selectedLanguageKey,
 } from "@/arches_lingo/constants.ts";
 
 import { routeNames } from "@/arches_lingo/routes.ts";
 import { fetchUser } from "@/arches_lingo/api.ts";
-
-import type { User } from "@/arches_lingo/types.ts";
-
 import PageHeader from "@/arches_lingo/components/header/PageHeader.vue";
 import SideNav from "@/arches_lingo/components/sidenav/SideNav.vue";
+
+import type { Ref } from "vue";
+import type { Language } from "@/arches/types";
+import type { User } from "@/arches_lingo/types";
 
 const user = ref<User | null>(null);
 const setUser = (userToSet: User | null) => {
     user.value = userToSet;
 };
 provide(USER_KEY, { user, setUser });
+
+const selectedLanguage: Ref<Language> = ref(ENGLISH);
+provide(selectedLanguageKey, selectedLanguage);
 
 const router = useRouter();
 const route = useRoute();
