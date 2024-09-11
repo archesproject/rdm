@@ -1,5 +1,6 @@
 import type { Ref } from "vue";
 import type { TreeNode } from "primevue/treenode";
+import type { Label } from "@/arches_vue_utils/types";
 
 import type { Label } from "@/arches_vue_utils/types";
 
@@ -20,7 +21,7 @@ export interface HeaderRefAndSetter {
 }
 export interface DisplayedRowRefAndSetter {
     displayedRow: Ref<Concept | null>;
-    setDisplayedRow: (val: Labellable | null) => void;
+    setDisplayedRow: (val: Concept | Scheme | null) => void;
 }
 
 export interface Concept {
@@ -38,14 +39,6 @@ export interface Scheme {
     labels: Label[];
     top_concepts: Concept[];
 }
-
-export interface Label {
-    value: string;
-    language: string;
-    valuetype: "prefLabel" | "altLabel" | "unknown";
-}
-
-export type Labellable = Concept | Scheme;
 
 export interface NodeAndParentInstruction {
     node: TreeNode;
