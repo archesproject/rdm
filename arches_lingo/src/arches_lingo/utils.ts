@@ -1,19 +1,20 @@
+import { getItemLabel } from "@/arches_vue_utils/utils.ts";
+
 import type { TreeNode } from "primevue/treenode";
 import type { Language } from "@/arches_vue_utils/types";
 import type { Labellable, Scheme } from "@/arches_lingo/types";
 import type {
     Concept,
     IconLabels,
-    Labellable,
     NodeAndParentInstruction,
     Scheme,
 } from "@/arches_lingo/types";
 
 // Duck-typing helpers
-export const dataIsScheme = (data: Labellable) => {
+export const dataIsScheme = (data: Concept | Scheme) => {
     return (data as Scheme).top_concepts !== undefined;
 };
-export const dataIsConcept = (data: Labellable) => {
+export const dataIsConcept = (data: Concept | Scheme) => {
     return !dataIsScheme(data);
 };
 export const nodeIsConcept = (node: TreeNode) => {
@@ -27,6 +28,7 @@ export const nodeIsScheme = (node: TreeNode) => {
 export const treeFromSchemes = (
     schemes: Scheme[],
     selectedLanguage: Language,
+    systemLanguage: Language,
     iconLabels: IconLabels,
     focusedNode: TreeNode | null,
 ): TreeNode[] => {
@@ -43,7 +45,7 @@ export const treeFromSchemes = (
     };
 
     const conceptOrSchemeAsNodeAndInstruction = (
-        labellable: Labellable,
+        labellable: Concept | Scheme,
         children: Concept[],
     ): NodeAndParentInstruction => {
         let childrenAsNodes: TreeNode[];
@@ -61,7 +63,11 @@ export const treeFromSchemes = (
 
         const node: TreeNode = {
             key: labellable.id,
-            label: bestLabel(labellable, selectedLanguage.code).value,
+            label: getItemLabel(
+                labellable,
+                selectedLanguage.code,
+                systemLanguage.code,
+            ).value,
             children: childrenAsNodes,
             data: labellable,
             iconLabel: dataIsScheme(labellable)

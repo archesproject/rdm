@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { getItemLabel } from "@/arches_vue_utils/utils.ts";
+import { ENGLISH } from "@/arches_lingo/constants.ts";
 
 import type { PropType } from "vue";
 import type { Concept } from "@/arches_lingo/types.ts";
+
 import type { SearchResultItem } from "@/arches_lingo/types.ts";
 
 defineProps({
@@ -14,12 +16,17 @@ defineProps({
 
 const getParentLabels = (
     item: SearchResultItem,
-    preferredLanguage: string,
+    preferredLanguageCode: string,
+    systemLanguageCode: string,
 ): string => {
     const arrowIcon = " → ";
 
     return item.parents.reduce((acc, parent, index) => {
-        const label = getItemLabel(parent, preferredLanguage, "en-US").value;
+        const label = getItemLabel(
+            parent,
+            preferredLanguageCode,
+            systemLanguageCode,
+        ).value;
         if (label) {
             return acc + (index > 0 ? arrowIcon : "") + label;
         }
@@ -39,11 +46,18 @@ const getParentLabels = (
         />
 
         <div style="margin: 0 0.5rem">
-            {{ getItemLabel(searchResult.option, "en-US", "en-US").value }}
+            {{
+                getItemLabel(searchResult.option, ENGLISH.code, ENGLISH.code)
+                    .value
+            }}
         </div>
 
         <div class="search-result-hierarchy">
-            [ {{ getParentLabels(searchResult.option, "en-US") }} ]
+            [
+            {{
+                getParentLabels(searchResult.option, ENGLISH.code, ENGLISH.code)
+            }}
+            ]
         </div>
     </div>
 </template>
