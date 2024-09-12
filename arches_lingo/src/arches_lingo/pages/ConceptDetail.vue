@@ -3,10 +3,15 @@ import { inject, provide, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
-import Panel from "primevue/panel";
+import Button from "primevue/button";
 import ProgressSpinner from "primevue/progressspinner";
+import Splitter from "primevue/splitter";
+import SplitterPanel from "primevue/splitterpanel";
 
+import { shouldUseContrast } from "@/arches_references/utils.ts";
 import {
+    CONTRAST,
+    SECONDARY,
     displayedRowKey,
     selectedLanguageKey,
 } from "@/arches_lingo/constants.ts";
@@ -33,19 +38,31 @@ const setDisplayedRow = (val: Labellable | null) => {
     }
 };
 provide(displayedRowKey, { displayedRow, setDisplayedRow });
+
+const showHierarchy = ref(true);
+const toggleHierarchy = () => {
+    showHierarchy.value = !showHierarchy.value;
+};
 </script>
 
 <template>
-    <div style="display: flex; flex-direction: row; gap: 1rem">
-        <Panel
-            toggleable
-            :header="$gettext('Hierarchy')"
-            :pt="{
-                pcToggleButton: {
-                    root: {
-                        ariaLabel: $gettext('Expand or collapse hierarchy'),
-                    },
-                },
+    <Button
+        :severity="shouldUseContrast() ? CONTRAST : SECONDARY"
+        :label="$gettext('Toggle hierarchy')"
+        @click="toggleHierarchy"
+    />
+    <Splitter
+        style="display: flex; height: 100%"
+        :pt="{
+            gutter: { style: { display: showHierarchy ? 'flex' : 'none' } },
+        }"
+    >
+        <SplitterPanel
+            :size="40"
+            :min-size="25"
+            :style="{
+                display: showHierarchy ? 'flex' : 'none',
+                flexDirection: 'column',
             }"
         >
             <Suspense>
@@ -54,11 +71,13 @@ provide(displayedRowKey, { displayedRow, setDisplayedRow });
                     <ProgressSpinner />
                 </template>
             </Suspense>
-        </Panel>
-        {{
-            (displayedRow
-                ? bestLabel(displayedRow, selectedLanguage.code).value
-                : "") || "Concept detail placeholder"
-        }}
-    </div>
+        </SplitterPanel>
+        <SplitterPanel :min-size="25">
+            {{
+                (displayedRow
+                    ? bestLabel(displayedRow, selectedLanguage.code).value
+                    : "") || "Concept detail placeholder"
+            }}
+        </SplitterPanel>
+    </Splitter>
 </template>
