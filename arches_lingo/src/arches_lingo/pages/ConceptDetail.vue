@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, provide, ref } from "vue";
+import { computed, inject, provide, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
@@ -13,6 +13,7 @@ import {
     CONTRAST,
     SECONDARY,
     displayedRowKey,
+    headerKey,
     selectedLanguageKey,
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
@@ -21,13 +22,21 @@ import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";
 
 import type { Ref } from "vue";
 import type { Language } from "@/arches/types";
-import type { Labellable } from "@/arches_lingo/types";
+import type { HeaderRefAndSetter, Labellable } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
 const router = useRouter();
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 
+const { setHeader } = inject(headerKey) as HeaderRefAndSetter;
+
 const displayedRow: Ref<Labellable | null> = ref(null);
+const conceptLabel = computed(() => {
+    if (!displayedRow.value) {
+        return "Concept detail placeholder";
+    }
+    return bestLabel(displayedRow.value, selectedLanguage.value.code).value;
+});
 const setDisplayedRow = (val: Labellable | null) => {
     displayedRow.value = val;
     if (val === null) {
@@ -35,6 +44,7 @@ const setDisplayedRow = (val: Labellable | null) => {
     }
     if (dataIsConcept(val)) {
         router.push({ name: routeNames.concept, params: { id: val.id } });
+        setHeader(conceptLabel.value);
     }
 };
 // @ts-expect-error vue-tsc doesn't like arbitrary properties here
@@ -74,11 +84,7 @@ const toggleHierarchy = () => {
             </Suspense>
         </SplitterPanel>
         <SplitterPanel :min-size="25">
-            {{
-                (displayedRow
-                    ? bestLabel(displayedRow, selectedLanguage.code).value
-                    : "") || "Concept detail placeholder"
-            }}
+            {{ conceptLabel }}
         </SplitterPanel>
     </Splitter>
 </template>
