@@ -4,6 +4,8 @@ import type { Concept, UserRefAndSetter } from "@/arches_lingo/types.ts";
 
 export const ANONYMOUS = "anonymous";
 export const ERROR = "error";
+export const SECONDARY = "secondary";
+export const CONTRAST = "contrast";
 export const DEFAULT_ERROR_TOAST_LIFE = 8000;
 
 // Injection keys
