@@ -17,12 +17,23 @@ import {
     selectedLanguageKey,
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
-import { bestLabel, dataIsConcept } from "@/arches_lingo/utils.ts";
+import {
+    bestLabel,
+    dataIsConcept,
+    dataIsScheme,
+} from "@/arches_lingo/utils.ts";
+import ConceptDetail from "@/arches_lingo/components/detail/ConceptDetail.vue";
 import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";
+import SchemeDetail from "@/arches_lingo/components/detail/SchemeDetail.vue";
 
 import type { Ref } from "vue";
 import type { Language } from "@/arches/types";
-import type { HeaderRefAndSetter, Labellable } from "@/arches_lingo/types";
+import type {
+    Concept,
+    HeaderRefAndSetter,
+    Labellable,
+    Scheme,
+} from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
 const router = useRouter();
@@ -31,7 +42,7 @@ const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { setHeader } = inject(headerKey) as HeaderRefAndSetter;
 
 const displayedRow: Ref<Labellable | null> = ref(null);
-const conceptLabel = computed(() => {
+const rowLabel = computed(() => {
     if (!displayedRow.value) {
         return "Concept detail placeholder";
     }
@@ -42,10 +53,12 @@ const setDisplayedRow = (val: Labellable | null) => {
     if (val === null) {
         return;
     }
-    if (dataIsConcept(val)) {
+    if (dataIsScheme(val)) {
+        router.push({ name: routeNames.scheme, params: { id: val.id } });
+    } else if (dataIsConcept(val)) {
         router.push({ name: routeNames.concept, params: { id: val.id } });
-        setHeader(conceptLabel.value);
     }
+    setHeader(rowLabel.value);
 };
 provide(displayedRowKey, { displayedRow, setDisplayedRow });
 
@@ -83,7 +96,14 @@ const toggleHierarchy = () => {
             </Suspense>
         </SplitterPanel>
         <SplitterPanel :min-size="25">
-            {{ conceptLabel }}
+            <ConceptDetail
+                v-if="displayedRow && dataIsConcept(displayedRow)"
+                :concept="displayedRow as Concept"
+            />
+            <SchemeDetail
+                v-else-if="displayedRow && dataIsScheme(displayedRow)"
+                :scheme="displayedRow as Scheme"
+            />
         </SplitterPanel>
     </Splitter>
 </template>
