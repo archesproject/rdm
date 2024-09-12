@@ -267,6 +267,11 @@ await initializeTree();
                     },
                 },
             },
+            pcFilterIconContainer: {
+                root: {
+                    style: { top: '30%' },
+                },
+            },
             nodeLabel: {
                 style: { textWrap: 'nowrap' },
             },

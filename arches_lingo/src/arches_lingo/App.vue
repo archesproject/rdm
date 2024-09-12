@@ -70,7 +70,7 @@ router.beforeEach(async (to, _from, next) => {
         <PageHeader v-if="route.meta.shouldShowNavigation" />
         <div style="display: flex; flex: auto; flex-direction: row">
             <SideNav v-if="route.meta.shouldShowNavigation" />
-            <div style="margin: 1rem; flex: auto">
+            <div style="flex: auto">
                 <RouterView />
             </div>
         </div>
