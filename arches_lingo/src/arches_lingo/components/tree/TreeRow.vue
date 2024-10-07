@@ -4,7 +4,7 @@ import { inject } from "vue";
 import { selectedLanguageKey } from "@/arches_references/constants.ts";
 import { bestLabel } from "@/arches_lingo/utils.ts";
 
-import type { Language } from "@/arches/types";
+import type { Language } from "@/arches_vue_utils/types";
 import type { Ref } from "vue";
 import type { TreeNode } from "primevue/treenode";
 import type { Labellable } from "@/arches_lingo/types";

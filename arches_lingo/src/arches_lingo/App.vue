@@ -22,7 +22,7 @@ import PageHeader from "@/arches_lingo/components/header/PageHeader.vue";
 import SideNav from "@/arches_lingo/components/sidenav/SideNav.vue";
 
 import type { Ref } from "vue";
-import type { Language } from "@/arches/types";
+import type { Language } from "@/arches_vue_utils/types";
 import type { User } from "@/arches_lingo/types";
 
 const user = ref<User | null>(null);

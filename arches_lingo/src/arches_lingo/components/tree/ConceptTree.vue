@@ -26,7 +26,7 @@ import type { ComponentPublicInstance, Ref } from "vue";
 import type { RouteLocationNormalizedLoadedGeneric } from "vue-router";
 import type { TreeExpandedKeys, TreeSelectionKeys } from "primevue/tree";
 import type { TreeNode } from "primevue/treenode";
-import type { Language } from "@/arches/types";
+import type { Language } from "@/arches_vue_utils/types";
 import type {
     DisplayedRowRefAndSetter,
     IconLabels,

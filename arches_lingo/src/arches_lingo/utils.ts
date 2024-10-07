@@ -1,6 +1,6 @@
 import type { TreeNode } from "primevue/treenode";
+import type { Language } from "@/arches_vue_utils/types";
 import type { Labellable, Scheme } from "@/arches_lingo/types";
-import type { Language } from "@/arches/types";
 import type {
     Concept,
     IconLabels,
