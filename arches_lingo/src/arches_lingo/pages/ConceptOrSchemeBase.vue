@@ -27,7 +27,7 @@ import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";
 import SchemeDetail from "@/arches_lingo/components/detail/SchemeDetail.vue";
 
 import type { Ref } from "vue";
-import type { Language } from "@/arches/types";
+import type { Language } from "@/arches_vue_utils/types";
 import type {
     Concept,
     HeaderRefAndSetter,
