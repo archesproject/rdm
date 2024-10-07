@@ -21,7 +21,10 @@ const items = ref([
 </script>
 
 <template>
-    <Menubar :model="items">
+    <Menubar
+        :model="items"
+        style="border-radius: 0"
+    >
         <template #start>
             <RouterLink
                 :to="{ name: routeNames.root }"
@@ -47,13 +50,7 @@ const items = ref([
             </RouterLink>
         </template>
         <template #end>
-            <div
-                style="
-                    display: flex;
-                    align-items: center;
-                    gap: var(--p-content-gap);
-                "
-            >
+            <div style="display: flex; align-items: center; gap: 1rem">
                 <DarkModeToggle />
                 <UserInteraction />
             </div>
