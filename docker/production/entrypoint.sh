@@ -138,6 +138,19 @@ run_django_server() {
 	exec /bin/bash -c "source ${WEB_ROOT}/ENV/bin/activate && gunicorn arches_lingo.wsgi"
 }
 
+reset_database() {
+	echo ""
+	echo "----- RESETTING DATABASE -----"
+	echo ""
+	cd ${APP_ROOT}
+	pwd && ../ENV/bin/python --version
+	(test $(echo "SELECT FROM pg_database WHERE datname = 'template_postgis'" | ../ENV/bin/python manage.py dbshell | grep -c "1 row") = 1 || \
+	(echo "CREATE DATABASE template_postgis" | ../ENV/bin/python manage.py dbshell --database postgres && \
+	echo "CREATE EXTENSION postgis" | ../ENV/bin/python manage.py dbshell --database postgres))
+	../ENV/bin/python manage.py setup_db --force 
+	../ENV/bin/python manage.py packages -o load_package -a arches_lingo -db -dev -y
+}
+
 activate_virtualenv() {
 	. ${WEB_ROOT}/ENV/bin/activate
 }
