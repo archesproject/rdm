@@ -75,7 +75,7 @@
                 "logDriver": "awslogs",
                 "options": {
                     "awslogs-stream-prefix": "arches",
-                    "awslogs-group": "rdm-base-infrastructure-rdmcontainerloggroupC4ED3A19-y6M1wpjYa5gh",
+                    "awslogs-group": "lingo-base-infrastructure-lingocontainerloggroup79B923D7-o5bIiMZjbylI",
                     "awslogs-region": "us-west-1"
                 }
             }
@@ -85,8 +85,8 @@
     "networkMode": "awsvpc",
     "memory": "8192",
     "cpu": "4096",
-    "executionRoleArn": "arn:aws:iam::889276910795:role/arches-execution-role",
-    "family": "rdmbaseinfrastructureesArchesTaskDefinitionCCD52D02",
-    "taskRoleArn": "arn:aws:iam::889276910795:role/arches-task-role",
+    "executionRoleArn": "arn:aws:iam::889276910795:role/arches-execution-role-lingo",
+    "family": "lingobaseinfrastructureesArchesTaskDefinition127C8007",
+    "taskRoleArn": "arn:aws:iam::889276910795:role/arches-task-role-lingo",
     "placementConstraints": []
 }

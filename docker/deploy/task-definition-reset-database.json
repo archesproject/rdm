@@ -89,7 +89,7 @@
     "memory": "8192",
     "cpu": "4096",
     "executionRoleArn": "arn:aws:iam::889276910795:role/arches-execution-role-lingo",
-    "family": "reset-database-container",
+    "family": "reset-database-container-lingo",
     "taskRoleArn": "arn:aws:iam::889276910795:role/arches-task-role-lingo",
     "placementConstraints": []
 }
