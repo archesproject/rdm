@@ -46,7 +46,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: arches_rdm_example_project/task-definition.json
+          task-definition: arches_rdm_example_project/docker/deploy/task-definition.json
           container-name: arches
           image: ${{ steps.build-image.outputs.image }}
 
@@ -54,7 +54,7 @@ jobs:
         id: task-def-run-reset
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: arches_rdm_example_project/task-definition-reset-database.json
+          task-definition: arches_rdm_example_project/docker/deploy/task-definition-reset-database.json
           container-name: arches
           image: ${{ steps.build-image.outputs.image }}
 
