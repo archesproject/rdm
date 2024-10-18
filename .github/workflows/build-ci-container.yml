@@ -32,7 +32,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: rdm-repository
+          ECR_REPOSITORY: lingo-repository
           IMAGE_TAG: ${{ github.sha }}
         run: |
           # Build a docker container and
@@ -46,7 +46,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: arches_rdm_example_project/docker/deploy/task-definition.json
+          task-definition: arches-lingo/docker/deploy/task-definition.json
           container-name: arches
           image: ${{ steps.build-image.outputs.image }}
 
@@ -54,7 +54,7 @@ jobs:
         id: task-def-run-reset
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: arches_rdm_example_project/docker/deploy/task-definition-reset-database.json
+          task-definition: arches-lingo/docker/deploy/task-definition-reset-database.json
           container-name: arches
           image: ${{ steps.build-image.outputs.image }}
 
@@ -63,7 +63,7 @@ jobs:
         id: task-def-deploy-reset
         with:
           task-definition: ${{ steps.task-def-run-reset.outputs.task-definition }}
-          cluster: rdm-cluster
+          cluster: lingo-cluster
 
       - name: Reset database
         id: run-reset-task
@@ -71,11 +71,11 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          aws ecs run-task --cluster rdm-cluster --task-definition ${{ steps.task-def-deploy-reset.outputs.task-definition-arn }} --count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=['subnet-0d66c5e9e3c174519','subnet-0ad21fa3dbc479860'],securityGroups=['sg-04ca486cc6239259b']}"
+          aws ecs run-task --cluster lingo-cluster --task-definition ${{ steps.task-def-deploy-reset.outputs.task-definition-arn }} --count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=['subnet-0d66c5e9e3c174519','subnet-0ad21fa3dbc479860'],securityGroups=['sg-04ca486cc6239259b']}"
 
       - name: Deploy Amazon ECS task definition to arches service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: rdm-arches-service
-          cluster: rdm-cluster
+          service: lingo-arches-service
+          cluster: lingo-cluster
