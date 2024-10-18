@@ -17,31 +17,27 @@
             ],
             "environment": [
                 {
-                    "name": "ES_SECRET_ID",
+                    "name": "ARCHES_ES_SECRET_ID",
                     "value": "prod/lingo/elastic"
                 },
                 {
-                    "name": "DB_SECRET_ID",
+                    "name": "ARCHES_DB_SECRET_ID",
                     "value": "archesDbSecretC996653C-qRg6QQ5XOMB9"
                 },
                 {
-                    "name": "PUBLIC_SERVER_ADDRESS",
+                    "name": "ARCHES_PUBLIC_SERVER_ADDRESS",
                     "value": "https://lingo.dev.fargeo.com"
                 },
                 {
-                    "name": "SECRETS_MODE",
+                    "name": "ARCHES_SECRETS_MODE",
                     "value": "AWS"
                 },
                 {
-                    "name": "ALLOWED_HOSTS",
+                    "name": "ARCHES_ALLOWED_HOSTS",
                     "value": "lingo.dev.fargeo.com"
                 },
                 {
-                    "name": "TRUSTEDORIGINS",
-                    "value": "https://lingo.dev.fargeo.com"
-                },
-                {
-                    "name": "ESVALIDATE",
+                    "name": "ARCHES_ESVALIDATE",
                     "value": "False"
                 },
                 {
@@ -49,19 +45,19 @@
                     "value": "arches-lingo"
                 },
                 {
-                    "name": "ESPROTOCOL",
+                    "name": "ARCHES_ESPROTOCOL",
                     "value": "https"
                 },
                 {
-                    "name": "S3FILEOVERWRITE",
+                    "name": "ARCHES_S3FILEOVERWRITE",
                     "value": "False"
                 },
                 {
-                    "name": "STORAGEBACKEND",
+                    "name": "ARCHES_STORAGEBACKEND",
                     "value": "storages.backends.s3.S3Storage"
                 },
                 {
-                    "name": "S3BUCKETNAME",
+                    "name": "ARCHES_S3BUCKETNAME",
                     "value": "fargeo-1-lingo-media-files"
                 }
             ],

@@ -56,7 +56,7 @@ KIBANA_CONFIG_BASEPATH = get_optional_env_variable("ARCHES_KIBANACONFIGBASEPATH"
 RESOURCE_IMPORT_LOG = get_optional_env_variable("ARCHES_RESOURCEIMPORTLOG", os.path.join(APP_ROOT, "logs", "resource_import.log"))
 ARCHES_LOG_PATH = get_optional_env_variable("ARCHES_LOGPATH", os.path.join(ROOT_DIR, "arches.log"))
 
-STORAGE_BACKEND = get_optional_env_variable("STORAGEBACKEND", "django.core.files.storage.FileSystemStorage")
+STORAGE_BACKEND = get_optional_env_variable("ARCHES_STORAGEBACKEND", "django.core.files.storage.FileSystemStorage")
 
 if STORAGE_BACKEND == "storages.backends.s3.S3Storage":
     import psutil
@@ -260,7 +260,7 @@ TEMPLATES = build_templates_config(
     app_root=APP_ROOT,
 )
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = get_optional_env_variable("ARCHES_ALLOWED_HOSTS", "*").split(',')
 
 SYSTEM_SETTINGS_LOCAL_PATH = os.path.join(APP_ROOT, "system_settings", "System_Settings.json")
 WSGI_APPLICATION = "arches_lingo.wsgi.application"
