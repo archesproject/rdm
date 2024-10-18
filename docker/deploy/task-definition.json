@@ -1,0 +1,92 @@
+{
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "inferenceAccelerators": [],
+    "containerDefinitions": [
+        {
+            "name": "arches",
+            "image": "ecs-devops-sandbox-repository:00000",
+            "resourceRequirements": null,
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": "443",
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "ES_SECRET_ID",
+                    "value": "prod/lingo/elastic"
+                },
+                {
+                    "name": "DB_SECRET_ID",
+                    "value": "archesDbSecretC996653C-qRg6QQ5XOMB9"
+                },
+                {
+                    "name": "PUBLIC_SERVER_ADDRESS",
+                    "value": "https://lingo.dev.fargeo.com"
+                },
+                {
+                    "name": "SECRETS_MODE",
+                    "value": "AWS"
+                },
+                {
+                    "name": "ALLOWED_HOSTS",
+                    "value": "lingo.dev.fargeo.com"
+                },
+                {
+                    "name": "TRUSTEDORIGINS",
+                    "value": "https://lingo.dev.fargeo.com"
+                },
+                {
+                    "name": "ESVALIDATE",
+                    "value": "False"
+                },
+                {
+                    "name": "ARCHES_PROJECT",
+                    "value": "arches_lingo"
+                },
+                {
+                    "name": "ESPROTOCOL",
+                    "value": "https"
+                },
+                {
+                    "name": "S3FILEOVERWRITE",
+                    "value": "False"
+                },
+                {
+                    "name": "STORAGEBACKEND",
+                    "value": "storages.backends.s3.S3Storage"
+                },
+                {
+                    "name": "S3BUCKETNAME",
+                    "value": "fargeo-1-lingo-media-files"
+                }
+            ],
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl --insecure -f https://localhost/ || exit 1"
+                ]
+            },
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-stream-prefix": "arches",
+                    "awslogs-group": "rdm-base-infrastructure-rdmcontainerloggroupC4ED3A19-y6M1wpjYa5gh",
+                    "awslogs-region": "us-west-1"
+                }
+            }
+        }
+    ],
+    "volumes": [],
+    "networkMode": "awsvpc",
+    "memory": "8192",
+    "cpu": "4096",
+    "executionRoleArn": "arn:aws:iam::889276910795:role/arches-execution-role",
+    "family": "rdmbaseinfrastructureesArchesTaskDefinitionCCD52D02",
+    "taskRoleArn": "arn:aws:iam::889276910795:role/arches-task-role",
+    "placementConstraints": []
+}
