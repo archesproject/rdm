@@ -54,7 +54,7 @@ WORKDIR ${WEB_ROOT}
 # FIXME: ADD from github repository instead?
 
 # From here, run commands from ARCHES_ROOT
-RUN source /web_root/ENV/bin/activate && pip install gunicorn
+RUN source /web_root/ENV/bin/activate && pip install gunicorn psutil botocore boto3 django-storages 
 
 COPY docker/production/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
 RUN chmod -R 700 ${WEB_ROOT}/entrypoint.sh &&\
