@@ -246,6 +246,7 @@ INSTALLED_APPS = (
     "guardian",
     "captcha",
     "revproxy",
+    "rest_framework",
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
