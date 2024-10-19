@@ -5,6 +5,16 @@ from django.urls import include, path
 
 from arches_lingo.views.root import LingoRootView
 from arches_lingo.views.api.concepts import ConceptTreeView, ValueSearchView
+from arches_lingo.views.api.pythonic_models import (
+    ConceptDetailView,
+    ConceptListCreateView,
+    ConceptStatementDetailView,
+    ConceptStatementListCreateView,
+    SchemeDetailView,
+    SchemeListCreateView,
+    SchemeStatementDetailView,
+    SchemeStatementListCreateView,
+)
 
 urlpatterns = [
     path("", LingoRootView.as_view(), name="root"),
@@ -12,8 +22,32 @@ urlpatterns = [
     path("advanced-search", LingoRootView.as_view(), name="advanced-search"),
     path("schemes", LingoRootView.as_view(), name="schemes"),
     path("concept/<uuid:id>", LingoRootView.as_view(), name="concept"),
-    path("api/concepts", ConceptTreeView.as_view(), name="api-concepts"),
+    path("api/concept-tree", ConceptTreeView.as_view(), name="api-concepts"),
     path("api/search", ValueSearchView.as_view(), name="api-search"),
+    path("api/concepts", ConceptListCreateView.as_view(), name="concepts-list-create"),
+    path("api/concept/<uuid:pk>", ConceptDetailView.as_view(), name="concept-detail"),
+    path(
+        "api/concept/statements",
+        ConceptStatementListCreateView.as_view(),
+        name="concept-statements-list-create",
+    ),
+    path(
+        "api/concept/statement/<uuid:pk>",
+        ConceptStatementDetailView.as_view(),
+        name="concept-statement-detail",
+    ),
+    path("api/schemes", SchemeListCreateView.as_view(), name="schemes-list-create"),
+    path("api/scheme/<uuid:pk>", SchemeDetailView.as_view(), name="scheme-detail"),
+    path(
+        "api/scheme/statements",
+        SchemeStatementListCreateView.as_view(),
+        name="scheme-statements-list-create",
+    ),
+    path(
+        "api/scheme/statement/<uuid:pk>",
+        SchemeStatementDetailView.as_view(),
+        name="scheme-statement-detail",
+    ),
     path("", include("arches_references.urls")),
 ]
 
