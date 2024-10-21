@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     "django.contrib.gis",
     "django_hosts",
     "arches_references",
+    "arches_vue_utils",
     "arches",
     "arches.app.models",
     "arches.management",
