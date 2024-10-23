@@ -47,26 +47,41 @@ ES_USER = get_optional_env_variable("ARCHES_ESUSER", "elastic")
 ES_PASSWORD = get_optional_env_variable("ARCHES_ESPASSWORD", "E1asticSearchforArche5")
 ES_HOST = get_optional_env_variable("ARCHES_ESHOST", "localhost")
 ES_PORT = int(get_optional_env_variable("ARCHES_ESPORT", "9200"))
-WEBPACK_DEVELOPMENT_SERVER_PORT = int(get_optional_env_variable("ARCHES_WEBPACKDEVELOPMENTSERVERPORT", "8022"))
+WEBPACK_DEVELOPMENT_SERVER_PORT = int(
+    get_optional_env_variable("ARCHES_WEBPACKDEVELOPMENTSERVERPORT", "8022")
+)
 ES_PROTOCOL = get_optional_env_variable("ARCHES_ESPROTOCOL", "http")
 ES_VALIDATE_CERT = get_optional_env_variable("ARCHES_ESVALIDATE", "True") == "True"
 DEBUG = bool(get_optional_env_variable("ARCHES_DJANGO_DEBUG", False))
 KIBANA_URL = get_optional_env_variable("ARCHES_KIBANA_URL", "http://localhost:5601/")
-KIBANA_CONFIG_BASEPATH = get_optional_env_variable("ARCHES_KIBANACONFIGBASEPATH", "kibana")
-RESOURCE_IMPORT_LOG = get_optional_env_variable("ARCHES_RESOURCEIMPORTLOG", os.path.join(APP_ROOT, "logs", "resource_import.log"))
-ARCHES_LOG_PATH = get_optional_env_variable("ARCHES_LOGPATH", os.path.join(ROOT_DIR, "arches.log"))
+KIBANA_CONFIG_BASEPATH = get_optional_env_variable(
+    "ARCHES_KIBANACONFIGBASEPATH", "kibana"
+)
+RESOURCE_IMPORT_LOG = get_optional_env_variable(
+    "ARCHES_RESOURCEIMPORTLOG", os.path.join(APP_ROOT, "logs", "resource_import.log")
+)
+ARCHES_LOG_PATH = get_optional_env_variable(
+    "ARCHES_LOGPATH", os.path.join(ROOT_DIR, "arches.log")
+)
 
-STORAGE_BACKEND = get_optional_env_variable("ARCHES_STORAGEBACKEND", "django.core.files.storage.FileSystemStorage")
+STORAGE_BACKEND = get_optional_env_variable(
+    "ARCHES_STORAGEBACKEND", "django.core.files.storage.FileSystemStorage"
+)
 
 if STORAGE_BACKEND == "storages.backends.s3.S3Storage":
     import psutil
 
     STORAGE_OPTIONS = {
         "bucket_name": get_env_variable("ARCHES_S3BUCKETNAME"),
-        "file_overwrite": get_optional_env_variable("ARCHES_S3FILEOVERWRITE", "True") == "True",
-        "signature_version": get_optional_env_variable("ARCHES_S3SIGNATUREVERSION", "s3v4"),
+        "file_overwrite": get_optional_env_variable("ARCHES_S3FILEOVERWRITE", "True")
+        == "True",
+        "signature_version": get_optional_env_variable(
+            "ARCHES_S3SIGNATUREVERSION", "s3v4"
+        ),
         "region": get_optional_env_variable("ARCHES_S3REGION", "us-west-1"),
-        "max_memory_size": get_optional_env_variable("ARCHES_S3MAXMEMORY", str(psutil.virtual_memory().available * 0.5)),
+        "max_memory_size": get_optional_env_variable(
+            "ARCHES_S3MAXMEMORY", str(psutil.virtual_memory().available * 0.5)
+        ),
     }
 else:
     STORAGE_OPTIONS = {}
@@ -90,8 +105,12 @@ if SECRETS_MODE == "AWS":
         ES_SECRET_ID = get_env_variable("ARCHES_ES_SECRET_ID")
         DB_SECRET_ID = get_env_variable("ARCHES_DB_SECRET_ID")
         client = boto3.client("secretsmanager", region_name=AWS_REGION)
-        es_secret = json.loads(client.get_secret_value(SecretId=ES_SECRET_ID)["SecretString"])
-        db_secret = json.loads(client.get_secret_value(SecretId=DB_SECRET_ID)["SecretString"])
+        es_secret = json.loads(
+            client.get_secret_value(SecretId=ES_SECRET_ID)["SecretString"]
+        )
+        db_secret = json.loads(
+            client.get_secret_value(SecretId=DB_SECRET_ID)["SecretString"]
+        )
         DB_NAME = APP_NAME
         DB_USER = db_secret["username"]
         DB_PASSWORD = db_secret["password"]
@@ -140,10 +159,9 @@ FILENAME_GENERATOR = "arches.app.utils.storage_filename_generator.generate_filen
 UPLOADED_FILES_DIR = "uploadedfiles"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_optional_env_variable("ARCHES_SECRET_KEY", "--+c7*txnosqv=flep00qp+=t-xhrj%f4==r8w*n_7pm@mi%)7")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = get_optional_env_variable(
+    "ARCHES_SECRET_KEY", "--+c7*txnosqv=flep00qp+=t-xhrj%f4==r8w*n_7pm@mi%)7"
+)
 
 ROOT_URLCONF = "arches_lingo.urls"
 
@@ -178,8 +196,12 @@ LOAD_PACKAGE_ONTOLOGIES = True
 # This is the namespace to use for export of data (for RDF/XML for example)
 # It must point to the url where you host your site
 # Make sure to use a trailing slash
-PUBLIC_SERVER_ADDRESS = get_optional_env_variable("ARCHES_PUBLIC_SERVER_ADDRESS", "http://localhost:8000/")
-ARCHES_NAMESPACE_FOR_DATA_EXPORT = get_optional_env_variable("ARCHES_NAMESPACE_FOR_DATA_EXPORT", PUBLIC_SERVER_ADDRESS)
+PUBLIC_SERVER_ADDRESS = get_optional_env_variable(
+    "ARCHES_PUBLIC_SERVER_ADDRESS", "http://localhost:8000/"
+)
+ARCHES_NAMESPACE_FOR_DATA_EXPORT = get_optional_env_variable(
+    "ARCHES_NAMESPACE_FOR_DATA_EXPORT", PUBLIC_SERVER_ADDRESS
+)
 
 DATABASES = {
     "default": {
@@ -250,9 +272,13 @@ MIDDLEWARE = [
     # "silk.middleware.SilkyMiddleware",
 ]
 
-MIDDLEWARE.insert(0, "django_hosts.middleware.HostsRequestMiddleware")  # this must resolve to first MIDDLEWARE entry
+MIDDLEWARE.insert(
+    0, "django_hosts.middleware.HostsRequestMiddleware"
+)  # this must resolve to first MIDDLEWARE entry
 
-MIDDLEWARE.append("django_hosts.middleware.HostsResponseMiddleware")  # this must resolve last MIDDLEWARE entry
+MIDDLEWARE.append(
+    "django_hosts.middleware.HostsResponseMiddleware"
+)  # this must resolve last MIDDLEWARE entry
 
 STATICFILES_DIRS = build_staticfiles_dirs(app_root=APP_ROOT)
 
@@ -261,9 +287,11 @@ TEMPLATES = build_templates_config(
     app_root=APP_ROOT,
 )
 
-ALLOWED_HOSTS = get_optional_env_variable("ARCHES_ALLOWED_HOSTS", "*").split(',')
+ALLOWED_HOSTS = get_optional_env_variable("ARCHES_ALLOWED_HOSTS", "*").split(",")
 
-SYSTEM_SETTINGS_LOCAL_PATH = os.path.join(APP_ROOT, "system_settings", "System_Settings.json")
+SYSTEM_SETTINGS_LOCAL_PATH = os.path.join(
+    APP_ROOT, "system_settings", "System_Settings.json"
+)
 WSGI_APPLICATION = "arches_lingo.wsgi.application"
 
 # URL that handles the media served from MEDIA_ROOT, used for managing stored files.
@@ -350,7 +378,9 @@ HIDE_EMPTY_NODES_IN_REPORT = False
 BYPASS_UNIQUE_CONSTRAINT_TILE_VALIDATION = False
 BYPASS_REQUIRED_VALUE_TILE_VALIDATION = False
 
-DATE_IMPORT_EXPORT_FORMAT = "%Y-%m-%d"  # Custom date format for dates imported from and exported to csv
+DATE_IMPORT_EXPORT_FORMAT = (
+    "%Y-%m-%d"  # Custom date format for dates imported from and exported to csv
+)
 
 # This is used to indicate whether the data in the CSV and SHP exports should be
 # ordered as seen in the resource cards or not.
@@ -390,7 +420,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CELERY_BROKER_URL = ""  # RabbitMQ --> "amqp://guest:guest@localhost",  Redis --> "redis://localhost:6379/0"
 CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_RESULT_BACKEND = "django-db"  # Use 'django-cache' if you want to use your cache as your backend
+CELERY_RESULT_BACKEND = (
+    "django-db"  # Use 'django-cache' if you want to use your cache as your backend
+)
 CELERY_TASK_SERIALIZER = "json"
 
 
@@ -456,7 +488,9 @@ RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER = False
 # Dictionary containing any additional context items for customising email templates
 EXTRA_EMAIL_CONTEXT = {
     "salutation": _("Hi"),
-    "expiration": (datetime.now() + timedelta(seconds=CELERY_SEARCH_EXPORT_EXPIRES)).strftime("%A, %d %B %Y"),
+    "expiration": (
+        datetime.now() + timedelta(seconds=CELERY_SEARCH_EXPORT_EXPIRES)
+    ).strftime("%A, %d %B %Y"),
 }
 
 # see https://docs.djangoproject.com/en/1.9/topics/i18n/translation/#how-django-discovers-language-preference
