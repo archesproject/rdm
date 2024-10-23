@@ -1,5 +1,6 @@
 FROM public.ecr.aws/l1p7h1f9/archesproject-fargeo:7.6.x-base-prod AS base
 ENV APP_ROOT=${WEB_ROOT}/arches-lingo
+ENV ARCHES_DJANGO_DEBUG=True
 
 WORKDIR ${WEB_ROOT}
 RUN apt-get install nginx -y && ENV/bin/pip install gunicorn botocore boto3 django-storages psutil

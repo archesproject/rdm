@@ -361,7 +361,7 @@ SESSION_COOKIE_NAME = "arches_lingo"
 # For more info on configuring your cache: https://docs.djangoproject.com/en/2.2/topics/cache/
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     },
     "lingo": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
