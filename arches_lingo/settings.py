@@ -9,6 +9,7 @@ import arches
 import inspect
 import semantic_version
 from datetime import datetime, timedelta
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 
 try:
@@ -16,9 +17,94 @@ try:
 except ImportError:
     pass
 
+
+def get_env_variable(var_name):
+    msg = "Set the %s environment variable"
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        error_msg = msg % var_name
+        raise ImproperlyConfigured(error_msg)
+
+
+def get_optional_env_variable(var_name, default=None) -> str:
+    try:
+        return os.environ[var_name]
+    except KeyError:
+        return default
+
+
 APP_NAME = "arches_lingo"
-APP_VERSION = semantic_version.Version(major=0, minor=0, patch=0)
+SECRETS_MODE = get_optional_env_variable("ARCHES_SECRETS_MODE", "ENV")
+
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+DB_NAME = get_optional_env_variable("ARCHES_DB_NAME", APP_NAME)
+DB_USER = get_optional_env_variable("ARCHES_PGUSERNAME", "postgres")
+DB_PASSWORD = get_optional_env_variable("ARCHES_PGPASSWORD", "postgis")
+DB_HOST = get_optional_env_variable("ARCHES_PGHOST", "localhost")
+DB_PORT = get_optional_env_variable("ARCHES_PGPORT", "5432")
+ES_USER = get_optional_env_variable("ARCHES_ESUSER", "elastic")
+ES_PASSWORD = get_optional_env_variable("ARCHES_ESPASSWORD", "E1asticSearchforArche5")
+ES_HOST = get_optional_env_variable("ARCHES_ESHOST", "localhost")
+ES_PORT = int(get_optional_env_variable("ARCHES_ESPORT", "9200"))
+WEBPACK_DEVELOPMENT_SERVER_PORT = int(get_optional_env_variable("ARCHES_WEBPACKDEVELOPMENTSERVERPORT", "8022"))
+ES_PROTOCOL = get_optional_env_variable("ARCHES_ESPROTOCOL", "http")
+ES_VALIDATE_CERT = get_optional_env_variable("ARCHES_ESVALIDATE", "True") == "True"
+DEBUG = bool(get_optional_env_variable("ARCHES_DJANGO_DEBUG", False))
+KIBANA_URL = get_optional_env_variable("ARCHES_KIBANA_URL", "http://localhost:5601/")
+KIBANA_CONFIG_BASEPATH = get_optional_env_variable("ARCHES_KIBANACONFIGBASEPATH", "kibana")
+RESOURCE_IMPORT_LOG = get_optional_env_variable("ARCHES_RESOURCEIMPORTLOG", os.path.join(APP_ROOT, "logs", "resource_import.log"))
+ARCHES_LOG_PATH = get_optional_env_variable("ARCHES_LOGPATH", os.path.join(ROOT_DIR, "arches.log"))
+
+STORAGE_BACKEND = get_optional_env_variable("ARCHES_STORAGEBACKEND", "django.core.files.storage.FileSystemStorage")
+
+if STORAGE_BACKEND == "storages.backends.s3.S3Storage":
+    import psutil
+
+    STORAGE_OPTIONS = {
+        "bucket_name": get_env_variable("ARCHES_S3BUCKETNAME"),
+        "file_overwrite": get_optional_env_variable("ARCHES_S3FILEOVERWRITE", "True") == "True",
+        "signature_version": get_optional_env_variable("ARCHES_S3SIGNATUREVERSION", "s3v4"),
+        "region": get_optional_env_variable("ARCHES_S3REGION", "us-west-1"),
+        "max_memory_size": get_optional_env_variable("ARCHES_S3MAXMEMORY", str(psutil.virtual_memory().available * 0.5)),
+    }
+else:
+    STORAGE_OPTIONS = {}
+
+STORAGES = {
+    "default": {
+        "BACKEND": STORAGE_BACKEND,
+        "OPTIONS": STORAGE_OPTIONS,
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+if SECRETS_MODE == "AWS":
+    try:
+        import boto3
+        import json
+
+        AWS_REGION = get_optional_env_variable("ARCHES_AWS_REGION", "us-west-1")
+        ES_SECRET_ID = get_env_variable("ARCHES_ES_SECRET_ID")
+        DB_SECRET_ID = get_env_variable("ARCHES_DB_SECRET_ID")
+        client = boto3.client("secretsmanager", region_name=AWS_REGION)
+        es_secret = json.loads(client.get_secret_value(SecretId=ES_SECRET_ID)["SecretString"])
+        db_secret = json.loads(client.get_secret_value(SecretId=DB_SECRET_ID)["SecretString"])
+        DB_NAME = APP_NAME
+        DB_USER = db_secret["username"]
+        DB_PASSWORD = db_secret["password"]
+        DB_HOST = db_secret["host"]
+        DB_PORT = db_secret["port"]
+        ES_USER = es_secret["user"]
+        ES_PASSWORD = es_secret["password"]
+        ES_HOST = es_secret["host"]
+    except (ModuleNotFoundError, ImportError):
+        pass
+
+
+APP_VERSION = semantic_version.Version(major=0, minor=0, patch=0)
 
 
 WEBPACK_LOADER = {
@@ -54,18 +140,19 @@ FILENAME_GENERATOR = "arches.app.utils.storage_filename_generator.generate_filen
 UPLOADED_FILES_DIR = "uploadedfiles"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "--+c7*txnosqv=flep00qp+=t-xhrj%f4==r8w*n_7pm@mi%)7"
+SECRET_KEY = get_optional_env_variable("ARCHES_SECRET_KEY", "--+c7*txnosqv=flep00qp+=t-xhrj%f4==r8w*n_7pm@mi%)7")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ROOT_URLCONF = "arches_lingo.urls"
 
+ELASTICSEARCH_HOSTS = [{"scheme": ES_PROTOCOL, "host": ES_HOST, "port": ES_PORT}]
 # Modify this line as needed for your project to connect to elasticsearch with a password that you generate
 ELASTICSEARCH_CONNECTION_OPTIONS = {
-    "request_timeout": 30,
-    "verify_certs": False,
-    "basic_auth": ("elastic", "E1asticSearchforArche5"),
+    "timeout": 30,
+    "verify_certs": ES_VALIDATE_CERT,
+    "basic_auth": (ES_USER, ES_PASSWORD),
 }
 
 # If you need to connect to Elasticsearch via an API key instead of username/password, use the syntax below:
@@ -81,18 +168,9 @@ ELASTICSEARCH_CONNECTION_OPTIONS = {
 # Or Kibana: https://www.elastic.co/guide/en/kibana/current/api-keys.html
 
 # a prefix to append to all elasticsearch indexes, note: must be lower case
-ELASTICSEARCH_PREFIX = "arches_lingo"
+ELASTICSEARCH_PREFIX = get_optional_env_variable("ARCHES_ES_INDEX_PREFIX", APP_NAME)
 
 ELASTICSEARCH_CUSTOM_INDEXES = []
-# [{
-#     'module': 'arches_lingo.search_indexes.sample_index.SampleIndex',
-#     'name': 'my_new_custom_index', <-- follow ES index naming rules
-#     'should_update_asynchronously': False  <-- denotes if asynchronously updating the index would affect custom functionality within the project.
-# }]
-
-KIBANA_URL = "http://localhost:5601/"
-KIBANA_CONFIG_BASEPATH = "kibana"  # must match Kibana config.yml setting (server.basePath) but without the leading slash,
-# also make sure to set server.rewriteBasePath: true
 
 LOAD_DEFAULT_ONTOLOGY = False
 LOAD_PACKAGE_ONTOLOGIES = True
@@ -100,7 +178,8 @@ LOAD_PACKAGE_ONTOLOGIES = True
 # This is the namespace to use for export of data (for RDF/XML for example)
 # It must point to the url where you host your site
 # Make sure to use a trailing slash
-ARCHES_NAMESPACE_FOR_DATA_EXPORT = "http://localhost:8000/"
+PUBLIC_SERVER_ADDRESS = get_optional_env_variable("ARCHES_PUBLIC_SERVER_ADDRESS", "http://localhost:8000/")
+ARCHES_NAMESPACE_FOR_DATA_EXPORT = get_optional_env_variable("ARCHES_NAMESPACE_FOR_DATA_EXPORT", PUBLIC_SERVER_ADDRESS)
 
 DATABASES = {
     "default": {
@@ -108,17 +187,17 @@ DATABASES = {
         "AUTOCOMMIT": True,
         "CONN_MAX_AGE": 0,
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "HOST": "localhost",
-        "NAME": "arches_lingo",
         "OPTIONS": {
             "options": "-c cursor_tuple_fraction=1",
         },
-        "PASSWORD": "postgis",
-        "PORT": "5432",
+        "HOST": DB_HOST,
+        "NAME": DB_NAME,
+        "PASSWORD": DB_PASSWORD,
+        "PORT": DB_PORT,
         "POSTGIS_TEMPLATE": "template_postgis",
         "TEST": {"CHARSET": None, "COLLATION": None, "MIRROR": None, "NAME": None},
         "TIME_ZONE": None,
-        "USER": "postgres",
+        "USER": DB_USER,
     }
 }
 
@@ -171,13 +250,9 @@ MIDDLEWARE = [
     # "silk.middleware.SilkyMiddleware",
 ]
 
-MIDDLEWARE.insert(  # this must resolve to first MIDDLEWARE entry
-    0, "django_hosts.middleware.HostsRequestMiddleware"
-)
+MIDDLEWARE.insert(0, "django_hosts.middleware.HostsRequestMiddleware")  # this must resolve to first MIDDLEWARE entry
 
-MIDDLEWARE.append(  # this must resolve last MIDDLEWARE entry
-    "django_hosts.middleware.HostsResponseMiddleware"
-)
+MIDDLEWARE.append("django_hosts.middleware.HostsResponseMiddleware")  # this must resolve last MIDDLEWARE entry
 
 STATICFILES_DIRS = build_staticfiles_dirs(app_root=APP_ROOT)
 
@@ -186,11 +261,9 @@ TEMPLATES = build_templates_config(
     app_root=APP_ROOT,
 )
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = get_optional_env_variable("ARCHES_ALLOWED_HOSTS", "*").split(',')
 
-SYSTEM_SETTINGS_LOCAL_PATH = os.path.join(
-    APP_ROOT, "system_settings", "System_Settings.json"
-)
+SYSTEM_SETTINGS_LOCAL_PATH = os.path.join(APP_ROOT, "system_settings", "System_Settings.json")
 WSGI_APPLICATION = "arches_lingo.wsgi.application"
 
 # URL that handles the media served from MEDIA_ROOT, used for managing stored files.
@@ -277,9 +350,7 @@ HIDE_EMPTY_NODES_IN_REPORT = False
 BYPASS_UNIQUE_CONSTRAINT_TILE_VALIDATION = False
 BYPASS_REQUIRED_VALUE_TILE_VALIDATION = False
 
-DATE_IMPORT_EXPORT_FORMAT = (
-    "%Y-%m-%d"  # Custom date format for dates imported from and exported to csv
-)
+DATE_IMPORT_EXPORT_FORMAT = "%Y-%m-%d"  # Custom date format for dates imported from and exported to csv
 
 # This is used to indicate whether the data in the CSV and SHP exports should be
 # ordered as seen in the resource cards or not.
@@ -319,9 +390,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CELERY_BROKER_URL = ""  # RabbitMQ --> "amqp://guest:guest@localhost",  Redis --> "redis://localhost:6379/0"
 CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_RESULT_BACKEND = (
-    "django-db"  # Use 'django-cache' if you want to use your cache as your backend
-)
+CELERY_RESULT_BACKEND = "django-db"  # Use 'django-cache' if you want to use your cache as your backend
 CELERY_TASK_SERIALIZER = "json"
 
 
@@ -387,9 +456,7 @@ RESTRICT_CELERY_EXPORT_FOR_ANONYMOUS_USER = False
 # Dictionary containing any additional context items for customising email templates
 EXTRA_EMAIL_CONTEXT = {
     "salutation": _("Hi"),
-    "expiration": (
-        datetime.now() + timedelta(seconds=CELERY_SEARCH_EXPORT_EXPIRES)
-    ).strftime("%A, %d %B %Y"),
+    "expiration": (datetime.now() + timedelta(seconds=CELERY_SEARCH_EXPORT_EXPIRES)).strftime("%A, %d %B %Y"),
 }
 
 # see https://docs.djangoproject.com/en/1.9/topics/i18n/translation/#how-django-discovers-language-preference
