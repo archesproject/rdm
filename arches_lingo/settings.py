@@ -11,6 +11,7 @@ import semantic_version
 from datetime import datetime, timedelta
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
+from django.utils.crypto import get_random_string
 
 try:
     from arches.settings import *
@@ -158,9 +159,10 @@ FILE_TYPES = [
 FILENAME_GENERATOR = "arches.app.utils.storage_filename_generator.generate_filename"
 UPLOADED_FILES_DIR = "uploadedfiles"
 
+chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_optional_env_variable(
-    "ARCHES_SECRET_KEY", "--+c7*txnosqv=flep00qp+=t-xhrj%f4==r8w*n_7pm@mi%)7"
+    "ARCHES_SECRET_KEY", "django-insecure-" + get_random_string(50, chars)
 )
 
 ROOT_URLCONF = "arches_lingo.urls"
@@ -168,7 +170,7 @@ ROOT_URLCONF = "arches_lingo.urls"
 ELASTICSEARCH_HOSTS = [{"scheme": ES_PROTOCOL, "host": ES_HOST, "port": ES_PORT}]
 # Modify this line as needed for your project to connect to elasticsearch with a password that you generate
 ELASTICSEARCH_CONNECTION_OPTIONS = {
-    "timeout": 30,
+    "request_timeout": 30,
     "verify_certs": ES_VALIDATE_CERT,
     "basic_auth": (ES_USER, ES_PASSWORD),
 }
