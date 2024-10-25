@@ -71,7 +71,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          aws ecs run-task --cluster lingo-cluster --task-definition ${{ steps.task-def-deploy-reset.outputs.task-definition-arn }} --count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=['subnet-0d66c5e9e3c174519','subnet-0ad21fa3dbc479860'],securityGroups=['sg-04ca486cc6239259b']}"
+          aws ecs run-task --cluster lingo-cluster --task-definition ${{ steps.task-def-deploy-reset.outputs.task-definition-arn }} --count 1 --launch-type FARGATE --network-configuration "awsvpcConfiguration={subnets=['subnet-000e3d777b0f3b605','subnet-0a424c54d72c1d54f'],securityGroups=['sg-014ef1f241f91407a']}"
 
       - name: Deploy Amazon ECS task definition to arches service
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
