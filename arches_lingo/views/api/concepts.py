@@ -1,13 +1,16 @@
+from http import HTTPStatus
+
 from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.generic import View
 
 from arches.app.models.system_settings import settings
 from arches.app.utils.decorators import group_required
-from arches.app.utils.response import JSONResponse
+from arches.app.utils.response import JSONErrorResponse, JSONResponse
 
 from arches_lingo.models import VwLabelValue
-from arches_lingo.concepts import ConceptBuilder
+from arches_lingo.utils.concept_builder import ConceptBuilder
 
 
 @method_decorator(
@@ -28,8 +31,8 @@ class ConceptTreeView(View):
 class ValueSearchView(ConceptTreeView):
     def get(self, request):
         term = request.GET.get("term")
-        max_edit_distance = int(
-            request.GET.get("maxEditDistance", self.default_sensitivity())
+        max_edit_distance = request.GET.get(
+            "maxEditDistance", self.default_sensitivity()
         )
         exact = request.GET.get("exact", False)
         page_number = request.GET.get("page", 1)
@@ -40,33 +43,31 @@ class ValueSearchView(ConceptTreeView):
                 "concept_id"
             )
         elif term:
-            concept_query = VwLabelValue.objects.fuzzy_search(term, max_edit_distance)
+            try:
+                concept_query = VwLabelValue.objects.fuzzy_search(
+                    term, max_edit_distance
+                )
+            except ValueError as ve:
+                return JSONErrorResponse(
+                    title=_("Unable to perform search."),
+                    message=ve.args[0],
+                    status=HTTPStatus.BAD_REQUEST,
+                )
         else:
             concept_query = VwLabelValue.objects.all().order_by("concept_id")
-        concept_query = concept_query.values_list("concept_id", flat=True).distinct()
+        concept_ids = concept_query.values_list("concept_id", flat=True).distinct()
 
-        paginator = Paginator(concept_query, items_per_page)
-        page = paginator.get_page(page_number)
+        paginator = Paginator(concept_ids, items_per_page)
+        if not paginator.count:
+            return JSONResponse([])
 
-        data = []
-        if page:
-            builder = ConceptBuilder()
-            data = [
-                builder.serialize_concept(
-                    str(concept_uuid), parents=True, children=False
-                )
-                for concept_uuid in page
-            ]
+        builder = ConceptBuilder()
+        data = [
+            builder.serialize_concept(str(concept_uuid), parents=True, children=False)
+            for concept_uuid in paginator.get_page(page_number)
+        ]
 
-        return JSONResponse(
-            {
-                "current_page": page.number,
-                "total_pages": paginator.num_pages,
-                "results_per_page": paginator.per_page,
-                "total_results": paginator.count,
-                "data": data,
-            }
-        )
+        return JSONResponse(data)
 
     @staticmethod
     def default_sensitivity():
@@ -80,4 +81,4 @@ class ValueSearchView(ConceptTreeView):
             return 5
         if elastic_prefix_length >= 5:
             return 0
-        return 5 - elastic_prefix_length
+        return int(5 - elastic_prefix_length)

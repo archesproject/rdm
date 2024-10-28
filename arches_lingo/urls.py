@@ -11,8 +11,8 @@ urlpatterns = [
     path("login", LingoRootView.as_view(), name="login"),
     path("advanced-search", LingoRootView.as_view(), name="advanced-search"),
     path("schemes", LingoRootView.as_view(), name="schemes"),
-    path("api/concepts", ConceptTreeView.as_view(), name="api_concepts"),
-    path("api/search", ValueSearchView.as_view(), name="api_search"),
+    path("api/concepts", ConceptTreeView.as_view(), name="api-concepts"),
+    path("api/search", ValueSearchView.as_view(), name="api-search"),
     path("", include("arches_references.urls")),
 ]
 

@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -48,7 +49,7 @@ def setUpModule():
             (
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
-                "Top concept of",
+                "top_concept_of",
                 "concept-list",
             ),
             (
@@ -60,29 +61,31 @@ def setUpModule():
             (
                 SCHEME_NAME_NODEGROUP,
                 SCHEME_NAME_CONTENT_NODE,
-                "Name content",
+                "appellative_status_ascribed_name_content",
                 "concept-list",
             ),
             (
                 SCHEME_NAME_NODEGROUP,
                 SCHEME_NAME_LANGUAGE_NODE,
-                "Name language",
+                "appellative_status_ascribed_name_language",
                 "string",
             ),
             (
                 CONCEPT_NAME_NODEGROUP,
                 CONCEPT_NAME_CONTENT_NODE,
-                "Name content",
+                "appellative_status_ascribed_name_content",
                 "concept-list",
             ),
             (
                 CONCEPT_NAME_NODEGROUP,
                 CONCEPT_NAME_LANGUAGE_NODE,
-                "Name language",
+                "appellative_status_ascribed_name_language",
                 "string",
             ),
         ]:
-            NodeGroup.objects.get_or_create(pk=nodegroup_id)
+            NodeGroup.objects.update_or_create(
+                pk=nodegroup_id, defaults={"cardinality": "n"}
+            )
             Node.objects.create(
                 pk=node_id,
                 graph_id=CONCEPTS_GRAPH_ID,
@@ -196,7 +199,7 @@ class ViewTests(TestCase):
             # 4: select broader tiles, subquery for labels
             # 5: select top concept tiles, subquery for labels
             # 6: select schemes, subquery for labels
-            response = self.client.get(reverse("api_concepts"))
+            response = self.client.get(reverse("api-concepts"))
 
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content)
@@ -237,6 +240,30 @@ class ViewTests(TestCase):
         )
         for query, expected_result_count in cases:
             with self.subTest(query=query):
-                response = self.client.get(reverse("api_search"), QUERY_STRING=query)
+                response = self.client.get(reverse("api-search"), QUERY_STRING=query)
                 result = json.loads(response.content)
                 self.assertEqual(len(result), expected_result_count, result)
+
+    def test_invalid_search_term(self):
+        self.client.force_login(self.admin)
+        with self.assertLogs("django.request", level="WARNING"):
+            response = self.client.get(
+                reverse("api-search"), QUERY_STRING="term=" + ("!" * 256)
+            )
+        self.assertContains(
+            response,
+            "Fuzzy search terms cannot exceed 255 characters.",
+            status_code=HTTPStatus.BAD_REQUEST,
+        )
+
+    def test_invalid_edit_distance(self):
+        self.client.force_login(self.admin)
+        with self.assertLogs("django.request", level="WARNING"):
+            response = self.client.get(
+                reverse("api-search"), QUERY_STRING="term=test&maxEditDistance=?"
+            )
+        self.assertContains(
+            response,
+            "Edit distance could not be converted to an integer.",
+            status_code=HTTPStatus.BAD_REQUEST,
+        )
