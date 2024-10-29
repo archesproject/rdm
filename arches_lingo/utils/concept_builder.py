@@ -2,16 +2,11 @@ from collections import defaultdict
 
 from django.contrib.postgres.expressions import ArraySubquery
 from django.core.cache import caches
-from django.db.models import CharField, Exists, F, OuterRef, Value
+from django.db.models import CharField, F, OuterRef, Value
 from django.db.models.expressions import CombinedExpression
 from django.utils.translation import gettext_lazy as _
 
-from arches.app.models.models import (
-    Relation,
-    ResourceInstance,
-    TileModel,
-    Value as ConceptValue,
-)
+from arches.app.models.models import ResourceInstance, TileModel
 
 from arches_lingo.const import (
     SCHEMES_GRAPH_ID,
