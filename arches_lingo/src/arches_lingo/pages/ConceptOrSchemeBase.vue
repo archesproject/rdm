@@ -58,6 +58,7 @@ const setDisplayedRow = (val: Concept | Scheme | null) => {
     }
     setHeader(rowLabel.value);
 };
+// @ts-expect-error vue-tsc doesn't like arbitrary properties here
 provide(displayedRowKey, { displayedRow, setDisplayedRow });
 
 const showHierarchy = ref(true);
