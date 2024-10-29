@@ -5,5 +5,5 @@ const { scheme } = defineProps<{ scheme: Scheme }>();
 </script>
 
 <template>
-    {{ scheme }}
+    <pre style="text-wrap: auto">{{ scheme }}</pre>
 </template>

@@ -5,5 +5,5 @@ const { concept } = defineProps<{ concept: Concept }>();
 </script>
 
 <template>
-    {{ concept }}
+    <pre style="text-wrap: auto">{{ concept }}</pre>
 </template>
