@@ -1,5 +1,7 @@
 import type { Ref } from "vue";
 
+import type { Label } from "@/arches_vue_utils/types";
+
 export interface User {
     first_name: string;
     last_name: string;
@@ -21,11 +23,7 @@ export interface Concept {
     }[];
     parents: {
         id: string;
-        labels: {
-            language: string;
-            value: string;
-            valuetype: string;
-        }[];
+        labels: Label[];
     }[];
     polyhierarchical: boolean;
 }

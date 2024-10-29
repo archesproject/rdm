@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Concept } from "@/arches_lingo/types.ts";
-import { getItemLabel } from "@/arches_lingo/utils.ts";
+import { getItemLabel } from "@/arches_vue_utils/utils.ts";
 
 defineProps({
     searchResult: {
@@ -13,7 +13,7 @@ const getParentLabels = (item: Concept, preferredLanguage: string): string => {
     const arrowIcon = " → ";
 
     return item.parents.reduce((acc, parent, index) => {
-        const label = getItemLabel(parent as Concept, preferredLanguage);
+        const label = getItemLabel(parent, preferredLanguage, "en-US").value;
         if (label) {
             return acc + (index > 0 ? arrowIcon : "") + label;
         }
@@ -30,7 +30,7 @@ const getParentLabels = (item: Concept, preferredLanguage: string): string => {
         <i class="pi pi-paperclip" />
 
         <div style="margin: 0 0.5rem">
-            {{ getItemLabel(searchResult.option, "en-US") }}
+            {{ getItemLabel(searchResult.option, "en-US", "en-US").value }}
         </div>
 
         <div class="search-result-hierarchy">

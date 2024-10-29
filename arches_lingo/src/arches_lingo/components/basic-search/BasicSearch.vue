@@ -145,7 +145,7 @@ watch(query, (query) => {
  * updating the height of a `VirtualScroller` overlay, much less updating the height dynamically.
  */
 watch(searchResults, (searchResults) => {
-    if (searchResults.length) {
+    if (searchResults?.length) {
         const rootFontSize = parseFloat(
             getComputedStyle(document.documentElement).fontSize,
         );
