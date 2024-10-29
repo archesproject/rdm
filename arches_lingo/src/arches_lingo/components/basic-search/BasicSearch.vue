@@ -311,5 +311,3 @@ watch(searchResults, (searchResults) => {
     position: static !important;
 }
 </style>
-
-<style></style>
