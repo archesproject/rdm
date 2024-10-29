@@ -13,6 +13,8 @@ import SearchResult from "@/arches_lingo/components/basic-search/SearchResult.vu
 import { fetchSearchResults } from "@/arches_lingo/api.ts";
 import { DEFAULT_ERROR_TOAST_LIFE, ERROR } from "@/arches_lingo/constants.ts";
 
+import type { VirtualScrollerLazyEvent } from "primevue/virtualscroller";
+
 import type { Concept } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
@@ -107,10 +109,7 @@ const keepOverlayVisible = () => {
     }
 };
 
-const loadAdditionalSearchResults = (event: {
-    first: number;
-    last: number;
-}) => {
+const loadAdditionalSearchResults = (event: VirtualScrollerLazyEvent) => {
     if (
         event.last >= searchResultsPage.value * props.searchResultsPerPage &&
         event.last <= searchResultsTotalCount.value
@@ -167,15 +166,22 @@ watch(searchResults, (searchResults) => {
 </script>
 
 <template>
-    <div style="width: 100%; font-family: sans-serif">
+    <div
+        id="basic-search-container"
+        style="width: 100%; font-family: sans-serif"
+    >
         <div style="display: flex; align-items: center">
-            <i class="pi pi-search search-icon" />
+            <i
+                class="pi pi-search search-icon"
+                aria-hidden="true"
+            />
 
             <AutoComplete
                 ref="autoCompleteInstance"
                 :key="autoCompleteKey"
                 v-model="query"
                 option-label="id"
+                append-to="#basic-search-container"
                 :loading="isLoading && !isLoadingAdditionalResults"
                 :placeholder="$gettext('Quick Search')"
                 :pt="{
@@ -186,8 +192,10 @@ watch(searchResults, (searchResults) => {
                         },
                     },
                     overlay: {
-                        class: 'basic-search-overlay',
-                        style: {},
+                        style: {
+                            padding: '0',
+                            borderRadius: '0',
+                        },
                     },
                     list: {
                         style: {
@@ -239,6 +247,9 @@ watch(searchResults, (searchResults) => {
                     <div class="footer">
                         <i
                             class="pi pi-spin pi-spinner p-virtualscroller-loader"
+                            :aria-label="
+                                $gettext('Loading additional search results')
+                            "
                         />
                     </div>
                 </template>
@@ -295,18 +306,10 @@ watch(searchResults, (searchResults) => {
     padding: 1rem 2.5rem;
     border: none;
 }
-</style>
 
-<!-- NOT scoped because overlay gets appended to <body> and is unreachable via scoped styles -->
-<style>
-.basic-search-overlay {
-    transform: translateY(3.4rem) !important;
-    border-radius: 0 !important;
-}
-
-@media screen and (max-width: 960px) {
-    .basic-search-overlay {
-        transform: translateY(10rem) !important;
-    }
+:deep(.p-autocomplete-overlay) {
+    position: static !important;
 }
 </style>
+
+<style></style>

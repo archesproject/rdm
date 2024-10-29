@@ -7,12 +7,14 @@ import Dialog from "primevue/dialog";
 
 import BasicSearch from "@/arches_lingo/components/basic-search/BasicSearch.vue";
 
+import {
+    SEARCH_RESULTS_PER_PAGE,
+    SEARCH_RESULT_ITEM_SIZE,
+} from "@/arches_lingo/constants.ts";
+
 const { $gettext } = useGettext();
 
 const visible = ref(false);
-
-const SEARCH_RESULTS_PER_PAGE = 25;
-const SEARCH_RESULT_ITEM_SIZE = 38;
 </script>
 
 <template>
@@ -25,6 +27,7 @@ const SEARCH_RESULT_ITEM_SIZE = 38;
     <Dialog
         v-model:visible="visible"
         position="top"
+        :header="$gettext('Search')"
         :dismissable-mask="true"
         :close-on-escape="true"
         :modal="true"
@@ -32,6 +35,7 @@ const SEARCH_RESULT_ITEM_SIZE = 38;
             content: {
                 style: {
                     padding: 0,
+                    overflow: 'visible',
                 },
             },
             root: {

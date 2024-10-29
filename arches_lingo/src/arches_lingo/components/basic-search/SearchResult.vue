@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import type { Concept } from "@/arches_lingo/types.ts";
 import { getItemLabel } from "@/arches_vue_utils/utils.ts";
+
+import type { PropType } from "vue";
+import type { Concept } from "@/arches_lingo/types.ts";
 
 defineProps({
     searchResult: {
-        type: Object,
+        type: Object as PropType<{ index: number; option: Concept }>,
         required: true,
     },
 });
@@ -27,7 +29,10 @@ const getParentLabels = (item: Concept, preferredLanguage: string): string => {
         class="search-result"
         :class="{ 'is-even': searchResult.index % 2 === 0 }"
     >
-        <i class="pi pi-paperclip" />
+        <i
+            class="pi pi-paperclip"
+            aria-hidden="true"
+        />
 
         <div style="margin: 0 0.5rem">
             {{ getItemLabel(searchResult.option, "en-US", "en-US").value }}

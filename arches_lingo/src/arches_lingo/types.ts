@@ -16,11 +16,7 @@ export interface UserRefAndSetter {
 
 export interface Concept {
     id: string;
-    labels: {
-        language: string;
-        value: string;
-        valuetype: string;
-    }[];
+    labels: Label[];
     parents: {
         id: string;
         labels: Label[];

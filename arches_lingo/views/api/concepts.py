@@ -70,7 +70,7 @@ class ValueSearchView(ConceptTreeView):
 
         return JSONResponse(
             {
-                "current_page": paginator.get_page(page_number),
+                "current_page": paginator.get_page(page_number).number,
                 "total_pages": paginator.num_pages,
                 "results_per_page": paginator.per_page,
                 "total_results": paginator.count,
