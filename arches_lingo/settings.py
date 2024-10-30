@@ -238,6 +238,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "django_hosts",
+    "arches_references",
     "arches_vue_utils",
     "arches",
     "arches.app.models",
@@ -248,7 +249,6 @@ INSTALLED_APPS = (
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",
-    "arches_references",
     # "silk",
 )
 
