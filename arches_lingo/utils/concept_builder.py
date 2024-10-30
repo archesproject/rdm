@@ -22,7 +22,9 @@ from arches_lingo.const import (
     SCHEME_NAME_LANGUAGE_NODE,
     SCHEME_NAME_TYPE_NODE,
 )
+
 from arches_lingo.utils.query_expressions import JsonbArrayElements
+
 
 TOP_CONCEPT_OF_LOOKUP = f"data__{TOP_CONCEPT_OF_NODE_AND_NODEGROUP}"
 BROADER_LOOKUP = f"data__{CLASSIFICATION_STATUS_ASCRIBED_CLASSIFICATION_NODEID}"
@@ -212,6 +214,7 @@ class ConceptBuilder:
             schemes = sorted(self.schemes_by_top_concept[conceptid])
             working_parent_list.insert(0, schemes[0])
             return working_parent_list
+
         working_parent_list.insert(0, first_broader_conceptid)
         return self.add_broader_concept_recursive(
             working_parent_list, first_broader_conceptid
