@@ -3,13 +3,11 @@ import { getItemLabel } from "@/arches_vue_utils/utils.ts";
 import { ENGLISH } from "@/arches_lingo/constants.ts";
 
 import type { PropType } from "vue";
-import type { Concept } from "@/arches_lingo/types.ts";
-
 import type { SearchResultItem } from "@/arches_lingo/types.ts";
 
 defineProps({
     searchResult: {
-        type: Object as PropType<{ index: number; option: Concept }>,
+        type: Object as PropType<{ index: number; option: SearchResultItem }>,
         required: true,
     },
 });
