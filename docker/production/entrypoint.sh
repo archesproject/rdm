@@ -160,6 +160,8 @@ reset_database() {
 	echo "CREATE EXTENSION postgis" | ../ENV/bin/python manage.py dbshell --database postgres))
 	../ENV/bin/python manage.py setup_db --force 
 	../ENV/bin/python manage.py packages -o load_package -a arches_lingo -db -dev -y
+	../ENV/bin/python manage.py packages -o import_business_data -s tests/fixtures/data/aat_entries_scheme_examples.json -ow overwrite
+	../ENV/bin/python manage.py packages -o import_business_data -s tests/fixtures/data/aat_entries_concept_examples.json -ow overwrite
 }
 
 activate_virtualenv() {
