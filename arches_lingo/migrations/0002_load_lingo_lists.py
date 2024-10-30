@@ -1,8 +1,9 @@
 import io
 import os
 
-from django.db import migrations
 from django.core import management
+from django.db import migrations
+
 from arches_lingo.settings import APP_ROOT
 
 
