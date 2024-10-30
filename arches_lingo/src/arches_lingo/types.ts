@@ -2,8 +2,6 @@ import type { Ref } from "vue";
 import type { TreeNode } from "primevue/treenode";
 import type { Label } from "@/arches_vue_utils/types";
 
-import type { Label } from "@/arches_vue_utils/types";
-
 export interface User {
     first_name: string;
     last_name: string;
@@ -27,10 +25,6 @@ export interface DisplayedRowRefAndSetter {
 export interface Concept {
     id: string;
     labels: Label[];
-    parents: {
-        id: string;
-        labels: Label[];
-    }[];
     narrower: Concept[];
 }
 
@@ -53,6 +47,9 @@ export interface IconLabels {
 export interface SearchResultItem {
     id: string;
     labels: Label[];
-    parents: Concept[];
+    parents: {
+        id: string;
+        labels: Label[];
+    }[];
     polyhierarchical: boolean;
 }
