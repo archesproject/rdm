@@ -39,11 +39,14 @@ APP_NAME = "arches_lingo"
 SECRETS_MODE = get_optional_env_variable("ARCHES_SECRETS_MODE", "ENV")
 
 APP_ROOT = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-DB_NAME = get_optional_env_variable("ARCHES_DB_NAME", APP_NAME)
-DB_USER = get_optional_env_variable("ARCHES_PGUSERNAME", "postgres")
-DB_PASSWORD = get_optional_env_variable("ARCHES_PGPASSWORD", "postgis")
-DB_HOST = get_optional_env_variable("ARCHES_PGHOST", "localhost")
-DB_PORT = get_optional_env_variable("ARCHES_PGPORT", "5432")
+
+# environment variable names for postgres are built-ins for the pg client, do not modify
+DB_NAME = get_optional_env_variable("PGDATABASE", APP_NAME)
+DB_USER = get_optional_env_variable("PGUSER", "postgres")
+DB_PASSWORD = get_optional_env_variable("PGPASSWORD", "postgis")
+DB_HOST = get_optional_env_variable("PGHOST", "localhost")
+DB_PORT = get_optional_env_variable("PGPORT", "5432")
+
 ES_USER = get_optional_env_variable("ARCHES_ESUSER", "elastic")
 ES_PASSWORD = get_optional_env_variable("ARCHES_ESPASSWORD", "E1asticSearchforArche5")
 ES_HOST = get_optional_env_variable("ARCHES_ESHOST", "localhost")

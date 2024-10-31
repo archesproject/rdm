@@ -64,7 +64,7 @@ WORKDIR ${WEB_ROOT}
 # From here, run commands from ARCHES_ROOT
 RUN source ${WEB_ROOT}/ENV/bin/activate
 
-COPY docker/production/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
+COPY docker/entrypoint.sh ${WEB_ROOT}/entrypoint.sh
 RUN chmod -R 700 ${WEB_ROOT}/entrypoint.sh &&\
   dos2unix ${WEB_ROOT}/entrypoint.sh
 
