@@ -30,16 +30,15 @@
     source ENV/bin/activate
     ```
 
-5. Navigate to the arches-rdm package, and install it into the virtual environment:
+5. Navigate to the `arches-lingo` directory, and install the project (with development dependencies):
     ```
-    cd arches
-    pip install -e .
+    cd arches-lingo
+    pip install -e '.[dev]'
     ```
 
-6. Navigate to the arches_lingo, and install the python requirements:
+6. Also install core arches for local development:
     ```
-    cd ../arches-lingo
-    pip install -r arches_lingo/install/requirements.txt
+    pip install -e ../arches
     ```
 
 7. Run the Django server:
@@ -54,9 +53,8 @@
     source ENV/bin/activate
     ```
 
-10. Navigate to your project then install the frontend dependencies.
+10. (From the `arches-lingo` top-level directory) install the frontend dependencies:
     ```
-    cd arches-lingo/
     npm install
     ```
 
@@ -68,13 +66,19 @@
 
 12. If you ran `npm start` in the previous step, you will need to open a new terminal window and activate the virtual environment in the new terminal window. If you ran `npm run build_development` then you can skip this step.
 
-13. Navigate to the arches_lingo top-level directory, and install the ontologies, branches, and resource models from the arches-rdm package.
+13. Install the ontologies, branches, and resource models from the package.
     ```
     python manage.py setup_db
-    python manage.py packages -o load_package -s arches_lingo/pkg --yes -db
+    python manage.py packages -o load_package -a arches_lingo --yes -db
     ```
 
-14. In the terminal window that is running the Django server, halt the server and restart it.
+14. Load the test data:
+    ```
+    python manage.py packages -o import_business_data -s tests/fixtures/data/aat_entries_scheme_examples.json -ow overwrite
+    python manage.py packages -o import_business_data -s tests/fixtures/data/aat_entries_concept_examples.json -ow overwrite
+    ```
+
+15. In the terminal window that is running the Django server, halt the server and restart it.
     ```
     (ctrl+c to halt the server)
     python manage.py runserver
@@ -82,7 +86,7 @@
 
 ## Committing changes
 
-NOTE: Changes are commited to the arches-rdm repository. 
+NOTE: Changes are committed to the arches-lingo repository. 
 
 1. Navigate to the repository
     ```
@@ -91,7 +95,7 @@ NOTE: Changes are commited to the arches-rdm repository.
 
 2. Cut a new git branch
     ```
-    git checkout origin/master -b my-descriptive-branch-name
+    git checkout origin/main -b my-descriptive-branch-name
     ```
 
 3. If updating models or branches
