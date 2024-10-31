@@ -3783,9 +3783,9 @@
             "publication": {
                 "graph_id": "56788995-423b-11ee-8a8d-11afefc4bff7",
                 "most_recent_edit_id": null,
-                "notes": "Migrated concept/concept-list nodes to reference datatype",
-                "publicationid": "d4ece790-8022-11ef-99a9-0aa766c61b66",
-                "published_time": "2024-10-01T13:27:36.131"
+                "notes": "update graph slug",
+                "publicationid": "2bb9e172-978e-11ef-aa96-0aa766c61b64",
+                "published_time": "2024-10-31T08:43:54.652"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -3858,7 +3858,7 @@
                 "source_identifier_id": null,
                 "sourcebranchpublication_id": null
             },
-            "slug": null,
+            "slug": "scheme",
             "source_identifier_id": null,
             "subtitle": "",
             "template_id": "50000000-0000-0000-0000-000000000001",
@@ -3867,8 +3867,8 @@
         }
     ],
     "metadata": {
-        "db": "PostgreSQL 14.5 on x86_64-apple-darwin20.6.0, compiled by Apple clang version 12.0.0 (clang-1200.0.32.29), 64-bit",
-        "git hash": "c54906bac6 2024-10-01 14:15:57 -0400",
+        "db": "PostgreSQL 17.0 (Postgres.app) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 15.0.0 (clang-1500.3.9.4), 64-bit",
+        "git hash": "5006223ef6 2024-10-30 15:47:56 -0400",
         "os": "Darwin",
         "os version": "24.0.0"
     }
