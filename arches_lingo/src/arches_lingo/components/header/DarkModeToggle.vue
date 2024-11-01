@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useGettext } from "vue3-gettext";
 
 import ToggleButton from "primevue/togglebutton";
@@ -21,6 +21,12 @@ function toggleDarkMode() {
     );
     isDarkModeEnabled.value = !isDarkModeEnabled.value;
 }
+
+onMounted(() => {
+    if (isDarkModeEnabled.value) {
+        toggleDarkMode();
+    }
+});
 </script>
 
 <template>
