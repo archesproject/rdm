@@ -10,8 +10,6 @@ import SearchDialog from "@/arches_lingo/components/header/SearchDialog.vue";
 
 const { $gettext } = useGettext();
 
-const { header } = defineProps<{ header: string }>();
-
 const items = ref([
     {
         label: $gettext("Advanced Search"),
@@ -31,7 +29,7 @@ const items = ref([
                 :to="{ name: routeNames.root }"
                 style="text-decoration: none; color: inherit"
             >
-                <h2>{{ header }}</h2>
+                <h2>{{ $gettext("Arches Lingo") }}</h2>
             </RouterLink>
             <SearchDialog />
         </template>

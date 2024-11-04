@@ -12,7 +12,6 @@ import {
     ENGLISH,
     ERROR,
     USER_KEY,
-    headerKey,
     selectedLanguageKey,
     systemLanguageKey,
 } from "@/arches_lingo/constants.ts";
@@ -41,12 +40,6 @@ const router = useRouter();
 const route = useRoute();
 const toast = useToast();
 const { $gettext } = useGettext();
-
-const header = ref($gettext("Arches Lingo"));
-const setHeader = (headerToSet: string) => {
-    header.value = headerToSet;
-};
-provide(headerKey, { header, setHeader });
 
 router.beforeEach(async (to, _from, next) => {
     try {
@@ -77,10 +70,7 @@ router.beforeEach(async (to, _from, next) => {
 
 <template>
     <main>
-        <PageHeader
-            v-if="route.meta.shouldShowNavigation"
-            :header
-        />
+        <PageHeader v-if="route.meta.shouldShowNavigation" />
         <div style="display: flex; flex: auto; flex-direction: row">
             <SideNav v-if="route.meta.shouldShowNavigation" />
             <div style="flex: auto">

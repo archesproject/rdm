@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, provide, ref } from "vue";
+import { provide, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
@@ -9,14 +9,10 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 
 import { shouldUseContrast } from "@/arches_references/utils.ts";
-import { getItemLabel } from "@/arches_vue_utils/utils.ts";
 import {
     CONTRAST,
     SECONDARY,
     displayedRowKey,
-    headerKey,
-    selectedLanguageKey,
-    systemLanguageKey,
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 import { dataIsConcept, dataIsScheme } from "@/arches_lingo/utils.ts";
@@ -25,27 +21,12 @@ import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";
 import SchemeDetail from "@/arches_lingo/components/detail/SchemeDetail.vue";
 
 import type { Ref } from "vue";
-import type { Language } from "@/arches_vue_utils/types";
-import type { Concept, HeaderRefAndSetter, Scheme } from "@/arches_lingo/types";
+import type { Concept, Scheme } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
 const router = useRouter();
-const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
-const systemLanguage = inject(systemLanguageKey) as Language;
-
-const { setHeader } = inject(headerKey) as HeaderRefAndSetter;
 
 const displayedRow: Ref<Concept | Scheme | null> = ref(null);
-const rowLabel = computed(() => {
-    if (!displayedRow.value) {
-        return "Concept detail placeholder";
-    }
-    return getItemLabel(
-        displayedRow.value,
-        selectedLanguage.value.code,
-        systemLanguage.code,
-    ).value;
-});
 const setDisplayedRow = (val: Concept | Scheme | null) => {
     displayedRow.value = val;
     if (val === null) {
@@ -56,7 +37,6 @@ const setDisplayedRow = (val: Concept | Scheme | null) => {
     } else if (dataIsConcept(val)) {
         router.push({ name: routeNames.concept, params: { id: val.id } });
     }
-    setHeader(rowLabel.value);
 };
 // @ts-expect-error vue-tsc doesn't like arbitrary properties here
 provide(displayedRowKey, { displayedRow, setDisplayedRow });
