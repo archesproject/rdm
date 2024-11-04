@@ -137,6 +137,17 @@
                             "narrower": []
                         }
                     ]
+                },
+                {
+                    "id": "080dc4fc-2533-418d-a794-1f871f416ab5",
+                    "labels": [
+                        {
+                            "language_id": "en",
+                            "value": "Other Top Concept",
+                            "valuetype_id": "prefLabel"
+                        }
+                    ],
+                    "narrower": []
                 }
             ]
         }
