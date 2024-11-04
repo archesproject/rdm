@@ -32,7 +32,7 @@ export interface Scheme {
 
 export interface NodeAndParentInstruction {
     node: TreeNode;
-    parentShouldHideSiblings: boolean;
+    shouldHideSiblings: boolean;
 }
 
 export interface IconLabels {
