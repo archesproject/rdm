@@ -65,7 +65,10 @@ const toggleFocus = (node: TreeNode) => {
     <span v-html="rowLabel(node.data)"></span>
     <!-- eslint-enable vue/no-v-html -->
     <i
-        v-tooltip="labelForFocusToggle(node)"
+        v-tooltip="{
+            value: labelForFocusToggle(node),
+            pt: { text: { style: { fontFamily: 'sans-serif' } } },
+        }"
         role="button"
         :class="iconForFocusToggle(node)"
         :aria-label="labelForFocusToggle(node)"
