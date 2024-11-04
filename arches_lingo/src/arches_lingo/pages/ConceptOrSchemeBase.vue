@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, ref } from "vue";
+import { inject, provide, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
@@ -8,11 +8,14 @@ import ProgressSpinner from "primevue/progressspinner";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 
+import { getItemLabel } from "@/arches_vue_utils/utils.ts";
 import { shouldUseContrast } from "@/arches_references/utils.ts";
 import {
     CONTRAST,
     SECONDARY,
     displayedRowKey,
+    selectedLanguageKey,
+    systemLanguageKey,
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 import { dataIsConcept, dataIsScheme } from "@/arches_lingo/utils.ts";
@@ -21,10 +24,13 @@ import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";
 import SchemeDetail from "@/arches_lingo/components/detail/SchemeDetail.vue";
 
 import type { Ref } from "vue";
+import type { Language } from "@/arches_vue_utils/types";
 import type { Concept, Scheme } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
 const router = useRouter();
+const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
+const systemLanguage = inject(systemLanguageKey) as Language;
 
 const displayedRow: Ref<Concept | Scheme | null> = ref(null);
 const setDisplayedRow = (val: Concept | Scheme | null) => {
@@ -45,11 +51,22 @@ const showHierarchy = ref(true);
 </script>
 
 <template>
-    <Button
-        :severity="shouldUseContrast() ? CONTRAST : SECONDARY"
-        :label="$gettext('Toggle hierarchy')"
-        @click="() => (showHierarchy = !showHierarchy)"
-    />
+    <div class="subheading">
+        <h2 v-if="displayedRow">
+            {{
+                getItemLabel(
+                    displayedRow,
+                    selectedLanguage.code,
+                    systemLanguage.code,
+                ).value
+            }}
+        </h2>
+        <Button
+            :severity="shouldUseContrast() ? CONTRAST : SECONDARY"
+            :label="$gettext('Toggle hierarchy')"
+            @click="() => (showHierarchy = !showHierarchy)"
+        />
+    </div>
     <Splitter
         style="display: flex; height: 100%"
         :pt="{
@@ -83,3 +100,15 @@ const showHierarchy = ref(true);
         </SplitterPanel>
     </Splitter>
 </template>
+
+<style scoped>
+.subheading {
+    display: flex;
+    margin: 0.5rem;
+    gap: 0.5rem;
+}
+
+.subheading h2 {
+    font-size: medium;
+}
+</style>
