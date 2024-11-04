@@ -93,7 +93,7 @@ const navigate = (newRoute: RouteLocationNormalizedLoadedGeneric) => {
                 expandedKeys.value = {
                     ...expandedKeys.value,
                     ...Object.fromEntries(
-                        itemsToExpandIds.map((x) => [x, true]),
+                        itemsToExpandIds.map((x: string) => [x, true]),
                     ),
                 };
                 selectedKeys.value = { [found.data.id]: true };

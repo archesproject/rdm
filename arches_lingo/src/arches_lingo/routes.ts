@@ -52,7 +52,7 @@ export const routes = [
     {
         path: "/scheme/:id",
         name: "scheme",
-        component: () => import("@/arches_lingo/pages/SchemePage.vue"),
+        component: () => import("@/arches_lingo/pages/SchemeReport.vue"),
         meta: {
             shouldShowNavigation: true,
             shouldShowHierarchy: true,

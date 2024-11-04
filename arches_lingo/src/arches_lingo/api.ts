@@ -37,6 +37,21 @@ export const fetchUser = async () => {
     return parsed;
 };
 
+export const fetchSchemeResource = async (id: string | string[]) => {
+    const resourceRequest = await fetch(
+        `${arches.urls.api_resources(id)}?format=json&v=beta&hide_empty_nodes=false`,
+    );
+    try {
+        const resource = await resourceRequest.json();
+        if (resourceRequest.ok) {
+            return resource;
+        }
+        throw new Error(resource.message);
+    } catch (error) {
+        throw new Error((error as Error).message || resourceRequest.statusText);
+    }
+};
+
 export const fetchSearchResults = async (
     searchTerm: string,
     items: number,

@@ -1,6 +1,6 @@
 import type { Ref } from "vue";
 import type { TreeNode } from "primevue/treenode";
-import type { Label } from "@/arches_vue_utils/types";
+import type { Label } from "@/arches_vue_utils/types.ts";
 
 export interface User {
     first_name: string;
@@ -28,6 +28,13 @@ export interface Scheme {
     id: string;
     labels: Label[];
     top_concepts: Concept[];
+}
+
+export interface SchemeResource {
+    [key: string]: object;
+    resource: {
+        [key: string]: Array<object>;
+    };
 }
 
 export interface NodeAndParentInstruction {
