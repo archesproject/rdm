@@ -25,25 +25,34 @@ export function treeFromSchemes(
     iconLabels: IconLabels,
     focusedNode: TreeNode | null,
 ): TreeNode[] {
-    // Use a closure to avoid passing around params (selectedLanguage, etc).
-    const conceptAsNodeAndInstruction = (
-        concept: Concept,
-    ): NodeAndParentInstruction => {
-        return conceptOrSchemeAsNodeAndInstruction(concept, concept.narrower);
-    };
-    const schemeAsNodeAndInstruction = (
-        scheme: Scheme,
-    ): NodeAndParentInstruction => {
-        return conceptOrSchemeAsNodeAndInstruction(scheme, scheme.top_concepts);
-    };
+    function buildNode(
+        item: Concept | Scheme,
+        childNodes: TreeNode[],
+    ): TreeNode {
+        return {
+            key: item.id,
+            label: getItemLabel(
+                item,
+                selectedLanguage.code,
+                systemLanguage.code,
+            ).value,
+            children: childNodes,
+            data: item,
+            iconLabel: dataIsScheme(item)
+                ? iconLabels.scheme
+                : iconLabels.concept,
+        };
+    }
 
-    const conceptOrSchemeAsNodeAndInstruction = (
-        labellable: Concept | Scheme,
+    // When traversing the tree, notice whether the node is focused, and if so,
+    // memoize/instruct that the parent should hide its siblings.
+    function processItem(
+        item: Concept | Scheme,
         children: Concept[],
-    ): NodeAndParentInstruction => {
+    ): NodeAndParentInstruction {
         let childrenAsNodes: TreeNode[];
         const nodesAndInstructions = children.map((child) =>
-            conceptAsNodeAndInstruction(child),
+            processItem(child, child.narrower),
         );
         const parentOfFocusedNode = nodesAndInstructions.find(
             (obj) => obj.parentShouldHideSiblings,
@@ -54,46 +63,35 @@ export function treeFromSchemes(
             childrenAsNodes = nodesAndInstructions.map((obj) => obj.node);
         }
 
-        const node: TreeNode = {
-            key: labellable.id,
-            label: getItemLabel(
-                labellable,
-                selectedLanguage.code,
-                systemLanguage.code,
-            ).value,
-            children: childrenAsNodes,
-            data: labellable,
-            iconLabel: dataIsScheme(labellable)
-                ? iconLabels.scheme
-                : iconLabels.concept,
-        };
+        const node: TreeNode = buildNode(item, childrenAsNodes);
         let parentShouldHideSiblings = !!parentOfFocusedNode;
         if (!parentShouldHideSiblings) {
-            const focalNodeIdx = node.children!.findIndex(
+            const focalNode = node.children!.find(
                 (child: TreeNode) => child.data.id === focusedNode?.data?.id,
             );
-            if (focalNodeIdx > -1) {
-                node.children = [node.children![focalNodeIdx]];
+            if (focalNode) {
+                node.children = [focalNode];
                 parentShouldHideSiblings = true;
             }
         }
         return { node, parentShouldHideSiblings };
-    };
-
-    const focalNodeIdx = schemes.findIndex(
-        (scheme) => scheme.id === focusedNode?.data?.id,
-    );
-    if (focalNodeIdx > -1) {
-        return [schemeAsNodeAndInstruction(schemes[focalNodeIdx]).node];
     }
+
+    // Immediately process & return only this scheme if it's focused.
+    const focalScheme = schemes.find((sch) => sch.id === focusedNode?.data?.id);
+    if (focalScheme) {
+        return [processItem(focalScheme, focalScheme.top_concepts).node];
+    }
+
+    // Otherwise, process all schemes.
     const nodesAndInstructions = schemes.map((scheme: Scheme) =>
-        schemeAsNodeAndInstruction(scheme),
+        processItem(scheme, scheme.top_concepts),
     );
-    const parentOfFocusedNode = nodesAndInstructions.find(
-        (obj) => obj.parentShouldHideSiblings,
+    const focusedChild = nodesAndInstructions.find(
+        (o) => o.parentShouldHideSiblings,
     );
-    if (parentOfFocusedNode) {
-        return [parentOfFocusedNode.node];
+    if (focusedChild) {
+        return [focusedChild.node];
     }
     return nodesAndInstructions.map((obj) => obj.node);
 }
