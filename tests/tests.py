@@ -118,7 +118,9 @@ class ViewTests(TestCase):
 
         # Create a scheme with five concepts, each one narrower than the last,
         # and each concept after the top concept also narrower than the top.
-        cls.scheme = ResourceInstance.objects.create(graph_id=SCHEMES_GRAPH_ID)
+        cls.scheme = ResourceInstance.objects.create(
+            graph_id=SCHEMES_GRAPH_ID, name="Test Scheme"
+        )
 
         reference = DataTypeFactory().get_instance("reference")
         language_config = {"controlledList": LANGUAGES_LIST_ID}
@@ -141,7 +143,8 @@ class ViewTests(TestCase):
         MAX_DEPTH = 5
         CONCEPT_COUNT = 5
         cls.concepts = [
-            ResourceInstance(graph_id=CONCEPTS_GRAPH_ID) for _ in range(CONCEPT_COUNT)
+            ResourceInstance(graph_id=CONCEPTS_GRAPH_ID, name=f"Concept {num + 1}")
+            for num in range(CONCEPT_COUNT)
         ]
         for concept in cls.concepts:
             concept.save()

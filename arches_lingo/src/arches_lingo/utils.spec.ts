@@ -33,10 +33,31 @@ describe("Build scheme hierarchy", () => {
         const schemeNode = nodes[0];
         expect(schemeNode.label).toEqual("Test Scheme");
         expect(schemeNode.iconLabel).toEqual("Scheme");
-        expect(schemeNode.data.top_concepts.length).toEqual(1);
+        expect(schemeNode.data.top_concepts.length).toEqual(2);
 
         const topConcept = schemeNode.data.top_concepts[0];
         expect(topConcept.labels[0].value).toEqual("Concept 1");
         expect(topConcept.narrower.length).toEqual(4);
+    });
+    it("Should hide other top concepts when focusing child of another", () => {
+        const nodesBeforeFocus = treeFromSchemes(
+            schemesFixture["schemes"] as Scheme[],
+            ENGLISH,
+            ENGLISH,
+            iconLabels,
+            null,
+        );
+        const focusedNode = nodesBeforeFocus[0].children![0].children!.find(
+            (n) => n.data.labels[0].value === "Concept 2",
+        )!;
+        const nodesAfterFocus = treeFromSchemes(
+            schemesFixture["schemes"] as Scheme[],
+            ENGLISH,
+            ENGLISH,
+            iconLabels,
+            focusedNode,
+        );
+        const scheme = nodesAfterFocus[0];
+        expect(scheme.children!.length).toEqual(1);
     });
 });
