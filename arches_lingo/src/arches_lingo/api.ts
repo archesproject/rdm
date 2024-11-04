@@ -15,15 +15,9 @@ export const login = async (username: string, password: string) => {
         headers: { "X-CSRFTOKEN": getToken() },
         body: JSON.stringify({ username, password }),
     });
-    try {
-        const responseJson = await response.json();
-        if (response.ok) {
-            return responseJson;
-        }
-        throw new Error(responseJson.message);
-    } catch (error) {
-        throw new Error((error as Error).message || response.statusText);
-    }
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
 };
 
 export const logout = async () => {
@@ -31,28 +25,16 @@ export const logout = async () => {
         method: "POST",
         headers: { "X-CSRFTOKEN": getToken() },
     });
-    if (response.ok) {
-        return true;
-    }
-    try {
-        const error = await response.json();
-        throw new Error(error.message);
-    } catch (error) {
-        throw new Error((error as Error).message || response.statusText);
-    }
+    if (response.ok) return true;
+    const parsedError = await response.json();
+    throw new Error(parsedError.message || response.statusText);
 };
 
 export const fetchUser = async () => {
     const response = await fetch(arches.urls.api_user);
-    try {
-        const responseJson = await response.json();
-        if (response.ok) {
-            return responseJson;
-        }
-        throw new Error(responseJson.message);
-    } catch (error) {
-        throw new Error((error as Error).message || response.statusText);
-    }
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
 };
 
 export const fetchSearchResults = async (
@@ -67,28 +49,15 @@ export const fetchSearchResults = async (
     });
 
     const url = `${arches.urls.api_search}?${params.toString()}`;
-
     const response = await fetch(url);
-    try {
-        const responseJson = await response.json();
-        if (response.ok) {
-            return responseJson;
-        }
-        throw new Error(responseJson.message);
-    } catch (error) {
-        throw new Error((error as Error).message || response.statusText);
-    }
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
 };
 
 export const fetchConcepts = async () => {
     const response = await fetch(arches.urls.api_concepts);
-    try {
-        const parsed = await response.json();
-        if (response.ok) {
-            return parsed;
-        }
-        throw new Error(parsed.message);
-    } catch (error) {
-        throw new Error((error as Error).message || response.statusText);
-    }
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
 };
