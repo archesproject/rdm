@@ -55,7 +55,7 @@ export function treeFromSchemes(
             processItem(child, child.narrower),
         );
         const parentOfFocusedNode = nodesAndInstructions.find(
-            (obj) => obj.parentShouldHideSiblings,
+            (obj) => obj.shouldHideSiblings,
         );
         if (parentOfFocusedNode) {
             childrenAsNodes = [parentOfFocusedNode.node];
@@ -64,34 +64,38 @@ export function treeFromSchemes(
         }
 
         const node: TreeNode = buildNode(item, childrenAsNodes);
-        let parentShouldHideSiblings = !!parentOfFocusedNode;
-        if (!parentShouldHideSiblings) {
+        let shouldHideSiblings = !!parentOfFocusedNode;
+        if (!shouldHideSiblings) {
             const focalNode = node.children!.find(
                 (child: TreeNode) => child.data.id === focusedNode?.data?.id,
             );
             if (focalNode) {
                 node.children = [focalNode];
-                parentShouldHideSiblings = true;
+                shouldHideSiblings = true;
             }
         }
-        return { node, parentShouldHideSiblings };
+        return { node, shouldHideSiblings };
     }
 
-    // Immediately process & return only this scheme if it's focused.
+    // If this scheme is focused, immediately process and return it.
     const focalScheme = schemes.find((sch) => sch.id === focusedNode?.data?.id);
     if (focalScheme) {
         return [processItem(focalScheme, focalScheme.top_concepts).node];
     }
 
-    // Otherwise, process all schemes.
-    const nodesAndInstructions = schemes.map((scheme: Scheme) =>
-        processItem(scheme, scheme.top_concepts),
-    );
-    const focusedChild = nodesAndInstructions.find(
-        (o) => o.parentShouldHideSiblings,
-    );
-    if (focusedChild) {
-        return [focusedChild.node];
+    // Otherwise, process schemes until a focused node is found.
+    const reshapedSchemes = [];
+    for (const scheme of schemes) {
+        const { node, shouldHideSiblings } = processItem(
+            scheme,
+            scheme.top_concepts,
+        );
+        if (shouldHideSiblings) {
+            return [node];
+        } else {
+            reshapedSchemes.push(node);
+        }
     }
-    return nodesAndInstructions.map((obj) => obj.node);
+
+    return reshapedSchemes;
 }
