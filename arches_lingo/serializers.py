@@ -11,13 +11,10 @@ class SchemeStatementSerializer(ArchesTileSerializer):
 
 
 class SchemeSerializer(ArchesModelSerializer):
-    # TODO: Reduce duplication with Meta.nodegroups, below?
-    statement = SchemeStatementSerializer(many=True, required=False)
-
     class Meta:
         model = ResourceInstance
         graph_slug = "scheme"
-        nodegroups = ["statement"]
+        nodegroups = "__all__"
         fields = "__all__"
 
 
@@ -30,10 +27,8 @@ class ConceptStatementSerializer(ArchesTileSerializer):
 
 
 class ConceptSerializer(ArchesModelSerializer):
-    statement = ConceptStatementSerializer(many=True, required=False)
-
     class Meta:
         model = ResourceInstance
         graph_slug = "concept"
-        nodegroups = ["statement"]
+        nodegroups = "__all__"
         fields = "__all__"
