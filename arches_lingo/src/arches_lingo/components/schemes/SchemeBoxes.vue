@@ -1,32 +1,43 @@
 <script setup lang="ts">
+import SchemeBox from "@/arches_lingo/components/schemes/SchemeBox.vue";
 import { fetchSchemes } from "@/arches_lingo/api.ts";
 
 const schemes = await fetchSchemes();
 </script>
 
 <template>
-    <div style="display: block">
-        <!-- Creating New Scheme -->
-        <div>
-            <input
-                type="text"
-                placeholder="Enter Scheme Name"
-            />
-            <button>Create Scheme</button>
-        </div>
-
-        <!-- Existing Schemes -->
-        <div>
-            <ul>
-                <li
-                    v-for="scheme in schemes"
-                    :key="scheme.id"
-                >
-                    {{ scheme.name }}
-                </li>
-            </ul>
-        </div>
+    <div>
+        <ul
+            style="
+                display: flex;
+                flex-wrap: wrap;
+                list-style-type: none;
+                padding: 0;
+            "
+        >
+            <!-- Create New Scheme -->
+            <li class="scheme-card">Placeholder for creating new scheme</li>
+            <!-- Existing Schemes -->
+            <li
+                v-for="scheme in schemes"
+                :key="scheme.resourceinstanceid"
+                class="scheme-card"
+            >
+                <SchemeBox :scheme="scheme" />
+            </li>
+        </ul>
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.scheme-card {
+    margin: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--p-menubar-border-color);
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: var(--p-primary-400);
+}
+</style>
