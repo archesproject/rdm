@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { routeNames } from "@/arches_lingo/routes.ts";
+
+// TODO: Shift into types.ts
 interface Scheme {
     resourceinstanceid: string;
     descriptors: {
@@ -10,11 +13,17 @@ interface Scheme {
 }
 
 const { scheme } = defineProps<{ scheme: Scheme }>();
+const schemeURL = {
+    name: routeNames.scheme,
+    params: { id: scheme.resourceinstanceid },
+};
 </script>
 
 <template>
     <div>
-        <p>{{ scheme.descriptors.en.name }}</p>
+        <RouterLink :to="schemeURL">
+            <p>{{ scheme.descriptors.en.name }}</p>
+        </RouterLink>
         <p>{{ scheme.descriptors.en.description }}</p>
     </div>
 </template>
