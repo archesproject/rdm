@@ -1,31 +1,23 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { fetchSchemeResource } from "@/arches_lingo/api.ts";
-import type { SchemeResource } from "@/arches_lingo/types.ts";
-import SchemeSection from "@/arches_lingo/components/detail/SchemeSection.vue";
-
-const route = useRoute();
-const schemeResource = ref<SchemeResource | null>(null);
-
-onMounted(async () => {
-    const resource = (await fetchSchemeResource(
-        route.params.id,
-    )) as SchemeResource;
-    schemeResource.value = resource;
-});
+import Splitter from "primevue/splitter";
+import SplitterPanel from "primevue/splitterpanel";
+import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
+import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
+import SchemeUri from "@/arches_lingo/components/scheme/report/SchemeUri.vue";
+import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
+import SchemeAuthority from "@/arches_lingo/components/scheme/report/SchemeAuthority.vue";
 </script>
 
 <template>
-    <div v-if="schemeResource">
-        <div
-            v-for="(section, resourceKey) in schemeResource.resource"
-            :key="resourceKey"
-        >
-            <SchemeSection
-                :section="section"
-                :resource-key="resourceKey"
-            />
-        </div>
+    <div>
+        <Splitter>
+            <SplitterPanel>
+                <SchemeNote />
+                <SchemeAuthority />
+                <SchemeStandard />
+                <SchemeLicense />
+                <SchemeUri />
+            </SplitterPanel>
+        </Splitter>
     </div>
 </template>

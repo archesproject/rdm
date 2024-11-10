@@ -30,13 +30,6 @@ export interface Scheme {
     top_concepts: Concept[];
 }
 
-export interface SchemeResource {
-    [key: string]: object;
-    resource: {
-        [key: string]: Array<object>;
-    };
-}
-
 export interface NodeAndParentInstruction {
     node: TreeNode;
     shouldHideSiblings: boolean;
