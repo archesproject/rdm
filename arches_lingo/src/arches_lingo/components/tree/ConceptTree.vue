@@ -21,7 +21,6 @@ import {
 } from "@/arches_lingo/constants.ts";
 import { treeFromSchemes } from "@/arches_lingo/utils.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
-import LetterCircle from "@/arches_lingo/components/misc/LetterCircle.vue";
 import TreeRow from "@/arches_lingo/components/tree/TreeRow.vue";
 
 import type { ComponentPublicInstance, Ref } from "vue";
@@ -275,9 +274,6 @@ await initializeTree();
         @node-collapse="nextFilterChangeNeedsExpandAll = true"
         @node-select="updateSelectedAndExpanded"
     >
-        <template #nodeicon="slotProps">
-            <LetterCircle :labelled="slotProps.node.data" />
-        </template>
         <template #default="slotProps">
             <TreeRow
                 v-model:focused-node="focusedNode"

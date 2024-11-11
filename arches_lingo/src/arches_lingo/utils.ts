@@ -38,6 +38,7 @@ export function treeFromSchemes(
             ).value,
             children: childNodes,
             data: item,
+            icon: dataIsScheme(item) ? "pi pi-folder" : "pi pi-tag",
             iconLabel: dataIsScheme(item)
                 ? iconLabels.scheme
                 : iconLabels.concept,
