@@ -1741,12 +1741,7 @@
                 {
                     "card_id": "bf73e59d-4888-11ee-8a8d-11afefc4bff7",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1766,7 +1761,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "bf73e59d-4888-11ee-8a8d-11afefc4bff7",
@@ -1801,12 +1796,7 @@
                 {
                     "card_id": "bf73e5d9-4888-11ee-8a8d-11afefc4bff7",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1826,7 +1816,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "bf73e5d9-4888-11ee-8a8d-11afefc4bff7",
@@ -1861,12 +1851,7 @@
                 {
                     "card_id": "bf73e58b-4888-11ee-8a8d-11afefc4bff7",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1886,7 +1871,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "bf73e58b-4888-11ee-8a8d-11afefc4bff7",
@@ -2003,12 +1988,7 @@
                 {
                     "card_id": "bf73e630-4888-11ee-8a8d-11afefc4bff7",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -2028,7 +2008,7 @@
                     "sortorder": 2,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "bf73e630-4888-11ee-8a8d-11afefc4bff7",
@@ -2326,12 +2306,7 @@
                 {
                     "card_id": "32bc9136-f3f3-4424-b1cf-d0af4367980c",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -2351,7 +2326,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "bf73e630-4888-11ee-8a8d-11afefc4bff7",
@@ -4058,7 +4033,7 @@
                     "alias": "data_assignment_language",
                     "config": {
                         "controlledList": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
-                        "multiValue": true
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -4737,7 +4712,7 @@
                     "config": {
                         "en": ""
                     },
-                    "datatype": "string",
+                    "datatype": "non-localized-string",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -5019,7 +4994,7 @@
                     "alias": "statement_data_assignment_statement_language",
                     "config": {
                         "controlledList": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
-                        "multiValue": true
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -5077,7 +5052,7 @@
                     "alias": "appellative_status_ascribed_name_language",
                     "config": {
                         "controlledList": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
-                        "multiValue": true
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -5798,7 +5773,7 @@
                 {
                     "alias": "statement_data_assignment_statement_content",
                     "config": {},
-                    "datatype": "string",
+                    "datatype": "non-localized-string",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -5844,7 +5819,7 @@
                 {
                     "alias": "statement_content",
                     "config": {},
-                    "datatype": "string",
+                    "datatype": "non-localized-string",
                     "description": "* Collection_id: LAP.4_Statement\n* Field_id: LAF.15_statement_content\n* Category_id: CAT.4_Description",
                     "exportable": false,
                     "fieldname": null,
@@ -6150,7 +6125,7 @@
                 {
                     "alias": "data_assignment_statement_content",
                     "config": {},
-                    "datatype": "string",
+                    "datatype": "non-localized-string",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -6389,7 +6364,7 @@
                     "alias": "statement_language",
                     "config": {
                         "controlledList": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
-                        "multiValue": true
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -6778,9 +6753,9 @@
             "publication": {
                 "graph_id": "bf73e576-4888-11ee-8a8d-11afefc4bff7",
                 "most_recent_edit_id": null,
-                "notes": "Migrated concept/concept-list nodes to reference datatype",
-                "publicationid": "c8f94d18-a1d6-11ef-9428-0aa766c61b64",
-                "published_time": "2024-11-13T09:48:53.862"
+                "notes": "Migrated selected string nodes to non-localized string nodes",
+                "publicationid": "f182cc5c-a2f1-11ef-a490-0aa766c61b64",
+                "published_time": "2024-11-14T19:35:49.447"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -6863,7 +6838,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 17.0 (Postgres.app) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 15.0.0 (clang-1500.3.9.4), 64-bit",
-        "git hash": "e3aeed266 2024-11-12 02:14:26 -0800",
+        "git hash": "92539cdf5 2024-11-14 19:28:17 -0500",
         "os": "Darwin",
         "os version": "24.1.0"
     }
