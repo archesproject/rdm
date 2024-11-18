@@ -38,6 +38,7 @@ const toast = useToast();
 const { $gettext } = useGettext();
 const route = useRoute();
 
+// Defining these in the parent avoids re-running $gettext in thousands of children.
 const FOCUS = $gettext("Focus");
 const UNFOCUS = $gettext("Unfocus");
 const iconLabels: IconLabels = Object.freeze({
