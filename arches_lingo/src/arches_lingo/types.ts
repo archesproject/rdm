@@ -30,6 +30,42 @@ export interface Scheme {
     top_concepts: Concept[];
 }
 
+export interface ControlledListeItemLabelValue {
+    id: string;
+    valuetype_id: string;
+    language_id: string;
+    value: string;
+    list_item_id: string;
+}
+
+export interface ControlledListItem {
+    list_id: string;
+    uri: string;
+    sortorder: number;
+    guide: boolean;
+    labels: ControlledListeItemLabelValue[];
+}
+
+interface ControlledListItemValue {
+    value: string;
+}
+
+export interface SchemeNamespaceUpdate {
+    namespace?: {
+        namespace_name: string;
+        namespace_type: ControlledListItemValue[] | ControlledListItem[];
+    };
+}
+
+export interface SchemeNamespace {
+    namespace?: {
+        namespace_name: string;
+        namespace_type: ControlledListItem[];
+    };
+}
+
+export type DataComponentMode = "edit" | "view";
+
 export interface NodeAndParentInstruction {
     node: TreeNode;
     shouldHideSiblings: boolean;

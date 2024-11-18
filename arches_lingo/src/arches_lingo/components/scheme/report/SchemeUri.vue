@@ -9,3 +9,4 @@ const { $gettext } = useGettext();
         abc
     </SchemeReportSection>
 </template>
+

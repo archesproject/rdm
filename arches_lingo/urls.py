@@ -12,6 +12,7 @@ from arches_lingo.views.api.pythonic_models import (
     ConceptStatementListCreateView,
     SchemeDetailView,
     SchemeListCreateView,
+    SchemeNamespaceView,
     SchemeStatementDetailView,
     SchemeStatementListCreateView,
 )
@@ -39,6 +40,11 @@ urlpatterns = [
     ),
     path("api/schemes", SchemeListCreateView.as_view(), name="schemes-list-create"),
     path("api/scheme/<uuid:pk>", SchemeDetailView.as_view(), name="scheme-detail"),
+    path(
+        "api/scheme/<uuid:pk>/namespace",
+        SchemeNamespaceView.as_view(),
+        name="api-uri-components",
+    ),
     path(
         "api/scheme/statements",
         SchemeStatementListCreateView.as_view(),
