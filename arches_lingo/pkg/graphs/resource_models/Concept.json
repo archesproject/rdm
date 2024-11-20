@@ -1714,7 +1714,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "ff3c400a-76ec-11e7-a793-784f435179ea"
+                    "widget_id": "31f3728c-7613-11e7-a139-784f435179ea"
                 },
                 {
                     "card_id": "bf73e60c-4888-11ee-8a8d-11afefc4bff7",
@@ -5435,7 +5435,7 @@
                         "searchDsl": "",
                         "searchString": ""
                     },
-                    "datatype": "resource-instance-list",
+                    "datatype": "resource-instance",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -6753,7 +6753,7 @@
             "publication": {
                 "graph_id": "bf73e576-4888-11ee-8a8d-11afefc4bff7",
                 "most_recent_edit_id": null,
-                "notes": "Migrated selected string nodes to non-localized string nodes and made part of scheme 1:1 with concepts",
+                "notes": "Migrated selected string nodes to non-localized string nodes and made part_of_scheme & top_concept_of 1:1 with concepts",
                 "publicationid": "442474c0-a2fb-11ef-82bb-0aa766c61b64",
                 "published_time": "2024-11-14T20:42:33.550"
             },
@@ -6838,7 +6838,7 @@
     ],
     "metadata": {
         "db": "PostgreSQL 17.0 (Postgres.app) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 15.0.0 (clang-1500.3.9.4), 64-bit",
-        "git hash": "92539cdf5 2024-11-14 19:28:17 -0500",
+        "git hash": "ab1e5bf70 2024-11-19 09:57:25 -0500",
         "os": "Darwin",
         "os version": "24.1.0"
     }
