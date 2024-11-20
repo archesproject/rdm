@@ -354,7 +354,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                         'valid', true,
                         'value', json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')),
                         'source', conceptidfrom,
-                        'datatype', 'resource-instance-list'
+                        'datatype', 'resource-instance'
                     )
                 ) as value,
                 conceptidto as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
@@ -483,7 +483,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                         }
                     ],
                     "source": root_scheme,
-                    "datatype": "resource-instance-list",
+                    "datatype": "resource-instance",
                 }
             }
 
