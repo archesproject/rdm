@@ -36,10 +36,6 @@ from arches_lingo.const import (
 )
 
 
-def localized_string(text, language="en", direction="ltr"):
-    return {language: {"value": text, "direction": direction}}
-
-
 class ViewTests(TestCase):
     @classmethod
     def mock_concept_and_scheme_graphs(cls):
@@ -75,8 +71,8 @@ class ViewTests(TestCase):
                 SCHEME_NAME_NODEGROUP,
                 SCHEME_NAME_CONTENT_NODE,
                 "appellative_status_ascribed_name_content",
-                "string",
-                {"en": ""},
+                "non-localized-string",
+                {},
             ),
             (
                 SCHEME_NAME_NODEGROUP,
@@ -89,8 +85,8 @@ class ViewTests(TestCase):
                 CONCEPT_NAME_NODEGROUP,
                 CONCEPT_NAME_CONTENT_NODE,
                 "appellative_status_ascribed_name_content",
-                "string",
-                {"en": ""},
+                "non-localized-string",
+                {},
             ),
             (
                 CONCEPT_NAME_NODEGROUP,
@@ -111,7 +107,7 @@ class ViewTests(TestCase):
                 istopnode=False,
                 datatype=datatype,
                 config=config,
-                isrequired=datatype == "string",
+                isrequired=False,
             )
 
     @classmethod
@@ -135,7 +131,7 @@ class ViewTests(TestCase):
             resourceinstance=cls.scheme,
             nodegroup_id=SCHEME_NAME_NODEGROUP,
             data={
-                SCHEME_NAME_CONTENT_NODE: localized_string("Test Scheme"),
+                SCHEME_NAME_CONTENT_NODE: "Test Scheme",
                 SCHEME_NAME_TYPE_NODE: prefLabel_reference_dt,
                 SCHEME_NAME_LANGUAGE_NODE: en_reference_dt,
             },
@@ -155,7 +151,7 @@ class ViewTests(TestCase):
                 resourceinstance=concept,
                 nodegroup_id=CONCEPT_NAME_NODEGROUP,
                 data={
-                    CONCEPT_NAME_CONTENT_NODE: localized_string(f"Concept {i + 1}"),
+                    CONCEPT_NAME_CONTENT_NODE: f"Concept {i + 1}",
                     CONCEPT_NAME_TYPE_NODE: prefLabel_reference_dt,
                     CONCEPT_NAME_LANGUAGE_NODE: en_reference_dt,
                 },
