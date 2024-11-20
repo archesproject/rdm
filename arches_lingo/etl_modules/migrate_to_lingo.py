@@ -442,9 +442,21 @@ class RDMMtoLingoMigrator(BaseImportModule):
         part_of_scheme_nodegroup = NodeGroup.objects.get(
             nodegroupid=CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID
         )
+        concepts_with_scheme = {}
         for concept in concept_hierarchy:
             root_list = str(concept["root_list"])
             resourceinstanceid = concept["concept"]
+
+            concept_has_part_of_scheme = resourceinstanceid in concepts_with_scheme
+            existing_scheme = concepts_with_scheme.get(resourceinstanceid)
+            if not concept_has_part_of_scheme:
+                concepts_with_scheme[resourceinstanceid] = root_list
+            elif concept_has_part_of_scheme and existing_scheme == root_list:
+                continue
+            elif concept_has_part_of_scheme and existing_scheme != root_list:
+                raise Exception(
+                    f"Concept {resourceinstanceid} cannot have multiple schemes: {root_list} and {concepts_with_scheme[resourceinstanceid]}"
+                )
 
             value_obj = {
                 str(CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID): {
