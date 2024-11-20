@@ -6,6 +6,7 @@ import uuid
 from django.db import connection
 from django.db.models import OuterRef, Subquery
 from django.db.models.functions import Coalesce
+from django.utils.translation import gettext as _
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.etl_modules.save import save_to_tiles
 from arches.app.etl_modules.decorators import load_data_async
@@ -454,9 +455,14 @@ class RDMMtoLingoMigrator(BaseImportModule):
             elif concept_has_part_of_scheme and existing_scheme == root_list:
                 continue
             elif concept_has_part_of_scheme and existing_scheme != root_list:
-                raise Exception(
-                    f"Concept {resourceinstanceid} cannot have multiple schemes: {root_list} and {concepts_with_scheme[resourceinstanceid]}"
-                )
+                return {
+                    "status": 400,
+                    "success": False,
+                    "title": "Concepts may only participate in one scheme",
+                    "message": _(
+                        f"Concept {resourceinstanceid} cannot have multiple schemes: {root_list} and {concepts_with_scheme[resourceinstanceid]}"
+                    ),
+                }
 
             value_obj = {
                 str(CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID): {
