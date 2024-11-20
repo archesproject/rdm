@@ -6,6 +6,7 @@ import uuid
 from django.db import connection
 from django.db.models import OuterRef, Subquery
 from django.db.models.functions import Coalesce
+from django.utils.translation import gettext as _
 from arches.app.datatypes.datatypes import DataTypeFactory
 from arches.app.etl_modules.save import save_to_tiles
 from arches.app.etl_modules.decorators import load_data_async
@@ -292,7 +293,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
         cursor.execute(
             """
             with recursive collection_hierarchy as (
-                select conceptidfrom as root_list,
+                select conceptidfrom as root_scheme,
                     conceptidto as child,
                     ARRAY[conceptidfrom] AS path,
                     0 as depth
@@ -301,7 +302,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                     select 1 from relations r2 where r2.conceptidto = relations.conceptidfrom
                 ) and relationtype != 'member'
                 union all
-                select ch.root_list,
+                select ch.root_scheme,
                     r.conceptidto,
                     ch.path || r.conceptidfrom,
                     ch.depth + 1
@@ -311,7 +312,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
             )
             select * 
             from collection_hierarchy
-            where root_list = %s;
+            where root_scheme = %s;
             """,
             (scheme_conceptid,),
         )
@@ -320,7 +321,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
         concepts_to_migrate = []
         for result in results:
             concept_dict = {
-                "root_list": result[0],
+                "root_scheme": result[0],
                 "concept": result[1],
                 "path": result[2],
                 "depth": result[3],
@@ -353,7 +354,7 @@ class RDMMtoLingoMigrator(BaseImportModule):
                         'valid', true,
                         'value', json_build_array(json_build_object('resourceId', conceptidfrom, 'ontologyProperty', '', 'resourceXresourceId', '', 'inverseOntologyProperty', '')),
                         'source', conceptidfrom,
-                        'datatype', 'resource-instance-list'
+                        'datatype', 'resource-instance'
                     )
                 ) as value,
                 conceptidto as resourceinstanceid, -- map target concept's new resourceinstanceid to its existing conceptid
@@ -442,9 +443,32 @@ class RDMMtoLingoMigrator(BaseImportModule):
         part_of_scheme_nodegroup = NodeGroup.objects.get(
             nodegroupid=CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID
         )
+        concepts_with_scheme = {}
         for concept in concept_hierarchy:
-            root_list = str(concept["root_list"])
+            root_scheme = str(concept["root_scheme"])
             resourceinstanceid = concept["concept"]
+
+            concept_has_part_of_scheme = resourceinstanceid in concepts_with_scheme
+            existing_scheme = concepts_with_scheme.get(resourceinstanceid)
+            if not concept_has_part_of_scheme:
+                concepts_with_scheme[resourceinstanceid] = root_scheme
+            elif concept_has_part_of_scheme and existing_scheme == root_scheme:
+                continue
+            elif concept_has_part_of_scheme and existing_scheme != root_scheme:
+                return {
+                    "status": 400,
+                    "success": False,
+                    "title": "Concepts may only participate in one scheme",
+                    "message": _(
+                        "Concept {conceptid} cannot have multiple schemes: {current_scheme} and {existing_scheme}"
+                    ).format(
+                        {
+                            "conceptid": resourceinstanceid,
+                            "current_scheme": root_scheme,
+                            "existing_scheme": concepts_with_scheme[resourceinstanceid],
+                        }
+                    ),
+                }
 
             value_obj = {
                 str(CONCEPTS_PART_OF_SCHEME_NODEGROUP_ID): {
@@ -452,14 +476,14 @@ class RDMMtoLingoMigrator(BaseImportModule):
                     "valid": True,
                     "value": [
                         {
-                            "resourceId": root_list,
+                            "resourceId": root_scheme,
                             "ontologyProperty": "",
                             "resourceXresourceId": "",
                             "inverseOntologyProperty": "",
                         }
                     ],
-                    "source": root_list,
-                    "datatype": "resource-instance-list",
+                    "source": root_scheme,
+                    "datatype": "resource-instance",
                 }
             }
 
