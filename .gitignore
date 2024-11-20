@@ -2,6 +2,7 @@
 *.log
 node_modules
 coverage/
+arches_lingo/list_item_images/*
 arches_lingo/logs
 arches_lingo/export_deliverables
 arches_lingo/cantaloupe/*
