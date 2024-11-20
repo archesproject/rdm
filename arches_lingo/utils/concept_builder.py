@@ -103,15 +103,22 @@ class ConceptBuilder:
             # Annotating a ResourceInstance
             outer = OuterRef("resourceinstanceid")
             nodegroup_id = SCHEME_NAME_NODEGROUP
+            type_node = SCHEME_NAME_TYPE_NODE
+            language_node = SCHEME_NAME_LANGUAGE_NODE
         else:
             # Annotating a Tile
             outer = OuterRef("resourceinstance_id")
             nodegroup_id = CONCEPT_NAME_NODEGROUP
+            type_node = CONCEPT_NAME_TYPE_NODE
+            language_node = CONCEPT_NAME_LANGUAGE_NODE
 
         return ArraySubquery(
             TileModel.objects.filter(
                 resourceinstance_id=outer, nodegroup_id=nodegroup_id
-            ).values("data")
+            )
+            .exclude(**{f"data__{type_node}": None})
+            .exclude(**{f"data__{language_node}": None})
+            .values("data")
         )
 
     def top_concepts_map(self):
