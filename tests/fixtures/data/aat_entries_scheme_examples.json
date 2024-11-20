@@ -3,6 +3,7 @@
         "resources": [
             {
                 "resourceinstance": {
+                    "createdtime": "2024-11-20T07:29:33.734",
                     "descriptors": {
                         "en": {
                             "description": "Undefined",
@@ -11,23 +12,18 @@
                         }
                     },
                     "graph_id": "56788995-423b-11ee-8a8d-11afefc4bff7",
-                    "graph_publication_id": "d4ece790-8022-11ef-99a9-0aa766c61b66",
+                    "graph_publication_id": "dfda523c-a2f5-11ef-afb4-0aa766c61b64",
                     "legacyid": null,
                     "name": "AAT Entries",
                     "principaluser_id": null,
                     "resource_instance_lifecycle_state_id": "9375c9a7-dad2-4f14-a5c1-d7e329fdde4f",
                     "resourceinstanceid": "b73e741b-46da-496c-8960-55cc1007bec4",
-                    "publication_id": "d4ece790-8022-11ef-99a9-0aa766c61b66"
+                    "publication_id": "dfda523c-a2f5-11ef-afb4-0aa766c61b64"
                 },
                 "tiles": [
                     {
                         "data": {
-                            "ef87b132-11de-11ef-9493-0a58a9feac02": {
-                                "en": {
-                                    "direction": "ltr",
-                                    "value": "AAT Entries"
-                                }
-                            },
+                            "ef87b132-11de-11ef-9493-0a58a9feac02": "AAT Entries",
                             "ef87b43e-11de-11ef-9493-0a58a9feac02": [
                                 {
                                     "labels": [
@@ -64,7 +60,7 @@
                         "provisionaledits": null,
                         "resourceinstance_id": "b73e741b-46da-496c-8960-55cc1007bec4",
                         "sortorder": null,
-                        "tileid": "64216616-eb0b-4902-98ce-c70877d4eadb"
+                        "tileid": "7b559cf4-77a1-49b3-9116-aabffd464bd3"
                     },
                     {
                         "data": {
@@ -95,7 +91,7 @@
                         "provisionaledits": null,
                         "resourceinstance_id": "b73e741b-46da-496c-8960-55cc1007bec4",
                         "sortorder": null,
-                        "tileid": "3d0c362d-2796-420d-b891-8caaffee3ed2"
+                        "tileid": "d35063cf-e93c-4bb9-89b1-d718d1d21ee3"
                     }
                 ]
             }
