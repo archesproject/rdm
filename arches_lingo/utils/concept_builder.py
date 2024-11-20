@@ -4,7 +4,7 @@ from django.contrib.postgres.expressions import ArraySubquery
 from django.core.cache import caches
 from django.db.models import CharField, F, OuterRef, Value
 from django.db.models.expressions import CombinedExpression
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 
 from arches.app.models.models import ResourceInstance, TileModel
 
@@ -163,11 +163,7 @@ class ConceptBuilder:
     def serialize_scheme_label(self, label_tile: dict):
         valuetype_id = label_tile[SCHEME_NAME_TYPE_NODE][0]["labels"][0]["value"]
         language_id = label_tile[SCHEME_NAME_LANGUAGE_NODE][0]["labels"][0]["value"]
-        localized_string_objs = label_tile[SCHEME_NAME_CONTENT_NODE].values()
-        try:
-            value = next(iter(localized_string_objs))["value"]
-        except (StopIteration, KeyError):
-            value = "Unknown"
+        value = label_tile[SCHEME_NAME_CONTENT_NODE] or _("Unknown")
         return {
             "valuetype_id": valuetype_id,
             "language_id": language_id,
@@ -223,11 +219,7 @@ class ConceptBuilder:
     def serialize_concept_label(self, label_tile: dict):
         valuetype_id = label_tile[CONCEPT_NAME_TYPE_NODE][0]["labels"][0]["value"]
         language_id = label_tile[CONCEPT_NAME_LANGUAGE_NODE][0]["labels"][0]["value"]
-        localized_string_objs = label_tile[CONCEPT_NAME_CONTENT_NODE].values()
-        try:
-            value = next(iter(localized_string_objs))["value"]
-        except (StopIteration, KeyError):
-            value = "Unknown"
+        value = label_tile[CONCEPT_NAME_CONTENT_NODE] or _("Unknown")
         return {
             "valuetype_id": valuetype_id,
             "language_id": language_id,
