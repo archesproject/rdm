@@ -49,7 +49,7 @@ class ViewTests(TestCase):
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
                 TOP_CONCEPT_OF_NODE_AND_NODEGROUP,
                 "top_concept_of",
-                "resource-instance-list",
+                "resource-instance",
                 {
                     "graphs": [{"graphid": SCHEMES_GRAPH_ID, "name": "Scheme"}],
                     "searchDsl": "",
@@ -97,7 +97,8 @@ class ViewTests(TestCase):
             ),
         ]:
             NodeGroup.objects.update_or_create(
-                pk=nodegroup_id, defaults={"cardinality": "n"}
+                pk=nodegroup_id,
+                defaults={"cardinality": "1" if node_name == "top_concept_of" else "n"},
             )
             Node.objects.create(
                 pk=node_id,
