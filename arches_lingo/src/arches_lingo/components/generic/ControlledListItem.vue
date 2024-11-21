@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import type { ControlledListItem } from "@/arches_lingo/types";
+import type {
+    ControlledListItem,
+    DataComponentMode,
+} from "@/arches_lingo/types";
 import ControlledListItemViewer from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
+import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
-const VIEW = "view";
-const EDIT = "edit";
-
-type DataComponentMode = typeof EDIT | typeof VIEW;
-
-const props = defineProps<{
+const { mode = EDIT } = defineProps<{
     mode?: DataComponentMode;
     value?: ControlledListItem;
 }>();
@@ -15,9 +14,9 @@ defineEmits(["update"]);
 </script>
 <template>
     <div>
-        <div v-if="!props.mode || props.mode === VIEW">
-            <ControlledListItemViewer :value="props.value" />
+        <div v-if="mode === VIEW">
+            <ControlledListItemViewer :value="value" />
         </div>
-        <div v-if="props.mode === EDIT"></div>
+        <div v-if="mode === EDIT"></div>
     </div>
 </template>

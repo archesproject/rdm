@@ -9,7 +9,7 @@ import TabPanels from "primevue/tabpanels";
 import TabPanel from "primevue/tabpanel";
 import SchemeNamespace from "../report/SchemeNamespace.vue";
 import { onBeforeUpdate, onUpdated, ref } from "vue";
-
+import SchemeStandard from "../report/SchemeStandard.vue";
 type sectionTypes = typeof SchemeNamespace;
 
 const { $gettext } = useGettext();
@@ -24,6 +24,11 @@ const schemeComponents = [
         component: SchemeNamespace,
         id: "namespace",
         editorTabName: $gettext("Scheme Namespace"),
+    },
+    {
+        component: SchemeStandard,
+        id: "standard",
+        editorTabName: $gettext("Scheme Standards Followed"),
     },
 ];
 
@@ -57,81 +62,76 @@ async function updateScheme() {
 </script>
 
 <template>
-    <div>
-        <div class="header">
+    <div class="header">
+        <div>
+            <h3>{{ $gettext("Editor Tools") }}</h3>
             <div>
-                <h3>{{ $gettext("Editor Tools") }}</h3>
-                <div>
-                    <Button
-                        :aria-label="$gettext('toggle editor size')"
-                        @click="toggleSize"
-                    >
-                        <i
-                            :class="{
-                                pi: true,
-                                'pi-window-maximize': props.editorMax,
-                                'pi-window-minimize': !props.editorMax,
-                            }"
-                            aria-hidden="true"
-                        />
-                    </Button>
-                    <Button
-                        :aria-label="$gettext('close editor')"
-                        @click="$emit('close')"
-                    >
-                        <i
-                            class="pi pi-times"
-                            aria-hidden="true"
-                        />
-                    </Button>
-                </div>
+                <Button
+                    :aria-label="$gettext('toggle editor size')"
+                    @click="toggleSize"
+                >
+                    <i
+                        :class="{
+                            pi: true,
+                            'pi-window-maximize': props.editorMax,
+                            'pi-window-minimize': !props.editorMax,
+                        }"
+                        aria-hidden="true"
+                    />
+                </Button>
+                <Button
+                    :aria-label="$gettext('close editor')"
+                    @click="$emit('close')"
+                >
+                    <i
+                        class="pi pi-times"
+                        aria-hidden="true"
+                    />
+                </Button>
             </div>
         </div>
-        <div class="content">
-            <Tabs :value="activeTab">
-                <TabList>
-                    <template
-                        v-for="component in schemeComponents"
-                        :key="component.id"
-                    >
-                        <Tab :value="component.id">{{
-                            component.editorTabName
-                        }}</Tab>
-                    </template>
-                </TabList>
-                <TabPanels>
-                    <template
-                        v-for="(component, index) in schemeComponents"
-                        :key="component.id"
-                    >
-                        <TabPanel :value="component.id">
-                            <component
-                                :is="component.component"
-                                v-bind="{ mode: EDIT }"
-                                :ref="(el) => getRef(el, index)"
-                                v-on="onUpdated"
-                            />
-                        </TabPanel>
-                    </template>
-                </TabPanels>
-            </Tabs>
-            <Button
-                :label="$gettext('Update')"
-                @click="updateScheme"
-            ></Button>
-        </div>
+    </div>
+    <div class="content">
+        <Tabs :value="activeTab">
+            <TabList>
+                <template
+                    v-for="component in schemeComponents"
+                    :key="component.id"
+                >
+                    <Tab :value="component.id">{{
+                        component.editorTabName
+                    }}</Tab>
+                </template>
+            </TabList>
+            <TabPanels>
+                <template
+                    v-for="(component, index) in schemeComponents"
+                    :key="component.id"
+                >
+                    <TabPanel :value="component.id">
+                        <component
+                            :is="component.component"
+                            v-bind="{ mode: EDIT }"
+                            :ref="(el) => getRef(el, index)"
+                            v-on="{ updated: onUpdated }"
+                        />
+                    </TabPanel>
+                </template>
+            </TabPanels>
+        </Tabs>
+        <Button
+            :label="$gettext('Update')"
+            @click="updateScheme"
+        ></Button>
     </div>
 </template>
 <style scoped>
-.header {
-    background-color: var(--p-surface-200);
-}
 .header div {
     margin: 0 1rem;
     display: flex;
     align-items: center;
 }
-.header div h2 {
+.header div h3 {
     flex: 1;
 }
 </style>
