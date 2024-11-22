@@ -36,6 +36,7 @@ const setDisplayedRow = (val: Concept | Scheme | null) => {
     if (val === null) {
         return;
     }
+    // TODO: Consider adding some sort of short-circuiting of fetchUser
     if (dataIsScheme(val)) {
         router.push({ name: routeNames.scheme, params: { id: val.id } });
     } else if (dataIsConcept(val)) {
