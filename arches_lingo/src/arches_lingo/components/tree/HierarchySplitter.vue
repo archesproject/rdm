@@ -19,9 +19,7 @@ import {
 } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 import { dataIsConcept, dataIsScheme } from "@/arches_lingo/utils.ts";
-import ConceptDetail from "@/arches_lingo/components/detail/ConceptDetail.vue";
 import ConceptTree from "@/arches_lingo/components/tree/ConceptTree.vue";
-import SchemeDetail from "@/arches_lingo/components/detail/SchemeDetail.vue";
 
 import type { Ref } from "vue";
 import type { Language } from "@/arches_vue_utils/types";
@@ -89,14 +87,7 @@ const showHierarchy = ref(true);
             </Suspense>
         </SplitterPanel>
         <SplitterPanel :min-size="25">
-            <ConceptDetail
-                v-if="displayedRow && dataIsConcept(displayedRow)"
-                :concept="displayedRow as Concept"
-            />
-            <SchemeDetail
-                v-else-if="displayedRow && dataIsScheme(displayedRow)"
-                :scheme="displayedRow as Scheme"
-            />
+            <RouterView />
         </SplitterPanel>
     </Splitter>
 </template>

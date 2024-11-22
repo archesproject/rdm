@@ -5,6 +5,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/HomePage.vue"),
         meta: {
             shouldShowNavigation: true,
+            shouldShowHierarchy: false,
             requiresAuthentication: true,
         },
     },
@@ -14,6 +15,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/LoginPage.vue"),
         meta: {
             shouldShowNavigation: false,
+            shouldShowHierarchy: false,
             requiresAuthentication: false,
         },
     },
@@ -23,6 +25,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/AdvancedSearch.vue"),
         meta: {
             shouldShowNavigation: true,
+            shouldShowHierarchy: true,
             requiresAuthentication: true,
         },
     },
@@ -32,26 +35,27 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/SchemeList.vue"),
         meta: {
             shouldShowNavigation: true,
+            shouldShowHierarchy: true,
             requiresAuthentication: true,
         },
     },
     {
         path: "/concept/:id",
         name: "concept",
-        component: () =>
-            import("@/arches_lingo/pages/ConceptOrSchemeSplitter.vue"),
+        component: () => import("@/arches_lingo/pages/ConceptPage.vue"),
         meta: {
             shouldShowNavigation: true,
+            shouldShowHierarchy: true,
             requiresAuthentication: true,
         },
     },
     {
         path: "/scheme/:id",
         name: "scheme",
-        component: () =>
-            import("@/arches_lingo/pages/ConceptOrSchemeSplitter.vue"),
+        component: () => import("@/arches_lingo/pages/SchemePage.vue"),
         meta: {
             shouldShowNavigation: true,
+            shouldShowHierarchy: true,
             requiresAuthentication: true,
         },
     },

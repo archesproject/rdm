@@ -18,6 +18,7 @@ import {
 
 import { routeNames } from "@/arches_lingo/routes.ts";
 import { fetchUser } from "@/arches_lingo/api.ts";
+import HierarchySplitter from "@/arches_lingo/components/tree/HierarchySplitter.vue";
 import PageHeader from "@/arches_lingo/components/header/PageHeader.vue";
 import SideNav from "@/arches_lingo/components/sidenav/SideNav.vue";
 
@@ -74,7 +75,8 @@ router.beforeEach(async (to, _from, next) => {
         <div style="display: flex; flex: auto; flex-direction: row">
             <SideNav v-if="route.meta.shouldShowNavigation" />
             <div style="flex: auto">
-                <RouterView />
+                <HierarchySplitter v-if="route.meta.shouldShowHierarchy" />
+                <RouterView v-else></RouterView>
             </div>
         </div>
     </main>
