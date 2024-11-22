@@ -27,7 +27,7 @@ requires-python = ">=3.11"
 dependencies = [
     "arches >= 8.0.0a0",
     "arches_vue_utils @ git+https://github.com/archesproject/arches-vue-utils.git@main",
-    "arches_references @ git+https://github.com/archesproject/arches-references.git@jtw/pythonic-resource-models-compatibility",
+    "arches_references @ git+https://github.com/archesproject/arches-references.git@main",
 ]
 version = "0.0.1"
 
