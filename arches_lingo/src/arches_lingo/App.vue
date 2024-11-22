@@ -76,7 +76,7 @@ router.beforeEach(async (to, _from, next) => {
             <SideNav v-if="route.meta.shouldShowNavigation" />
             <div style="flex: auto">
                 <HierarchySplitter v-if="route.meta.shouldShowHierarchy" />
-                <RouterView v-else></RouterView>
+                <RouterView v-else />
             </div>
         </div>
     </main>
