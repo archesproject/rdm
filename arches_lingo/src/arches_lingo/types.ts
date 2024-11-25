@@ -66,6 +66,16 @@ export interface SchemeNamespace {
 
 export type DataComponentMode = "edit" | "view";
 
+export interface SchemeDescriptor {
+    resourceinstanceid: string;
+    descriptors: {
+        [key: string]: {
+            name: string;
+            description: string;
+        };
+    };
+}
+
 export interface NodeAndParentInstruction {
     node: TreeNode;
     shouldHideSiblings: boolean;

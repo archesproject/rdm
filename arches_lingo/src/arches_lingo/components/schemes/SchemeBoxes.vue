@@ -16,7 +16,12 @@ const schemes = await fetchSchemes();
             "
         >
             <!-- Create New Scheme -->
-            <li class="scheme-card">Placeholder for creating new scheme</li>
+            <li
+                class="scheme-card"
+                style="text-align: center"
+            >
+                Placeholder for creating new scheme
+            </li>
             <!-- Existing Schemes -->
             <li
                 v-for="scheme in schemes"
@@ -31,9 +36,9 @@ const schemes = await fetchSchemes();
 
 <style scoped>
 .scheme-card {
-    margin: 1rem;
+    margin: 0.5rem;
     padding: 1rem;
-    border: 1px solid var(--p-menubar-border-color);
+    border: 0.0625rem solid var(--p-menubar-border-color);
     min-width: 300px;
     display: flex;
     flex-direction: column;
