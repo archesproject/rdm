@@ -23,7 +23,7 @@ const [schemeName, schemeDescription] = getDescriptors(
 <template>
     <RouterLink
         :to="schemeURL"
-        style="text-align: center"
+        class="existing-scheme-card {"
     >
         <p>{{ schemeName }}</p>
         <p>{{ schemeDescription }}</p>
@@ -31,8 +31,13 @@ const [schemeName, schemeDescription] = getDescriptors(
 </template>
 
 <style scoped>
-a {
+.existing-scheme-card {
     text-decoration: none;
     color: var(--p-text-color);
+    width: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 </style>
