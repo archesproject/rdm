@@ -6,8 +6,6 @@ const { $gettext } = useGettext();
 const props = defineProps<{
     titleText: string;
 }>();
-
-const buttonText = $gettext(`Add ${props.titleText}`);
 </script>
 
 <template>
@@ -16,7 +14,7 @@ const buttonText = $gettext(`Add ${props.titleText}`);
             <h2>{{ props.titleText }}</h2>
             <div>
                 <Button
-                    :label="buttonText"
+                    :label="$gettext(`Add ${props.titleText}`)"
                     @click="$emit('openEditor')"
                 ></Button>
             </div>
@@ -34,7 +32,7 @@ const buttonText = $gettext(`Add ${props.titleText}`);
 .section .header {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--p-menubar-border-color);
 }
 .section .header h2 {
     flex: 1;

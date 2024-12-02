@@ -59,16 +59,6 @@ export const routes = [
             requiresAuthentication: true,
         },
     },
-    {
-        path: "/scheme/:id/report",
-        name: "scheme",
-        component: () => import("@/arches_lingo/pages/SchemeReport.vue"),
-        meta: {
-            shouldShowNavigation: true,
-            shouldShowHierarchy: true,
-            requiresAuthentication: true,
-        },
-    },
 ];
 
 export const routeNames = {
