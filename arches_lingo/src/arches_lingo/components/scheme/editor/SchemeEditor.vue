@@ -1,8 +1,3 @@
-<script lang="ts">
-const MAXIMIZE = "maximize";
-const SIDE = "side";
-const CLOSE = "close";
-</script>
 <script setup lang="ts">
 import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
@@ -13,13 +8,13 @@ const props = defineProps<{
     editorMax: boolean;
 }>();
 
-const emit = defineEmits([MAXIMIZE, SIDE, CLOSE]);
+const emit = defineEmits(["maximize", "side", "close"]);
 
 const toggleSize = () => {
     if (props.editorMax) {
-        emit(MAXIMIZE);
+        emit("maximize");
     } else {
-        emit(SIDE);
+        emit("side");
     }
 };
 </script>
@@ -39,7 +34,7 @@ const toggleSize = () => {
                         aria-hidden="true"
                     />
                 </Button>
-                <Button @click="$emit(CLOSE)">
+                <Button @click="$emit('close')">
                     <i
                         class="pi pi-times"
                         aria-hidden="true"
