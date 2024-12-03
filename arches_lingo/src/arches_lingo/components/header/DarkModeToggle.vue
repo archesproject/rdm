@@ -16,6 +16,7 @@ const isDarkModeEnabled = ref(
 function toggleDarkMode() {
     document.documentElement.classList.toggle(darkModeClass);
     isDarkModeEnabled.value = !isDarkModeEnabled.value;
+    localStorage.setItem(darkModeClass, isDarkModeEnabled.value.toString());
 }
 </script>
 
