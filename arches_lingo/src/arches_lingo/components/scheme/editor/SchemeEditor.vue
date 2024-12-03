@@ -22,9 +22,12 @@ const toggleSize = () => {
 <template>
     <div class="header">
         <div>
-            <h2>{{ $gettext("Scheme Editor Tools") }}</h2>
+            <h3>{{ $gettext("Scheme Editor Tools") }}</h3>
             <div>
-                <Button @click="toggleSize">
+                <Button
+                    :aria-label="$gettext('toggle editor size')"
+                    @click="toggleSize"
+                >
                     <i
                         :class="{
                             pi: true,
@@ -34,7 +37,10 @@ const toggleSize = () => {
                         aria-hidden="true"
                     />
                 </Button>
-                <Button @click="$emit('close')">
+                <Button
+                    :aria-label="$gettext('close editor')"
+                    @click="$emit('close')"
+                >
                     <i
                         class="pi pi-times"
                         aria-hidden="true"

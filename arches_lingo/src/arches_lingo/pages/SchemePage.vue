@@ -9,8 +9,8 @@ import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStanda
 import SchemeAuthority from "@/arches_lingo/components/scheme/report/SchemeAuthority.vue";
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
 
-const editorVisible = ref<boolean>(true);
-const sectionVisible = ref<boolean>(true);
+const editorVisible = ref(true);
+const sectionVisible = ref(true);
 
 const onMaximize = () => {
     editorVisible.value = true;
