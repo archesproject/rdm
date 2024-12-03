@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { useGettext } from "vue3-gettext";
 
 import ToggleButton from "primevue/togglebutton";
@@ -8,25 +8,15 @@ import { DEFAULT_THEME } from "@/arches/themes/default.ts";
 
 const { $gettext } = useGettext();
 
+const darkModeClass = DEFAULT_THEME.theme.options.darkModeSelector.substring(1);
 const isDarkModeEnabled = ref(
-    window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches,
+    document.documentElement.classList.contains(darkModeClass),
 );
 
 function toggleDarkMode() {
-    const element = document.querySelector("html");
-    // Remove the leading dot from the selector to get class name.
-    element!.classList.toggle(
-        DEFAULT_THEME.theme.options.darkModeSelector.substring(1),
-    );
+    document.documentElement.classList.toggle(darkModeClass);
     isDarkModeEnabled.value = !isDarkModeEnabled.value;
 }
-
-onMounted(() => {
-    if (isDarkModeEnabled.value) {
-        toggleDarkMode();
-    }
-});
 </script>
 
 <template>
