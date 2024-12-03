@@ -263,11 +263,6 @@ await initializeTree();
                     },
                 },
             },
-            pcFilterIconContainer: {
-                root: {
-                    style: { top: '30%' },
-                },
-            },
             nodeIcon: ({ instance }: TreePassThroughMethodOptions) => {
                 return { ariaLabel: instance.node.iconLabel };
             },
