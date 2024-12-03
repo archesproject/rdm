@@ -18,6 +18,7 @@ from arches_lingo.views.api.pythonic_models import (
 
 urlpatterns = [
     path("", LingoRootView.as_view(), name="root"),
+    path("scheme/<uuid:id>", LingoRootView.as_view(), name="scheme-root"),
     path("login", LingoRootView.as_view(), name="login"),
     path("advanced-search", LingoRootView.as_view(), name="advanced-search"),
     path("schemes", LingoRootView.as_view(), name="schemes"),

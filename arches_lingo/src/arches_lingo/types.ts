@@ -1,6 +1,6 @@
 import type { Ref } from "vue";
 import type { TreeNode } from "primevue/treenode";
-import type { Label } from "@/arches_vue_utils/types";
+import type { Label } from "@/arches_vue_utils/types.ts";
 
 export interface User {
     first_name: string;
