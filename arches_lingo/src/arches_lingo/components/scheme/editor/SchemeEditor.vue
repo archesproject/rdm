@@ -9,26 +9,19 @@ import TabPanels from "primevue/tabpanels";
 import TabPanel from "primevue/tabpanel";
 import SchemeNamespace from "../report/SchemeNamespace.vue";
 import { onBeforeUpdate, onUpdated, ref } from "vue";
-import type { DataComponentMode } from "@/arches_lingo/types";
+
+type sectionTypes = typeof SchemeNamespace;
 
 const { $gettext } = useGettext();
-
+const EDIT = "edit";
 const props = defineProps<{
     editorMax: boolean;
     activeTab: string;
 }>();
-type sectionTypes = typeof SchemeNamespace;
 const childRefs = ref<Array<sectionTypes>>([]);
-const editMode: DataComponentMode = "edit";
 const schemeComponents = [
     {
         component: SchemeNamespace,
-        props: {
-            mode: editMode,
-        },
-        on: {
-            update: onUpdated,
-        },
         id: "namespace",
         editorTabName: $gettext("Scheme Namespace"),
     },
@@ -37,36 +30,31 @@ const schemeComponents = [
 const emit = defineEmits(["maximize", "side", "close", "updated"]);
 
 
-const toggleSize = () => {
+onBeforeUpdate(() => {
+    childRefs.value = [];
+});
+
+function toggleSize() {
     if (props.editorMax) {
         emit("maximize");
     } else {
         emit("side");
     }
-};
+}
 
-schemeComponents.map((x) => {
-    x.props.mode = "edit";
-});
-
-const getRef = (el: object | null, index: number) => {
+function getRef(el: object | null, index: number) {
     if (el != null) childRefs.value[index] = el as sectionTypes;
-};
+}
 
-onBeforeUpdate(() => {
-    childRefs.value = [];
-});
-
-const updateScheme = async () => {
+async function updateScheme() {
     await Promise.all(
         childRefs.value.map(async (ref) => {
             return ref.save();
         }),
     );
 
-    emit('updated');
-};
-
+    emit("updated");
+}
 </script>
 
 <template>
@@ -120,9 +108,9 @@ const updateScheme = async () => {
                         <TabPanel :value="component.id">
                             <component
                                 :is="component.component"
-                                v-bind="component.props"
+                                v-bind="{ mode: EDIT }"
                                 :ref="(el) => getRef(el, index)"
-                                v-on="component.on"
+                                v-on="onUpdated"
                             />
                         </TabPanel>
                     </template>

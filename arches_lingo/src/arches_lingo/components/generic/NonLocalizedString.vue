@@ -1,15 +1,12 @@
-<script lang="ts">
-const UPDATE = "update";
-</script>
 <script setup lang="ts">
 import NonLocalizedStringViewer from "@/arches_lingo/components/generic/NonLocalizedStringViewer.vue";
-import NonLocalizedStringEditor from "@/arches_lingo/components/generic//NonLocalizedStringEditor.vue";
+import NonLocalizedStringEditor from "@/arches_lingo/components/generic/NonLocalizedStringEditor.vue";
 
 type DataComponentMode = "edit" | "view";
 const props = defineProps<{ mode?: DataComponentMode; value?: string }>();
-const emits = defineEmits([UPDATE]);
+const emits = defineEmits(["update"]);
 const onUpdate = (val: string) => {
-    emits(UPDATE, val);
+    emits("update", val);
 };
 </script>
 <template>

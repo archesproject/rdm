@@ -19,30 +19,32 @@ import type {
 } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
-
 const schemeNamespace = ref<SchemeNamespace>();
 const route = useRoute();
+
 defineProps<{
     mode?: DataComponentMode;
 }>();
-defineEmits([OPEN_EDITOR]);
 
-const save = async () => {
-    await updateSchemeNamespace(
-        route.params.id as string,
-        schemeNamespace.value as SchemeNamespace,
-    );
-};
-const getSectionValue = async () => {
-    const response = await fetchSchemeNamespace(route.params.id as string);
-    schemeNamespace.value = response;
-};
+defineEmits([OPEN_EDITOR]);
 
 defineExpose({ save, getSectionValue });
 
 onMounted(async () => {
     getSectionValue();
 });
+
+async function save() {
+    await updateSchemeNamespace(
+        route.params.id as string,
+        schemeNamespace.value as SchemeNamespace,
+    );
+}
+
+async function getSectionValue() {
+    const response = await fetchSchemeNamespace(route.params.id as string);
+    schemeNamespace.value = response;
+}
 
 const onNamespaceNameUpdate = (val: string) => {
     const namespaceValue = schemeNamespace.value as SchemeNamespaceUpdate;
