@@ -2,6 +2,8 @@
 import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
 
+defineEmits(["openEditor"]);
+
 const { $gettext } = useGettext();
 const props = defineProps<{
     titleText: string;
