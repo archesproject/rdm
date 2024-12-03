@@ -11,7 +11,7 @@ const props = defineProps<{
 <template>
     <div class="section">
         <div class="header">
-            <h2>{{ props.titleText }}</h2>
+            <h3>{{ props.titleText }}</h3>
             <div>
                 <Button
                     :label="$gettext(`Add ${props.titleText}`)"
@@ -34,7 +34,7 @@ const props = defineProps<{
     align-items: center;
     border-bottom: 1px solid var(--p-menubar-border-color);
 }
-.section .header h2 {
+.section .header h3 {
     flex: 1;
 }
 .content {
