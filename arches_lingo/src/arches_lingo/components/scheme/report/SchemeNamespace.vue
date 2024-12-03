@@ -1,6 +1,3 @@
-<script lang="ts">
-const OPEN_EDITOR = "openEditor";
-</script>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -19,6 +16,8 @@ import type {
 } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
+const VIEW = "view";
+const EDIT = "edit";
 const schemeNamespace = ref<SchemeNamespace>();
 const route = useRoute();
 
@@ -26,7 +25,7 @@ defineProps<{
     mode?: DataComponentMode;
 }>();
 
-defineEmits([OPEN_EDITOR]);
+defineEmits(["openEditor"]);
 
 defineExpose({ save, getSectionValue });
 
@@ -62,23 +61,23 @@ const onNamespaceNameUpdate = (val: string) => {
 
 <template>
     <div>
-        <div v-if="!mode || mode === 'view'">
+        <div v-if="!mode || mode === VIEW">
             <SchemeReportSection
                 :title-text="$gettext('Scheme Namespace')"
-                @open-editor="$emit(OPEN_EDITOR)"
+                @open-editor="$emit('openEditor')"
             >
                 <NonLocalizedString
                     :value="schemeNamespace?.namespace?.namespace_name"
-                    mode="view"
+                    :mode="VIEW"
                 />
                 <!-- Discussion of namespace_type indicated it should not be displayed or edited manually,
                  if this changes, the ControlledListItem widget can be used.-->
             </SchemeReportSection>
         </div>
-        <div v-if="mode === 'edit'">
+        <div v-if="mode === EDIT">
             <NonLocalizedString
                 :value="schemeNamespace?.namespace?.namespace_name ?? ''"
-                mode="edit"
+                :mode="EDIT"
                 @update="onNamespaceNameUpdate"
             />
         </div>

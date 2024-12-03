@@ -29,7 +29,6 @@ const schemeComponents = [
 
 const emit = defineEmits(["maximize", "side", "close", "updated"]);
 
-
 onBeforeUpdate(() => {
     childRefs.value = [];
 });

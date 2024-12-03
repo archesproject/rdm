@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { ControlledListItem } from "@/arches_lingo/types";
 import ControlledListItemViewer from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
+
 const VIEW = "view";
 const EDIT = "edit";
 
-type DataComponentMode = "edit" | "view";
+type DataComponentMode = typeof EDIT | typeof VIEW;
 
 const props = defineProps<{
     mode?: DataComponentMode;
