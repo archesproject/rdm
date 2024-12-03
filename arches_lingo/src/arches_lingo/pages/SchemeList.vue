@@ -13,31 +13,29 @@ onMounted(async () => {
 </script>
 
 <template>
-    <Suspense>
-        <div>
-            <ul
-                style="
-                    display: flex;
-                    flex-wrap: wrap;
-                    list-style-type: none;
-                    padding: 0;
-                "
+    <div>
+        <ul
+            style="
+                display: flex;
+                flex-wrap: wrap;
+                list-style-type: none;
+                padding: 0;
+            "
+        >
+            <!-- Create New Scheme -->
+            <li class="scheme-card new-scheme-card">
+                Placeholder for creating new scheme
+            </li>
+            <!-- Existing Schemes -->
+            <li
+                v-for="scheme in schemes"
+                :key="scheme.resourceinstanceid"
+                class="scheme-card"
             >
-                <!-- Create New Scheme -->
-                <li class="scheme-card new-scheme-card">
-                    Placeholder for creating new scheme
-                </li>
-                <!-- Existing Schemes -->
-                <li
-                    v-for="scheme in schemes"
-                    :key="scheme.resourceinstanceid"
-                    class="scheme-card"
-                >
-                    <SchemeCard :scheme="scheme" />
-                </li>
-            </ul>
-        </div>
-    </Suspense>
+                <SchemeCard :scheme="scheme" />
+            </li>
+        </ul>
+    </div>
 </template>
 
 <style scoped>
