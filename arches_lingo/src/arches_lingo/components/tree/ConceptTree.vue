@@ -25,7 +25,11 @@ import TreeRow from "@/arches_lingo/components/tree/TreeRow.vue";
 
 import type { ComponentPublicInstance, Ref } from "vue";
 import type { RouteLocationNormalizedLoadedGeneric } from "vue-router";
-import type { TreeExpandedKeys, TreeSelectionKeys } from "primevue/tree";
+import type {
+    TreePassThroughMethodOptions,
+    TreeExpandedKeys,
+    TreeSelectionKeys,
+} from "primevue/tree";
 import type { TreeNode } from "primevue/treenode";
 import type { Language } from "@/arches_vue_utils/types";
 import type {
@@ -263,6 +267,9 @@ await initializeTree();
                 root: {
                     style: { top: '30%' },
                 },
+            },
+            nodeIcon: ({ instance }: TreePassThroughMethodOptions) => {
+                return { ariaLabel: instance.node.iconLabel };
             },
             nodeLabel: {
                 style: { textWrap: 'nowrap' },
