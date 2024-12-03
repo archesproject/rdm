@@ -2,13 +2,12 @@
 import { ref } from "vue";
 import { useGettext } from "vue3-gettext";
 
+import { Theme } from "@primeuix/styled";
 import ToggleButton from "primevue/togglebutton";
-
-import { DEFAULT_THEME } from "@/arches/themes/default.ts";
 
 const { $gettext } = useGettext();
 
-const darkModeClass = DEFAULT_THEME.theme.options.darkModeSelector.substring(1);
+const darkModeClass = Theme.options.darkModeSelector.substring(1);
 const isDarkModeEnabled = ref(
     document.documentElement.classList.contains(darkModeClass),
 );
@@ -16,7 +15,10 @@ const isDarkModeEnabled = ref(
 function toggleDarkMode() {
     document.documentElement.classList.toggle(darkModeClass);
     isDarkModeEnabled.value = !isDarkModeEnabled.value;
-    localStorage.setItem(darkModeClass, isDarkModeEnabled.value.toString());
+    localStorage.setItem(
+        `arches.${darkModeClass}`,
+        isDarkModeEnabled.value.toString(),
+    );
 }
 </script>
 
