@@ -52,7 +52,7 @@ const toggleSize = () => {
 </template>
 <style scoped>
 .header {
-    background-color: #ddd;
+    background-color: var(--p-surface-200);
 }
 .header div {
     margin: 0 1rem;
