@@ -3393,20 +3393,13 @@
                 {
                     "card_id": "5b8894b3-48aa-11ee-8a8d-11afefc4bff7",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Namespace Name",
                         "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
+                        "placeholder": "Enter text",
                         "uneditable": false,
                         "width": "100%"
                     },
@@ -3417,7 +3410,7 @@
                     "node_id": "5b8894c0-48aa-11ee-8a8d-11afefc4bff7",
                     "sortorder": 0,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "5b8894b6-48aa-11ee-8a8d-11afefc4bff7",

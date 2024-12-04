@@ -1,5 +1,6 @@
 import arches from "arches";
 import Cookies from "js-cookie";
+import type { SchemeNamespace } from "@/arches_lingo/types";
 
 function getToken() {
     const token = Cookies.get("csrftoken");
@@ -32,6 +33,30 @@ export const logout = async () => {
 
 export const fetchUser = async () => {
     const response = await fetch(arches.urls.api_user);
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const fetchSchemeNamespace = async (schemeId: string) => {
+    const response = await fetch(arches.urls.api_uri_namespace(schemeId));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const updateSchemeNamespace = async (
+    schemeId: string,
+    schemeNamespace: SchemeNamespace,
+) => {
+    const response = await fetch(arches.urls.api_uri_namespace(schemeId), {
+        method: "PATCH",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(schemeNamespace),
+    });
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;

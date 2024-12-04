@@ -18,6 +18,14 @@ class SchemeSerializer(ArchesModelSerializer):
         fields = "__all__"
 
 
+class SchemeNamespaceSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = "scheme"
+        nodegroups = ["namespace"]
+        fields = "__all__"
+
+
 class ConceptStatementSerializer(ArchesTileSerializer):
     class Meta:
         model = TileModel

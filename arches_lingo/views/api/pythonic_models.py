@@ -5,6 +5,7 @@ from arches.app.views.api.mixins import ArchesModelAPIMixin
 
 from arches_lingo.serializers import (
     ConceptSerializer,
+    SchemeNamespaceSerializer,
     SchemeSerializer,
     ConceptStatementSerializer,
     SchemeStatementSerializer,
@@ -34,6 +35,11 @@ class SchemeStatementDetailView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIVie
 class ConceptListCreateView(ArchesModelAPIMixin, ListCreateAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = ConceptSerializer
+
+
+class SchemeNamespaceView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeNamespaceSerializer
 
 
 class ConceptDetailView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
