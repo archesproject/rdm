@@ -3,34 +3,30 @@ import { onMounted, ref } from "vue";
 import SchemeCard from "@/arches_lingo/components/scheme/SchemeCard.vue";
 import { fetchSchemes } from "@/arches_lingo/api.ts";
 
-import type { SchemeDescriptor } from "@/arches_lingo/types";
+import type { SchemeResource } from "@/arches_lingo/types";
 
-const schemes = ref<SchemeDescriptor[]>([]);
+const schemes = ref<SchemeResource[]>([]);
 
 onMounted(async () => {
     schemes.value = await fetchSchemes();
+    schemes.value.unshift({
+        resourceinstanceid: "placeholder-id",
+        descriptors: {
+            en: {
+                name: "Create a new scheme",
+                description: "This is a placeholder to create a new scheme",
+            },
+        },
+    } as SchemeResource);
 });
 </script>
 
 <template>
     <div>
-        <ul
-            style="
-                display: flex;
-                flex-wrap: wrap;
-                list-style-type: none;
-                padding: 0;
-            "
-        >
-            <!-- Create New Scheme -->
-            <li class="scheme-card new-scheme-card">
-                Placeholder for creating new scheme
-            </li>
-            <!-- Existing Schemes -->
+        <ul class="scheme-cards">
             <li
                 v-for="scheme in schemes"
                 :key="scheme.resourceinstanceid"
-                class="scheme-card"
             >
                 <SchemeCard :scheme="scheme" />
             </li>
@@ -39,20 +35,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.scheme-card {
-    margin: 0.5rem;
-    padding: 1rem;
-    border: 0.0625rem solid var(--p-menubar-border-color);
-    background-color: var(--p-primary-400);
-    width: 15rem;
-    height: 15rem;
+.scheme-cards {
     display: flex;
-}
-.scheme-card:hover {
-    background-color: var(--p-button-primary-hover-background);
-    cursor: pointer;
-}
-.new-scheme-card {
-    text-align: center;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
 }
 </style>

@@ -66,7 +66,7 @@ export interface SchemeNamespace {
 
 export type DataComponentMode = "edit" | "view";
 
-export interface SchemeDescriptor {
+export interface SchemeResource {
     resourceinstanceid: string;
     descriptors: {
         [key: string]: {
@@ -74,6 +74,11 @@ export interface SchemeDescriptor {
             description: string;
         };
     };
+}
+
+export interface ResourceDescriptor {
+    name: string;
+    description: string;
 }
 
 export interface NodeAndParentInstruction {
