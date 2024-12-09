@@ -1,14 +1,34 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useGettext } from "vue3-gettext";
+
+import { useToast } from "primevue/usetoast";
+import {
+    DEFAULT_ERROR_TOAST_LIFE,
+    ERROR,
+} from "@/arches_references/constants.ts";
+
 import SchemeCard from "@/arches_lingo/components/scheme/SchemeCard.vue";
 import { fetchSchemes } from "@/arches_lingo/api.ts";
 
 import type { SchemeResource } from "@/arches_lingo/types";
 
+const toast = useToast();
+const { $gettext } = useGettext();
+
 const schemes = ref<SchemeResource[]>([]);
 
 onMounted(async () => {
-    schemes.value = await fetchSchemes();
+    try {
+        schemes.value = await fetchSchemes();
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            life: DEFAULT_ERROR_TOAST_LIFE,
+            summary: $gettext("Unable to fetch schemes"),
+            detail: error instanceof Error ? error.message : undefined,
+        });
+    }
     schemes.value.unshift({
         resourceinstanceid: "placeholder-id",
         descriptors: {
@@ -17,7 +37,7 @@ onMounted(async () => {
                 description: "This is a placeholder to create a new scheme",
             },
         },
-    } as SchemeResource);
+    });
 });
 </script>
 

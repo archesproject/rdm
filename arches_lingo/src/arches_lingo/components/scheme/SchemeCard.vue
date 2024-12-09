@@ -13,22 +13,18 @@ const schemeURL = {
     name: routeNames.scheme,
     params: { id: scheme.resourceinstanceid },
 };
-const schemeDescriptor: ResourceDescriptor = (() => {
-    const descriptors = scheme.descriptors;
-    if (!scheme) {
-        return {
-            name: "",
-            description: "",
-        };
-    }
+
+const descriptors = scheme.descriptors;
+let schemeDescriptor: ResourceDescriptor = {
+    name: "",
+    description: "",
+};
+if (descriptors) {
     const descriptor =
-        descriptors[systemLanguage.code] ??
-        descriptors[Object.keys(descriptors)[0]];
-    return {
-        name: descriptor.name ?? "",
-        description: descriptor.description ?? "",
-    };
-})();
+        descriptors[systemLanguage.code] ?? Object.values(descriptors)[0];
+    schemeDescriptor.name = descriptor.name ?? "";
+    schemeDescriptor.description = descriptor.description ?? "";
+}
 </script>
 
 <template>
