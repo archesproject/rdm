@@ -9,7 +9,7 @@ import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStanda
 import SchemeAuthority from "@/arches_lingo/components/scheme/report/SchemeAuthority.vue";
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
 
-const editorVisible = ref(true);
+const editorVisible = ref(false);
 const sectionVisible = ref(true);
 const editorTab = ref<string>();
 type sectionTypes =
