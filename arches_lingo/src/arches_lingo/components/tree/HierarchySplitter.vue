@@ -46,7 +46,7 @@ const setDisplayedRow = (val: Concept | Scheme | null) => {
 // @ts-expect-error vue-tsc doesn't like arbitrary properties here
 provide(displayedRowKey, { displayedRow, setDisplayedRow });
 
-const showHierarchy = ref(true);
+const showHierarchy = ref(false);
 </script>
 
 <template>
