@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onBeforeUpdate, onUpdated, ref } from "vue";
 import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
 
@@ -7,19 +8,25 @@ import TabList from "primevue/tablist";
 import Tab from "primevue/tab";
 import TabPanels from "primevue/tabpanels";
 import TabPanel from "primevue/tabpanel";
-import SchemeNamespace from "../report/SchemeNamespace.vue";
-import { onBeforeUpdate, onUpdated, ref } from "vue";
-import SchemeStandard from "../report/SchemeStandard.vue";
-type sectionTypes = typeof SchemeNamespace;
+import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
+import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
+import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
+import type { SectionTypes } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
 const EDIT = "edit";
 const props = defineProps<{
     editorMax: boolean;
     activeTab: string;
+    tileId?: string;
 }>();
-const childRefs = ref<Array<sectionTypes>>([]);
+const childRefs = ref<Array<SectionTypes>>([]);
 const schemeComponents = [
+    {
+        component: SchemeLabel,
+        id: "label",
+        editorTabName: $gettext("Scheme Label"),
+    },
     {
         component: SchemeNamespace,
         id: "namespace",
@@ -47,7 +54,7 @@ function toggleSize() {
 }
 
 function getRef(el: object | null, index: number) {
-    if (el != null) childRefs.value[index] = el as sectionTypes;
+    if (el != null) childRefs.value[index] = el as SectionTypes;
 }
 
 async function updateScheme() {
@@ -111,7 +118,7 @@ async function updateScheme() {
                     <TabPanel :value="component.id">
                         <component
                             :is="component.component"
-                            v-bind="{ mode: EDIT }"
+                            v-bind="{ mode: EDIT, tileId: props.tileId }"
                             :ref="(el) => getRef(el, index)"
                             v-on="{ updated: onUpdated }"
                         />
