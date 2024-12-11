@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import NonLocalizedStringViewer from "@/arches_lingo/components/generic/NonLocalizedStringViewer.vue";
 import NonLocalizedStringEditor from "@/arches_lingo/components/generic/NonLocalizedStringEditor.vue";
+import type { DataComponentMode } from "@/arches_lingo/types.ts";
+import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
-const EDIT = "edit";
-const VIEW = "view";
-
-type DataComponentMode = typeof EDIT | typeof VIEW;
-const props = defineProps<{ mode?: DataComponentMode; value?: string }>();
+const { mode = EDIT } = defineProps<{
+    mode?: DataComponentMode;
+    value?: string;
+}>();
 const emits = defineEmits(["update"]);
 const onUpdate = (val: string) => {
     emits("update", val);
@@ -14,12 +15,12 @@ const onUpdate = (val: string) => {
 </script>
 <template>
     <div>
-        <div v-if="!props.mode || props.mode === VIEW">
-            <NonLocalizedStringViewer :value="props.value ?? ''" />
+        <div v-if="mode === VIEW">
+            <NonLocalizedStringViewer :value="value ?? ''" />
         </div>
-        <div v-if="props.mode === EDIT">
+        <div v-if="mode === EDIT">
             <NonLocalizedStringEditor
-                :value="props.value ?? ''"
+                :value="value ?? ''"
                 @update="onUpdate"
             />
         </div>

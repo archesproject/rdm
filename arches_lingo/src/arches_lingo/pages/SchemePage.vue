@@ -60,38 +60,36 @@ const getRef = (el: object | null, index: number) => {
 </script>
 
 <template>
-    <div>
-        <Splitter>
-            <SplitterPanel
-                v-if="sectionVisible"
-                size="75"
+    <Splitter>
+        <SplitterPanel
+            v-if="sectionVisible"
+            :size="75"
+        >
+            <template
+                v-for="(component, index) in components"
+                :key="component.id"
             >
-                <template
-                    v-for="(component, index) in components"
-                    :key="component.id"
-                >
-                    <component
-                        :is="component.component"
-                        :ref="(el) => getRef(el, index)"
-                        v-bind="component.props"
-                        @open-editor="onOpenEditor(component.id)"
-                    />
-                </template>
-            </SplitterPanel>
-            <SplitterPanel
-                v-if="editorVisible"
-                size="25"
-            >
-                <SchemeEditor
-                    v-if="editorTab"
-                    :editor-max="sectionVisible"
-                    :active-tab="editorTab"
-                    @maximize="onMaximize"
-                    @side="onSide"
-                    @close="onClose"
-                    @updated="onUpdated"
+                <component
+                    :is="component.component"
+                    :ref="(el) => getRef(el, index)"
+                    v-bind="component.props"
+                    @open-editor="onOpenEditor(component.id)"
                 />
-            </SplitterPanel>
-        </Splitter>
-    </div>
+            </template>
+        </SplitterPanel>
+        <SplitterPanel
+            v-if="editorVisible"
+            :size="25"
+        >
+            <SchemeEditor
+                v-if="editorTab"
+                :editor-max="sectionVisible"
+                :active-tab="editorTab"
+                @maximize="onMaximize"
+                @side="onSide"
+                @close="onClose"
+                @updated="onUpdated"
+            />
+        </SplitterPanel>
+    </Splitter>
 </template>
