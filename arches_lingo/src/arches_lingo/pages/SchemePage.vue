@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
+import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
 import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
 import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
@@ -13,6 +14,7 @@ const editorVisible = ref(false);
 const sectionVisible = ref(true);
 const editorTab = ref<string>();
 type sectionTypes =
+    | typeof SchemeLabel
     | typeof SchemeNamespace
     | typeof SchemeLicense
     | typeof SchemeStandard
@@ -47,6 +49,7 @@ const onUpdated = () => {
 };
 
 const components = [
+    { component: SchemeLabel, id: "label", props: {} },
     { component: SchemeNote, id: "note", props: {} },
     { component: SchemeAuthority, id: "authority", props: {} },
     { component: SchemeStandard, id: "standard", props: {} },

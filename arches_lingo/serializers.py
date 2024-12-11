@@ -34,6 +34,14 @@ class SchemeCreationSerializer(ArchesModelSerializer):
         fields = "__all__"
 
 
+class SchemeLabelSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = "scheme"
+        nodegroups = ["label"]
+        fields = "__all__"
+
+
 class TextualWorkRdmSystemSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance

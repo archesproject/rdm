@@ -54,6 +54,11 @@ urlpatterns = [
         name="api-scheme-creation",
     ),
     path(
+        "api/scheme/<uuid:pk>/label",
+        SchemeCreationView.as_view(),
+        name="api-scheme-creation",
+    ),
+    path(
         "api/textual-work",
         TextualWorkRdmSystemSerializerView.as_view(),
         name="api-textualwork-list",
