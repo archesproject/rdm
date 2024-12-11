@@ -38,7 +38,7 @@ class SchemeLabelSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance
         graph_slug = "scheme"
-        nodegroups = ["label"]
+        nodegroups = ["appellative_status"]
         fields = "__all__"
 
 

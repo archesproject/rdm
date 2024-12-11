@@ -59,6 +59,13 @@ export const fetchSchemeCreation = async (schemeId: string) => {
     return parsed;
 };
 
+export const fetchSchemeLabel = async (schemeId: string) => {
+    const response = await fetch(arches.urls.api_scheme_label(schemeId));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const updateSchemeCreation = async (
     schemeId: string,
     schemeInstance: SchemeInstance,

@@ -1,34 +1,22 @@
 <script setup lang="ts">
 import { useGettext } from "vue3-gettext";
-import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
-import { VIEW, EDIT } from "@/arches_lingo/constants.ts";
-import type { DataComponentMode } from "@/arches_lingo/types";
 
-//todo: replace dummy data with actual data
-const labels = ref([
-    {
-        code: "1",
-        name: "label 1",
-        category: "category 1",
-        quantity: "1",
-    },
-    {
-        code: "2",
-        name: "label 2",
-        category: "category 2",
-        quantity: "2",
-    },
-    {
-        code: "3",
-        name: "label 3",
-        category: "category 3",
-        quantity: "3",
-    },
-]);
+import { VIEW, EDIT, OPEN_EDITOR } from "@/arches_lingo/constants.ts";
+import type {
+    DataComponentMode,
+    SchemeInstance,
+} from "@/arches_lingo/types.ts";
+import { fetchSchemeLabel } from "@/arches_lingo/api.ts";
+import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
+
+const schemeInstance = ref<SchemeInstance>();
 const { $gettext } = useGettext();
+const route = useRoute();
 
 defineProps<{
     mode?: DataComponentMode;
@@ -36,12 +24,19 @@ defineProps<{
 
 defineExpose({ save, getSectionValue });
 
+const emits = defineEmits([OPEN_EDITOR]);
+
+onMounted(async () => {
+    getSectionValue();
+});
+
 async function getSectionValue() {
-    // todo: this function is for both of us, I'll implement it tomorrow (you should be able to work on the UI for the form and widgets with dummy data for now).
-    // This is the current value of the label nodegroup that will be passed
-    // via prop to both components.  Note - per ticket #146 I will probably be genericizing the label viewer component for use by other nodegroups.
-    // you will likely need to do the same.    You will need to emit an update event from your component(s) and have a ref to that here, then actually
-    // save that value with the save function below.
+    const result = await fetchSchemeLabel(route.params.id as string);
+    schemeInstance.value = {
+        appellative_status: result.appellative_status,
+    };
+
+    //schemeAsLabelTable(scheme)
 }
 
 async function save() {
@@ -55,26 +50,25 @@ async function save() {
 
 <template>
     <div v-if="!mode || mode === VIEW">
-        <SchemeReportSection :title-text="$gettext('Scheme Labels')">
+        <SchemeReportSection
+            :title-text="$gettext('Scheme Labels')"
+            @open-editor="emits(OPEN_EDITOR)"
+        >
             <DataTable
-                :value="labels"
+                :value="schemeInstance?.appellative_status"
                 table-style="min-width: 50rem"
             >
                 <Column
-                    field="code"
-                    header="Code"
+                    field="appellative_status_ascribed_name_content"
+                    header="Label"
                 ></Column>
                 <Column
-                    field="name"
-                    header="Name"
+                    field="type"
+                    header="Label Type"
                 ></Column>
                 <Column
-                    field="category"
-                    header="Category"
-                ></Column>
-                <Column
-                    field="quantity"
-                    header="Quantity"
+                    field="language"
+                    header="Label Language"
                 ></Column>
             </DataTable>
         </SchemeReportSection>

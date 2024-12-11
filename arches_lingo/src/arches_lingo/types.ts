@@ -80,6 +80,13 @@ export interface SchemeInstance {
     creation?: {
         creation_sources: ResourceInstanceReference[];
     };
+    appellative_status?: {
+        appellative_status_ascribed_name_content: string;
+        appellative_status_ascribed_name_language?: ControlledListItemValue[];
+        appellative_status_ascribed_relation?: ControlledListItemValue[];
+        appellative_status_status_metatype?: ControlledListItemValue[];
+        appellative_status_status?: ControlledListItemValue[];
+    }[];
 }
 
 export interface SchemeResource {
