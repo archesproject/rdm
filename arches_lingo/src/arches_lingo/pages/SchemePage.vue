@@ -13,6 +13,8 @@ import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.v
 const editorVisible = ref(false);
 const sectionVisible = ref(true);
 const editorTab = ref<string>();
+const activeEditorArgs = ref<Array<object>>([]);
+
 type sectionTypes =
     | typeof SchemeLabel
     | typeof SchemeNamespace
@@ -37,10 +39,11 @@ const onClose = () => {
     sectionVisible.value = true;
 };
 
-const onOpenEditor = (tab: string) => {
+const onOpenEditor = (tab: string, ...args: object[]) => {
     editorTab.value = tab;
     editorVisible.value = true;
     sectionVisible.value = true;
+    activeEditorArgs.value = args;
 };
 const onUpdated = () => {
     childRefs.value.forEach((ref) => {
@@ -76,7 +79,10 @@ const getRef = (el: object | null, index: number) => {
                     :is="component.component"
                     :ref="(el) => getRef(el, index)"
                     v-bind="component.props"
-                    @open-editor="onOpenEditor(component.id)"
+                    @open-editor="
+                        (...args: object[]) =>
+                            onOpenEditor(component.id, ...args)
+                    "
                 />
             </template>
         </SplitterPanel>
@@ -88,6 +94,7 @@ const getRef = (el: object | null, index: number) => {
                 v-if="editorTab"
                 :editor-max="sectionVisible"
                 :active-tab="editorTab"
+                :active-args="activeEditorArgs"
                 @maximize="onMaximize"
                 @side="onSide"
                 @close="onClose"

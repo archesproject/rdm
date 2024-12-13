@@ -3,9 +3,6 @@ import { useGettext } from "vue3-gettext";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
-
 import { VIEW, EDIT, OPEN_EDITOR } from "@/arches_lingo/constants.ts";
 import type {
     DataComponentMode,
@@ -13,14 +10,22 @@ import type {
 } from "@/arches_lingo/types.ts";
 import { fetchSchemeLabel } from "@/arches_lingo/api.ts";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
+import LabelViewer from "@/arches_lingo/components/generic/LabelViewer.vue";
 
 const schemeInstance = ref<SchemeInstance>();
 const { $gettext } = useGettext();
 const route = useRoute();
 
-defineProps<{
-    mode?: DataComponentMode;
-}>();
+const props = withDefaults(
+    defineProps<{
+        mode?: DataComponentMode;
+        args?: Array<object>;
+    }>(),
+    {
+        mode: VIEW,
+        args: () => [],
+    },
+);
 
 defineExpose({ save, getSectionValue });
 
@@ -30,13 +35,17 @@ onMounted(async () => {
     getSectionValue();
 });
 
+async function deleteLabel() {
+    // deletes label
+    console.log("deleted");
+}
+
 async function getSectionValue() {
+    console.log(props);
     const result = await fetchSchemeLabel(route.params.id as string);
     schemeInstance.value = {
         appellative_status: result.appellative_status,
     };
-
-    //schemeAsLabelTable(scheme)
 }
 
 async function save() {
@@ -54,24 +63,21 @@ async function save() {
             :title-text="$gettext('Scheme Labels')"
             @open-editor="emits(OPEN_EDITOR)"
         >
-            <DataTable
+            <LabelViewer
                 :value="schemeInstance?.appellative_status"
-                table-style="min-width: 50rem"
-            >
-                <Column
-                    field="appellative_status_ascribed_name_content"
-                    header="Label"
-                ></Column>
-                <Column
-                    field="type"
-                    header="Label Type"
-                ></Column>
-                <Column
-                    field="language"
-                    header="Label Language"
-                ></Column>
-            </DataTable>
+                @edit-label="(...args) => emits(OPEN_EDITOR, ...args)"
+                @delete-label="deleteLabel"
+            ></LabelViewer>
         </SchemeReportSection>
     </div>
     <div v-if="mode === EDIT"><!-- todo for Johnathan-->abc</div>
 </template>
+<style scoped>
+:deep(.drawer) {
+    padding: 1rem 2rem;
+}
+
+:deep(.resource-instance-relationship-view) {
+    padding: 0 0.25rem;
+}
+</style>

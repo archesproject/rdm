@@ -29,7 +29,7 @@ const route = useRoute();
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
-defineProps<{
+const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
 }>();
 

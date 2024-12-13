@@ -18,6 +18,7 @@ const EDIT = "edit";
 const props = defineProps<{
     editorMax: boolean;
     activeTab: string;
+    activeArgs: Array<object>;
 }>();
 const childRefs = ref<Array<sectionTypes>>([]);
 const schemeComponents = [
@@ -117,7 +118,7 @@ async function updateScheme() {
                     <TabPanel :value="component.id">
                         <component
                             :is="component.component"
-                            v-bind="{ mode: EDIT }"
+                            v-bind="{ mode: EDIT, args: props.activeArgs }"
                             :ref="(el) => getRef(el, index)"
                             v-on="{ updated: onUpdated }"
                         />
