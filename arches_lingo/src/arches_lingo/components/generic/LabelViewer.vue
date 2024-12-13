@@ -3,20 +3,45 @@ import { ref } from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
+import ConfirmDialog from "primevue/confirmdialog";
+import { useConfirm } from "primevue/useconfirm";
 
 import type { AppellativeStatus } from "@/arches_lingo/types";
 import ControlledListItemViewer from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
 import ResourceInstanceRelationshipsViewer from "@/arches_lingo/components/generic/ResourceInstanceRelationshipsViewer.vue";
 
 const expandedRows = ref([]);
+const confirm = useConfirm();
 
 const props = defineProps<{
     value?: AppellativeStatus[];
 }>();
 
 const emits = defineEmits(["editLabel", "deleteLabel"]);
+
+function confirmDelete(tileId: string) {
+    confirm.require({
+        header: "Confirmation",
+        message: "Are you sure you want to delete this label?",
+        accept: () => {
+            emits("deleteLabel", tileId);
+        },
+        rejectProps: {
+            label: "Cancel",
+            severity: "secondary",
+            outlined: true,
+        },
+        acceptProps: {
+            label: "Delete",
+            severity: "danger",
+        },
+    });
+}
 </script>
 <template>
+    <ConfirmDialog
+        :pt="{ root: { style: { fontFamily: 'sans-serif' } } }"
+    ></ConfirmDialog>
     <DataTable
         v-model:expanded-rows="expandedRows"
         :value="props.value"
@@ -87,10 +112,11 @@ const emits = defineEmits(["editLabel", "deleteLabel"]);
                     <Button
                         icon="pi pi-trash"
                         aria-label="delete"
+                        severity="danger"
+                        outlined
                         @click="
                             () =>
-                                emits(
-                                    'deleteLabel',
+                                confirmDelete(
                                     (slotProps.data as AppellativeStatus)
                                         .tileid,
                                 )

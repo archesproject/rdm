@@ -8,7 +8,7 @@ import type {
     DataComponentMode,
     SchemeInstance,
 } from "@/arches_lingo/types.ts";
-import { fetchSchemeLabel } from "@/arches_lingo/api.ts";
+import { deleteSchemeLabelTile, fetchSchemeLabel } from "@/arches_lingo/api.ts";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import LabelViewer from "@/arches_lingo/components/generic/LabelViewer.vue";
 
@@ -35,17 +35,27 @@ onMounted(async () => {
     getSectionValue();
 });
 
-async function deleteLabel() {
-    // deletes label
-    console.log("deleted");
-}
-
 async function getSectionValue() {
     console.log(props);
     const result = await fetchSchemeLabel(route.params.id as string);
     schemeInstance.value = {
         appellative_status: result.appellative_status,
     };
+}
+
+async function deleteSectionValue(tileId: string) {
+    const result = await deleteSchemeLabelTile(tileId);
+    if (result) {
+        getSectionValue();
+    }
+}
+
+async function editSectionValue(tileId: string) {
+    schemeInstance.value?.appellative_status?.find((tile) => {
+        if (tile.tileid === tileId) {
+            emits(OPEN_EDITOR, tile);
+        }
+    });
 }
 
 async function save() {
@@ -65,8 +75,8 @@ async function save() {
         >
             <LabelViewer
                 :value="schemeInstance?.appellative_status"
-                @edit-label="(...args) => emits(OPEN_EDITOR, ...args)"
-                @delete-label="deleteLabel"
+                @edit-label="(tileId: string) => editSectionValue(tileId)"
+                @delete-label="(tileId: string) => deleteSectionValue(tileId)"
             ></LabelViewer>
         </SchemeReportSection>
     </div>

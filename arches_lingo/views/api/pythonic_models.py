@@ -11,6 +11,7 @@ from arches_lingo.serializers import (
     ConceptSerializer,
     SchemeCreationSerializer,
     SchemeLabelSerializer,
+    SchemeLabelTileSerializer,
     SchemeNamespaceSerializer,
     SchemeSerializer,
     ConceptStatementSerializer,
@@ -58,6 +59,11 @@ class SchemeCreationView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
 class SchemeLabelView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeLabelSerializer
+
+
+class SchemeLabelTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeLabelTileSerializer
 
 
 class TextualWorkRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):

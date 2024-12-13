@@ -42,6 +42,14 @@ class SchemeLabelSerializer(ArchesModelSerializer):
         fields = "__all__"
 
 
+class SchemeLabelTileSerializer(ArchesTileSerializer):
+    class Meta:
+        model = TileModel
+        graph_slug = "scheme"
+        root_node = "appellative_status"
+        fields = "__all__"
+
+
 class TextualWorkRdmSystemSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance

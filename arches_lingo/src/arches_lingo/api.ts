@@ -66,6 +66,20 @@ export const fetchSchemeLabel = async (schemeId: string) => {
     return parsed;
 };
 
+export const deleteSchemeLabelTile = async (tileId: string) => {
+    const response = await fetch(arches.urls.api_scheme_label_tile(tileId), {
+        method: "DELETE",
+        headers: { "X-CSRFTOKEN": getToken() },
+    });
+
+    if (!response.ok) {
+        const parsed = await response.json();
+        throw new Error(parsed.message || response.statusText);
+    } else {
+        return true;
+    }
+};
+
 export const updateSchemeCreation = async (
     schemeId: string,
     schemeInstance: SchemeInstance,
