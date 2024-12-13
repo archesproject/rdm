@@ -93,3 +93,8 @@ const getRef = (el: object | null, index: number) => {
         </SplitterPanel>
     </Splitter>
 </template>
+<style scoped>
+:deep(.p-splitterpanel) {
+    min-width: 25%;
+}
+</style>
