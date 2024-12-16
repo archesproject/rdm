@@ -11,12 +11,14 @@ import type {
 import { deleteSchemeLabelTile, fetchSchemeLabel } from "@/arches_lingo/api.ts";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import LabelViewer from "@/arches_lingo/components/generic/LabelViewer.vue";
+import { useToast } from "primevue/usetoast";
 
 const schemeInstance = ref<SchemeInstance>();
 const { $gettext } = useGettext();
+const toast = useToast();
 const route = useRoute();
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         mode?: DataComponentMode;
         args?: Array<object>;
@@ -36,7 +38,6 @@ onMounted(async () => {
 });
 
 async function getSectionValue() {
-    console.log(props);
     const result = await fetchSchemeLabel(route.params.id as string);
     schemeInstance.value = {
         appellative_status: result.appellative_status,
@@ -51,11 +52,25 @@ async function deleteSectionValue(tileId: string) {
 }
 
 async function editSectionValue(tileId: string) {
-    schemeInstance.value?.appellative_status?.find((tile) => {
-        if (tile.tileid === tileId) {
-            emits(OPEN_EDITOR, tile);
-        }
-    });
+    const appellativeStatus = schemeInstance.value?.appellative_status?.find(
+        (tile) => {
+            if (tile.tileid === tileId) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+    );
+    if (appellativeStatus && appellativeStatus.tileid === tileId) {
+        emits(OPEN_EDITOR, appellativeStatus);
+    } else {
+        toast.add({
+            severity: "error",
+            summary: $gettext("Error"),
+            detail: $gettext("Could not find the selected label to edit."),
+            life: 3000,
+        });
+    }
 }
 
 async function save() {
