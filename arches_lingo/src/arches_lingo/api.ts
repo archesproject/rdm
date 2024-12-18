@@ -193,3 +193,10 @@ export const fetchSchemes = async () => {
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;
 };
+
+export const fetchControlledListOptions = async (controlledListId: string) => {
+    const response = await fetch(arches.urls.controlled_list(controlledListId));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
