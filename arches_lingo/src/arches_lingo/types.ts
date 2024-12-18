@@ -45,6 +45,7 @@ export interface ControlledListeItemLabelValue {
 }
 
 export interface ControlledListItem {
+    item_id: string;
     list_id: string;
     uri: string;
     sortorder: number;
