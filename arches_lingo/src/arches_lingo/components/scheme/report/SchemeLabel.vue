@@ -2,6 +2,7 @@
 import { useGettext } from "vue3-gettext";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import { useToast } from "primevue/usetoast";
 
 import {
     EDIT,
@@ -10,20 +11,18 @@ import {
     NEW,
     VIEW,
 } from "@/arches_lingo/constants.ts";
+import { deleteSchemeLabelTile, fetchSchemeLabel } from "@/arches_lingo/api.ts";
+import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
+import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
+import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
+import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
+
 import type {
     AppellativeStatus,
     DataComponentMode,
     MetaStringText,
     SchemeInstance,
 } from "@/arches_lingo/types.ts";
-import { deleteSchemeLabelTile, fetchSchemeLabel } from "@/arches_lingo/api.ts";
-import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
-import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
-import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
-import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItem.vue";
-import { useToast } from "primevue/usetoast";
-
-const schemeInstance = ref<SchemeInstance>({});
 const { $gettext } = useGettext();
 const toast = useToast();
 const route = useRoute();
@@ -39,12 +38,16 @@ withDefaults(
     defineProps<{
         mode?: DataComponentMode;
         tileId?: string | null;
+        args?: Array<object>;
+        // todo for Johnathan - if obj empty, create new tile
+        // if obj has values, load those values into the form
     }>(),
     {
         mode: VIEW,
         tileId: null, // editor arg specifying what tile to operate on.
     },
 );
+const schemeInstance = ref<SchemeInstance>();
 
 defineExpose({ getSectionValue });
 
@@ -140,22 +143,22 @@ function editSectionValue(tileId: string) {
                     </span>
                 </template>
                 <template #type="{ rowData }">
-                    <ControlledListItem
+                    <ReferenceDatatype
                         :value="
                             (rowData as AppellativeStatus)
                                 .appellative_status_ascribed_relation
                         "
                     >
-                    </ControlledListItem>
+                    </ReferenceDatatype>
                 </template>
                 <template #language="{ rowData }">
-                    <ControlledListItem
+                    <ReferenceDatatype
                         :value="
                             (rowData as AppellativeStatus)
                                 .appellative_status_ascribed_name_language
                         "
                     >
-                    </ControlledListItem>
+                    </ReferenceDatatype>
                 </template>
                 <template #drawer="{ rowData }">
                     <div>
@@ -180,7 +183,14 @@ function editSectionValue(tileId: string) {
             </MetaStringViewer>
         </SchemeReportSection>
     </div>
-    <div v-if="mode === EDIT"><!-- todo for Johnathan-->abc</div>
+    <div v-if="mode === EDIT">
+        <div
+            v-for="appellative_status in schemeInstance?.appellative_status"
+            :key="appellative_status.tileid"
+        >
+            <LabelEditor :value="appellative_status"></LabelEditor>
+        </div>
+    </div>
 </template>
 <style scoped>
 :deep(.drawer) {
