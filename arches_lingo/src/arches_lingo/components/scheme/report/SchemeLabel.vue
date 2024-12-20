@@ -75,15 +75,15 @@ async function save() {
 </script>
 
 <template>
-    <div v-if="!mode || mode === VIEW">
+    <div v-if="mode === VIEW">
         <SchemeReportSection
             :title-text="$gettext('Scheme Labels')"
             @open-editor="emits(OPEN_EDITOR)"
         >
             <LabelViewer
                 :value="schemeInstance?.appellative_status"
-                @edit-label="(tileId: string) => editSectionValue(tileId)"
-                @delete-label="(tileId: string) => deleteSectionValue(tileId)"
+                @edit-label="editSectionValue"
+                @delete-label="deleteSectionValue"
             ></LabelViewer>
         </SchemeReportSection>
     </div>
