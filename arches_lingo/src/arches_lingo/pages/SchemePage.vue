@@ -79,10 +79,7 @@ const getRef = (el: object | null, index: number) => {
                     :is="component.component"
                     :ref="(el) => getRef(el, index)"
                     v-bind="component.props"
-                    @open-editor="
-                        (...args: object[]) =>
-                            onOpenEditor(component.id, ...args)
-                    "
+                    @open-editor="onOpenEditor"
                 />
             </template>
         </SplitterPanel>

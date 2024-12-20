@@ -21,11 +21,11 @@ const route = useRoute();
 withDefaults(
     defineProps<{
         mode?: DataComponentMode;
-        args?: Array<object>;
+        tileId?: string | null;
     }>(),
     {
         mode: VIEW,
-        args: () => [],
+        tileId: null, // editor arg specifying what tile to operate on.
     },
 );
 
@@ -56,7 +56,7 @@ function editSectionValue(tileId: string) {
         (tile) => tile.tileid === tileId,
     );
     if (appellativeStatus && appellativeStatus.tileid === tileId) {
-        emits(OPEN_EDITOR, appellativeStatus);
+        emits(OPEN_EDITOR, appellativeStatus.tileid);
     } else {
         toast.add({
             summary: $gettext("Error"),
