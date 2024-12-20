@@ -33,7 +33,7 @@ defineExpose({ save, getSectionValue });
 
 const emits = defineEmits([OPEN_EDITOR]);
 
-onMounted(async () => {
+onMounted(() => {
     getSectionValue();
 });
 
@@ -51,24 +51,16 @@ async function deleteSectionValue(tileId: string) {
     }
 }
 
-async function editSectionValue(tileId: string) {
+function editSectionValue(tileId: string) {
     const appellativeStatus = schemeInstance.value?.appellative_status?.find(
-        (tile) => {
-            if (tile.tileid === tileId) {
-                return true;
-            } else {
-                return false;
-            }
-        },
+        (tile) => tile.tileid === tileId,
     );
     if (appellativeStatus && appellativeStatus.tileid === tileId) {
         emits(OPEN_EDITOR, appellativeStatus);
     } else {
         toast.add({
-            severity: "error",
             summary: $gettext("Error"),
             detail: $gettext("Could not find the selected label to edit."),
-            life: 3000,
         });
     }
 }
@@ -100,9 +92,5 @@ async function save() {
 <style scoped>
 :deep(.drawer) {
     padding: 1rem 2rem;
-}
-
-:deep(.resource-instance-relationship-view) {
-    padding: 0 0.25rem;
 }
 </style>

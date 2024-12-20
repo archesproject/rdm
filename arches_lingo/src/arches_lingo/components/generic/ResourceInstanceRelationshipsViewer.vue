@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useGettext } from "vue3-gettext";
-import type { ResourceInstanceReference } from "@/arches_lingo/types";
 import arches from "arches";
+import type { ResourceInstanceReference } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
 
@@ -23,3 +23,9 @@ withDefaults(defineProps<{ value?: ResourceInstanceReference[] }>(), {
     </span>
     <span v-else>{{ $gettext("None") }}</span>
 </template>
+
+<style scoped>
+.resource-instance-relationship-view {
+    padding: 0 0.25rem;
+}
+</style>

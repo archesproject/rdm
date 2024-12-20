@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useGettext } from "vue3-gettext";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
-import type { AppellativeStatus } from "@/arches_lingo/types";
 import ControlledListItemViewer from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
-import ResourceInstanceRelationshipsViewer from "@/arches_lingo/components/generic/ResourceInstanceRelationshipsViewer.vue";
+import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
+import type { AppellativeStatus } from "@/arches_lingo/types";
+
+const { $gettext } = useGettext();
 const expandedRows = ref([]);
 const confirm = useConfirm();
 
@@ -21,8 +24,8 @@ const emits = defineEmits(["editLabel", "deleteLabel"]);
 
 function confirmDelete(tileId: string) {
     confirm.require({
-        header: "Confirmation",
-        message: "Are you sure you want to delete this label?",
+        header: $gettext("Confirmation"),
+        message: $gettext("Are you sure you want to delete this label?"),
         accept: () => {
             emits("deleteLabel", tileId);
         },
@@ -38,6 +41,7 @@ function confirmDelete(tileId: string) {
     });
 }
 </script>
+
 <template>
     <ConfirmDialog
         :pt="{ root: { style: { fontFamily: 'sans-serif' } } }"
@@ -45,7 +49,6 @@ function confirmDelete(tileId: string) {
     <DataTable
         v-model:expanded-rows="expandedRows"
         :value="props.value"
-        onrowexp
         table-style="min-width: 50rem"
     >
         <Column
@@ -99,7 +102,7 @@ function confirmDelete(tileId: string) {
                 <div class="controls">
                     <Button
                         icon="pi pi-file-edit"
-                        aria-label="edit"
+                        :aria-label="$gettext('edit')"
                         @click="
                             () =>
                                 emits(
@@ -111,7 +114,7 @@ function confirmDelete(tileId: string) {
                     />
                     <Button
                         icon="pi pi-trash"
-                        aria-label="delete"
+                        :aria-label="$gettext('delete')"
                         severity="danger"
                         outlined
                         @click="
@@ -128,22 +131,22 @@ function confirmDelete(tileId: string) {
         <template #expansion="slotProps">
             <div class="drawer">
                 <div>
-                    Bibliographic Sources:
-                    <ResourceInstanceRelationshipsViewer
+                    {{ $gettext("Bibliographic Sources") }}:
+                    <ResourceInstanceRelationships
                         :value="
                             (slotProps.data as AppellativeStatus)
                                 .appellative_status_data_assignment_object_used
                         "
-                    ></ResourceInstanceRelationshipsViewer>
+                    ></ResourceInstanceRelationships>
                 </div>
                 <div>
-                    Contributors:
-                    <ResourceInstanceRelationshipsViewer
+                    {{ $gettext("Contributors") }}:
+                    <ResourceInstanceRelationships
                         :value="
                             (slotProps.data as AppellativeStatus)
                                 .appellative_status_data_assignment_actor
                         "
-                    ></ResourceInstanceRelationshipsViewer>
+                    ></ResourceInstanceRelationships>
                 </div>
             </div>
         </template>
