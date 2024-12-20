@@ -149,6 +149,9 @@ export interface SchemeInstance {
     };
     appellative_status?: AppellativeStatus[];
     statement?: SchemeStatement[];
+    rights?: {
+        right_holder: ResourceInstanceReference[];
+    };
 }
 
 export interface SchemeResource {

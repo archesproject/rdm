@@ -21,5 +21,6 @@
     api_textualwork_list="{% url 'api-textualwork-list' %}"
     api_group_list="{% url 'api-group-list' %}"
     api_person_list="{% url 'api-person-list' %}"
+    api_scheme_rights='(pluginid)=>{return "{% url "api-scheme-rights" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" %}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", pluginid)}'
 ></div>
 {% endblock arches_urls %}

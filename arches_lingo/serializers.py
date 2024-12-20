@@ -38,6 +38,12 @@ class SchemeCreationSerializer(ArchesModelSerializer):
         nodegroups = ["creation"]
         fields = "__all__"
 
+class SchemeRightsSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = "scheme"
+        nodegroups = ["rights"]
+        fields = "__all__"
 
 class SchemeLabelSerializer(ArchesModelSerializer):
     class Meta:
@@ -119,6 +125,22 @@ class TextualWorkRdmSystemSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance
         graph_slug = "textual_work"
+        nodegroups = "__all__"
+        fields = "__all__"
+
+
+class GroupRdmSystemSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = "group"
+        nodegroups = "__all__"
+        fields = "__all__"
+
+
+class PersonRdmSystemSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = "person"
         nodegroups = "__all__"
         fields = "__all__"
 

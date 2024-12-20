@@ -230,6 +230,13 @@ export const createScheme = async (newScheme: SchemeInstance) => {
     return parsed;
 };
 
+export const fetchSchemeRights = async (schemeId: string) => {
+    const response = await fetch(arches.urls.api_scheme_rights(schemeId));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const updateSchemeCreation = async (
     schemeId: string,
     schemeInstance: SchemeInstance,
@@ -260,6 +267,24 @@ export const updateSchemeNamespace = async (
         body: JSON.stringify(schemeNamespace),
     });
     const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const updateSchemeRights = async (
+    schemeId: string,
+    schemeRights: SchemeInstance,
+) => {
+    const response = await fetch(arches.urls.api_scheme_rights(schemeId), {
+        method: "PATCH",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(schemeRights),
+    });
+    const parsed = await response.json();
+    console.log(parsed);
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;
 };
