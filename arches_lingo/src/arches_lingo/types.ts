@@ -151,6 +151,7 @@ export interface SchemeInstance {
     statement?: SchemeStatement[];
     rights?: {
         right_holder: ResourceInstanceReference[];
+        right_type: ControlledListItem[];
     };
 }
 
