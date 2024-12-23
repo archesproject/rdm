@@ -57,7 +57,7 @@ function confirmDelete(tileId: string) {
         />
         <Column
             field="appellative_status_ascribed_name_content"
-            header="Label"
+            :header="$gettext('Label')"
             sortable
         >
             <template #body="slotProps">
@@ -69,7 +69,7 @@ function confirmDelete(tileId: string) {
         </Column>
         <Column
             field="appellative_status_ascribed_relation"
-            header="Label Type"
+            :header="$gettext('Label Type')"
             sortable
         >
             <template #body="slotProps">
@@ -84,7 +84,7 @@ function confirmDelete(tileId: string) {
         </Column>
         <Column
             field="appellative_status_ascribed_name_language"
-            header="Label Language"
+            :header="$gettext('Label Language')"
             sortable
         >
             <template #body="slotProps">
