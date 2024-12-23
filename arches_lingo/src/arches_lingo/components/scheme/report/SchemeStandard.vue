@@ -2,6 +2,7 @@
 import { inject, onMounted, ref, type Ref } from "vue";
 import { useRoute } from "vue-router";
 import { useGettext } from "vue3-gettext";
+import Button from "primevue/button";
 import type {
     DataComponentMode,
     ResourceInstanceReference,
@@ -20,6 +21,7 @@ import {
     VIEW,
     EDIT,
     OPEN_EDITOR,
+    UPDATED,
 } from "@/arches_lingo/constants.ts";
 import type { Language } from "@/arches_vue_utils/types.ts";
 
@@ -33,9 +35,9 @@ const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
 }>();
 
-const emits = defineEmits([OPEN_EDITOR]);
+const emits = defineEmits([OPEN_EDITOR, UPDATED]);
 
-defineExpose({ save, getSectionValue });
+defineExpose({ getSectionValue });
 
 onMounted(async () => {
     getSectionValue();
@@ -60,7 +62,6 @@ async function save() {
         route.params.id as string,
         schemeInstance.value as SchemeInstance,
     );
-
     getSectionValue();
 }
 
@@ -84,6 +85,7 @@ async function getSectionValue() {
     });
     textualWorkOptions.value = hydratedResults;
     schemeInstance.value = scheme;
+    emits(UPDATED);
 }
 
 function onCreationUpdate(val: string[]) {
@@ -102,14 +104,13 @@ function onCreationUpdate(val: string[]) {
 </script>
 
 <template>
-    <div v-if="!mode || mode === VIEW">
+    <div v-if="mode === VIEW">
         <SchemeReportSection
             :title-text="$gettext('Scheme Standards Followed')"
             @open-editor="emits(OPEN_EDITOR)"
         >
             <ResourceInstanceRelationships
                 :value="schemeInstance?.creation?.creation_sources"
-                :mode="VIEW"
             />
             <!-- Discussion of namespace_type indicated it should not be displayed or edited manually,
                  if this changes, the ControlledListItem widget can be used.-->
@@ -122,5 +123,9 @@ function onCreationUpdate(val: string[]) {
             :mode="EDIT"
             @update="onCreationUpdate"
         />
+        <Button
+            :label="$gettext('Update')"
+            @click="save"
+        ></Button>
     </div>
 </template>

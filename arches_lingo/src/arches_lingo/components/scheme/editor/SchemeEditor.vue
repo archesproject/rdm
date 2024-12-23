@@ -1,17 +1,11 @@
 <script setup lang="ts">
-import { onBeforeUpdate, onUpdated, ref } from "vue";
+import { onBeforeUpdate, ref, watch } from "vue";
 import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
-
-import Tabs from "primevue/tabs";
-import TabList from "primevue/tablist";
-import Tab from "primevue/tab";
-import TabPanels from "primevue/tabpanels";
-import TabPanel from "primevue/tabpanel";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
-type sectionTypes = typeof SchemeNamespace;
+import type { SectionTypes } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
 const EDIT = "edit";
@@ -20,24 +14,46 @@ const props = defineProps<{
     activeTab: string;
     tileId?: string;
 }>();
-const childRefs = ref<Array<sectionTypes>>([]);
+
+type SchemeComponent = {
+    component: SectionTypes;
+    id: string;
+    editorName: string;
+};
+
+const childRefs = ref<Array<SectionTypes>>([]);
+const currentEditor = ref<SchemeComponent>();
 const schemeComponents = [
     {
         component: SchemeLabel,
         id: "label",
-        editorTabName: $gettext("Scheme Label"),
+        editorName: $gettext("Scheme Label"),
     },
     {
         component: SchemeNamespace,
         id: "namespace",
-        editorTabName: $gettext("Scheme Namespace"),
+        editorName: $gettext("Scheme Namespace"),
     },
     {
         component: SchemeStandard,
         id: "standard",
-        editorTabName: $gettext("Scheme Standards Followed"),
+        editorName: $gettext("Scheme Standards Followed"),
     },
 ];
+
+watch(
+    props,
+    (newValue) => {
+        if (newValue) {
+            currentEditor.value =
+                schemeComponents.find((component) => {
+                    return component.id === newValue.activeTab;
+                }) || schemeComponents[0];
+            console.log(currentEditor.value);
+        }
+    },
+    { immediate: true },
+);
 
 const emit = defineEmits(["maximize", "side", "close", "updated"]);
 
@@ -53,17 +69,7 @@ function toggleSize() {
     }
 }
 
-function getRef(el: object | null, index: number) {
-    if (el != null) childRefs.value[index] = el as sectionTypes;
-}
-
-async function updateScheme() {
-    await Promise.all(
-        childRefs.value.map(async (ref) => {
-            return ref.save();
-        }),
-    );
-
+function onSectionUpdate() {
     emit("updated");
 }
 </script>
@@ -98,38 +104,16 @@ async function updateScheme() {
             </div>
         </div>
     </div>
-    <div class="content">
-        <Tabs :value="activeTab">
-            <TabList>
-                <template
-                    v-for="component in schemeComponents"
-                    :key="component.id"
-                >
-                    <Tab :value="component.id">{{
-                        component.editorTabName
-                    }}</Tab>
-                </template>
-            </TabList>
-            <TabPanels>
-                <template
-                    v-for="(component, index) in schemeComponents"
-                    :key="component.id"
-                >
-                    <TabPanel :value="component.id">
-                        <component
-                            :is="component.component"
-                            v-bind="{ mode: EDIT, tileId: props.tileId }"
-                            :ref="(el) => getRef(el, index)"
-                            v-on="{ updated: onUpdated }"
-                        />
-                    </TabPanel>
-                </template>
-            </TabPanels>
-        </Tabs>
-        <Button
-            :label="$gettext('Update')"
-            @click="updateScheme"
-        ></Button>
+    <div
+        v-if="currentEditor"
+        class="content"
+    >
+        <h3>{{ currentEditor.editorName }}</h3>
+        <component
+            :is="currentEditor.component"
+            v-bind="{ mode: EDIT, tileId: tileId }"
+            v-on="{ updated: onSectionUpdate }"
+        />
     </div>
 </template>
 <style scoped>

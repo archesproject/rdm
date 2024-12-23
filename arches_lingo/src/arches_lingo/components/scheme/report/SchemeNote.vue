@@ -15,6 +15,6 @@ const { $gettext } = useGettext();
 
 <template>
     <SchemeReportSection :title-text="$gettext('Scheme Notes')">
-        abc
+        todo
     </SchemeReportSection>
 </template>

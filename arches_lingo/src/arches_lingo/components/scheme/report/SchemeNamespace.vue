@@ -2,19 +2,19 @@
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useGettext } from "vue3-gettext";
-
+import Button from "primevue/button";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import {
     fetchSchemeNamespace,
     updateSchemeNamespace,
 } from "@/arches_lingo/api.ts";
+import { VIEW, EDIT, OPEN_EDITOR } from "@/arches_lingo/constants.ts";
 import type {
     DataComponentMode,
     SchemeNamespaceUpdate,
     SchemeInstance,
 } from "@/arches_lingo/types";
-import { VIEW, EDIT, OPEN_EDITOR } from "@/arches_lingo/constants.ts";
 
 const { $gettext } = useGettext();
 const schemeNamespace = ref<SchemeInstance>();
@@ -24,9 +24,9 @@ defineProps<{
     mode?: DataComponentMode;
 }>();
 
-defineEmits([OPEN_EDITOR]);
+const emit = defineEmits([OPEN_EDITOR, "updated"]);
 
-defineExpose({ save, getSectionValue });
+defineExpose({ getSectionValue });
 
 onMounted(async () => {
     getSectionValue();
@@ -37,6 +37,7 @@ async function save() {
         route.params.id as string,
         schemeNamespace.value as SchemeInstance,
     );
+    emit("updated");
 }
 
 async function getSectionValue() {
@@ -63,7 +64,7 @@ function onNamespaceNameUpdate(val: string) {
         <div v-if="!mode || mode === VIEW">
             <SchemeReportSection
                 :title-text="$gettext('Scheme Namespace')"
-                @open-editor="$emit(OPEN_EDITOR)"
+                @open-editor="emit(OPEN_EDITOR)"
             >
                 <NonLocalizedString
                     :value="schemeNamespace?.namespace?.namespace_name"
@@ -79,6 +80,10 @@ function onNamespaceNameUpdate(val: string) {
                 :mode="EDIT"
                 @update="onNamespaceNameUpdate"
             />
+            <Button
+                :label="$gettext('Update')"
+                @click="save"
+            ></Button>
         </div>
     </div>
 </template>

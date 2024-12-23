@@ -7,7 +7,7 @@ import type {
     ResourceInstanceReference,
 } from "@/arches_lingo/types";
 
-const { mode = EDIT } = defineProps<{
+const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
     value?: ResourceInstanceReference[];
     options?: ResourceInstanceReference[];

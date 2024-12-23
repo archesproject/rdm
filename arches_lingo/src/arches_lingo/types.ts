@@ -2,6 +2,12 @@ import type { Ref } from "vue";
 import type { TreeNode } from "primevue/treenode";
 import type { Label } from "@/arches_vue_utils/types.ts";
 import type { EDIT, VIEW } from "./constants";
+import SchemeNamespace from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeNamespace.vue";
+import SchemeLabel from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeLabel.vue";
+import SchemeLicense from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeLicense.vue";
+import SchemeStandard from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeStandard.vue";
+import SchemeAuthority from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeAuthority.vue";
+import SchemeNote from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeNote.vue";
 
 export interface User {
     first_name: string;
@@ -128,3 +134,11 @@ export interface SearchResultItem {
     }[];
     polyhierarchical: boolean;
 }
+
+export type SectionTypes =
+    | typeof SchemeLabel
+    | typeof SchemeNamespace
+    | typeof SchemeLicense
+    | typeof SchemeStandard
+    | typeof SchemeAuthority
+    | typeof SchemeNote;
