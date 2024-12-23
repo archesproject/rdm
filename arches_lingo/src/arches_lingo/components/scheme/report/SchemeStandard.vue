@@ -20,9 +20,12 @@ import {
     VIEW,
     EDIT,
     OPEN_EDITOR,
+    ERROR,
 } from "@/arches_lingo/constants.ts";
 import type { Language } from "@/arches_vue_utils/types.ts";
+import { useToast } from "primevue/usetoast";
 
+const toast = useToast();
 const schemeInstance = ref<SchemeInstance>();
 const textualWorkOptions = ref<ResourceInstanceReference[]>();
 const route = useRoute();
@@ -56,34 +59,68 @@ async function getOptions(): Promise<ResourceInstanceReference[]> {
 }
 
 async function save() {
-    await updateSchemeCreation(
-        route.params.id as string,
-        schemeInstance.value as SchemeInstance,
-    );
+    try {
+        await updateSchemeCreation(
+            route.params.id as string,
+            schemeInstance.value as SchemeInstance,
+        );
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not save the scheme standard"),
+        });
+    }
 
     getSectionValue();
 }
 
 async function getSectionValue() {
-    const options = !textualWorkOptions.value
-        ? await getOptions()
-        : textualWorkOptions.value;
+    let options = null;
+    try {
+        options = !textualWorkOptions.value
+            ? await getOptions()
+            : textualWorkOptions.value;
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not fetch options for the standard"),
+        });
+    }
 
-    const scheme = await fetchSchemeCreation(route.params.id as string);
+    try {
+        const scheme = await fetchSchemeCreation(route.params.id as string);
 
-    const hydratedResults = options.map((option) => {
-        const savedSource = scheme.creation?.creation_sources.find(
-            (source: ResourceInstanceReference) =>
-                source.resourceId === option.resourceId,
-        );
-        if (savedSource) {
-            return savedSource;
-        } else {
-            return option;
-        }
-    });
-    textualWorkOptions.value = hydratedResults;
-    schemeInstance.value = scheme;
+        const hydratedResults = options?.map((option) => {
+            const savedSource = scheme.creation?.creation_sources.find(
+                (source: ResourceInstanceReference) =>
+                    source.resourceId === option.resourceId,
+            );
+            if (savedSource) {
+                return savedSource;
+            } else {
+                return option;
+            }
+        });
+        textualWorkOptions.value = hydratedResults;
+        schemeInstance.value = scheme;
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not fetch the scheme standard"),
+        });
+    }
 }
 
 function onCreationUpdate(val: string[]) {

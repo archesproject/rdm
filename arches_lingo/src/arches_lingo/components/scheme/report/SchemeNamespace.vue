@@ -14,10 +14,12 @@ import type {
     SchemeNamespaceUpdate,
     SchemeInstance,
 } from "@/arches_lingo/types";
-import { VIEW, EDIT, OPEN_EDITOR } from "@/arches_lingo/constants.ts";
+import { VIEW, EDIT, OPEN_EDITOR, ERROR } from "@/arches_lingo/constants.ts";
+import { useToast } from "primevue/usetoast";
 
+const toast = useToast();
 const { $gettext } = useGettext();
-const schemeNamespace = ref<SchemeInstance>();
+const schemeInstance = ref<SchemeInstance>();
 const route = useRoute();
 
 defineProps<{
@@ -33,19 +35,45 @@ onMounted(async () => {
 });
 
 async function save() {
-    await updateSchemeNamespace(
-        route.params.id as string,
-        schemeNamespace.value as SchemeInstance,
-    );
+    try {
+        await updateSchemeNamespace(
+            route.params.id as string,
+            schemeInstance.value as SchemeInstance,
+        );
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext(
+                          "Could not update the namespace for the resource",
+                      ),
+        });
+    }
 }
 
 async function getSectionValue() {
-    const response = await fetchSchemeNamespace(route.params.id as string);
-    schemeNamespace.value = response;
+    try {
+        const response = await fetchSchemeNamespace(route.params.id as string);
+        schemeInstance.value = response;
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext(
+                          "Could not fetch the namespace for the resource",
+                      ),
+        });
+    }
 }
 
 function onNamespaceNameUpdate(val: string) {
-    const namespaceValue = schemeNamespace.value as SchemeNamespaceUpdate;
+    const namespaceValue = schemeInstance.value as SchemeNamespaceUpdate;
     if (!namespaceValue?.namespace) {
         namespaceValue.namespace = {
             namespace_name: val,
@@ -66,7 +94,7 @@ function onNamespaceNameUpdate(val: string) {
                 @open-editor="$emit(OPEN_EDITOR)"
             >
                 <NonLocalizedString
-                    :value="schemeNamespace?.namespace?.namespace_name"
+                    :value="schemeInstance?.namespace?.namespace_name"
                     :mode="VIEW"
                 />
                 <!-- Discussion of namespace_type indicated it should not be displayed or edited manually,
@@ -75,7 +103,7 @@ function onNamespaceNameUpdate(val: string) {
         </div>
         <div v-if="mode === EDIT">
             <NonLocalizedString
-                :value="schemeNamespace?.namespace?.namespace_name ?? ''"
+                :value="schemeInstance?.namespace?.namespace_name ?? ''"
                 :mode="EDIT"
                 @update="onNamespaceNameUpdate"
             />
