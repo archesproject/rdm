@@ -5,12 +5,15 @@ import { useRoute } from "vue-router";
 
 import { VIEW, EDIT, OPEN_EDITOR, ERROR } from "@/arches_lingo/constants.ts";
 import type {
+    AppellativeStatus,
     DataComponentMode,
     SchemeInstance,
 } from "@/arches_lingo/types.ts";
 import { deleteSchemeLabelTile, fetchSchemeLabel } from "@/arches_lingo/api.ts";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import LabelViewer from "@/arches_lingo/components/generic/LabelViewer.vue";
+import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
+import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItem.vue";
 import { useToast } from "primevue/usetoast";
 
 const schemeInstance = ref<SchemeInstance>();
@@ -106,10 +109,55 @@ async function save() {
             @open-editor="emits(OPEN_EDITOR)"
         >
             <LabelViewer
-                :value="schemeInstance?.appellative_status"
+                :labels="schemeInstance?.appellative_status"
                 @edit-label="editSectionValue"
                 @delete-label="deleteSectionValue"
-            ></LabelViewer>
+            >
+                <template #name="{ rowData }">
+                    {{
+                        (rowData as AppellativeStatus)
+                            .appellative_status_ascribed_name_content
+                    }}
+                </template>
+                <template #type="{ rowData }">
+                    <ControlledListItem
+                        :value="
+                            (rowData as AppellativeStatus)
+                                .appellative_status_ascribed_relation
+                        "
+                    >
+                    </ControlledListItem>
+                </template>
+                <template #language="{ rowData }">
+                    <ControlledListItem
+                        :value="
+                            (rowData as AppellativeStatus)
+                                .appellative_status_ascribed_name_language
+                        "
+                    >
+                    </ControlledListItem>
+                </template>
+                <template #drawer="{ rowData }">
+                    <div>
+                        {{ $gettext("Bibliographic Sources") }}:
+                        <ResourceInstanceRelationships
+                            :value="
+                                (rowData as AppellativeStatus)
+                                    .appellative_status_data_assignment_object_used
+                            "
+                        ></ResourceInstanceRelationships>
+                    </div>
+                    <div>
+                        {{ $gettext("Contributors") }}:
+                        <ResourceInstanceRelationships
+                            :value="
+                                (rowData as AppellativeStatus)
+                                    .appellative_status_data_assignment_actor
+                            "
+                        ></ResourceInstanceRelationships>
+                    </div>
+                </template>
+            </LabelViewer>
         </SchemeReportSection>
     </div>
     <div v-if="mode === EDIT"><!-- todo for Johnathan-->abc</div>

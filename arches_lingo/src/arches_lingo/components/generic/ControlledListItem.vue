@@ -3,12 +3,12 @@ import type {
     ControlledListItem,
     DataComponentMode,
 } from "@/arches_lingo/types";
-import ControlledListItemViewer from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
+import ControlledListItemViewer from "@/arches_lingo/components/generic/controlled-list-item/ControlledListItemViewer.vue";
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
-const { mode = EDIT } = defineProps<{
+const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
-    value?: ControlledListItem;
+    value?: ControlledListItem[] | ControlledListItem;
 }>();
 defineEmits(["update"]);
 </script>

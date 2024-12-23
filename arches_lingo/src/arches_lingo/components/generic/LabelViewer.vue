@@ -7,9 +7,6 @@ import Button from "primevue/button";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
-import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
-import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
-
 import type { AppellativeStatus } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
@@ -17,7 +14,7 @@ const expandedRows = ref([]);
 const confirm = useConfirm();
 
 const props = defineProps<{
-    value?: AppellativeStatus[];
+    labels?: object[];
 }>();
 
 const emits = defineEmits(["editLabel", "deleteLabel"]);
@@ -30,12 +27,12 @@ function confirmDelete(tileId: string) {
             emits("deleteLabel", tileId);
         },
         rejectProps: {
-            label: "Cancel",
+            label: $gettext("Cancel"),
             severity: "secondary",
             outlined: true,
         },
         acceptProps: {
-            label: "Delete",
+            label: $gettext("Delete"),
             severity: "danger",
         },
     });
@@ -48,7 +45,7 @@ function confirmDelete(tileId: string) {
     ></ConfirmDialog>
     <DataTable
         v-model:expanded-rows="expandedRows"
-        :value="props.value"
+        :value="props.labels"
         table-style="min-width: 50rem"
     >
         <Column
@@ -56,45 +53,36 @@ function confirmDelete(tileId: string) {
             style="width: 3rem"
         />
         <Column
-            field="appellative_status_ascribed_name_content"
             :header="$gettext('Label')"
             sortable
         >
             <template #body="slotProps">
-                {{
-                    (slotProps.data as AppellativeStatus)
-                        .appellative_status_ascribed_name_content
-                }}
+                <slot
+                    name="name"
+                    :row-data="slotProps.data"
+                ></slot>
             </template>
         </Column>
         <Column
-            field="appellative_status_ascribed_relation"
             :header="$gettext('Label Type')"
             sortable
         >
             <template #body="slotProps">
-                <ControlledListItem
-                    :value="
-                        (slotProps.data as AppellativeStatus)
-                            .appellative_status_ascribed_relation
-                    "
-                >
-                </ControlledListItem>
+                <slot
+                    name="type"
+                    :row-data="slotProps.data"
+                ></slot>
             </template>
         </Column>
         <Column
-            field="appellative_status_ascribed_name_language"
             :header="$gettext('Label Language')"
             sortable
         >
             <template #body="slotProps">
-                <ControlledListItem
-                    :value="
-                        (slotProps.data as AppellativeStatus)
-                            .appellative_status_ascribed_name_language
-                    "
-                >
-                </ControlledListItem>
+                <slot
+                    name="language"
+                    :row-data="slotProps.data"
+                ></slot>
             </template>
         </Column>
         <Column>
@@ -130,24 +118,10 @@ function confirmDelete(tileId: string) {
         </Column>
         <template #expansion="slotProps">
             <div class="drawer">
-                <div>
-                    {{ $gettext("Bibliographic Sources") }}:
-                    <ResourceInstanceRelationships
-                        :value="
-                            (slotProps.data as AppellativeStatus)
-                                .appellative_status_data_assignment_object_used
-                        "
-                    ></ResourceInstanceRelationships>
-                </div>
-                <div>
-                    {{ $gettext("Contributors") }}:
-                    <ResourceInstanceRelationships
-                        :value="
-                            (slotProps.data as AppellativeStatus)
-                                .appellative_status_data_assignment_actor
-                        "
-                    ></ResourceInstanceRelationships>
-                </div>
+                <slot
+                    name="drawer"
+                    :row-data="slotProps.data"
+                ></slot>
             </div>
         </template>
     </DataTable>
