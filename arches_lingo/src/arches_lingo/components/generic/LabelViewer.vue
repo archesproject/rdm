@@ -7,7 +7,7 @@ import Button from "primevue/button";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
-import ControlledListItemViewer from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
+import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
 import type { AppellativeStatus } from "@/arches_lingo/types";
@@ -73,13 +73,13 @@ function confirmDelete(tileId: string) {
             sortable
         >
             <template #body="slotProps">
-                <ControlledListItemViewer
+                <ControlledListItem
                     :value="
                         (slotProps.data as AppellativeStatus)
                             .appellative_status_ascribed_relation
                     "
                 >
-                </ControlledListItemViewer>
+                </ControlledListItem>
             </template>
         </Column>
         <Column
@@ -88,13 +88,13 @@ function confirmDelete(tileId: string) {
             sortable
         >
             <template #body="slotProps">
-                <ControlledListItemViewer
+                <ControlledListItem
                     :value="
                         (slotProps.data as AppellativeStatus)
                             .appellative_status_ascribed_name_language
                     "
                 >
-                </ControlledListItemViewer>
+                </ControlledListItem>
             </template>
         </Column>
         <Column>
