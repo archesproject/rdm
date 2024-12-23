@@ -7,7 +7,7 @@ import Button from "primevue/button";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
-import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
+import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItem.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
 import type { AppellativeStatus } from "@/arches_lingo/types";
