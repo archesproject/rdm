@@ -7,7 +7,7 @@ import Button from "primevue/button";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
-import ControlledListItemViewer from "@/arches_lingo/components/generic/ControlledListItemViewer.vue";
+import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItem.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
 import type { AppellativeStatus } from "@/arches_lingo/types";
@@ -57,7 +57,7 @@ function confirmDelete(tileId: string) {
         />
         <Column
             field="appellative_status_ascribed_name_content"
-            header="Label"
+            :header="$gettext('Label')"
             sortable
         >
             <template #body="slotProps">
@@ -69,32 +69,32 @@ function confirmDelete(tileId: string) {
         </Column>
         <Column
             field="appellative_status_ascribed_relation"
-            header="Label Type"
+            :header="$gettext('Label Type')"
             sortable
         >
             <template #body="slotProps">
-                <ControlledListItemViewer
+                <ControlledListItem
                     :value="
                         (slotProps.data as AppellativeStatus)
                             .appellative_status_ascribed_relation
                     "
                 >
-                </ControlledListItemViewer>
+                </ControlledListItem>
             </template>
         </Column>
         <Column
             field="appellative_status_ascribed_name_language"
-            header="Label Language"
+            :header="$gettext('Label Language')"
             sortable
         >
             <template #body="slotProps">
-                <ControlledListItemViewer
+                <ControlledListItem
                     :value="
                         (slotProps.data as AppellativeStatus)
                             .appellative_status_ascribed_name_language
                     "
                 >
-                </ControlledListItemViewer>
+                </ControlledListItem>
             </template>
         </Column>
         <Column>

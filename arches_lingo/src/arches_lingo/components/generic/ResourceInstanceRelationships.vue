@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ResourceInstanceRelationshipsViewer from "@/arches_lingo/components/generic/ResourceInstanceRelationshipsViewer.vue";
-import ResourceInstanceRelationshipsEditor from "@/arches_lingo/components/generic/ResourceInstanceRelationshipsEditor.vue";
+import ResourceInstanceRelationshipsViewer from "@/arches_lingo/components/generic//resource-instance-relationships/ResourceInstanceRelationshipsViewer.vue";
+import ResourceInstanceRelationshipsEditor from "@/arches_lingo/components/generic/resource-instance-relationships/ResourceInstanceRelationshipsEditor.vue";
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 import type {
     DataComponentMode,

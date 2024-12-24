@@ -3,7 +3,7 @@ import { useGettext } from "vue3-gettext";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
-import { VIEW, EDIT, OPEN_EDITOR } from "@/arches_lingo/constants.ts";
+import { VIEW, EDIT, OPEN_EDITOR, ERROR } from "@/arches_lingo/constants.ts";
 import type {
     DataComponentMode,
     SchemeInstance,
@@ -38,14 +38,38 @@ onMounted(() => {
 });
 
 async function getSectionValue() {
-    const result = await fetchSchemeLabel(route.params.id as string);
-    schemeInstance.value = {
-        appellative_status: result.appellative_status,
-    };
+    try {
+        const result = await fetchSchemeLabel(route.params.id as string);
+        schemeInstance.value = {
+            appellative_status: result.appellative_status,
+        };
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not fetch the labels for the resource"),
+        });
+    }
 }
 
 async function deleteSectionValue(tileId: string) {
-    const result = await deleteSchemeLabelTile(tileId);
+    let result = false;
+    try {
+        result = await deleteSchemeLabelTile(tileId);
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not delete selected label"),
+        });
+    }
+
     if (result) {
         getSectionValue();
     }
@@ -59,8 +83,9 @@ function editSectionValue(tileId: string) {
         emits(OPEN_EDITOR, appellativeStatus.tileid);
     } else {
         toast.add({
+            severity: ERROR,
             summary: $gettext("Error"),
-            detail: $gettext("Could not find the selected label to edit."),
+            detail: $gettext("Could not find the selected label to edit"),
         });
     }
 }
