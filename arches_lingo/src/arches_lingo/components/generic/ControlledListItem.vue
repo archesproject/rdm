@@ -8,7 +8,7 @@ import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
 const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
-    value?: ControlledListItem[] | ControlledListItem;
+    value?: ControlledListItem | ControlledListItem[];
 }>();
 defineEmits(["update"]);
 </script>
