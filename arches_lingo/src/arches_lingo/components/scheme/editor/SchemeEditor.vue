@@ -11,7 +11,12 @@ import TabPanel from "primevue/tabpanel";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
-type sectionTypes = typeof SchemeNamespace;
+import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
+type sectionTypes =
+    | typeof SchemeLabel
+    | typeof SchemeNamespace
+    | typeof SchemeStandard
+    | typeof SchemeNote;
 
 const { $gettext } = useGettext();
 const EDIT = "edit";
@@ -36,6 +41,11 @@ const schemeComponents = [
         component: SchemeStandard,
         id: "standard",
         editorTabName: $gettext("Scheme Standards Followed"),
+    },
+    {
+        component: SchemeNote,
+        id: "note",
+        editorTabName: $gettext("Scheme Notes"),
     },
 ];
 

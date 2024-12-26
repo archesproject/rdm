@@ -68,7 +68,7 @@ async function getSectionValue() {
 async function deleteSectionValue(tileId: string) {
     let result = false;
     try {
-        result = await deleteSchemeLabelTile(tileId);
+        result = await deleteSchemeLabelTile(route.params.id as string, tileId);
     } catch (error) {
         toast.add({
             severity: ERROR,

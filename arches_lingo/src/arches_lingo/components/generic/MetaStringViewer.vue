@@ -24,6 +24,7 @@ function confirmDelete(tileId: string) {
     confirm.require({
         header: $gettext("Confirmation"),
         message: props.metaStringText.deleteConfirm,
+        group: props.metaStringText.name,
         accept: () => {
             emits("deleteString", tileId);
         },
@@ -43,6 +44,7 @@ function confirmDelete(tileId: string) {
 <template>
     <ConfirmDialog
         :pt="{ root: { style: { fontFamily: 'sans-serif' } } }"
+        :group="metaStringText.name"
     ></ConfirmDialog>
     <DataTable
         v-model:expanded-rows="expandedRows"

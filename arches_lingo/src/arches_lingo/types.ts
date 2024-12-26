@@ -94,6 +94,15 @@ export interface AppellativeStatus {
     appellative_status_data_assignment_actor: ResourceInstanceReference[];
 }
 
+export interface SchemeStatement {
+    tileid: string;
+    statement_content_n1: string;
+    statement_language_n1?: ControlledListItem[];
+    statement_type_n1?: ControlledListItem[];
+    statement_data_assignment_object_used: ResourceInstanceReference[];
+    statement_data_assignment_actor: ResourceInstanceReference[];
+}
+
 export interface SchemeInstance {
     namespace?: {
         namespace_name: string;
@@ -103,6 +112,7 @@ export interface SchemeInstance {
         creation_sources: ResourceInstanceReference[];
     };
     appellative_status?: AppellativeStatus[];
+    statement?: SchemeStatement[];
 }
 
 export interface SchemeResource {
