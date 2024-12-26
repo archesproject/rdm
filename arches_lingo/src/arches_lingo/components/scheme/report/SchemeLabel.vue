@@ -7,11 +7,12 @@ import { VIEW, EDIT, OPEN_EDITOR, ERROR } from "@/arches_lingo/constants.ts";
 import type {
     AppellativeStatus,
     DataComponentMode,
+    MetaStringText,
     SchemeInstance,
 } from "@/arches_lingo/types.ts";
 import { deleteSchemeLabelTile, fetchSchemeLabel } from "@/arches_lingo/api.ts";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
-import LabelViewer from "@/arches_lingo/components/generic/LabelViewer.vue";
+import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItem.vue";
 import { useToast } from "primevue/usetoast";
@@ -20,6 +21,12 @@ const schemeInstance = ref<SchemeInstance>();
 const { $gettext } = useGettext();
 const toast = useToast();
 const route = useRoute();
+const metaStringLabel: MetaStringText = {
+    deleteConfirm: $gettext("Are you sure you want to delete this label?"),
+    language: $gettext("Label Language"),
+    name: $gettext("Label Name"),
+    type: $gettext("Label Type"),
+};
 
 withDefaults(
     defineProps<{
@@ -108,10 +115,11 @@ async function save() {
             :title-text="$gettext('Scheme Labels')"
             @open-editor="emits(OPEN_EDITOR)"
         >
-            <LabelViewer
-                :labels="schemeInstance?.appellative_status"
-                @edit-label="editSectionValue"
-                @delete-label="deleteSectionValue"
+            <MetaStringViewer
+                :meta-strings="schemeInstance?.appellative_status"
+                :meta-string-text="metaStringLabel"
+                @edit-string="editSectionValue"
+                @delete-string="deleteSectionValue"
             >
                 <template #name="{ rowData }">
                     {{
@@ -157,7 +165,7 @@ async function save() {
                         ></ResourceInstanceRelationships>
                     </div>
                 </template>
-            </LabelViewer>
+            </MetaStringViewer>
         </SchemeReportSection>
     </div>
     <div v-if="mode === EDIT"><!-- todo for Johnathan-->abc</div>

@@ -7,24 +7,25 @@ import Button from "primevue/button";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
-import type { AppellativeStatus } from "@/arches_lingo/types";
+import type { MetaString, MetaStringText } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
 const expandedRows = ref([]);
 const confirm = useConfirm();
 
 const props = defineProps<{
-    labels?: object[];
+    metaStringText: MetaStringText;
+    metaStrings?: object[];
 }>();
 
-const emits = defineEmits(["editLabel", "deleteLabel"]);
+const emits = defineEmits(["editString", "deleteString"]);
 
 function confirmDelete(tileId: string) {
     confirm.require({
         header: $gettext("Confirmation"),
-        message: $gettext("Are you sure you want to delete this label?"),
+        message: props.metaStringText.deleteConfirm,
         accept: () => {
-            emits("deleteLabel", tileId);
+            emits("deleteString", tileId);
         },
         rejectProps: {
             label: $gettext("Cancel"),
@@ -45,7 +46,7 @@ function confirmDelete(tileId: string) {
     ></ConfirmDialog>
     <DataTable
         v-model:expanded-rows="expandedRows"
-        :value="props.labels"
+        :value="props.metaStrings"
         table-style="min-width: 50rem"
     >
         <Column
@@ -53,7 +54,7 @@ function confirmDelete(tileId: string) {
             style="width: 3rem"
         />
         <Column
-            :header="$gettext('Label')"
+            :header="props.metaStringText.name"
             sortable
         >
             <template #body="slotProps">
@@ -64,7 +65,7 @@ function confirmDelete(tileId: string) {
             </template>
         </Column>
         <Column
-            :header="$gettext('Label Type')"
+            :header="props.metaStringText.type"
             sortable
         >
             <template #body="slotProps">
@@ -75,7 +76,7 @@ function confirmDelete(tileId: string) {
             </template>
         </Column>
         <Column
-            :header="$gettext('Label Language')"
+            :header="props.metaStringText.language"
             sortable
         >
             <template #body="slotProps">
@@ -94,9 +95,8 @@ function confirmDelete(tileId: string) {
                         @click="
                             () =>
                                 emits(
-                                    'editLabel',
-                                    (slotProps.data as AppellativeStatus)
-                                        .tileid,
+                                    'editString',
+                                    (slotProps.data as MetaString).tileid,
                                 )
                         "
                     />
@@ -108,8 +108,7 @@ function confirmDelete(tileId: string) {
                         @click="
                             () =>
                                 confirmDelete(
-                                    (slotProps.data as AppellativeStatus)
-                                        .tileid,
+                                    (slotProps.data as MetaString).tileid,
                                 )
                         "
                     />

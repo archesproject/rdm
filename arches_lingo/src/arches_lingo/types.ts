@@ -72,6 +72,17 @@ export interface SchemeNamespaceUpdate {
     };
 }
 
+export interface MetaString {
+    tileid: string;
+}
+
+export interface MetaStringText {
+    name: string;
+    type: string;
+    language: string;
+    deleteConfirm: string;
+}
+
 export interface AppellativeStatus {
     tileid: string;
     appellative_status_ascribed_name_content: string;
