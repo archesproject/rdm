@@ -69,6 +69,14 @@ interface ControlledListItemValue {
     value: string;
 }
 
+export type SectionTypes =
+    | typeof SchemeLabel
+    | typeof SchemeNamespace
+    | typeof SchemeLicense
+    | typeof SchemeStandard
+    | typeof SchemeAuthority
+    | typeof SchemeNote;
+
 export type DataComponentMode = typeof EDIT | typeof VIEW;
 
 export interface SchemeNamespaceUpdate {
@@ -134,11 +142,3 @@ export interface SearchResultItem {
     }[];
     polyhierarchical: boolean;
 }
-
-export type SectionTypes =
-    | typeof SchemeLabel
-    | typeof SchemeNamespace
-    | typeof SchemeLicense
-    | typeof SchemeStandard
-    | typeof SchemeAuthority
-    | typeof SchemeNote;
