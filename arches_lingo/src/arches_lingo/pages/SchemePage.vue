@@ -9,20 +9,14 @@ import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNames
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import SchemeAuthority from "@/arches_lingo/components/scheme/report/SchemeAuthority.vue";
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
+import type { SectionTypes } from "@/arches_lingo/types.ts";
 
 const editorVisible = ref(false);
 const sectionVisible = ref(true);
 const editorTab = ref<string>();
 const editorTileId = ref<string>();
 
-type sectionTypes =
-    | typeof SchemeLabel
-    | typeof SchemeNamespace
-    | typeof SchemeLicense
-    | typeof SchemeStandard
-    | typeof SchemeAuthority
-    | typeof SchemeNote;
-const childRefs = ref<Array<sectionTypes>>([]);
+const childRefs = ref<Array<SectionTypes>>([]);
 const onMaximize = () => {
     editorVisible.value = true;
     sectionVisible.value = false;
@@ -61,7 +55,7 @@ const components = [
 ];
 
 const getRef = (el: object | null, index: number) => {
-    if (el != null) childRefs.value[index] = el as sectionTypes;
+    if (el != null) childRefs.value[index] = el as SectionTypes;
 };
 </script>
 

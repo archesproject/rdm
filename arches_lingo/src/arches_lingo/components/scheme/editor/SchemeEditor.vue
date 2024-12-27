@@ -12,11 +12,7 @@ import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNames
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
 import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
-type sectionTypes =
-    | typeof SchemeLabel
-    | typeof SchemeNamespace
-    | typeof SchemeStandard
-    | typeof SchemeNote;
+import type { SectionTypes } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
 const EDIT = "edit";
@@ -25,7 +21,7 @@ const props = defineProps<{
     activeTab: string;
     tileId?: string;
 }>();
-const childRefs = ref<Array<sectionTypes>>([]);
+const childRefs = ref<Array<SectionTypes>>([]);
 const schemeComponents = [
     {
         component: SchemeLabel,
@@ -64,7 +60,7 @@ function toggleSize() {
 }
 
 function getRef(el: object | null, index: number) {
-    if (el != null) childRefs.value[index] = el as sectionTypes;
+    if (el != null) childRefs.value[index] = el as SectionTypes;
 }
 
 async function updateScheme() {
