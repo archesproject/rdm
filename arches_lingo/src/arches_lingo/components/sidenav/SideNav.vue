@@ -22,7 +22,10 @@ const items = ref([
             :key="item.routeName"
         >
             <RouterLink
-                v-tooltip="item.linkName"
+                v-tooltip="{
+                    value: item.linkName,
+                    pt: { text: { style: { fontFamily: 'sans-serif' } } },
+                }"
                 :to="{ name: item.routeName }"
                 class="p-button p-component p-button-primary"
                 style="text-decoration: none"
