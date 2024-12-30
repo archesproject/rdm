@@ -20,8 +20,6 @@ const props = withDefaults(
     },
 );
 
-console.log(props);
-
 const emit = defineEmits(["update"]);
 const valRef = toRef(props, "val");
 const value = computed({
@@ -32,12 +30,8 @@ const value = computed({
         emit("update", value);
     },
 });
-// const getOptionLabels = (value) => {
-//     return getItemLabel(value, selectedLanguage.value.code, systemLanguage.code)
-//         .value;
-// };
-// :optionLabel="getOptionLabels"
 </script>
+
 <template>
     <Select
         v-model="value"

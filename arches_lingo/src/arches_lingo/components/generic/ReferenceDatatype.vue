@@ -8,10 +8,10 @@ import ReferenceDatatypeEditor from "@/arches_lingo/components/generic/reference
 import ReferenceDatatypeListEditor from "@/arches_lingo/components/generic/reference-datatype/ReferenceDatatypeListEditor.vue";
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
-const { mode = VIEW } = defineProps<{
+defineProps<{
     mode?: DataComponentMode;
     value?: ControlledListItem | ControlledListItem[];
-    multiValue?: string;
+    multiValue?: boolean;
     options?: ControlledListItem[];
 }>();
 const emits = defineEmits(["update"]);
@@ -24,15 +24,17 @@ const onUpdate = (val: ControlledListItem) => {
         <div v-if="mode === VIEW">
             <ReferenceDatatypeViewer :value="value" />
         </div>
-        <div v-if="mode === EDIT && multiValue === '1'">
+        <div v-if="mode === EDIT && multiValue === false">
             <ReferenceDatatypeEditor
                 :value="value"
+                :options="options"
                 @update="onUpdate"
             />
         </div>
-        <div v-if="mode === EDIT && multiValue === 'n'">
+        <div v-if="mode === EDIT && multiValue === true">
             <ReferenceDatatypeListEditor
                 :value="value"
+                :options="options"
                 @update="onUpdate"
             />
         </div>
