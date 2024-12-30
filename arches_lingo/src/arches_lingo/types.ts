@@ -53,6 +53,15 @@ export interface ControlledListItem {
     labels: ControlledListeItemLabelValue[];
 }
 
+export interface ControlledListItemResult {
+    id: string;
+    list_id: string;
+    uri: string;
+    sortorder: number;
+    guide: boolean;
+    values: ControlledListeItemLabelValue[];
+}
+
 export interface ResourceInstanceReference {
     resourceId: string;
     ontologyProperty: string;
