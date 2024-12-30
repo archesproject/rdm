@@ -1,22 +1,25 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import {
+    createScheme,
     fetchSchemeNamespace,
     updateSchemeNamespace,
 } from "@/arches_lingo/api.ts";
 import {
-    VIEW,
     EDIT,
-    OPEN_EDITOR,
     ERROR,
+    NEW,
+    OPEN_EDITOR,
     UPDATED,
+    VIEW,
 } from "@/arches_lingo/constants.ts";
 import { useToast } from "primevue/usetoast";
+
 import type {
     DataComponentMode,
     SchemeNamespaceUpdate,
@@ -25,8 +28,9 @@ import type {
 
 const toast = useToast();
 const { $gettext } = useGettext();
-const schemeInstance = ref<SchemeInstance>();
+const schemeInstance = ref<SchemeInstance>({});
 const route = useRoute();
+const router = useRouter();
 
 defineProps<{
     mode?: DataComponentMode;
@@ -42,26 +46,34 @@ onMounted(async () => {
 
 async function save() {
     try {
-        await updateSchemeNamespace(
-            route.params.id as string,
-            schemeInstance.value as SchemeInstance,
-        );
+        let updated;
+        if (route.params.id === NEW) {
+            updated = await createScheme(schemeInstance.value);
+            await router.push({
+                name: "scheme",
+                params: { id: updated.resourceinstanceid },
+            });
+        } else {
+            updated = await updateSchemeNamespace(
+                route.params.id as string,
+                schemeInstance.value,
+            );
+        }
+        schemeInstance.value = updated;
         emit(UPDATED);
     } catch (error) {
         toast.add({
             severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext(
-                          "Could not update the namespace for the resource",
-                      ),
+            summary: $gettext("Error saving scheme"),
+            detail: (error as Error).message,
         });
     }
 }
 
 async function getSectionValue() {
+    if (route.params.id === NEW) {
+        return;
+    }
     try {
         const response = await fetchSchemeNamespace(route.params.id as string);
         schemeInstance.value = response;

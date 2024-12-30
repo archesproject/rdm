@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, onMounted, ref, type Ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
 import type {
@@ -11,6 +11,7 @@ import type {
 } from "@/arches_lingo/types";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
+    createScheme,
     fetchSchemeCreation,
     fetchTextualWorkRdmSystemList,
     updateSchemeCreation,
@@ -21,6 +22,7 @@ import {
     VIEW,
     EDIT,
     OPEN_EDITOR,
+    NEW,
     UPDATED,
     ERROR,
 } from "@/arches_lingo/constants.ts";
@@ -28,9 +30,10 @@ import type { Language } from "@/arches_vue_utils/types.ts";
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
-const schemeInstance = ref<SchemeInstance>();
+const schemeInstance = ref<SchemeInstance>({});
 const textualWorkOptions = ref<ResourceInstanceReference[]>();
 const route = useRoute();
+const router = useRouter();
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
@@ -62,21 +65,26 @@ async function getOptions(): Promise<ResourceInstanceReference[]> {
 
 async function save() {
     try {
-        await updateSchemeCreation(
-            route.params.id as string,
-            schemeInstance.value as SchemeInstance,
-        );
-
-        getSectionValue();
+        let updated;
+        if (route.params.id === NEW) {
+            updated = await createScheme(schemeInstance.value);
+            await router.push({
+                name: "scheme",
+                params: { id: updated.resourceinstanceid },
+            });
+        } else {
+            updated = await updateSchemeCreation(
+                route.params.id as string,
+                schemeInstance.value,
+            );
+        }
+        schemeInstance.value = updated;
         emit(UPDATED);
     } catch (error) {
         toast.add({
             severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext("Could not save the scheme standard"),
+            summary: $gettext("Error saving scheme"),
+            detail: (error as Error).message,
         });
     }
 }
@@ -84,6 +92,9 @@ async function save() {
 async function getCachedOptions(): Promise<
     ResourceInstanceReference[] | undefined
 > {
+    if (route.params.id === NEW) {
+        return;
+    }
     try {
         const options = textualWorkOptions.value || (await getOptions());
         return options;

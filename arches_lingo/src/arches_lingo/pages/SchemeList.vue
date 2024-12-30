@@ -10,6 +10,7 @@ import {
 
 import SchemeCard from "@/arches_lingo/components/scheme/SchemeCard.vue";
 import { fetchSchemes } from "@/arches_lingo/api.ts";
+import { NEW } from "@/arches_lingo/constants.ts";
 
 import type { SchemeResource } from "@/arches_lingo/types";
 
@@ -30,11 +31,11 @@ onMounted(async () => {
         });
     }
     schemes.value.unshift({
-        resourceinstanceid: "placeholder-id",
+        resourceinstanceid: NEW,
         descriptors: {
             en: {
                 name: "Create a new scheme",
-                description: "This is a placeholder to create a new scheme",
+                description: "",
             },
         },
     });
