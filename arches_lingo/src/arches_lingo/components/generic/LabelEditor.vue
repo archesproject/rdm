@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
+import { defineProps, onMounted, ref } from "vue";
+import { fetchControlledListOptions } from "@/arches_lingo/api.ts";
 
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
-
+import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 // import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
-import { EDIT } from "@/arches_lingo/constants.ts";
+import { EDIT, LANGUAGE_CONTROLLED_LIST } from "@/arches_lingo/constants.ts";
 
-import type { AppellativeStatus } from "@/arches_lingo/types.ts";
+import type {
+    AppellativeStatus,
+    ControlledListItem,
+    ControlledListItemResult,
+} from "@/arches_lingo/types.ts";
 
 const props = withDefaults(
     defineProps<{
@@ -17,13 +22,34 @@ const props = withDefaults(
         value: () => ({}) as AppellativeStatus,
     },
 );
-
 const appellative_status = ref(props.value);
 
 function onUpdate(newValue: string) {
     // handle the update
     console.log("Update new value here!" + newValue);
 }
+
+async function getOptions(listId: string): Promise<ControlledListItem[]> {
+    const parsed = await fetchControlledListOptions(listId);
+    const options = parsed.items.map(
+        (item: ControlledListItemResult): ControlledListItem => ({
+            item_id: item.id,
+            list_id: item.list_id,
+            uri: item.uri,
+            sortorder: item.sortorder,
+            guide: item.guide,
+            labels: item.values,
+        }),
+    );
+    return options;
+}
+
+const languageOptions = ref<ControlledListItem[]>([]);
+
+onMounted(async () => {
+    const lang_opts = await getOptions(LANGUAGE_CONTROLLED_LIST);
+    languageOptions.value = lang_opts;
+});
 </script>
 
 <template>
@@ -38,7 +64,12 @@ function onUpdate(newValue: string) {
     />
     <!-- Label Language: reference datatype -->
     <label for="">{{ $gettext("Label Language") }}</label>
-
+    <ReferenceDatatype
+        :value="appellative_status?.appellative_status_ascribed_name_language"
+        :mode="EDIT"
+        :multivalue="false"
+        :options="languageOptions"
+    />
     <!-- Label Type: reference datatype -->
     <label for="">{{ $gettext("Label Type") }}</label>
 
