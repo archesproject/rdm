@@ -67,7 +67,7 @@ const showHierarchy = ref(false);
         />
     </div>
     <Splitter
-        style="height: 100%"
+        style="height: 100%; overflow: hidden"
         :pt="{
             gutter: { style: { display: showHierarchy ? 'flex' : 'none' } },
         }"
@@ -78,6 +78,7 @@ const showHierarchy = ref(false);
             :style="{
                 display: showHierarchy ? 'flex' : 'none',
                 flexDirection: 'column',
+                overflowY: 'scroll',
             }"
         >
             <Suspense>
@@ -87,7 +88,10 @@ const showHierarchy = ref(false);
                 </template>
             </Suspense>
         </SplitterPanel>
-        <SplitterPanel :min-size="25">
+        <SplitterPanel
+            :min-size="25"
+            style="overflow-y: scroll"
+        >
             <RouterView />
         </SplitterPanel>
     </Splitter>
