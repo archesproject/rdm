@@ -85,11 +85,11 @@ async function deleteSectionValue(tileId: string) {
 }
 
 function editSectionValue(tileId: string) {
-    const SchemeStatement = schemeInstance.value?.statement?.find(
+    const schemeStatement = schemeInstance.value?.statement?.find(
         (tile) => tile.tileid === tileId,
     );
-    if (SchemeStatement && SchemeStatement.tileid === tileId) {
-        emits(OPEN_EDITOR, SchemeStatement.tileid);
+    if (schemeStatement && schemeStatement.tileid === tileId) {
+        emits(OPEN_EDITOR, schemeStatement.tileid);
     } else {
         toast.add({
             severity: ERROR,
@@ -118,16 +118,14 @@ function editSectionValue(tileId: string) {
                 <template #type="{ rowData }">
                     <ControlledListItem
                         :value="(rowData as SchemeStatement).statement_type_n1"
-                    >
-                    </ControlledListItem>
+                    />
                 </template>
                 <template #language="{ rowData }">
                     <ControlledListItem
                         :value="
                             (rowData as SchemeStatement).statement_language_n1
                         "
-                    >
-                    </ControlledListItem>
+                    />
                 </template>
                 <template #drawer="{ rowData }">
                     <div>
@@ -137,7 +135,7 @@ function editSectionValue(tileId: string) {
                                 (rowData as SchemeStatement)
                                     .statement_data_assignment_object_used
                             "
-                        ></ResourceInstanceRelationships>
+                        />
                     </div>
                     <div>
                         {{ $gettext("Contributors") }}:
@@ -146,7 +144,7 @@ function editSectionValue(tileId: string) {
                                 (rowData as SchemeStatement)
                                     .statement_data_assignment_actor
                             "
-                        ></ResourceInstanceRelationships>
+                        />
                     </div>
                 </template>
             </MetaStringViewer>
