@@ -30,6 +30,7 @@ urlpatterns = [
     path("advanced-search", LingoRootView.as_view(), name="advanced-search"),
     path("schemes", LingoRootView.as_view(), name="schemes"),
     path("scheme/<uuid:id>", LingoRootView.as_view(), name="scheme"),
+    path("scheme/new", LingoRootView.as_view(), name="new-scheme"),
     path("concept/<uuid:id>", LingoRootView.as_view(), name="concept"),
     path("api/concept-tree", ConceptTreeView.as_view(), name="api-concepts"),
     path("api/search", ValueSearchView.as_view(), name="api-search"),

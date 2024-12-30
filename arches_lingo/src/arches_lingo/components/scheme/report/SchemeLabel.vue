@@ -3,7 +3,13 @@ import { useGettext } from "vue3-gettext";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
-import { VIEW, EDIT, OPEN_EDITOR, ERROR } from "@/arches_lingo/constants.ts";
+import {
+    EDIT,
+    ERROR,
+    OPEN_EDITOR,
+    NEW,
+    VIEW,
+} from "@/arches_lingo/constants.ts";
 import type {
     AppellativeStatus,
     DataComponentMode,
@@ -17,7 +23,7 @@ import ResourceInstanceRelationships from "@/arches_lingo/components/generic/Res
 import ControlledListItem from "@/arches_lingo/components/generic/ControlledListItem.vue";
 import { useToast } from "primevue/usetoast";
 
-const schemeInstance = ref<SchemeInstance>();
+const schemeInstance = ref<SchemeInstance>({});
 const { $gettext } = useGettext();
 const toast = useToast();
 const route = useRoute();
@@ -49,6 +55,9 @@ onMounted(() => {
 });
 
 async function getSectionValue() {
+    if (route.params.id === NEW) {
+        return;
+    }
     try {
         const result = await fetchSchemeLabel(route.params.id as string);
         schemeInstance.value = {

@@ -10,6 +10,7 @@ export const EDIT = "edit";
 export const VIEW = "view";
 export const OPEN_EDITOR = "openEditor";
 export const UPDATED = "updated";
+export const NEW = "new";
 
 export const DEFAULT_ERROR_TOAST_LIFE = 8000;
 export const SEARCH_RESULTS_PER_PAGE = 25;

@@ -1,5 +1,6 @@
 import arches from "arches";
 import Cookies from "js-cookie";
+
 import type { SchemeInstance } from "@/arches_lingo/types";
 
 function getToken() {
@@ -111,6 +112,20 @@ export const deleteSchemeNoteTile = async (
     } else {
         return true;
     }
+};
+
+export const createScheme = async (newScheme: SchemeInstance) => {
+    const response = await fetch(arches.urls.api_schemes, {
+        method: "POST",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newScheme),
+    });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
 };
 
 export const updateSchemeCreation = async (
