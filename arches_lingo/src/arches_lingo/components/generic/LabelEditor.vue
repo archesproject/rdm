@@ -33,11 +33,8 @@ async function getOptions(listId: string): Promise<ControlledListItem[]> {
     const parsed = await fetchControlledListOptions(listId);
     const options = parsed.items.map(
         (item: ControlledListItemResult): ControlledListItem => ({
-            item_id: item.id,
             list_id: item.list_id,
             uri: item.uri,
-            sortorder: item.sortorder,
-            guide: item.guide,
             labels: item.values,
         }),
     );
