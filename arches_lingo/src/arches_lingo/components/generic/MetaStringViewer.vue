@@ -8,6 +8,8 @@ import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
 import type { MetaString, MetaStringText } from "@/arches_lingo/types.ts";
+import { SECONDARY } from "@/arches_lingo/constants.ts";
+import { DANGER } from "@/arches_references/constants.ts";
 
 const { $gettext } = useGettext();
 const expandedRows = ref([]);
@@ -29,12 +31,12 @@ function confirmDelete(tileId: string) {
         },
         rejectProps: {
             label: $gettext("Cancel"),
-            severity: "secondary",
+            severity: SECONDARY,
             outlined: true,
         },
         acceptProps: {
             label: $gettext("Delete"),
-            severity: "danger",
+            severity: DANGER,
         },
     });
 }
@@ -47,7 +49,6 @@ function confirmDelete(tileId: string) {
     <DataTable
         v-model:expanded-rows="expandedRows"
         :value="props.metaStrings"
-        table-style="min-width: 50rem"
     >
         <Column
             expander
