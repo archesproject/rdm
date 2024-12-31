@@ -15,7 +15,7 @@ defineProps<{
     options?: ControlledListItem[];
 }>();
 const emits = defineEmits(["update"]);
-const onUpdate = (val: ControlledListItem) => {
+const onUpdate = (val: ControlledListItem[]) => {
     emits("update", val);
 };
 </script>
