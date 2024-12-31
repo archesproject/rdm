@@ -78,12 +78,15 @@ async function save() {
     getSectionValue();
 }
 
-async function getSectionValue() {
-    let options = null;
+async function getCachedOptions(): Promise<
+    ResourceInstanceReference[] | undefined
+> {
     try {
-        options = !textualWorkOptions.value
+        const options = !textualWorkOptions.value
             ? await getOptions()
             : textualWorkOptions.value;
+
+        return options;
     } catch (error) {
         toast.add({
             severity: ERROR,
@@ -94,7 +97,11 @@ async function getSectionValue() {
                     : $gettext("Could not fetch options for the standard"),
         });
     }
+}
 
+async function setSchemeInstance(
+    options: ResourceInstanceReference[] | undefined,
+) {
     try {
         const scheme = await fetchSchemeCreation(route.params.id as string);
 
@@ -120,6 +127,14 @@ async function getSectionValue() {
                     ? error.message
                     : $gettext("Could not fetch the scheme standard"),
         });
+    }
+}
+
+async function getSectionValue() {
+    const options = await getCachedOptions();
+
+    if (options) {
+        await setSchemeInstance(options);
     }
 }
 

@@ -12,7 +12,6 @@ import { SECONDARY } from "@/arches_lingo/constants.ts";
 import { DANGER } from "@/arches_references/constants.ts";
 
 const { $gettext } = useGettext();
-const expandedRows = ref([]);
 const confirm = useConfirm();
 
 const props = defineProps<{
@@ -21,7 +20,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits(["editString", "deleteString"]);
-
+const expandedRows = ref([]);
 function confirmDelete(tileId: string) {
     confirm.require({
         header: $gettext("Confirmation"),
