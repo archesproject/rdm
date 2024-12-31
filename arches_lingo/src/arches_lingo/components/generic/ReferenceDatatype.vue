@@ -10,7 +10,7 @@ import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
 defineProps<{
     mode?: DataComponentMode;
-    value?: ControlledListItem | ControlledListItem[];
+    value?: ControlledListItem[];
     multiValue?: boolean;
     options?: ControlledListItem[];
 }>();
