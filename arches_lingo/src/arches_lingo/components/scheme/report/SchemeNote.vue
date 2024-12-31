@@ -129,7 +129,7 @@ function editSectionValue(tileId: string) {
                 </template>
                 <template #drawer="{ rowData }">
                     <div>
-                        {{ $gettext("Bibliographic Sources") }}:
+                        <span>{{ $gettext("Bibliographic Sources") }}:</span>
                         <ResourceInstanceRelationships
                             :value="
                                 (rowData as SchemeStatement)
@@ -138,7 +138,7 @@ function editSectionValue(tileId: string) {
                         />
                     </div>
                     <div>
-                        {{ $gettext("Contributors") }}:
+                        <span>{{ $gettext("Contributors") }}:</span>
                         <ResourceInstanceRelationships
                             :value="
                                 (rowData as SchemeStatement)
