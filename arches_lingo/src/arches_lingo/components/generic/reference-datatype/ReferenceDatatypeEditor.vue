@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, toRef } from "vue";
+import { computed, inject, ref } from "vue";
 import Select from "primevue/select";
 
 import { systemLanguageKey } from "@/arches_lingo/constants.ts";
@@ -21,16 +21,15 @@ const props = withDefaults(
 );
 
 const emit = defineEmits(["update"]);
-const valRef = toRef(props?.value?.[0]?.uri); // use uri as value
+const uriRef = ref(props?.value?.[0]?.uri); // unwrap array n=1 && use uri as value
 const val = computed({
     get() {
-        return valRef.value; // unwrap array n=1
+        return uriRef.value;
     },
-    set(value) {
-        // const item = props.options?.find((item) => item.uri === value);
-        console.log(value);
-        // emit("update", [item]); // rewrap array n=1
-        emit("update", value);
+    set(newVal) {
+        uriRef.value = newVal; // update uri
+        const item = props.options?.find((item) => item.uri === newVal);
+        emit("update", item ? [item] : []); // emit the updated value as a list item
     },
 });
 
