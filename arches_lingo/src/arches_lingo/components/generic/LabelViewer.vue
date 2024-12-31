@@ -13,7 +13,6 @@ import ResourceInstanceRelationships from "@/arches_lingo/components/generic/Res
 import type { AppellativeStatus } from "@/arches_lingo/types";
 
 const { $gettext } = useGettext();
-const expandedRows = ref([]);
 const confirm = useConfirm();
 
 const props = defineProps<{
@@ -21,6 +20,8 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits(["editLabel", "deleteLabel"]);
+
+const expandedRows = ref([]);
 
 function confirmDelete(tileId: string) {
     confirm.require({
