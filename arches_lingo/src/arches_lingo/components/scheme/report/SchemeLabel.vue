@@ -4,7 +4,7 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
-import { VIEW, EDIT, OPEN_EDITOR } from "@/arches_lingo/constants.ts";
+import { VIEW, EDIT, OPEN_EDITOR, ERROR } from "@/arches_lingo/constants.ts";
 import { deleteSchemeLabelTile, fetchSchemeLabel } from "@/arches_lingo/api.ts";
 import LabelViewer from "@/arches_lingo/components/generic/LabelViewer.vue";
 import LabelEditor from "@/arches_lingo/components/generic/LabelEditor.vue";

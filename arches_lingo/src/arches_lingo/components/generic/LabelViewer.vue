@@ -8,7 +8,7 @@ import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
 import ReferenceDatatypeViewer from "@/arches_lingo/components/generic/reference-datatype/ReferenceDatatypeViewer.vue";
-import ResourceInstanceRelationshipsViewer from "@/arches_lingo/components/generic/resource-instance-relationships/ResourceInstanceRelationshipsViewer.vue";
+import ResourceInstanceRelationships from "@/arches_lingo/components/generic/resource-instance-relationships/ResourceInstanceRelationshipsViewer.vue";
 
 import type { AppellativeStatus } from "@/arches_lingo/types";
 
