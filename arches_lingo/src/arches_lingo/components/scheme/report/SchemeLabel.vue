@@ -122,10 +122,12 @@ function editSectionValue(tileId: string) {
                 @delete-string="deleteSectionValue"
             >
                 <template #name="{ rowData }">
-                    {{
-                        (rowData as AppellativeStatus)
-                            .appellative_status_ascribed_name_content
-                    }}
+                    <span>
+                        {{
+                            (rowData as AppellativeStatus)
+                                .appellative_status_ascribed_name_content
+                        }}
+                    </span>
                 </template>
                 <template #type="{ rowData }">
                     <ControlledListItem
