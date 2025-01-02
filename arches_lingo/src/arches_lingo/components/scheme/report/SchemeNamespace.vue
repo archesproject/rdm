@@ -9,7 +9,13 @@ import {
     fetchSchemeNamespace,
     updateSchemeNamespace,
 } from "@/arches_lingo/api.ts";
-import { VIEW, EDIT, OPEN_EDITOR, ERROR } from "@/arches_lingo/constants.ts";
+import {
+    VIEW,
+    EDIT,
+    OPEN_EDITOR,
+    ERROR,
+    UPDATED,
+} from "@/arches_lingo/constants.ts";
 import { useToast } from "primevue/usetoast";
 import type {
     DataComponentMode,
@@ -26,7 +32,7 @@ defineProps<{
     mode?: DataComponentMode;
 }>();
 
-const emit = defineEmits([OPEN_EDITOR, "updated"]);
+const emits = defineEmits([OPEN_EDITOR, UPDATED]);
 
 defineExpose({ getSectionValue });
 
@@ -35,10 +41,24 @@ onMounted(async () => {
 });
 
 async function save() {
-    await updateSchemeNamespace(
-        route.params.id as string,
-        schemeInstance.value as SchemeInstance,
-    );
+    try {
+        await updateSchemeNamespace(
+            route.params.id as string,
+            schemeInstance.value as SchemeInstance,
+        );
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext(
+                          "Could not update the namespace for the resource",
+                      ),
+        });
+    }
+    emits("updated");
 }
 
 async function getSectionValue() {
@@ -78,7 +98,7 @@ function onNamespaceNameUpdate(val: string) {
         <div v-if="!mode || mode === VIEW">
             <SchemeReportSection
                 :title-text="$gettext('Scheme Namespace')"
-                @open-editor="emit(OPEN_EDITOR)"
+                @open-editor="emits(OPEN_EDITOR)"
             >
                 <NonLocalizedString
                     :value="schemeInstance?.namespace?.namespace_name"

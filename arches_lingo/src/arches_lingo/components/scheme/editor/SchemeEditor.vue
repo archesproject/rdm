@@ -45,11 +45,9 @@ watch(
     props,
     (newValue) => {
         if (newValue) {
-            currentEditor.value =
-                schemeComponents.find((component) => {
-                    return component.id === newValue.activeTab;
-                }) || schemeComponents[0];
-            console.log(currentEditor.value);
+            currentEditor.value = schemeComponents.find((component) => {
+                return component.id === newValue.activeTab;
+            });
         }
     },
     { immediate: true },
