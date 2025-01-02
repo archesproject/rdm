@@ -39,7 +39,15 @@ const props = withDefaults(
         value: () => ({}) as AppellativeStatus,
     },
 );
-const appellative_status = ref(props.value);
+const value = ref(props.value);
+
+const languageOptions = ref<ControlledListItem[]>([]);
+const typeOptions = ref<ControlledListItem[]>([]);
+const statusOptions = ref<ControlledListItem[]>([]);
+const metatypeOptions = ref<ControlledListItem[]>([]);
+const eventTypeOptions = ref<ControlledListItem[]>([]);
+const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
+const textualWorkOptions = ref<ResourceInstanceReference[]>();
 
 function onUpdate(newValue: string) {
     console.log(newValue);
@@ -75,14 +83,6 @@ async function getResourceInstanceOptions(
     return results;
 }
 
-const languageOptions = ref<ControlledListItem[]>([]);
-const typeOptions = ref<ControlledListItem[]>([]);
-const statusOptions = ref<ControlledListItem[]>([]);
-const metatypeOptions = ref<ControlledListItem[]>([]);
-const eventTypeOptions = ref<ControlledListItem[]>([]);
-const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
-const textualWorkOptions = ref<ResourceInstanceReference[]>();
-
 onMounted(async () => {
     const [languageOpts, typeOpts, statusOpts, metatypeOpts, eventTypeOpts] =
         await Promise.all([
@@ -115,16 +115,14 @@ onMounted(async () => {
     <!-- Label: string -->
     <label for="">{{ $gettext("Label") }}</label>
     <NonLocalizedString
-        :value="
-            appellative_status?.appellative_status_ascribed_name_content ?? ''
-        "
+        :value="value?.appellative_status_ascribed_name_content ?? ''"
         :mode="EDIT"
         @update="onUpdate"
     />
     <!-- Label Language: reference datatype -->
     <label for="">{{ $gettext("Label Language") }}</label>
     <ReferenceDatatype
-        :value="appellative_status?.appellative_status_ascribed_name_language"
+        :value="value?.appellative_status_ascribed_name_language"
         :mode="EDIT"
         :multi-value="false"
         :options="languageOptions"
@@ -133,7 +131,7 @@ onMounted(async () => {
     <!-- Label Type: reference datatype -->
     <label for="">{{ $gettext("Label Type") }}</label>
     <ReferenceDatatype
-        :value="appellative_status?.appellative_status_ascribed_relation"
+        :value="value?.appellative_status_ascribed_relation"
         :mode="EDIT"
         :multi-value="false"
         :options="typeOptions"
@@ -142,7 +140,7 @@ onMounted(async () => {
     <!-- Label Status: reference datatype -->
     <label for="">{{ $gettext("Label Status") }}</label>
     <ReferenceDatatype
-        :value="appellative_status?.appellative_status_status"
+        :value="value?.appellative_status_status"
         :mode="EDIT"
         :multi-value="false"
         :options="statusOptions"
@@ -151,7 +149,7 @@ onMounted(async () => {
     <!-- Label Status Metatype: reference datatype -->
     <label for="">{{ $gettext("Label Metatype") }}</label>
     <ReferenceDatatype
-        :value="appellative_status?.appellative_status_status_metatype"
+        :value="value?.appellative_status_status_metatype"
         :mode="EDIT"
         :multi-value="false"
         :options="metatypeOptions"
@@ -166,7 +164,7 @@ onMounted(async () => {
     <!-- Contributor: resource instance -->
     <label for="">{{ $gettext("Contributor") }}</label>
     <ResourceInstanceRelationships
-        :value="appellative_status?.appellative_status_data_assignment_actor"
+        :value="value?.appellative_status_data_assignment_actor"
         :mode="EDIT"
         :options="groupAndPersonOptions"
         @update="onUpdate"
@@ -174,9 +172,7 @@ onMounted(async () => {
     <!-- Sources: resource instance -->
     <label for="">{{ $gettext("Sources") }}</label>
     <ResourceInstanceRelationships
-        :value="
-            appellative_status?.appellative_status_data_assignment_object_used
-        "
+        :value="value?.appellative_status_data_assignment_object_used"
         :mode="EDIT"
         :options="textualWorkOptions"
         @update="onUpdate"
@@ -184,7 +180,7 @@ onMounted(async () => {
     <!-- Warrant Type: reference datatype -->
     <label for="">{{ $gettext("Warrant Type") }}</label>
     <ReferenceDatatype
-        :value="appellative_status?.appellative_status_data_assignment_type"
+        :value="value?.appellative_status_data_assignment_type"
         :mode="EDIT"
         :multi-value="false"
         :options="eventTypeOptions"
