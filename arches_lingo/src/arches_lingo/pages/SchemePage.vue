@@ -74,7 +74,9 @@ const getRef = (el: object | null, index: number) => {
                     :ref="(el) => getRef(el, index)"
                     v-bind="component.props"
                     @open-editor="
-                        (tileId: string) => onOpenEditor(component.id, tileId)
+                        (tileId: string) => {
+                            onOpenEditor(component.id, tileId);
+                        }
                     "
                 />
             </template>
