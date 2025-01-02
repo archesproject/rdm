@@ -13,7 +13,7 @@ import type { SectionTypes } from "@/arches_lingo/types.ts";
 
 const editorVisible = ref(false);
 const sectionVisible = ref(true);
-const editorTab = ref<string>();
+const editorForm = ref<string>();
 const editorTileId = ref<string>();
 
 const childRefs = ref<Array<SectionTypes>>([]);
@@ -34,7 +34,7 @@ const onClose = () => {
 };
 
 const onOpenEditor = (tab: string, tileId: string) => {
-    editorTab.value = tab;
+    editorForm.value = tab;
     editorVisible.value = true;
     sectionVisible.value = true;
     editorTileId.value = tileId;
@@ -84,9 +84,9 @@ const getRef = (el: object | null, index: number) => {
             :size="25"
         >
             <SchemeEditor
-                v-if="editorTab"
+                v-if="editorForm"
                 :editor-max="sectionVisible"
-                :editor-form="editorTab"
+                :editor-form="editorForm"
                 :tile-id="editorTileId"
                 @maximize="onMaximize"
                 @side="onSide"
