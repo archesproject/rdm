@@ -13,9 +13,9 @@ defineProps<{
     multiValue?: boolean;
     options?: ControlledListItem[];
 }>();
-const emits = defineEmits(["update"]);
+const emit = defineEmits(["update"]);
 const onUpdate = (val: ControlledListItem[]) => {
-    emits("update", val);
+    emit("update", val);
 };
 </script>
 <template>

@@ -54,11 +54,20 @@ const metatypeOptions = ref<ControlledListItem[]>([]);
 const eventTypeOptions = ref<ControlledListItem[]>([]);
 
 onMounted(async () => {
-    languageOptions.value = await getOptions(LANGUAGE_CONTROLLED_LIST);
-    typeOptions.value = await getOptions(LABEL_CONTROLLED_LIST);
-    statusOptions.value = await getOptions(STATUSES_CONTROLLED_LIST);
-    metatypeOptions.value = await getOptions(METATYPES_CONTROLLED_LIST);
-    eventTypeOptions.value = await getOptions(EVENT_TYPES_CONTROLLED_LIST);
+    const [languageOpts, typeOpts, statusOpts, metatypeOpts, eventTypeOpts] =
+        await Promise.all([
+            getOptions(LANGUAGE_CONTROLLED_LIST),
+            getOptions(LABEL_CONTROLLED_LIST),
+            getOptions(STATUSES_CONTROLLED_LIST),
+            getOptions(METATYPES_CONTROLLED_LIST),
+            getOptions(EVENT_TYPES_CONTROLLED_LIST),
+        ]);
+
+    languageOptions.value = languageOpts;
+    typeOptions.value = typeOpts;
+    statusOptions.value = statusOpts;
+    metatypeOptions.value = metatypeOpts;
+    eventTypeOptions.value = eventTypeOpts;
 });
 </script>
 
