@@ -13,6 +13,8 @@ from arches_lingo.serializers import (
     SchemeLabelSerializer,
     SchemeLabelTileSerializer,
     SchemeNamespaceSerializer,
+    SchemeNoteSerializer,
+    SchemeNoteTileSerializer,
     SchemeSerializer,
     ConceptStatementSerializer,
     SchemeStatementSerializer,
@@ -64,6 +66,16 @@ class SchemeLabelView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
 class SchemeLabelTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeLabelTileSerializer
+
+
+class SchemeNoteView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeNoteSerializer
+
+
+class SchemeNoteTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeNoteTileSerializer
 
 
 class TextualWorkRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):

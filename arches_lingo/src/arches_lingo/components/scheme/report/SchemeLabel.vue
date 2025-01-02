@@ -68,7 +68,7 @@ async function getSectionValue() {
 async function deleteSectionValue(tileId: string) {
     let result = false;
     try {
-        result = await deleteSchemeLabelTile(tileId);
+        result = await deleteSchemeLabelTile(route.params.id as string, tileId);
     } catch (error) {
         toast.add({
             severity: ERROR,
@@ -122,10 +122,12 @@ async function save() {
                 @delete-string="deleteSectionValue"
             >
                 <template #name="{ rowData }">
-                    {{
-                        (rowData as AppellativeStatus)
-                            .appellative_status_ascribed_name_content
-                    }}
+                    <span>
+                        {{
+                            (rowData as AppellativeStatus)
+                                .appellative_status_ascribed_name_content
+                        }}
+                    </span>
                 </template>
                 <template #type="{ rowData }">
                     <ControlledListItem
@@ -147,7 +149,7 @@ async function save() {
                 </template>
                 <template #drawer="{ rowData }">
                     <div>
-                        {{ $gettext("Bibliographic Sources") }}:
+                        <span>{{ $gettext("Bibliographic Sources:") }}</span>
                         <ResourceInstanceRelationships
                             :value="
                                 (rowData as AppellativeStatus)
@@ -156,7 +158,7 @@ async function save() {
                         ></ResourceInstanceRelationships>
                     </div>
                     <div>
-                        {{ $gettext("Contributors") }}:
+                        <span>{{ $gettext("Contributors:") }}</span>
                         <ResourceInstanceRelationships
                             :value="
                                 (rowData as AppellativeStatus)
