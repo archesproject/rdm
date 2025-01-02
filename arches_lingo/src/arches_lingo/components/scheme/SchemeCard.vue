@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject } from "vue";
-import { systemLanguageKey } from "@/arches_lingo/constants.ts";
+import { systemLanguageKey, NEW } from "@/arches_lingo/constants.ts";
 import { routeNames } from "@/arches_lingo/routes.ts";
 
 import Card from "primevue/card";
@@ -24,8 +24,10 @@ let schemeDescriptor: ResourceDescriptor = {
 if (descriptors) {
     const descriptor =
         descriptors[systemLanguage.code] ?? Object.values(descriptors)[0];
-    schemeDescriptor.name = descriptor.name ?? "";
-    schemeDescriptor.description = descriptor.description ?? "";
+    if (descriptor) {
+        schemeDescriptor.name = descriptor.name ?? "";
+        schemeDescriptor.description = descriptor.description ?? "";
+    }
 }
 </script>
 
@@ -33,10 +35,13 @@ if (descriptors) {
     <RouterLink :to="schemeURL">
         <Card>
             <template #title>
-                {{ schemeDescriptor.name }}
+                <p v-if="scheme.resourceinstanceid === NEW">
+                    {{ $gettext("Create a new scheme") }}
+                </p>
+                <p v-else>{{ schemeDescriptor.name }}</p>
             </template>
             <template #content>
-                {{ schemeDescriptor.description }}
+                <p>{{ schemeDescriptor.description }}</p>
             </template>
         </Card>
     </RouterLink>

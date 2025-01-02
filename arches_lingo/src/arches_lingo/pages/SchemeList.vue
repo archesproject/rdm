@@ -32,12 +32,7 @@ onMounted(async () => {
     }
     schemes.value.unshift({
         resourceinstanceid: NEW,
-        descriptors: {
-            en: {
-                name: "Create a new scheme",
-                description: "",
-            },
-        },
+        descriptors: {},
     });
 });
 </script>
