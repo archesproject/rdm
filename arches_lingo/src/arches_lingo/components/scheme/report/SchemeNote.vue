@@ -113,7 +113,9 @@ function editSectionValue(tileId: string) {
                 @delete-string="deleteSectionValue"
             >
                 <template #name="{ rowData }">
-                    {{ (rowData as SchemeStatement).statement_content_n1 }}
+                    <span>{{
+                        (rowData as SchemeStatement).statement_content_n1
+                    }}</span>
                 </template>
                 <template #type="{ rowData }">
                     <ControlledListItem
@@ -129,7 +131,7 @@ function editSectionValue(tileId: string) {
                 </template>
                 <template #drawer="{ rowData }">
                     <div>
-                        <span>{{ $gettext("Bibliographic Sources") }}:</span>
+                        <span>{{ $gettext("Bibliographic Sources:") }}</span>
                         <ResourceInstanceRelationships
                             :value="
                                 (rowData as SchemeStatement)
@@ -138,7 +140,7 @@ function editSectionValue(tileId: string) {
                         />
                     </div>
                     <div>
-                        <span>{{ $gettext("Contributors") }}:</span>
+                        <span>{{ $gettext("Contributors:") }}</span>
                         <ResourceInstanceRelationships
                             :value="
                                 (rowData as SchemeStatement)
