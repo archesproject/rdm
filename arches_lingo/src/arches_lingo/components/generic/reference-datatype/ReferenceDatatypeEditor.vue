@@ -24,9 +24,9 @@ const props = withDefaults(
 
 const emit = defineEmits(["update"]);
 const uriRef = ref(
-    props?.value.length === 1 && !props.multiValue
+    props?.value && !props.multiValue
         ? props?.value[0].uri
-        : props?.value.map((item) => item.uri),
+        : props?.value?.map((item) => item.uri) || [],
 );
 const val = computed({
     get() {
