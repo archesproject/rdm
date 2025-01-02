@@ -10,6 +10,7 @@ import type { ControlledListItem } from "@/arches_lingo/types";
 import type { Language } from "@/arches_vue_utils/types.ts";
 
 const systemLanguage = inject(systemLanguageKey) as Language;
+const emit = defineEmits(["update"]);
 const props = withDefaults(
     defineProps<{
         value?: ControlledListItem[];
@@ -22,12 +23,7 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits(["update"]);
-const uriRef = ref(
-    props?.value && !props.multiValue
-        ? props?.value[0].uri
-        : props?.value?.map((item) => item.uri) || [],
-);
+const uriRef = ref(extractURI(props.value));
 const val = computed({
     get() {
         return uriRef.value;
@@ -46,24 +42,35 @@ const val = computed({
     },
 });
 
-const optionLabels = (item: ControlledListItem): string => {
-    const preferredLabel =
-        item.labels.find(
-            (label) =>
-                label.language_id === systemLanguage?.code &&
-                label.valuetype_id === PREF_LABEL,
-        ) || item.labels.find((label) => label.valuetype_id === PREF_LABEL);
-    return preferredLabel?.value ?? "";
-};
+function extractURI(item: ControlledListItem[]): string | string[] {
+    if (item && !props.multiValue) {
+        return item[0].uri;
+    } else if (item && props.multiValue) {
+        return item.map((item) => item.uri);
+    } else {
+        return [];
+    }
+}
+
+function getOptionLabels(item: ControlledListItem): string {
+    const prefLabels = item.labels.filter(
+        (label) => label.valuetype_id === PREF_LABEL,
+    );
+    const optionLabel =
+        prefLabels.find(
+            (label) => label.language_id === systemLanguage?.code,
+        ) || prefLabels[0];
+    return optionLabel?.value ?? "";
+}
 </script>
 
 <template>
     <Select
         v-model="val"
         v-if:="!props.multiValue"
-        :show-toggle-all="!!options?.length"
+        :show-toggle-all="options?.length"
         :options
-        :option-label="optionLabels"
+        :option-label="getOptionLabels"
         option-value="uri"
         :pt="{
             emptyMessage: { style: { fontFamily: 'sans-serif' } },
@@ -74,9 +81,9 @@ const optionLabels = (item: ControlledListItem): string => {
     <MultiSelect
         v-if="props.multiValue"
         v-model="val"
-        :show-toggle-all="!!options?.length"
+        :show-toggle-all="options?.length"
         :options
-        :option-label="optionLabels"
+        :option-label="getOptionLabels"
         option-value="uri"
         :pt="{
             emptyMessage: { style: { fontFamily: 'sans-serif' } },
