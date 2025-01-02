@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { defineProps, onMounted, ref } from "vue";
-import { fetchControlledListOptions } from "@/arches_lingo/api.ts";
+import { defineProps, inject, onMounted, ref, type Ref } from "vue";
+import {
+    fetchControlledListOptions,
+    fetchGroupRdmSystemList,
+    fetchPersonRdmSystemList,
+    fetchTextualWorkRdmSystemList,
+} from "@/arches_lingo/api.ts";
 
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
-// import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
+import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
 import {
+    selectedLanguageKey,
     EDIT,
     LANGUAGE_CONTROLLED_LIST,
     LABEL_CONTROLLED_LIST,
@@ -19,8 +25,12 @@ import type {
     AppellativeStatus,
     ControlledListItem,
     ControlledListItemResult,
+    ResourceInstanceReference,
+    ResourceInstanceResult,
 } from "@/arches_lingo/types.ts";
+import type { Language } from "@/arches_vue_utils/types.ts";
 
+const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const props = withDefaults(
     defineProps<{
         value?: AppellativeStatus;
@@ -35,7 +45,9 @@ function onUpdate(newValue: string) {
     console.log(newValue);
 }
 
-async function getOptions(listId: string): Promise<ControlledListItem[]> {
+async function getControlledListOptions(
+    listId: string,
+): Promise<ControlledListItem[]> {
     const parsed = await fetchControlledListOptions(listId);
     const options = parsed.items.map(
         (item: ControlledListItemResult): ControlledListItem => ({
@@ -47,20 +59,38 @@ async function getOptions(listId: string): Promise<ControlledListItem[]> {
     return options;
 }
 
+async function getResourceInstanceOptions(
+    fetchOptions: () => Promise<ResourceInstanceResult[]>,
+): Promise<ResourceInstanceReference[]> {
+    const options = await fetchOptions();
+    const results = options.map((option: ResourceInstanceResult) => {
+        const result: ResourceInstanceReference = {
+            display_value: option.descriptors[selectedLanguage.value.code].name,
+            resourceId: option.resourceinstanceid,
+            ontologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
+            inverseOntologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
+        };
+        return result;
+    });
+    return results;
+}
+
 const languageOptions = ref<ControlledListItem[]>([]);
 const typeOptions = ref<ControlledListItem[]>([]);
 const statusOptions = ref<ControlledListItem[]>([]);
 const metatypeOptions = ref<ControlledListItem[]>([]);
 const eventTypeOptions = ref<ControlledListItem[]>([]);
+const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
+const textualWorkOptions = ref<ResourceInstanceReference[]>();
 
 onMounted(async () => {
     const [languageOpts, typeOpts, statusOpts, metatypeOpts, eventTypeOpts] =
         await Promise.all([
-            getOptions(LANGUAGE_CONTROLLED_LIST),
-            getOptions(LABEL_CONTROLLED_LIST),
-            getOptions(STATUSES_CONTROLLED_LIST),
-            getOptions(METATYPES_CONTROLLED_LIST),
-            getOptions(EVENT_TYPES_CONTROLLED_LIST),
+            getControlledListOptions(LANGUAGE_CONTROLLED_LIST),
+            getControlledListOptions(LABEL_CONTROLLED_LIST),
+            getControlledListOptions(STATUSES_CONTROLLED_LIST),
+            getControlledListOptions(METATYPES_CONTROLLED_LIST),
+            getControlledListOptions(EVENT_TYPES_CONTROLLED_LIST),
         ]);
 
     languageOptions.value = languageOpts;
@@ -68,6 +98,16 @@ onMounted(async () => {
     statusOptions.value = statusOpts;
     metatypeOptions.value = metatypeOpts;
     eventTypeOptions.value = eventTypeOpts;
+    groupAndPersonOptions.value = await getResourceInstanceOptions(
+        fetchGroupRdmSystemList,
+    );
+    groupAndPersonOptions.value = [
+        ...(groupAndPersonOptions.value || []),
+        ...(await getResourceInstanceOptions(fetchPersonRdmSystemList)),
+    ];
+    textualWorkOptions.value = await getResourceInstanceOptions(
+        fetchTextualWorkRdmSystemList,
+    );
 });
 </script>
 
@@ -125,10 +165,22 @@ onMounted(async () => {
 
     <!-- Contributor: resource instance -->
     <label for="">{{ $gettext("Contributor") }}</label>
-
+    <ResourceInstanceRelationships
+        :value="appellative_status?.appellative_status_data_assignment_actor"
+        :mode="EDIT"
+        :options="groupAndPersonOptions"
+        @update="onUpdate"
+    />
     <!-- Sources: resource instance -->
     <label for="">{{ $gettext("Sources") }}</label>
-
+    <ResourceInstanceRelationships
+        :value="
+            appellative_status?.appellative_status_data_assignment_object_used
+        "
+        :mode="EDIT"
+        :options="textualWorkOptions"
+        @update="onUpdate"
+    />
     <!-- Warrant Type: reference datatype -->
     <label for="">{{ $gettext("Warrant Type") }}</label>
     <ReferenceDatatype
