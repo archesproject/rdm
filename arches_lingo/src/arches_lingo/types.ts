@@ -105,6 +105,7 @@ export interface AppellativeStatus {
     appellative_status_status?: ControlledListItem[];
     appellative_status_data_assignment_object_used: ResourceInstanceReference[];
     appellative_status_data_assignment_actor: ResourceInstanceReference[];
+    appellative_status_data_assignment_type: ControlledListItem[];
 }
 
 export interface SchemeInstance {
