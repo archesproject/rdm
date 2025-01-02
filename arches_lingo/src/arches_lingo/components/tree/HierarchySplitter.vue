@@ -78,7 +78,7 @@ const showHierarchy = ref(false);
             :style="{
                 display: showHierarchy ? 'flex' : 'none',
                 flexDirection: 'column',
-                overflowY: 'scroll',
+                overflowY: 'auto',
             }"
         >
             <Suspense>
@@ -90,7 +90,7 @@ const showHierarchy = ref(false);
         </SplitterPanel>
         <SplitterPanel
             :min-size="25"
-            style="overflow-y: scroll"
+            style="overflow-y: auto"
         >
             <RouterView />
         </SplitterPanel>
