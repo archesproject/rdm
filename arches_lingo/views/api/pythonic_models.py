@@ -9,12 +9,14 @@ from arches.app.views.api.mixins import ArchesModelAPIMixin
 
 from arches_lingo.serializers import (
     ConceptSerializer,
+    ConceptStatementSerializer,
+    GroupRdmSystemSerializer,
+    PersonRdmSystemSerializer,
     SchemeCreationSerializer,
     SchemeLabelSerializer,
     SchemeLabelTileSerializer,
     SchemeNamespaceSerializer,
     SchemeSerializer,
-    ConceptStatementSerializer,
     SchemeStatementSerializer,
     TextualWorkRdmSystemSerializer,
 )
@@ -69,6 +71,18 @@ class SchemeLabelTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
 class TextualWorkRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = TextualWorkRdmSystemSerializer
+    pagination_class = None
+
+
+class GroupRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = GroupRdmSystemSerializer
+    pagination_class = None
+
+
+class PersonRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = PersonRdmSystemSerializer
     pagination_class = None
 
 

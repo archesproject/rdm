@@ -52,6 +52,20 @@ export const fetchTextualWorkRdmSystemList = async () => {
     return parsed;
 };
 
+export const fetchGroupRdmSystemList = async () => {
+    const response = await fetch(arches.urls.api_group_list);
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const fetchPersonRdmSystemList = async () => {
+    const response = await fetch(arches.urls.api_person_list);
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const fetchSchemeCreation = async (schemeId: string) => {
     const response = await fetch(arches.urls.api_scheme_creation(schemeId));
     const parsed = await response.json();
