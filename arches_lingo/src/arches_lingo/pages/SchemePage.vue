@@ -33,8 +33,8 @@ const onClose = () => {
     sectionVisible.value = true;
 };
 
-const onOpenEditor = (tab: string, tileId: string) => {
-    editorForm.value = tab;
+const onOpenEditor = (form: string, tileId: string) => {
+    editorForm.value = form;
     editorVisible.value = true;
     sectionVisible.value = true;
     editorTileId.value = tileId;
