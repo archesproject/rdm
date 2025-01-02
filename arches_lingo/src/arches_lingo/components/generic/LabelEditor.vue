@@ -6,7 +6,14 @@ import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedSt
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 // import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
-import { EDIT, LANGUAGE_CONTROLLED_LIST } from "@/arches_lingo/constants.ts";
+import {
+    EDIT,
+    LANGUAGE_CONTROLLED_LIST,
+    LABEL_CONTROLLED_LIST,
+    STATUSES_CONTROLLED_LIST,
+    METATYPES_CONTROLLED_LIST,
+    EVENT_TYPES_CONTROLLED_LIST,
+} from "@/arches_lingo/constants.ts";
 
 import type {
     AppellativeStatus,
@@ -25,8 +32,7 @@ const props = withDefaults(
 const appellative_status = ref(props.value);
 
 function onUpdate(newValue: string) {
-    // handle the update
-    console.log("Update new value here!" + newValue);
+    console.log(newValue);
 }
 
 async function getOptions(listId: string): Promise<ControlledListItem[]> {
@@ -42,10 +48,17 @@ async function getOptions(listId: string): Promise<ControlledListItem[]> {
 }
 
 const languageOptions = ref<ControlledListItem[]>([]);
+const typeOptions = ref<ControlledListItem[]>([]);
+const statusOptions = ref<ControlledListItem[]>([]);
+const metatypeOptions = ref<ControlledListItem[]>([]);
+const eventTypeOptions = ref<ControlledListItem[]>([]);
 
 onMounted(async () => {
-    const lang_opts = await getOptions(LANGUAGE_CONTROLLED_LIST);
-    languageOptions.value = lang_opts;
+    languageOptions.value = await getOptions(LANGUAGE_CONTROLLED_LIST);
+    typeOptions.value = await getOptions(LABEL_CONTROLLED_LIST);
+    statusOptions.value = await getOptions(STATUSES_CONTROLLED_LIST);
+    metatypeOptions.value = await getOptions(METATYPES_CONTROLLED_LIST);
+    eventTypeOptions.value = await getOptions(EVENT_TYPES_CONTROLLED_LIST);
 });
 </script>
 
@@ -64,18 +77,37 @@ onMounted(async () => {
     <ReferenceDatatype
         :value="appellative_status?.appellative_status_ascribed_name_language"
         :mode="EDIT"
-        :multivalue="false"
+        :multi-value="false"
         :options="languageOptions"
+        @update="onUpdate"
     />
     <!-- Label Type: reference datatype -->
     <label for="">{{ $gettext("Label Type") }}</label>
-
+    <ReferenceDatatype
+        :value="appellative_status?.appellative_status_ascribed_relation"
+        :mode="EDIT"
+        :multi-value="false"
+        :options="typeOptions"
+        @update="onUpdate"
+    />
     <!-- Label Status: reference datatype -->
     <label for="">{{ $gettext("Label Status") }}</label>
-
+    <ReferenceDatatype
+        :value="appellative_status?.appellative_status_status"
+        :mode="EDIT"
+        :multi-value="false"
+        :options="statusOptions"
+        @update="onUpdate"
+    />
     <!-- Label Status Metatype: reference datatype -->
     <label for="">{{ $gettext("Label Metatype") }}</label>
-
+    <ReferenceDatatype
+        :value="appellative_status?.appellative_status_status_metatype"
+        :mode="EDIT"
+        :multi-value="false"
+        :options="metatypeOptions"
+        @update="onUpdate"
+    />
     <!-- Label Temporal Validity Start: date -->
     <label for="">{{ $gettext("Label Temporal Validity Start") }}</label>
 
@@ -90,4 +122,11 @@ onMounted(async () => {
 
     <!-- Warrant Type: reference datatype -->
     <label for="">{{ $gettext("Warrant Type") }}</label>
+    <ReferenceDatatype
+        :value="appellative_status?.appellative_status_data_assignment_type"
+        :mode="EDIT"
+        :multi-value="false"
+        :options="eventTypeOptions"
+        @update="onUpdate"
+    />
 </template>
