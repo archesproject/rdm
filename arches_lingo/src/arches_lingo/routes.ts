@@ -55,7 +55,7 @@ export const routes = [
         component: () => import("@/arches_lingo/pages/SchemePage.vue"),
         meta: {
             shouldShowNavigation: true,
-            shouldShowHierarchy: false,
+            shouldShowHierarchy: true,
             requiresAuthentication: true,
         },
     },

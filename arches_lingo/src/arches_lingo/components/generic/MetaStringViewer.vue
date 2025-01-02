@@ -48,85 +48,88 @@ function confirmDelete(tileId: string) {
         :pt="{ root: { style: { fontFamily: 'sans-serif' } } }"
         :group="metaStringText.name"
     ></ConfirmDialog>
-    <DataTable
-        v-model:expanded-rows="expandedRows"
-        :value="props.metaStrings"
-    >
-        <Column
-            expander
-            style="width: 3rem"
-        />
-        <Column
-            :header="props.metaStringText.name"
-            sortable
+    <div v-if="props.metaStrings?.length">
+        <DataTable
+            v-model:expanded-rows="expandedRows"
+            :value="props.metaStrings"
         >
-            <template #body="slotProps">
-                <slot
-                    name="name"
-                    :row-data="slotProps.data"
-                ></slot>
-            </template>
-        </Column>
-        <Column
-            :header="props.metaStringText.type"
-            sortable
-        >
-            <template #body="slotProps">
-                <slot
-                    name="type"
-                    :row-data="slotProps.data"
-                ></slot>
-            </template>
-        </Column>
-        <Column
-            :header="props.metaStringText.language"
-            sortable
-        >
-            <template #body="slotProps">
-                <slot
-                    name="language"
-                    :row-data="slotProps.data"
-                ></slot>
-            </template>
-        </Column>
-        <Column>
-            <template #body="slotProps">
-                <div class="controls">
-                    <Button
-                        icon="pi pi-file-edit"
-                        :aria-label="$gettext('edit')"
-                        @click="
-                            () =>
-                                emits(
-                                    'editString',
-                                    (slotProps.data as MetaString).tileid,
-                                )
-                        "
-                    />
-                    <Button
-                        icon="pi pi-trash"
-                        :aria-label="$gettext('delete')"
-                        severity="danger"
-                        outlined
-                        @click="
-                            () =>
-                                confirmDelete(
-                                    (slotProps.data as MetaString).tileid,
-                                )
-                        "
-                    />
+            <Column
+                expander
+                style="width: 3rem"
+            />
+            <Column
+                :header="props.metaStringText.name"
+                sortable
+            >
+                <template #body="slotProps">
+                    <slot
+                        name="name"
+                        :row-data="slotProps.data"
+                    ></slot>
+                </template>
+            </Column>
+            <Column
+                :header="props.metaStringText.type"
+                sortable
+            >
+                <template #body="slotProps">
+                    <slot
+                        name="type"
+                        :row-data="slotProps.data"
+                    ></slot>
+                </template>
+            </Column>
+            <Column
+                :header="props.metaStringText.language"
+                sortable
+            >
+                <template #body="slotProps">
+                    <slot
+                        name="language"
+                        :row-data="slotProps.data"
+                    ></slot>
+                </template>
+            </Column>
+            <Column>
+                <template #body="slotProps">
+                    <div class="controls">
+                        <Button
+                            icon="pi pi-file-edit"
+                            :aria-label="$gettext('edit')"
+                            @click="
+                                () =>
+                                    emits(
+                                        'editString',
+                                        (slotProps.data as MetaString).tileid,
+                                    )
+                            "
+                        />
+                        <Button
+                            icon="pi pi-trash"
+                            :aria-label="$gettext('delete')"
+                            severity="danger"
+                            outlined
+                            @click="
+                                () =>
+                                    confirmDelete(
+                                        (slotProps.data as MetaString).tileid,
+                                    )
+                            "
+                        />
+                    </div>
+                </template>
+            </Column>
+            <template #expansion="slotProps">
+                <div class="drawer">
+                    <slot
+                        name="drawer"
+                        :row-data="slotProps.data"
+                    ></slot>
                 </div>
             </template>
-        </Column>
-        <template #expansion="slotProps">
-            <div class="drawer">
-                <slot
-                    name="drawer"
-                    :row-data="slotProps.data"
-                ></slot>
-            </div>
-        </template>
-    </DataTable>
+        </DataTable>
+    </div>
+    <div v-else>{{ props.metaStringText.noRecords }}</div>
 </template>
 <style scoped>
 .controls {

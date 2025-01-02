@@ -26,6 +26,7 @@ const metaStringLabel: MetaStringText = {
     language: $gettext("Label Language"),
     name: $gettext("Label Name"),
     type: $gettext("Label Type"),
+    noRecords: $gettext("No scheme labels were found."),
 };
 
 withDefaults(
@@ -39,7 +40,7 @@ withDefaults(
     },
 );
 
-defineExpose({ save, getSectionValue });
+defineExpose({ getSectionValue });
 
 const emits = defineEmits([OPEN_EDITOR]);
 
@@ -100,9 +101,9 @@ function editSectionValue(tileId: string) {
     }
 }
 
-async function save() {
-    // todo for Johnathan.  This function will save the values of the form back to arches.
-}
+// async function save() {
+//     // todo for Johnathan.  This function will save the values of the form back to arches.
+// }
 
 // async function update() {
 //     // todo for Johnathan.  This function will handle the update emit when the user changes values in your form - you store those values in this section.

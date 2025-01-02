@@ -25,6 +25,7 @@ const metaStringLabel: MetaStringText = {
     language: $gettext("Note Language"),
     name: $gettext("Note Name"),
     type: $gettext("Note Type"),
+    noRecords: $gettext("No scheme notes were found."),
 };
 
 withDefaults(
@@ -94,7 +95,7 @@ function editSectionValue(tileId: string) {
         toast.add({
             severity: ERROR,
             summary: $gettext("Error"),
-            detail: $gettext("Could not find the selected label to edit"),
+            detail: $gettext("Could not find the selected note to edit"),
         });
     }
 }

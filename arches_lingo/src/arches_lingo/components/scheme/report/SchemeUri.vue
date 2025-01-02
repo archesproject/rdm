@@ -6,6 +6,6 @@ const { $gettext } = useGettext();
 
 <template>
     <SchemeReportSection :title-text="$gettext('Scheme URI')">
-        abc
+        todo
     </SchemeReportSection>
 </template>
