@@ -11,7 +11,7 @@ const { $gettext } = useGettext();
 const EDIT = "edit";
 const props = defineProps<{
     editorMax: boolean;
-    activeTab: string;
+    editorForm: string;
     tileId?: string;
 }>();
 
@@ -46,7 +46,7 @@ watch(
     (newValue) => {
         if (newValue) {
             currentEditor.value = schemeComponents.find((component) => {
-                return component.id === newValue.activeTab;
+                return component.id === newValue.editorForm;
             });
         }
     },

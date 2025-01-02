@@ -32,7 +32,7 @@ defineProps<{
     mode?: DataComponentMode;
 }>();
 
-const emits = defineEmits([OPEN_EDITOR, UPDATED]);
+const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
 defineExpose({ getSectionValue });
 
@@ -58,7 +58,7 @@ async function save() {
                       ),
         });
     }
-    emits("updated");
+    emit(UPDATED);
 }
 
 async function getSectionValue() {
@@ -98,7 +98,7 @@ function onNamespaceNameUpdate(val: string) {
         <div v-if="!mode || mode === VIEW">
             <SchemeReportSection
                 :title-text="$gettext('Scheme Namespace')"
-                @open-editor="emits(OPEN_EDITOR)"
+                @open-editor="emit(OPEN_EDITOR)"
             >
                 <NonLocalizedString
                     :value="schemeInstance?.namespace?.namespace_name"

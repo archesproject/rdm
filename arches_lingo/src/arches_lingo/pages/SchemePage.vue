@@ -86,7 +86,7 @@ const getRef = (el: object | null, index: number) => {
             <SchemeEditor
                 v-if="editorTab"
                 :editor-max="sectionVisible"
-                :active-tab="editorTab"
+                :editor-form="editorTab"
                 :tile-id="editorTileId"
                 @maximize="onMaximize"
                 @side="onSide"
