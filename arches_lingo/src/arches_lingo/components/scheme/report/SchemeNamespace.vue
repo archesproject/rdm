@@ -2,20 +2,26 @@
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useGettext } from "vue3-gettext";
-
+import Button from "primevue/button";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import {
     fetchSchemeNamespace,
     updateSchemeNamespace,
 } from "@/arches_lingo/api.ts";
+import {
+    VIEW,
+    EDIT,
+    OPEN_EDITOR,
+    ERROR,
+    UPDATED,
+} from "@/arches_lingo/constants.ts";
+import { useToast } from "primevue/usetoast";
 import type {
     DataComponentMode,
     SchemeNamespaceUpdate,
     SchemeInstance,
 } from "@/arches_lingo/types";
-import { VIEW, EDIT, OPEN_EDITOR, ERROR } from "@/arches_lingo/constants.ts";
-import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 const { $gettext } = useGettext();
@@ -26,9 +32,9 @@ defineProps<{
     mode?: DataComponentMode;
 }>();
 
-defineEmits([OPEN_EDITOR]);
+const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
-defineExpose({ save, getSectionValue });
+defineExpose({ getSectionValue });
 
 onMounted(async () => {
     getSectionValue();
@@ -52,6 +58,7 @@ async function save() {
                       ),
         });
     }
+    emit(UPDATED);
 }
 
 async function getSectionValue() {
@@ -91,7 +98,7 @@ function onNamespaceNameUpdate(val: string) {
         <div v-if="!mode || mode === VIEW">
             <SchemeReportSection
                 :title-text="$gettext('Scheme Namespace')"
-                @open-editor="$emit(OPEN_EDITOR)"
+                @open-editor="emit(OPEN_EDITOR)"
             >
                 <NonLocalizedString
                     :value="schemeInstance?.namespace?.namespace_name"
@@ -107,6 +114,10 @@ function onNamespaceNameUpdate(val: string) {
                 :mode="EDIT"
                 @update="onNamespaceNameUpdate"
             />
+            <Button
+                :label="$gettext('Update')"
+                @click="save"
+            ></Button>
         </div>
     </div>
 </template>
