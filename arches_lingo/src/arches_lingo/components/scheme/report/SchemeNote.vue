@@ -113,9 +113,9 @@ function editSectionValue(tileId: string) {
                 @delete-string="deleteSectionValue"
             >
                 <template #name="{ rowData }">
-                    <span>{{
-                        (rowData as SchemeStatement).statement_content_n1
-                    }}</span>
+                    <span>
+                        {{ (rowData as SchemeStatement).statement_content_n1 }}
+                    </span>
                 </template>
                 <template #type="{ rowData }">
                     <ControlledListItem
