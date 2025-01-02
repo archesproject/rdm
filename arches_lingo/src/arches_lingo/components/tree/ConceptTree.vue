@@ -252,6 +252,7 @@ await initializeTree();
         filter-mode="lenient"
         :filter-placeholder="$gettext('Find')"
         selection-mode="single"
+        style="display: flex; flex-direction: column; overflow-y: hidden"
         :pt="{
             pcFilter: {
                 root: {

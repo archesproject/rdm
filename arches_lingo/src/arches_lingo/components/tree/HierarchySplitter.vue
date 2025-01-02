@@ -78,7 +78,6 @@ const showHierarchy = ref(false);
             :style="{
                 display: showHierarchy ? 'flex' : 'none',
                 flexDirection: 'column',
-                overflowY: 'auto',
             }"
         >
             <Suspense>
