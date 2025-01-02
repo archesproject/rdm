@@ -5,7 +5,6 @@ import type {
 } from "@/arches_lingo/types";
 import ReferenceDatatypeViewer from "@/arches_lingo/components/generic/reference-datatype/ReferenceDatatypeViewer.vue";
 import ReferenceDatatypeEditor from "@/arches_lingo/components/generic/reference-datatype/ReferenceDatatypeEditor.vue";
-import ReferenceDatatypeListEditor from "@/arches_lingo/components/generic/reference-datatype/ReferenceDatatypeListEditor.vue";
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
 defineProps<{
@@ -24,17 +23,11 @@ const onUpdate = (val: ControlledListItem[]) => {
         <div v-if="mode === VIEW">
             <ReferenceDatatypeViewer :value="value" />
         </div>
-        <div v-if="mode === EDIT && multiValue === false">
+        <div v-if="mode === EDIT">
             <ReferenceDatatypeEditor
                 :value="value"
                 :options="options"
-                @update="onUpdate"
-            />
-        </div>
-        <div v-if="mode === EDIT && multiValue === true">
-            <ReferenceDatatypeListEditor
-                :value="value"
-                :options="options"
+                :multi-value="multiValue"
                 @update="onUpdate"
             />
         </div>
