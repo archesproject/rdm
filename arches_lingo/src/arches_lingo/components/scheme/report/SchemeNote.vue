@@ -6,7 +6,13 @@ import { useToast } from "primevue/usetoast";
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import { deleteSchemeNoteTile, fetchSchemeNotes } from "@/arches_lingo/api.ts";
-import { ERROR, OPEN_EDITOR, VIEW, EDIT } from "@/arches_lingo/constants.ts";
+import {
+    ERROR,
+    NEW,
+    OPEN_EDITOR,
+    VIEW,
+    EDIT,
+} from "@/arches_lingo/constants.ts";
 import type {
     DataComponentMode,
     MetaStringText,
@@ -48,6 +54,9 @@ onMounted(() => {
 });
 
 async function getSectionValue() {
+    if (route.params.id === NEW) {
+        return;
+    }
     try {
         const result = await fetchSchemeNotes(route.params.id as string);
         schemeInstance.value = {
