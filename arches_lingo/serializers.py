@@ -34,6 +34,38 @@ class SchemeCreationSerializer(ArchesModelSerializer):
         fields = "__all__"
 
 
+class SchemeLabelSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = "scheme"
+        nodegroups = ["appellative_status"]
+        fields = "__all__"
+
+
+class SchemeLabelTileSerializer(ArchesTileSerializer):
+    class Meta:
+        model = TileModel
+        graph_slug = "scheme"
+        root_node = "appellative_status"
+        fields = "__all__"
+
+
+class SchemeNoteSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = "scheme"
+        nodegroups = ["statement"]
+        fields = "__all__"
+
+
+class SchemeNoteTileSerializer(ArchesTileSerializer):
+    class Meta:
+        model = TileModel
+        graph_slug = "scheme"
+        root_node = "statement"
+        fields = "__all__"
+
+
 class TextualWorkRdmSystemSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance

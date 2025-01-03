@@ -2,50 +2,85 @@
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useGettext } from "vue3-gettext";
-
+import Button from "primevue/button";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import {
     fetchSchemeNamespace,
     updateSchemeNamespace,
 } from "@/arches_lingo/api.ts";
+import {
+    VIEW,
+    EDIT,
+    OPEN_EDITOR,
+    ERROR,
+    UPDATED,
+} from "@/arches_lingo/constants.ts";
+import { useToast } from "primevue/usetoast";
 import type {
     DataComponentMode,
     SchemeNamespaceUpdate,
     SchemeInstance,
 } from "@/arches_lingo/types";
-import { VIEW, EDIT } from "@/arches_lingo/constants.ts";
 
+const toast = useToast();
 const { $gettext } = useGettext();
-const schemeNamespace = ref<SchemeInstance>();
+const schemeInstance = ref<SchemeInstance>();
 const route = useRoute();
 
 defineProps<{
     mode?: DataComponentMode;
 }>();
 
-defineEmits(["openEditor"]);
+const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
-defineExpose({ save, getSectionValue });
+defineExpose({ getSectionValue });
 
 onMounted(async () => {
     getSectionValue();
 });
 
 async function save() {
-    await updateSchemeNamespace(
-        route.params.id as string,
-        schemeNamespace.value as SchemeInstance,
-    );
+    try {
+        await updateSchemeNamespace(
+            route.params.id as string,
+            schemeInstance.value as SchemeInstance,
+        );
+        emit(UPDATED);
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext(
+                          "Could not update the namespace for the resource",
+                      ),
+        });
+    }
 }
 
 async function getSectionValue() {
-    const response = await fetchSchemeNamespace(route.params.id as string);
-    schemeNamespace.value = response;
+    try {
+        const response = await fetchSchemeNamespace(route.params.id as string);
+        schemeInstance.value = response;
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext(
+                          "Could not fetch the namespace for the resource",
+                      ),
+        });
+    }
 }
 
 function onNamespaceNameUpdate(val: string) {
-    const namespaceValue = schemeNamespace.value as SchemeNamespaceUpdate;
+    const namespaceValue = schemeInstance.value as SchemeNamespaceUpdate;
     if (!namespaceValue?.namespace) {
         namespaceValue.namespace = {
             namespace_name: val,
@@ -63,10 +98,10 @@ function onNamespaceNameUpdate(val: string) {
         <div v-if="!mode || mode === VIEW">
             <SchemeReportSection
                 :title-text="$gettext('Scheme Namespace')"
-                @open-editor="$emit('openEditor')"
+                @open-editor="emit(OPEN_EDITOR)"
             >
                 <NonLocalizedString
-                    :value="schemeNamespace?.namespace?.namespace_name"
+                    :value="schemeInstance?.namespace?.namespace_name"
                     :mode="VIEW"
                 />
                 <!-- Discussion of namespace_type indicated it should not be displayed or edited manually,
@@ -75,10 +110,14 @@ function onNamespaceNameUpdate(val: string) {
         </div>
         <div v-if="mode === EDIT">
             <NonLocalizedString
-                :value="schemeNamespace?.namespace?.namespace_name ?? ''"
+                :value="schemeInstance?.namespace?.namespace_name ?? ''"
                 :mode="EDIT"
                 @update="onNamespaceNameUpdate"
             />
+            <Button
+                :label="$gettext('Update')"
+                @click="save"
+            ></Button>
         </div>
     </div>
 </template>

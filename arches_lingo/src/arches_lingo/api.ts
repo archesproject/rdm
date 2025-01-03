@@ -59,6 +59,60 @@ export const fetchSchemeCreation = async (schemeId: string) => {
     return parsed;
 };
 
+export const fetchSchemeLabel = async (schemeId: string) => {
+    const response = await fetch(arches.urls.api_scheme_label(schemeId));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const deleteSchemeLabelTile = async (
+    schemeId: string,
+    tileId: string,
+) => {
+    const response = await fetch(
+        arches.urls.api_scheme_label_tile(schemeId, tileId),
+        {
+            method: "DELETE",
+            headers: { "X-CSRFTOKEN": getToken() },
+        },
+    );
+
+    if (!response.ok) {
+        const parsed = await response.json();
+        throw new Error(parsed.message || response.statusText);
+    } else {
+        return true;
+    }
+};
+
+export const fetchSchemeNotes = async (schemeId: string) => {
+    const response = await fetch(arches.urls.api_scheme_note(schemeId));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const deleteSchemeNoteTile = async (
+    schemeId: string,
+    tileId: string,
+) => {
+    const response = await fetch(
+        arches.urls.api_scheme_note_tile(schemeId, tileId),
+        {
+            method: "DELETE",
+            headers: { "X-CSRFTOKEN": getToken() },
+        },
+    );
+
+    if (!response.ok) {
+        const parsed = await response.json();
+        throw new Error(parsed.message || response.statusText);
+    } else {
+        return true;
+    }
+};
+
 export const updateSchemeCreation = async (
     schemeId: string,
     schemeInstance: SchemeInstance,

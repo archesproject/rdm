@@ -2,23 +2,21 @@
 import { ref } from "vue";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
+import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
 import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
 import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import SchemeAuthority from "@/arches_lingo/components/scheme/report/SchemeAuthority.vue";
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
+import type { SectionTypes } from "@/arches_lingo/types.ts";
 
 const editorVisible = ref(false);
 const sectionVisible = ref(true);
-const editorTab = ref<string>();
-type sectionTypes =
-    | typeof SchemeNamespace
-    | typeof SchemeLicense
-    | typeof SchemeStandard
-    | typeof SchemeAuthority
-    | typeof SchemeNote;
-const childRefs = ref<Array<sectionTypes>>([]);
+const editorForm = ref<string>();
+const editorTileId = ref<string>();
+
+const childRefs = ref<Array<SectionTypes>>([]);
 const onMaximize = () => {
     editorVisible.value = true;
     sectionVisible.value = false;
@@ -35,10 +33,11 @@ const onClose = () => {
     sectionVisible.value = true;
 };
 
-const onOpenEditor = (tab: string) => {
-    editorTab.value = tab;
+const onOpenEditor = (form: string, tileId: string) => {
+    editorForm.value = form;
     editorVisible.value = true;
     sectionVisible.value = true;
+    editorTileId.value = tileId;
 };
 const onUpdated = () => {
     childRefs.value.forEach((ref) => {
@@ -47,6 +46,7 @@ const onUpdated = () => {
 };
 
 const components = [
+    { component: SchemeLabel, id: "label", props: {} },
     { component: SchemeNote, id: "note", props: {} },
     { component: SchemeAuthority, id: "authority", props: {} },
     { component: SchemeStandard, id: "standard", props: {} },
@@ -55,7 +55,7 @@ const components = [
 ];
 
 const getRef = (el: object | null, index: number) => {
-    if (el != null) childRefs.value[index] = el as sectionTypes;
+    if (el != null) childRefs.value[index] = el as SectionTypes;
 };
 </script>
 
@@ -74,7 +74,11 @@ const getRef = (el: object | null, index: number) => {
                     :is="component.component"
                     :ref="(el) => getRef(el, index)"
                     v-bind="component.props"
-                    @open-editor="onOpenEditor(component.id)"
+                    @open-editor="
+                        (tileId: string) => {
+                            onOpenEditor(component.id, tileId);
+                        }
+                    "
                 />
             </template>
         </SplitterPanel>
@@ -84,9 +88,10 @@ const getRef = (el: object | null, index: number) => {
             :min-size="33"
         >
             <SchemeEditor
-                v-if="editorTab"
+                v-if="editorForm"
                 :editor-max="sectionVisible"
-                :active-tab="editorTab"
+                :editor-form="editorForm"
+                :tile-id="editorTileId"
                 @maximize="onMaximize"
                 @side="onSide"
                 @close="onClose"

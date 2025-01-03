@@ -2,6 +2,7 @@
 import { inject, onMounted, ref, type Ref } from "vue";
 import { useRoute } from "vue-router";
 import { useGettext } from "vue3-gettext";
+import Button from "primevue/button";
 import type {
     DataComponentMode,
     ResourceInstanceReference,
@@ -15,23 +16,31 @@ import {
     updateSchemeCreation,
 } from "@/arches_lingo/api.ts";
 import ResourceInstanceRelationships from "../../generic/ResourceInstanceRelationships.vue";
-import { selectedLanguageKey, VIEW, EDIT } from "@/arches_lingo/constants.ts";
+import {
+    selectedLanguageKey,
+    VIEW,
+    EDIT,
+    OPEN_EDITOR,
+    UPDATED,
+    ERROR,
+} from "@/arches_lingo/constants.ts";
 import type { Language } from "@/arches_vue_utils/types.ts";
+import { useToast } from "primevue/usetoast";
 
-const OPEN_EDITOR = "openEditor";
+const toast = useToast();
 const schemeInstance = ref<SchemeInstance>();
 const textualWorkOptions = ref<ResourceInstanceReference[]>();
 const route = useRoute();
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
-defineProps<{
+const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
 }>();
 
-const emits = defineEmits(["openEditor"]);
+const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
-defineExpose({ save, getSectionValue });
+defineExpose({ getSectionValue });
 
 onMounted(async () => {
     getSectionValue();
@@ -52,34 +61,81 @@ async function getOptions(): Promise<ResourceInstanceReference[]> {
 }
 
 async function save() {
-    await updateSchemeCreation(
-        route.params.id as string,
-        schemeInstance.value as SchemeInstance,
-    );
+    try {
+        await updateSchemeCreation(
+            route.params.id as string,
+            schemeInstance.value as SchemeInstance,
+        );
 
-    getSectionValue();
+        getSectionValue();
+        emit(UPDATED);
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not save the scheme standard"),
+        });
+    }
+}
+
+async function getCachedOptions(): Promise<
+    ResourceInstanceReference[] | undefined
+> {
+    try {
+        const options = textualWorkOptions.value || (await getOptions());
+        return options;
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not fetch options for the standard"),
+        });
+    }
+}
+
+async function setSchemeInstance(
+    options: ResourceInstanceReference[] | undefined,
+) {
+    try {
+        const scheme = await fetchSchemeCreation(route.params.id as string);
+
+        const hydratedResults = options?.map((option) => {
+            const savedSource = scheme.creation?.creation_sources.find(
+                (source: ResourceInstanceReference) =>
+                    source.resourceId === option.resourceId,
+            );
+            if (savedSource) {
+                return savedSource;
+            } else {
+                return option;
+            }
+        });
+        textualWorkOptions.value = hydratedResults;
+        schemeInstance.value = scheme;
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not fetch the scheme standard"),
+        });
+    }
 }
 
 async function getSectionValue() {
-    const options = !textualWorkOptions.value
-        ? await getOptions()
-        : textualWorkOptions.value;
+    const options = await getCachedOptions();
 
-    const scheme = await fetchSchemeCreation(route.params.id as string);
-
-    const hydratedResults = options.map((option) => {
-        const savedSource = scheme.creation?.creation_sources.find(
-            (source: ResourceInstanceReference) =>
-                source.resourceId === option.resourceId,
-        );
-        if (savedSource) {
-            return savedSource;
-        } else {
-            return option;
-        }
-    });
-    textualWorkOptions.value = hydratedResults;
-    schemeInstance.value = scheme;
+    if (options) {
+        setSchemeInstance(options);
+    }
 }
 
 function onCreationUpdate(val: string[]) {
@@ -98,14 +154,13 @@ function onCreationUpdate(val: string[]) {
 </script>
 
 <template>
-    <div v-if="!mode || mode === VIEW">
+    <div v-if="mode === VIEW">
         <SchemeReportSection
             :title-text="$gettext('Scheme Standards Followed')"
-            @open-editor="emits(OPEN_EDITOR)"
+            @open-editor="emit(OPEN_EDITOR)"
         >
             <ResourceInstanceRelationships
                 :value="schemeInstance?.creation?.creation_sources"
-                :mode="VIEW"
             />
             <!-- Discussion of namespace_type indicated it should not be displayed or edited manually,
                  if this changes, the ControlledListItem widget can be used.-->
@@ -118,5 +173,9 @@ function onCreationUpdate(val: string[]) {
             :mode="EDIT"
             @update="onCreationUpdate"
         />
+        <Button
+            :label="$gettext('Update')"
+            @click="save"
+        ></Button>
     </div>
 </template>

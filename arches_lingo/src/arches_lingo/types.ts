@@ -2,6 +2,12 @@ import type { Ref } from "vue";
 import type { TreeNode } from "primevue/treenode";
 import type { Label } from "@/arches_vue_utils/types.ts";
 import type { EDIT, VIEW } from "./constants";
+import SchemeNamespace from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeNamespace.vue";
+import SchemeLabel from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeLabel.vue";
+import SchemeLicense from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeLicense.vue";
+import SchemeStandard from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeStandard.vue";
+import SchemeAuthority from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeAuthority.vue";
+import SchemeNote from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeNote.vue";
 
 export interface User {
     first_name: string;
@@ -63,6 +69,14 @@ interface ControlledListItemValue {
     value: string;
 }
 
+export type SectionTypes =
+    | typeof SchemeLabel
+    | typeof SchemeNamespace
+    | typeof SchemeLicense
+    | typeof SchemeStandard
+    | typeof SchemeAuthority
+    | typeof SchemeNote;
+
 export type DataComponentMode = typeof EDIT | typeof VIEW;
 
 export interface SchemeNamespaceUpdate {
@@ -70,6 +84,38 @@ export interface SchemeNamespaceUpdate {
         namespace_name: string;
         namespace_type: ControlledListItemValue[] | ControlledListItem[];
     };
+}
+
+export interface MetaString {
+    tileid: string;
+}
+
+export interface MetaStringText {
+    name: string;
+    type: string;
+    language: string;
+    deleteConfirm: string;
+    noRecords: string;
+}
+
+export interface AppellativeStatus {
+    tileid: string;
+    appellative_status_ascribed_name_content: string;
+    appellative_status_ascribed_name_language?: ControlledListItem[];
+    appellative_status_ascribed_relation?: ControlledListItem[];
+    appellative_status_status_metatype?: ControlledListItem[];
+    appellative_status_status?: ControlledListItem[];
+    appellative_status_data_assignment_object_used: ResourceInstanceReference[];
+    appellative_status_data_assignment_actor: ResourceInstanceReference[];
+}
+
+export interface SchemeStatement {
+    tileid: string;
+    statement_content_n1: string;
+    statement_language_n1?: ControlledListItem[];
+    statement_type_n1?: ControlledListItem[];
+    statement_data_assignment_object_used: ResourceInstanceReference[];
+    statement_data_assignment_actor: ResourceInstanceReference[];
 }
 
 export interface SchemeInstance {
@@ -80,6 +126,8 @@ export interface SchemeInstance {
     creation?: {
         creation_sources: ResourceInstanceReference[];
     };
+    appellative_status?: AppellativeStatus[];
+    statement?: SchemeStatement[];
 }
 
 export interface SchemeResource {
