@@ -16,6 +16,7 @@ import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeS
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
+import LabelEditor from "@/arches_lingo/components/generic/LabelEditor.vue";
 
 import type {
     AppellativeStatus,
