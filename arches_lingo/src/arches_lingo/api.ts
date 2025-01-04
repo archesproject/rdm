@@ -1,7 +1,6 @@
 import arches from "arches";
 import Cookies from "js-cookie";
-
-import type { SchemeInstance } from "@/arches_lingo/types";
+import type { AppellativeStatus, SchemeInstance } from "@/arches_lingo/types";
 
 function getToken() {
     const token = Cookies.get("csrftoken");
@@ -99,6 +98,27 @@ export const deleteSchemeLabelTile = async (
     } else {
         return true;
     }
+};
+
+export const updateSchemeLabel = async (
+    schemeId: string,
+    tileId: string,
+    appellative_status: AppellativeStatus,
+) => {
+    const response = await fetch(
+        arches.urls.api_scheme_label_tile(schemeId, tileId),
+        {
+            method: "PATCH",
+            headers: {
+                "X-CSRFTOKEN": getToken(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(appellative_status),
+        },
+    );
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
 };
 
 export const fetchSchemeNotes = async (schemeId: string) => {

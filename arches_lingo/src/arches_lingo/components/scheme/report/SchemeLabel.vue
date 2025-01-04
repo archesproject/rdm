@@ -10,13 +10,14 @@ import {
     OPEN_EDITOR,
     NEW,
     VIEW,
+    UPDATED,
 } from "@/arches_lingo/constants.ts";
 import { deleteSchemeLabelTile, fetchSchemeLabel } from "@/arches_lingo/api.ts";
-import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
+import LabelEditor from "@/arches_lingo/components/generic/LabelEditor.vue";
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
-import LabelEditor from "@/arches_lingo/components/generic/LabelEditor.vue";
+import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 
 import type {
     AppellativeStatus,
@@ -40,8 +41,6 @@ withDefaults(
         mode?: DataComponentMode;
         tileId?: string | null;
         args?: Array<object>;
-        // todo for Johnathan - if obj empty, create new tile
-        // if obj has values, load those values into the form
     }>(),
     {
         mode: VIEW,
@@ -52,7 +51,7 @@ const schemeInstance = ref<SchemeInstance>();
 
 defineExpose({ getSectionValue });
 
-const emits = defineEmits([OPEN_EDITOR]);
+const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
 onMounted(() => {
     getSectionValue();
@@ -104,7 +103,7 @@ function editSectionValue(tileId: string) {
         (tile) => tile.tileid === tileId,
     );
     if (appellativeStatus && appellativeStatus.tileid === tileId) {
-        emits(OPEN_EDITOR, appellativeStatus.tileid);
+        emit(OPEN_EDITOR, appellativeStatus.tileid);
     } else {
         toast.add({
             severity: ERROR,
@@ -114,13 +113,9 @@ function editSectionValue(tileId: string) {
     }
 }
 
-// async function save() {
-//     // todo for Johnathan.  This function will save the values of the form back to arches.
-// }
-
-// async function update() {
-//     // todo for Johnathan.  This function will handle the update emit when the user changes values in your form - you store those values in this section.
-// }
+function update() {
+    emit(UPDATED);
+}
 </script>
 
 <template>
@@ -128,7 +123,7 @@ function editSectionValue(tileId: string) {
         <SchemeReportSection
             :title-text="$gettext('Scheme Labels')"
             :button-text="$gettext('Add New Scheme Label')"
-            @open-editor="emits(OPEN_EDITOR)"
+            @open-editor="emit(OPEN_EDITOR)"
         >
             <MetaStringViewer
                 :meta-strings="schemeInstance?.appellative_status"
@@ -190,7 +185,10 @@ function editSectionValue(tileId: string) {
             v-for="appellative_status in schemeInstance?.appellative_status"
             :key="appellative_status.tileid"
         >
-            <LabelEditor :value="appellative_status"></LabelEditor>
+            <LabelEditor
+                :value="appellative_status"
+                @update="update"
+            ></LabelEditor>
         </div>
     </div>
 </template>
