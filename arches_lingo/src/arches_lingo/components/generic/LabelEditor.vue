@@ -203,7 +203,10 @@ onMounted(async () => {
     <DateDatatype
         :value="value?.appellative_status_timespan_begin_of_the_begin"
         :mode="EDIT"
-        @update="onUpdate"
+        @update="
+            (val) =>
+                onUpdate('appellative_status_timespan_begin_of_the_begin', val)
+        "
     />
 
     <!-- Label Temporal Validity End: date -->
@@ -211,7 +214,9 @@ onMounted(async () => {
     <DateDatatype
         :value="value?.appellative_status_timespan_end_of_the_end"
         :mode="EDIT"
-        @update="onUpdate"
+        @update="
+            (val) => onUpdate('appellative_status_timespan_end_of_the_end', val)
+        "
     />
 
     <!-- Contributor: resource instance -->
