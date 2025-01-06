@@ -44,7 +44,7 @@ const val = computed({
 
 function extractURI(item: ControlledListItem[]): string | string[] {
     if (item && !props.multiValue) {
-        return item[0].uri;
+        return item[0]?.uri;
     } else if (item && props.multiValue) {
         return item.map((item) => item.uri);
     } else {
