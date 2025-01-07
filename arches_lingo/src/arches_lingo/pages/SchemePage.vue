@@ -7,7 +7,6 @@ import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense
 import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
-import SchemeAuthority from "@/arches_lingo/components/scheme/report/SchemeAuthority.vue";
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
 import type { SectionTypes } from "@/arches_lingo/types.ts";
 
@@ -48,7 +47,6 @@ const onUpdated = () => {
 const components = [
     { component: SchemeLabel, id: "label", props: {} },
     { component: SchemeNote, id: "note", props: {} },
-    { component: SchemeAuthority, id: "authority", props: {} },
     { component: SchemeStandard, id: "standard", props: {} },
     { component: SchemeLicense, id: "license", props: {} },
     { component: SchemeNamespace, id: "namespace", props: {} },

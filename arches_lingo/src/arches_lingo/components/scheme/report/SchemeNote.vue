@@ -114,6 +114,7 @@ function editSectionValue(tileId: string) {
     <div v-if="mode === VIEW">
         <SchemeReportSection
             :title-text="$gettext('Scheme Notes')"
+            :button-text="$gettext('Add New Scheme Note')"
             @open-editor="emits(OPEN_EDITOR)"
         >
             <MetaStringViewer

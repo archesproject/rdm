@@ -6,7 +6,6 @@ import SchemeNamespace from "@/arches_lingo/src/arches_lingo/components/scheme/r
 import SchemeLabel from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeLabel.vue";
 import SchemeLicense from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeLicense.vue";
 import SchemeStandard from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeStandard.vue";
-import SchemeAuthority from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeAuthority.vue";
 import SchemeNote from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeNote.vue";
 
 export interface User {
@@ -74,7 +73,6 @@ export type SectionTypes =
     | typeof SchemeNamespace
     | typeof SchemeLicense
     | typeof SchemeStandard
-    | typeof SchemeAuthority
     | typeof SchemeNote;
 
 export type DataComponentMode = typeof EDIT | typeof VIEW;
