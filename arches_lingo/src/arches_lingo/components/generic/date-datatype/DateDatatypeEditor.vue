@@ -18,6 +18,15 @@ watch(
         modelValue.value = newValue;
     },
 );
+
+// Datepicker returns date object, which needs to be parsed to post back
+// https://github.com/primefaces/primevue/issues/6278
+function parseDate(date: unknown): string | null {
+    if (date) {
+        return new Date(date as string).toISOString().split("T")[0];
+    }
+    return null;
+}
 </script>
 
 <template>
@@ -26,6 +35,6 @@ watch(
         icon-display="input"
         :date-format="dateFormat"
         show-icon
-        @update:model-value="() => emit('update', modelValue)"
+        @update:model-value="() => emit('update', parseDate(modelValue))"
     />
 </template>
