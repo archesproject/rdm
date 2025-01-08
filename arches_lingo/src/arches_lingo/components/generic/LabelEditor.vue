@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { inject, onMounted, ref, toRaw, type Ref } from "vue";
+import { computed, inject, onMounted, ref, toRaw, toRef, type Ref } from "vue";
 
 import Button from "primevue/button";
 import { useGettext } from "vue3-gettext";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
 import {
+    createScheme,
+    createSchemeLabel,
     fetchControlledListOptions,
     fetchGroupRdmSystemList,
     fetchPersonRdmSystemList,
@@ -26,8 +28,10 @@ import {
     LABEL_CONTROLLED_LIST,
     LANGUAGE_CONTROLLED_LIST,
     METATYPES_CONTROLLED_LIST,
+    NEW,
     selectedLanguageKey,
     STATUSES_CONTROLLED_LIST,
+    UPDATED,
 } from "@/arches_lingo/constants.ts";
 
 import type {
@@ -36,12 +40,14 @@ import type {
     ControlledListItemResult,
     ResourceInstanceReference,
     ResourceInstanceResult,
+    SchemeInstance,
 } from "@/arches_lingo/types.ts";
 import type { Language } from "@/arches_vue_utils/types.ts";
 
-const emit = defineEmits(["update"]);
+const emit = defineEmits([UPDATED]);
 const toast = useToast();
 const route = useRoute();
+const router = useRouter();
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
@@ -53,7 +59,13 @@ const props = withDefaults(
         value: () => ({}) as AppellativeStatus,
     },
 );
-const value = ref(props.value);
+const valueRef = toRef(props, "value");
+const formValue = computed({
+    get: () => valueRef.value,
+    set: (newVal: AppellativeStatus) => {
+        valueRef.value = newVal;
+    },
+});
 
 const languageOptions = ref<ControlledListItem[]>([]);
 const typeOptions = ref<ControlledListItem[]>([]);
@@ -64,14 +76,14 @@ const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
 const textualWorkOptions = ref<ResourceInstanceReference[]>();
 
 function onUpdateString(node: keyof AppellativeStatus, val: string) {
-    (value.value[node] as unknown) = toRaw(val);
+    (formValue.value[node] as unknown) = toRaw(val);
 }
 
 function onUpdateReferenceDatatype(
     node: keyof AppellativeStatus,
     val: ControlledListItem[],
 ) {
-    (value.value[node] as unknown) = val.map((item) => toRaw(item));
+    (formValue.value[node] as unknown) = val.map((item) => toRaw(item));
 }
 
 function onUpdateResourceInstance(
@@ -83,18 +95,31 @@ function onUpdateResourceInstance(
         const selectedOptions = options.filter((option) =>
             val.includes(option.resourceId),
         );
-        (value.value[node] as unknown) = selectedOptions;
+        (formValue.value[node] as unknown) = selectedOptions;
     }
 }
 
 async function save() {
     try {
-        await updateSchemeLabel(
-            route.params.id as string,
-            value.value.tileid as string,
-            value.value,
-        );
-        emit("update");
+        if (route.params.id === NEW) {
+            const newSchemeInstance: SchemeInstance = {
+                appellative_status: [toRaw(formValue.value)],
+            };
+            const updated = await createScheme(newSchemeInstance);
+            await router.push({
+                name: "scheme",
+                params: { id: updated.resourceinstanceid },
+            });
+        } else if (!formValue.value.tileid) {
+            await createSchemeLabel(route.params.id as string, formValue.value);
+        } else {
+            await updateSchemeLabel(
+                route.params.id as string,
+                formValue.value.tileid as string,
+                formValue.value,
+            );
+        }
+        emit(UPDATED);
     } catch (error) {
         toast.add({
             severity: ERROR,
@@ -176,7 +201,7 @@ onMounted(async () => {
     <!-- Label Language: reference datatype -->
     <label for="">{{ $gettext("Label Language") }}</label>
     <ReferenceDatatype
-        :value="value?.appellative_status_ascribed_name_language"
+        :value="formValue?.appellative_status_ascribed_name_language"
         :mode="EDIT"
         :multi-value="false"
         :options="languageOptions"
@@ -191,7 +216,7 @@ onMounted(async () => {
     <!-- Label Type: reference datatype -->
     <label for="">{{ $gettext("Label Type") }}</label>
     <ReferenceDatatype
-        :value="value?.appellative_status_ascribed_relation"
+        :value="formValue?.appellative_status_ascribed_relation"
         :mode="EDIT"
         :multi-value="false"
         :options="typeOptions"
@@ -206,7 +231,7 @@ onMounted(async () => {
     <!-- Label Status: reference datatype -->
     <label for="">{{ $gettext("Label Status") }}</label>
     <ReferenceDatatype
-        :value="value?.appellative_status_status"
+        :value="formValue?.appellative_status_status"
         :mode="EDIT"
         :multi-value="false"
         :options="statusOptions"
@@ -217,7 +242,7 @@ onMounted(async () => {
     <!-- Label Status Metatype: reference datatype -->
     <label for="">{{ $gettext("Label Metatype") }}</label>
     <ReferenceDatatype
-        :value="value?.appellative_status_status_metatype"
+        :value="formValue?.appellative_status_status_metatype"
         :mode="EDIT"
         :multi-value="false"
         :options="metatypeOptions"
@@ -233,7 +258,7 @@ onMounted(async () => {
     <!-- Label Temporal Validity Start: date -->
     <label for="">{{ $gettext("Label Temporal Validity Start") }}</label>
     <DateDatatype
-        :value="value?.appellative_status_timespan_begin_of_the_begin"
+        :value="formValue?.appellative_status_timespan_begin_of_the_begin"
         :mode="EDIT"
         @update="
             (val) =>
@@ -247,7 +272,7 @@ onMounted(async () => {
     <!-- Label Temporal Validity End: date -->
     <label for="">{{ $gettext("Label Temporal Validity End") }}</label>
     <DateDatatype
-        :value="value?.appellative_status_timespan_end_of_the_end"
+        :value="formValue?.appellative_status_timespan_end_of_the_end"
         :mode="EDIT"
         @update="
             (val) =>
@@ -261,7 +286,7 @@ onMounted(async () => {
     <!-- Contributor: resource instance -->
     <label for="">{{ $gettext("Contributor") }}</label>
     <ResourceInstanceRelationships
-        :value="value?.appellative_status_data_assignment_actor"
+        :value="formValue?.appellative_status_data_assignment_actor"
         :mode="EDIT"
         :options="groupAndPersonOptions"
         @update="
@@ -276,7 +301,7 @@ onMounted(async () => {
     <!-- Sources: resource instance -->
     <label for="">{{ $gettext("Sources") }}</label>
     <ResourceInstanceRelationships
-        :value="value?.appellative_status_data_assignment_object_used"
+        :value="formValue?.appellative_status_data_assignment_object_used"
         :mode="EDIT"
         :options="textualWorkOptions"
         @update="
@@ -291,7 +316,7 @@ onMounted(async () => {
     <!-- Warrant Type: reference datatype -->
     <label for="">{{ $gettext("Warrant Type") }}</label>
     <ReferenceDatatype
-        :value="value?.appellative_status_data_assignment_type"
+        :value="formValue?.appellative_status_data_assignment_type"
         :mode="EDIT"
         :multi-value="false"
         :options="eventTypeOptions"

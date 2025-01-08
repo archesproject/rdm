@@ -80,6 +80,26 @@ export const fetchSchemeLabel = async (schemeId: string) => {
     return parsed;
 };
 
+export const createSchemeLabel = async (
+    schemeId: string,
+    appellative_status: AppellativeStatus,
+) => {
+    const response = await fetch(arches.urls.api_scheme_label_create, {
+        method: "POST",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            resourceinstance: schemeId,
+            ...appellative_status,
+        }),
+    });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const deleteSchemeLabelTile = async (
     schemeId: string,
     tileId: string,

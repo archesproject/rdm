@@ -70,6 +70,11 @@ class SchemeLabelTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = SchemeLabelTileSerializer
 
 
+class SchemeLabelCreateView(ArchesModelAPIMixin, ListCreateAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeLabelTileSerializer
+
+
 class SchemeNoteView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeNoteSerializer
