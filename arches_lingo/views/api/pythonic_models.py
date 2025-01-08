@@ -85,6 +85,11 @@ class SchemeNoteTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = SchemeNoteTileSerializer
 
 
+class SchemeNoteCreateView(ArchesModelAPIMixin, ListCreateAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeNoteTileSerializer
+
+
 class TextualWorkRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = TextualWorkRdmSystemSerializer

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useGettext } from "vue3-gettext";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
@@ -12,7 +12,9 @@ import {
     OPEN_EDITOR,
     VIEW,
     EDIT,
+    UPDATED,
 } from "@/arches_lingo/constants.ts";
+import NoteEditor from "@/arches_lingo/components/generic/NoteEditor.vue";
 import type {
     DataComponentMode,
     MetaStringText,
@@ -34,7 +36,7 @@ const metaStringLabel: MetaStringText = {
     noRecords: $gettext("No scheme notes were found."),
 };
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         mode?: DataComponentMode;
         tileId?: string | null;
@@ -45,12 +47,22 @@ withDefaults(
     },
 );
 
-const emits = defineEmits([OPEN_EDITOR]);
+watch(props, () => {
+    getSectionValue();
+});
+
+const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
 defineExpose({ getSectionValue });
 
 onMounted(() => {
     getSectionValue();
+});
+
+const selectedNote = computed(() => {
+    return schemeInstance.value?.statement?.find(
+        (tile) => tile.tileid === props.tileId,
+    );
 });
 
 async function getSectionValue() {
@@ -99,13 +111,19 @@ function editSectionValue(tileId: string) {
         (tile) => tile.tileid === tileId,
     );
     if (schemeStatement && schemeStatement.tileid === tileId) {
-        emits(OPEN_EDITOR, schemeStatement.tileid);
+        emit(OPEN_EDITOR, schemeStatement.tileid);
     } else {
         toast.add({
             severity: ERROR,
             summary: $gettext("Error"),
             detail: $gettext("Could not find the selected note to edit"),
         });
+    }
+}
+async function update(tileId: string | undefined) {
+    await emit(UPDATED);
+    if (tileId) {
+        await emit(OPEN_EDITOR, tileId);
     }
 }
 </script>
@@ -115,7 +133,7 @@ function editSectionValue(tileId: string) {
         <SchemeReportSection
             :title-text="$gettext('Scheme Notes')"
             :button-text="$gettext('Add New Scheme Note')"
-            @open-editor="emits(OPEN_EDITOR)"
+            @open-editor="emit(OPEN_EDITOR)"
         >
             <MetaStringViewer
                 :meta-strings="schemeInstance?.statement"
@@ -165,5 +183,10 @@ function editSectionValue(tileId: string) {
             </MetaStringViewer>
         </SchemeReportSection>
     </div>
-    <div v-if="mode === EDIT"></div>
+    <div v-if="mode === EDIT">
+        <NoteEditor
+            :value="selectedNote"
+            @update="update"
+        />
+    </div>
 </template>
