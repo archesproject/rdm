@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGettext } from "vue3-gettext";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
@@ -36,11 +36,10 @@ const metaStringLabel: MetaStringText = {
     noRecords: $gettext("No scheme labels were found."),
 };
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         mode?: DataComponentMode;
         tileId?: string | null;
-        args?: Array<object>;
     }>(),
     {
         mode: VIEW,
@@ -48,6 +47,11 @@ withDefaults(
     },
 );
 const schemeInstance = ref<SchemeInstance>();
+const appellativeStatusToEdit = computed(() => {
+    return schemeInstance.value?.appellative_status?.find(
+        (tile) => tile.tileid === props.tileId,
+    );
+});
 
 defineExpose({ getSectionValue });
 
@@ -181,15 +185,10 @@ function update() {
         </SchemeReportSection>
     </div>
     <div v-if="mode === EDIT">
-        <div
-            v-for="appellative_status in schemeInstance?.appellative_status"
-            :key="appellative_status.tileid"
-        >
-            <LabelEditor
-                :value="appellative_status"
-                @update="update"
-            ></LabelEditor>
-        </div>
+        <LabelEditor
+            :value="appellativeStatusToEdit"
+            @update="update"
+        />
     </div>
 </template>
 <style scoped>
