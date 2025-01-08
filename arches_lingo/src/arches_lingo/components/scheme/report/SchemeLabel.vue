@@ -149,6 +149,7 @@ function update() {
                             (rowData as AppellativeStatus)
                                 .appellative_status_ascribed_relation
                         "
+                        :mode="VIEW"
                     >
                     </ReferenceDatatype>
                 </template>
@@ -158,6 +159,7 @@ function update() {
                             (rowData as AppellativeStatus)
                                 .appellative_status_ascribed_name_language
                         "
+                        :mode="VIEW"
                     >
                     </ReferenceDatatype>
                 </template>
