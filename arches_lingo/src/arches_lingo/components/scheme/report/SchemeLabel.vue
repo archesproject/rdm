@@ -123,6 +123,7 @@ function editSectionValue(tileId: string) {
     <div v-if="mode === VIEW">
         <SchemeReportSection
             :title-text="$gettext('Scheme Labels')"
+            :button-text="$gettext('Add New Scheme Label')"
             @open-editor="emits(OPEN_EDITOR)"
         >
             <MetaStringViewer

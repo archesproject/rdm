@@ -29,6 +29,7 @@ import type {
 const toast = useToast();
 const { $gettext } = useGettext();
 const schemeInstance = ref<SchemeInstance>({});
+const exists = ref(false);
 const route = useRoute();
 const router = useRouter();
 
@@ -77,6 +78,9 @@ async function getSectionValue() {
     try {
         const response = await fetchSchemeNamespace(route.params.id as string);
         schemeInstance.value = response;
+        if (schemeInstance.value.namespace) {
+            exists.value = true;
+        }
     } catch (error) {
         toast.add({
             severity: ERROR,
@@ -110,6 +114,11 @@ function onNamespaceNameUpdate(val: string) {
         <div v-if="!mode || mode === VIEW">
             <SchemeReportSection
                 :title-text="$gettext('Scheme Namespace')"
+                :button-text="
+                    exists
+                        ? $gettext('Edit Scheme Namespace')
+                        : $gettext('Add New Scheme Namespace')
+                "
                 @open-editor="emit(OPEN_EDITOR)"
             >
                 <NonLocalizedString

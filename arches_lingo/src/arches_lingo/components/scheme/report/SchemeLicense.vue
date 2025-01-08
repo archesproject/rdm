@@ -13,7 +13,10 @@ const { $gettext } = useGettext();
 </script>
 
 <template>
-    <SchemeReportSection :title-text="$gettext('License')">
+    <SchemeReportSection
+        :title-text="$gettext('License')"
+        :button-text="$gettext('Add New License')"
+    >
         todo
     </SchemeReportSection>
 </template>

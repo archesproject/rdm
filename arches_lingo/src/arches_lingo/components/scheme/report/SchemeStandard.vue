@@ -168,6 +168,7 @@ function onCreationUpdate(val: string[]) {
     <div v-if="mode === VIEW">
         <SchemeReportSection
             :title-text="$gettext('Scheme Standards Followed')"
+            :button-text="$gettext('Update Scheme Standards')"
             @open-editor="emit(OPEN_EDITOR)"
         >
             <ResourceInstanceRelationships
