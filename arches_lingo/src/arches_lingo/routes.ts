@@ -1,14 +1,14 @@
 export const routes = [
-    {
-        path: "/",
-        name: "root",
-        component: () => import("@/arches_lingo/pages/HomePage.vue"),
-        meta: {
-            shouldShowNavigation: true,
-            shouldShowHierarchy: false,
-            requiresAuthentication: true,
-        },
-    },
+    // {
+    //     path: "/",
+    //     name: "root",
+    //     component: () => import("@/arches_lingo/pages/HomePage.vue"),
+    //     meta: {
+    //         shouldShowNavigation: true,
+    //         shouldShowHierarchy: false,
+    //         requiresAuthentication: true,
+    //     },
+    // },
     {
         path: "/login/:next?",
         name: "login",
@@ -30,7 +30,7 @@ export const routes = [
         },
     },
     {
-        path: "/schemes",
+        path: "/",
         name: "schemes",
         component: () => import("@/arches_lingo/pages/SchemeList.vue"),
         meta: {
@@ -62,7 +62,7 @@ export const routes = [
 ];
 
 export const routeNames = {
-    root: "root",
+    root: "schemes",
     login: "login",
     search: "search",
     advancedSearch: "advanced-search",
