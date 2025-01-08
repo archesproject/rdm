@@ -114,7 +114,7 @@ async function save() {
         } else {
             await updateSchemeLabel(
                 route.params.id as string,
-                formValue.value.tileid as string,
+                formValue.value.tileid,
                 formValue.value,
             );
         }
