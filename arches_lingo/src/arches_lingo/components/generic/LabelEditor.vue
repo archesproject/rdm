@@ -190,7 +190,7 @@ onMounted(async () => {
     <!-- Label: string -->
     <label for="">{{ $gettext("Label") }}</label>
     <NonLocalizedString
-        :value="value?.appellative_status_ascribed_name_content ?? ''"
+        :value="formValue?.appellative_status_ascribed_name_content"
         :mode="EDIT"
         @update="
             (val) =>
