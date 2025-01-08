@@ -31,7 +31,6 @@ import {
     NEW,
     selectedLanguageKey,
     STATUSES_CONTROLLED_LIST,
-    UPDATED,
 } from "@/arches_lingo/constants.ts";
 
 import type {
@@ -44,7 +43,7 @@ import type {
 } from "@/arches_lingo/types.ts";
 import type { Language } from "@/arches_vue_utils/types.ts";
 
-const emit = defineEmits([UPDATED]);
+const emit = defineEmits(["update"]);
 const toast = useToast();
 const route = useRoute();
 const router = useRouter();
@@ -119,7 +118,7 @@ async function save() {
                 formValue.value,
             );
         }
-        emit(UPDATED);
+        emit("update");
     } catch (error) {
         toast.add({
             severity: ERROR,
