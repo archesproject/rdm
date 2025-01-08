@@ -34,14 +34,12 @@ const val = computed({
                 (item) => item.uri === newVal,
             );
             const item = foundItem ? [foundItem] : [];
-            modelValue.value = item;
             emit("update", item);
         } else {
             const foundItems = props.options?.filter((item) =>
                 newVal.includes(item.uri),
             );
             const items = foundItems ?? [];
-            modelValue.value = items;
             emit("update", items);
         }
     },
