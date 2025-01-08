@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref } from "vue";
+import { computed, inject, toRef } from "vue";
 import Select from "primevue/select";
 import MultiSelect from "primevue/multiselect";
 
@@ -23,21 +23,26 @@ const props = withDefaults(
     },
 );
 
-const uriRef = ref(extractURI(props.value));
+const modelValue = toRef(props, "value");
 const val = computed({
     get() {
-        return uriRef.value;
+        return extractURI(modelValue.value);
     },
     set(newVal) {
-        uriRef.value = newVal;
         if (!props.multiValue) {
-            const item = props.options?.find((item) => item.uri === newVal);
-            emit("update", item ? [item] : []);
+            const foundItem = props.options?.find(
+                (item) => item.uri === newVal,
+            );
+            const item = foundItem ? [foundItem] : [];
+            modelValue.value = item;
+            emit("update", item);
         } else {
-            const items = props.options?.filter((item) =>
+            const foundItems = props.options?.filter((item) =>
                 newVal.includes(item.uri),
             );
-            emit("update", items ?? []);
+            const items = foundItems ?? [];
+            modelValue.value = items;
+            emit("update", items);
         }
     },
 });
