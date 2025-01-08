@@ -131,6 +131,7 @@ function editSectionValue(tileId: string) {
                 <template #type="{ rowData }">
                     <ReferenceDatatype
                         :value="(rowData as SchemeStatement).statement_type_n1"
+                        :mode="VIEW"
                     />
                 </template>
                 <template #language="{ rowData }">
@@ -138,6 +139,7 @@ function editSectionValue(tileId: string) {
                         :value="
                             (rowData as SchemeStatement).statement_language_n1
                         "
+                        :mode="VIEW"
                     />
                 </template>
                 <template #drawer="{ rowData }">
