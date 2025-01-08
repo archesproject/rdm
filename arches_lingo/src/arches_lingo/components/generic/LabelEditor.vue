@@ -63,14 +63,27 @@ const eventTypeOptions = ref<ControlledListItem[]>([]);
 const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
 const textualWorkOptions = ref<ResourceInstanceReference[]>();
 
-function onUpdate(
+function onUpdateString(node: keyof AppellativeStatus, val: string) {
+    (value.value[node] as unknown) = toRaw(val);
+}
+
+function onUpdateReferenceDatatype(
     node: keyof AppellativeStatus,
-    val: ControlledListItem[] | ResourceInstanceReference[] | string,
+    val: ControlledListItem[],
 ) {
-    if (Array.isArray(val)) {
-        (value.value[node] as unknown) = val.map((item) => toRaw(item));
-    } else {
-        (value.value[node] as unknown) = toRaw(val);
+    (value.value[node] as unknown) = val.map((item) => toRaw(item));
+}
+
+function onUpdateResourceInstance(
+    node: keyof AppellativeStatus,
+    val: string[],
+    options: ResourceInstanceReference[],
+) {
+    if (val.length > 0) {
+        const selectedOptions = options.filter((option) =>
+            val.includes(option.resourceId),
+        );
+        (value.value[node] as unknown) = selectedOptions;
     }
 }
 
@@ -156,7 +169,8 @@ onMounted(async () => {
         :value="value?.appellative_status_ascribed_name_content ?? ''"
         :mode="EDIT"
         @update="
-            (val) => onUpdate('appellative_status_ascribed_name_content', val)
+            (val) =>
+                onUpdateString('appellative_status_ascribed_name_content', val)
         "
     />
     <!-- Label Language: reference datatype -->
@@ -167,7 +181,11 @@ onMounted(async () => {
         :multi-value="false"
         :options="languageOptions"
         @update="
-            (val) => onUpdate('appellative_status_ascribed_name_language', val)
+            (val) =>
+                onUpdateReferenceDatatype(
+                    'appellative_status_ascribed_name_language',
+                    val,
+                )
         "
     />
     <!-- Label Type: reference datatype -->
@@ -177,7 +195,13 @@ onMounted(async () => {
         :mode="EDIT"
         :multi-value="false"
         :options="typeOptions"
-        @update="(val) => onUpdate('appellative_status_ascribed_relation', val)"
+        @update="
+            (val) =>
+                onUpdateReferenceDatatype(
+                    'appellative_status_ascribed_relation',
+                    val,
+                )
+        "
     />
     <!-- Label Status: reference datatype -->
     <label for="">{{ $gettext("Label Status") }}</label>
@@ -186,7 +210,9 @@ onMounted(async () => {
         :mode="EDIT"
         :multi-value="false"
         :options="statusOptions"
-        @update="(val) => onUpdate('appellative_status_status', val)"
+        @update="
+            (val) => onUpdateReferenceDatatype('appellative_status_status', val)
+        "
     />
     <!-- Label Status Metatype: reference datatype -->
     <label for="">{{ $gettext("Label Metatype") }}</label>
@@ -195,7 +221,13 @@ onMounted(async () => {
         :mode="EDIT"
         :multi-value="false"
         :options="metatypeOptions"
-        @update="(val) => onUpdate('appellative_status_status_metatype', val)"
+        @update="
+            (val) =>
+                onUpdateReferenceDatatype(
+                    'appellative_status_status_metatype',
+                    val,
+                )
+        "
     />
 
     <!-- Label Temporal Validity Start: date -->
@@ -205,7 +237,10 @@ onMounted(async () => {
         :mode="EDIT"
         @update="
             (val) =>
-                onUpdate('appellative_status_timespan_begin_of_the_begin', val)
+                onUpdateString(
+                    'appellative_status_timespan_begin_of_the_begin',
+                    val,
+                )
         "
     />
 
@@ -215,7 +250,11 @@ onMounted(async () => {
         :value="value?.appellative_status_timespan_end_of_the_end"
         :mode="EDIT"
         @update="
-            (val) => onUpdate('appellative_status_timespan_end_of_the_end', val)
+            (val) =>
+                onUpdateString(
+                    'appellative_status_timespan_end_of_the_end',
+                    val,
+                )
         "
     />
 
@@ -226,7 +265,12 @@ onMounted(async () => {
         :mode="EDIT"
         :options="groupAndPersonOptions"
         @update="
-            (val) => onUpdate('appellative_status_data_assignment_actor', val)
+            (val) =>
+                onUpdateResourceInstance(
+                    'appellative_status_data_assignment_actor',
+                    val,
+                    groupAndPersonOptions ?? [],
+                )
         "
     />
     <!-- Sources: resource instance -->
@@ -237,7 +281,11 @@ onMounted(async () => {
         :options="textualWorkOptions"
         @update="
             (val) =>
-                onUpdate('appellative_status_data_assignment_object_used', val)
+                onUpdateResourceInstance(
+                    'appellative_status_data_assignment_object_used',
+                    val,
+                    textualWorkOptions ?? [],
+                )
         "
     />
     <!-- Warrant Type: reference datatype -->
@@ -248,7 +296,11 @@ onMounted(async () => {
         :multi-value="false"
         :options="eventTypeOptions"
         @update="
-            (val) => onUpdate('appellative_status_data_assignment_type', val)
+            (val) =>
+                onUpdateReferenceDatatype(
+                    'appellative_status_data_assignment_type',
+                    val,
+                )
         "
     />
     <Button
