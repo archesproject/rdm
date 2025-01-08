@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUpdate, ref, watch } from "vue";
+import { onBeforeUpdate, ref, shallowRef, watch } from "vue";
 import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
@@ -23,7 +23,7 @@ type SchemeComponent = {
 };
 
 const childRefs = ref<Array<SectionTypes>>([]);
-const currentEditor = ref<SchemeComponent>();
+const currentEditor = shallowRef<SchemeComponent>();
 const schemeComponents = [
     {
         component: SchemeLabel,
