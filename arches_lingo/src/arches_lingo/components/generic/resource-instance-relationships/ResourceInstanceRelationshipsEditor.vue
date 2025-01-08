@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { computed, toRef, ref, watch } from "vue";
 import MultiSelect from "primevue/multiselect";
 import type { ResourceInstanceReference } from "@/arches_lingo/types";
 import { useGettext } from "vue3-gettext";
@@ -28,10 +28,15 @@ const value = computed({
         emit("update", value);
     },
 });
+
+const primeVuePickerVal = ref(value.value);
+watch(primeVuePickerVal, (newVal) => {
+    value.value = newVal;
+});
 </script>
 <template>
     <MultiSelect
-        v-model="value"
+        v-model="primeVuePickerVal"
         :show-toggle-all="!!options?.length"
         :options
         option-label="display_value"
