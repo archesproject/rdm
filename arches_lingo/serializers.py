@@ -66,6 +66,22 @@ class SchemeNoteTileSerializer(ArchesTileSerializer):
         fields = "__all__"
 
 
+class SchemeRightsSerializer(ArchesTileSerializer):
+    class Meta:
+        model = TileModel
+        graph_slug = "scheme"
+        root_node = "rights"
+        fields = "__all__"
+
+
+class SchemeRightsStatementSerializer(ArchesTileSerializer):
+    class Meta:
+        model = TileModel
+        graph_slug = "scheme"
+        root_node = "rights_statement"
+        fields = "__all__"
+
+
 class TextualWorkRdmSystemSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance

@@ -16,7 +16,8 @@ from arches_lingo.serializers import (
     SchemeNoteSerializer,
     SchemeNoteTileSerializer,
     SchemeSerializer,
-    ConceptStatementSerializer,
+    SchemeRightsSerializer,
+    SchemeRightsStatementSerializer,
     SchemeStatementSerializer,
     TextualWorkRdmSystemSerializer,
 )
@@ -76,6 +77,26 @@ class SchemeNoteView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
 class SchemeNoteTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeNoteTileSerializer
+
+
+class SchemeRightsView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeRightsSerializer
+
+
+class SchemeRightsCreateView(ArchesModelAPIMixin, ListCreateAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeRightsSerializer
+
+
+class SchemeRightsStatementView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeRightsStatementSerializer
+
+
+class SchemeRightsStatementCreateView(ArchesModelAPIMixin, ListCreateAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeRightsStatementSerializer
 
 
 class TextualWorkRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
