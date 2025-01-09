@@ -9,6 +9,7 @@ from arches.app.views.api.mixins import ArchesModelAPIMixin
 
 from arches_lingo.serializers import (
     ConceptSerializer,
+    ConceptStatementSerializer,
     SchemeCreationSerializer,
     SchemeLabelSerializer,
     SchemeLabelTileSerializer,
