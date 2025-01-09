@@ -23,6 +23,8 @@ import {
     selectedLanguageKey,
     VIEW,
     EDIT,
+    OPEN_EDITOR,
+    UPDATED,
     RIGHT_TYPE_CONTROLLED_LIST,
 } from "@/arches_lingo/constants.ts";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
@@ -37,7 +39,7 @@ defineProps<{
     mode?: DataComponentMode;
 }>();
 
-const emit = defineEmits(["openEditor", "update"]);
+const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
 const schemeRight = ref<SchemeRights>();
 const tileid = ref<string>();
@@ -100,7 +102,7 @@ async function save() {
         tileid.value as string,
         schemeRight.value as SchemeRights,
     );
-    emit("update");
+    emit(UPDATED);
 };
 async function getSectionValue() {
     const actorOptions = await getActorOptions();
@@ -131,7 +133,7 @@ const { $gettext } = useGettext();
             <SchemeReportSection
                 :title-text="$gettext('Scheme Rights')"
                 :button-text="$gettext('Update Scheme Rights')"
-                @open-editor="$emit('openEditor')"
+                @open-editor="$emit(OPEN_EDITOR)"
             >
                 <h4>{{ $gettext('Rights Holders') }}</h4>
                 <ResourceInstanceRelationships
