@@ -14,6 +14,7 @@ from arches_lingo.views.api.pythonic_models import (
     PersonRdmSystemSerializerView,
     SchemeCreationView,
     SchemeRightsView,
+    SchemeRightsTileView,
     SchemeDetailView,
     SchemeLabelTileView,
     SchemeLabelView,
@@ -64,6 +65,16 @@ urlpatterns = [
         "api/scheme/<uuid:pk>/creation",
         SchemeCreationView.as_view(),
         name="api-scheme-creation",
+    ),
+    path(
+        "api/scheme/<uuid:pk>/scheme-rights",
+        SchemeRightsView.as_view(),
+        name="api-scheme-rights",
+    ),
+    path(
+        "api/scheme/<uuid:resource_id>/rights/<uuid:pk>",
+        SchemeRightsTileView.as_view(),
+        name="api-scheme-rights-tile",
     ),
     path(
         "api/scheme/<uuid:pk>/label",

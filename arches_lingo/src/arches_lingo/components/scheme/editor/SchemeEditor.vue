@@ -56,7 +56,7 @@ const schemeComponents = [
     {
         component: SchemeLicense,
         id: "license",
-        editorTabName: $gettext("Scheme Rights"),
+        editorName: $gettext("Scheme Rights"),
     },
 ];
 

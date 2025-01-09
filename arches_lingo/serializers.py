@@ -45,6 +45,15 @@ class SchemeRightsSerializer(ArchesModelSerializer):
         nodegroups = ["rights"]
         fields = "__all__"
 
+
+class SchemeRightsTileSerializer(ArchesTileSerializer):
+    class Meta:
+        model = TileModel
+        graph_slug = "scheme"
+        root_node = "rights"
+        fields = "__all__"
+
+
 class SchemeLabelSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance

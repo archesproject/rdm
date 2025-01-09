@@ -139,6 +139,12 @@ export interface SchemeStatement {
     statement_data_assignment_timespan_end_of_the_end: string;
 }
 
+export interface SchemeRights {
+    tileid: string;
+    right_holder?: ResourceInstanceReference[];
+    right_type?: ControlledListItem[];
+}
+
 export interface SchemeInstance {
     namespace?: {
         namespace_name: string;
@@ -149,10 +155,7 @@ export interface SchemeInstance {
     };
     appellative_status?: AppellativeStatus[];
     statement?: SchemeStatement[];
-    rights?: {
-        right_holder: ResourceInstanceReference[];
-        right_type: ControlledListItem[];
-    };
+    rights?: SchemeRights;
 }
 
 export interface SchemeResource {

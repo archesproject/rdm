@@ -4,6 +4,7 @@ import type {
     AppellativeStatus,
     SchemeInstance,
     SchemeStatement,
+    SchemeRights,
 } from "@/arches_lingo/types";
 
 function getToken() {
@@ -273,15 +274,16 @@ export const updateSchemeNamespace = async (
 
 export const updateSchemeRights = async (
     schemeId: string,
-    schemeRights: SchemeInstance,
+    tileId: string,
+    schemeRightsValue: SchemeRights,
 ) => {
-    const response = await fetch(arches.urls.api_scheme_rights(schemeId), {
+    const response = await fetch(arches.urls.api_scheme_rights_tile(schemeId, tileId), {
         method: "PATCH",
         headers: {
             "X-CSRFTOKEN": getToken(),
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(schemeRights),
+        body: JSON.stringify(schemeRightsValue),
     });
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);

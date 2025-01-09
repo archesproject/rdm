@@ -23,6 +23,8 @@ from arches_lingo.serializers import (
     SchemeNoteSerializer,
     SchemeNoteTileSerializer,
     SchemeSerializer,
+    SchemeRightsSerializer,
+    SchemeRightsTileSerializer,
     SchemeStatementSerializer,
     TextualWorkRdmSystemSerializer,
     GroupRdmSystemSerializer,
@@ -64,6 +66,16 @@ class SchemeNamespaceView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
 class SchemeCreationView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeCreationSerializer
+
+
+class SchemeRightsView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeRightsSerializer
+
+
+class SchemeRightsTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeRightsTileSerializer
 
 
 class SchemeLabelView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
