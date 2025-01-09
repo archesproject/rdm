@@ -105,9 +105,7 @@ async function save() {
 async function getSectionValue() {
     const actorOptions = await getActorOptions();
     const scheme = await fetchSchemeRights(route.params.id as string);
-    console.log(scheme);
     schemeRight.value = scheme?.rights;
-    console.log(schemeRight.value);
     tileid.value = schemeRight.value?.tileid;
     actorRdmOptions.value = actorOptions.map((option) => {
         const savedSource = schemeRight.value?.right_holder?.find(
