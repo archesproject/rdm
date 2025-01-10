@@ -83,7 +83,7 @@ urlpatterns = [
         name="api-scheme-rights-list-create",
     ),
     path(
-        "api/scheme/<uuid:resource_id>/rights/<uuid:pk>",
+        "api/scheme/<uuid:resource_id>/right/<uuid:pk>",
         SchemeRightDetailView.as_view(),
         name="api-scheme-right",
     ),
