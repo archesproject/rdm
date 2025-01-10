@@ -138,7 +138,7 @@ function onNamespaceNameUpdate(val: string) {
             <Button
                 :label="$gettext('Update')"
                 @click="save"
-            ></Button>
+            />
         </div>
     </div>
 </template>

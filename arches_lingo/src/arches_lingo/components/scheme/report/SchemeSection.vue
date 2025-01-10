@@ -18,11 +18,11 @@ const props = defineProps<{
                 <Button
                     :label="props.buttonText"
                     @click="$emit(OPEN_EDITOR)"
-                ></Button>
+                />
             </div>
         </div>
         <div class="content">
-            <slot></slot>
+            <slot />
         </div>
     </div>
 </template>

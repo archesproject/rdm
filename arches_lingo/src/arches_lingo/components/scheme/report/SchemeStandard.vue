@@ -188,6 +188,6 @@ function onCreationUpdate(val: string[]) {
         <Button
             :label="$gettext('Update')"
             @click="save"
-        ></Button>
+        />
     </div>
 </template>

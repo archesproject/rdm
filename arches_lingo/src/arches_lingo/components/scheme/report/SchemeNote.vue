@@ -163,5 +163,5 @@ function editSectionValue(tileId: string) {
             </MetaStringViewer>
         </SchemeReportSection>
     </div>
-    <div v-if="mode === EDIT"></div>
+    <div v-if="mode === EDIT" />
 </template>
