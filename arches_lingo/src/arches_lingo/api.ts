@@ -84,7 +84,7 @@ export const createSchemeLabel = async (
     schemeId: string,
     appellative_status: AppellativeStatus,
 ) => {
-    const response = await fetch(arches.urls.api_scheme_label_create, {
+    const response = await fetch(arches.urls.api_scheme_label_list_create, {
         method: "POST",
         headers: {
             "X-CSRFTOKEN": getToken(),

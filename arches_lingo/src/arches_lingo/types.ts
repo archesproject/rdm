@@ -36,7 +36,7 @@ export interface Scheme {
     top_concepts: Concept[];
 }
 
-export interface ControlledListeItemLabelValue {
+export interface ControlledListItemLabelValue {
     id: string;
     valuetype_id: string;
     language_id: string;
@@ -50,7 +50,7 @@ export interface ControlledListItem {
     uri: string;
     sortorder?: number;
     guide?: boolean;
-    labels: ControlledListeItemLabelValue[];
+    labels: ControlledListItemLabelValue[];
 }
 
 export interface ControlledListItemResult {
@@ -59,7 +59,7 @@ export interface ControlledListItemResult {
     uri: string;
     sortorder?: number;
     guide?: boolean;
-    values: ControlledListeItemLabelValue[];
+    values: ControlledListItemLabelValue[];
 }
 
 export interface ResourceInstanceReference {

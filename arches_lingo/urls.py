@@ -72,9 +72,9 @@ urlpatterns = [
         name="api-scheme-label-tile",
     ),
     path(
-        "api/scheme/label",
+        "api/scheme/labels",
         SchemeLabelCreateView.as_view(),
-        name="api-scheme-label-create",
+        name="api-scheme-label-list-create",
     ),
     path(
         "api/scheme/<uuid:pk>/note",

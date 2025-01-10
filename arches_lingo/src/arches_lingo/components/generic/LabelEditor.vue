@@ -131,7 +131,20 @@ async function save() {
 async function getControlledListOptions(
     listId: string,
 ): Promise<ControlledListItem[]> {
-    const parsed = await fetchControlledListOptions(listId);
+    let parsed;
+    try {
+        parsed = await fetchControlledListOptions(listId);
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not fetch the controlled list options"),
+        });
+        return [];
+    }
     const options = parsed.items.map(
         (item: ControlledListItemResult): ControlledListItem => ({
             list_id: item.list_id,
@@ -145,7 +158,20 @@ async function getControlledListOptions(
 async function getResourceInstanceOptions(
     fetchOptions: () => Promise<ResourceInstanceResult[]>,
 ): Promise<ResourceInstanceReference[]> {
-    const options = await fetchOptions();
+    let options;
+    try {
+        options = await fetchOptions();
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not fetch the resource instance options"),
+        });
+        return [];
+    }
     const results = options.map((option: ResourceInstanceResult) => {
         const result: ResourceInstanceReference = {
             display_value: option.descriptors[selectedLanguage.value.code].name,

@@ -71,7 +71,7 @@ function getOptionLabels(item: ControlledListItem): string {
     <Select
         v-model="val"
         v-if:="!props.multiValue"
-        :show-toggle-all="options?.length"
+        :show-toggle-all="!!options?.length"
         :options
         :option-label="getOptionLabels"
         option-value="uri"
@@ -84,7 +84,7 @@ function getOptionLabels(item: ControlledListItem): string {
     <MultiSelect
         v-if="props.multiValue"
         v-model="val"
-        :show-toggle-all="options?.length"
+        :show-toggle-all="!!options?.length"
         :options
         :option-label="getOptionLabels"
         option-value="uri"
