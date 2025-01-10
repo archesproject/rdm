@@ -80,22 +80,22 @@ class SchemeNoteTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = SchemeNoteTileSerializer
 
 
-class SchemeRightsView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+class SchemeRightsView(ArchesModelAPIMixin, ListCreateAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeRightsSerializer
 
 
-class SchemeRightsCreateView(ArchesModelAPIMixin, ListCreateAPIView):
+class SchemeRightDetailView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeRightsSerializer
 
 
-class SchemeRightsStatementView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+class SchemeRightStatementsView(ArchesModelAPIMixin, ListCreateAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeRightsStatementSerializer
 
 
-class SchemeRightsStatementCreateView(ArchesModelAPIMixin, ListCreateAPIView):
+class SchemeRightStatementDetailView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeRightsStatementSerializer
 

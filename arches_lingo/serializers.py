@@ -78,7 +78,7 @@ class SchemeRightsStatementSerializer(ArchesTileSerializer):
     class Meta:
         model = TileModel
         graph_slug = "scheme"
-        root_node = "rights_statement"
+        root_node = "right_statement"
         fields = "__all__"
 
 
