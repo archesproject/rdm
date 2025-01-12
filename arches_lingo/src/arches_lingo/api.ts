@@ -272,6 +272,13 @@ export const updateSchemeNamespace = async (
     return parsed;
 };
 
+export const fetchSchemeRightStatement = async (schemeId: string) => {
+    const response = await fetch(arches.urls.api_scheme_right_statement_tile(schemeId, tileid1, tileid2));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const updateSchemeRights = async (
     schemeId: string,
     tileId: string,
@@ -284,6 +291,25 @@ export const updateSchemeRights = async (
             "Content-Type": "application/json",
         },
         body: JSON.stringify(schemeRightsValue),
+    });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const updateSchemeRightStatement = async (
+    schemeId: string,
+    tileId: string,
+    childTileId: string,
+    schemeRightStatementValue: SchemeRightStatement,
+) => {
+    const response = await fetch(arches.urls.api_scheme_right_statement_tile(schemeId, tileId, childTileId), {
+        method: "PATCH",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(schemeRightStatementValue),
     });
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);

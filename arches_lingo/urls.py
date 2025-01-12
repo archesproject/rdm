@@ -15,6 +15,9 @@ from arches_lingo.views.api.pythonic_models import (
     SchemeCreationView,
     SchemeRightsView,
     SchemeRightsTileView,
+    SchemeRightsTileCreateView,
+    SchemeRightStatementTileView,
+    SchemeRightStatementTileCreateView,
     SchemeDetailView,
     SchemeLabelTileView,
     SchemeLabelView,
@@ -75,6 +78,21 @@ urlpatterns = [
         "api/scheme/<uuid:resource_id>/rights/<uuid:pk>",
         SchemeRightsTileView.as_view(),
         name="api-scheme-rights-tile",
+    ),
+    path(
+        "api/scheme/rights/",
+        SchemeRightsTileCreateView.as_view(),
+        name="api-scheme-rights-tile-create",
+    ),
+    path(
+        "api/scheme/<uuid:resource_id>/right_statement/<uuid:pk>",
+        SchemeRightStatementTileView.as_view(),
+        name="api-scheme-right-statement-tile",
+    ),
+    path(
+        "api/scheme/right_statement",
+        SchemeRightStatementTileCreateView.as_view(),
+        name="api-scheme-right-statement-tile-create",
     ),
     path(
         "api/scheme/<uuid:pk>/label",

@@ -145,6 +145,15 @@ export interface SchemeRights {
     right_type?: ControlledListItem[];
 }
 
+export interface SchemeRightStatement {
+    tileid: string;
+    right_statement_content?: string;
+    right_statement_label?: string;
+    right_statement_language?: ControlledListItem[];
+    right_statement_type?: ControlledListItem[];
+    right_statement_type_metatype?: ControlledListItem[];
+}
+
 export interface SchemeInstance {
     namespace?: {
         namespace_name: string;
@@ -156,6 +165,7 @@ export interface SchemeInstance {
     appellative_status?: AppellativeStatus[];
     statement?: SchemeStatement[];
     rights?: SchemeRights;
+    right_statement?: SchemeRightStatement[];
 }
 
 export interface SchemeResource {
