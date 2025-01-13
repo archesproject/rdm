@@ -7,9 +7,16 @@ import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStanda
 import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
 import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import type { SectionTypes } from "@/arches_lingo/types.ts";
+import {
+    OPEN_EDITOR,
+    EDIT,
+    UPDATED,
+    MAXIMIZE,
+    SIDE,
+    CLOSE,
+} from "@/arches_lingo/constants.ts";
 
 const { $gettext } = useGettext();
-const EDIT = "edit";
 const props = defineProps<{
     editorMax: boolean;
     editorForm: string;
@@ -59,7 +66,7 @@ watch(
     { immediate: true },
 );
 
-const emit = defineEmits(["maximize", "side", "close", "updated"]);
+const emit = defineEmits([MAXIMIZE, SIDE, CLOSE, UPDATED, OPEN_EDITOR]);
 
 onBeforeUpdate(() => {
     childRefs.value = [];
@@ -67,14 +74,14 @@ onBeforeUpdate(() => {
 
 function toggleSize() {
     if (props.editorMax) {
-        emit("maximize");
+        emit(MAXIMIZE);
     } else {
-        emit("side");
+        emit(SIDE);
     }
 }
 
 function onSectionUpdate() {
-    emit("updated");
+    emit(UPDATED);
 }
 </script>
 
@@ -98,7 +105,7 @@ function onSectionUpdate() {
                 </Button>
                 <Button
                     :aria-label="$gettext('close editor')"
-                    @click="$emit('close')"
+                    @click="$emit(CLOSE)"
                 >
                     <i
                         class="pi pi-times"
@@ -116,7 +123,11 @@ function onSectionUpdate() {
         <component
             :is="currentEditor.component"
             v-bind="{ mode: EDIT, tileId: tileId }"
-            v-on="{ updated: onSectionUpdate }"
+            v-on="{
+                updated: onSectionUpdate,
+                openEditor: (tileId: string | undefined) =>
+                    $emit(OPEN_EDITOR, currentEditor?.id, tileId),
+            }"
         />
     </div>
 </template>

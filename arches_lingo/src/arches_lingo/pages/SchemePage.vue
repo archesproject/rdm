@@ -94,6 +94,7 @@ const getRef = (el: object | null, index: number) => {
                 @side="onSide"
                 @close="onClose"
                 @updated="onUpdated"
+                @open-editor="onOpenEditor"
             />
         </SplitterPanel>
     </Splitter>
