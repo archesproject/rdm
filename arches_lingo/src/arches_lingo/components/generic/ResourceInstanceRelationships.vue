@@ -11,6 +11,7 @@ const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
     value?: ResourceInstanceReference[];
     options?: ResourceInstanceReference[];
+    ptAriaLabeledBy?: string;
 }>();
 
 const emits = defineEmits(["update"]);
@@ -29,6 +30,7 @@ function onUpdate(val: string[]) {
             :val="
                 value?.map((referenceValue) => referenceValue.resourceId) ?? []
             "
+            :pt-aria-labeled-by="ptAriaLabeledBy"
             @update="onUpdate"
         />
     </div>

@@ -49,6 +49,7 @@ const route = useRoute();
 const router = useRouter();
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
+const formId = (route.params.id as string) ?? Math.random().toString();
 
 const props = withDefaults(
     defineProps<{
@@ -213,23 +214,23 @@ onMounted(async () => {
 </script>
 
 <template>
-    <!-- Label: string -->
-    <label for="">{{ $gettext("Label") }}</label>
+    <label :for="formId + '-label'">{{ $gettext("Label") }}</label>
     <NonLocalizedString
         :value="formValue?.appellative_status_ascribed_name_content"
         :mode="EDIT"
+        :pt-id="formId + '-label'"
         @update="
             (val) =>
                 onUpdateString('appellative_status_ascribed_name_content', val)
         "
     />
-    <!-- Label Language: reference datatype -->
-    <label for="">{{ $gettext("Label Language") }}</label>
+    <p :id="formId + '-label-language'">{{ $gettext("Label Language") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_ascribed_name_language"
         :mode="EDIT"
         :multi-value="false"
         :options="languageOptions"
+        :pt-aria-labeled-by="formId + '-label-language'"
         @update="
             (val) =>
                 onUpdateReferenceDatatype(
@@ -238,13 +239,13 @@ onMounted(async () => {
                 )
         "
     />
-    <!-- Label Type: reference datatype -->
-    <label for="">{{ $gettext("Label Type") }}</label>
+    <p :id="formId + '-label-type'">{{ $gettext("Label Type") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_ascribed_relation"
         :mode="EDIT"
         :multi-value="false"
         :options="typeOptions"
+        :pt-aria-labeled-by="formId + '-label-type'"
         @update="
             (val) =>
                 onUpdateReferenceDatatype(
@@ -253,24 +254,24 @@ onMounted(async () => {
                 )
         "
     />
-    <!-- Label Status: reference datatype -->
-    <label for="">{{ $gettext("Label Status") }}</label>
+    <p :id="formId + '-label-status'">{{ $gettext("Label Status") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_status"
         :mode="EDIT"
         :multi-value="false"
         :options="statusOptions"
+        :pt-aria-labeled-by="formId + '-label-status'"
         @update="
             (val) => onUpdateReferenceDatatype('appellative_status_status', val)
         "
     />
-    <!-- Label Status Metatype: reference datatype -->
-    <label for="">{{ $gettext("Label Metatype") }}</label>
+    <p :id="formId + '-label-metatype'">{{ $gettext("Label Metatype") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_status_metatype"
         :mode="EDIT"
         :multi-value="false"
         :options="metatypeOptions"
+        :pt-aria-labeled-by="formId + '-label-metatype'"
         @update="
             (val) =>
                 onUpdateReferenceDatatype(
@@ -279,12 +280,13 @@ onMounted(async () => {
                 )
         "
     />
-
-    <!-- Label Temporal Validity Start: date -->
-    <label for="">{{ $gettext("Label Temporal Validity Start") }}</label>
+    <p :id="formId + '-label-start'">
+        {{ $gettext("Label Temporal Validity Start") }}
+    </p>
     <DateDatatype
         :value="formValue?.appellative_status_timespan_begin_of_the_begin"
         :mode="EDIT"
+        :pt-aria-labeled-by="formId + '-label-start'"
         @update="
             (val) =>
                 onUpdateString(
@@ -293,12 +295,13 @@ onMounted(async () => {
                 )
         "
     />
-
-    <!-- Label Temporal Validity End: date -->
-    <label for="">{{ $gettext("Label Temporal Validity End") }}</label>
+    <p :id="formId + '-label-end'">
+        {{ $gettext("Label Temporal Validity End") }}
+    </p>
     <DateDatatype
         :value="formValue?.appellative_status_timespan_end_of_the_end"
         :mode="EDIT"
+        :pt-aria-labeled-by="formId + '-label-end'"
         @update="
             (val) =>
                 onUpdateString(
@@ -307,13 +310,12 @@ onMounted(async () => {
                 )
         "
     />
-
-    <!-- Contributor: resource instance -->
-    <label for="">{{ $gettext("Contributor") }}</label>
+    <p :id="formId + '-label-contributor'">{{ $gettext("Contributor") }}</p>
     <ResourceInstanceRelationships
         :value="formValue?.appellative_status_data_assignment_actor"
         :mode="EDIT"
         :options="groupAndPersonOptions"
+        :pt-aria-labeled-by="formId + '-label-contributor'"
         @update="
             (val) =>
                 onUpdateResourceInstance(
@@ -323,12 +325,12 @@ onMounted(async () => {
                 )
         "
     />
-    <!-- Sources: resource instance -->
-    <label for="">{{ $gettext("Sources") }}</label>
+    <p :id="formId + '-label-sources'">{{ $gettext("Sources") }}</p>
     <ResourceInstanceRelationships
         :value="formValue?.appellative_status_data_assignment_object_used"
         :mode="EDIT"
         :options="textualWorkOptions"
+        :pt-aria-labeled-by="formId + '-label-sources'"
         @update="
             (val) =>
                 onUpdateResourceInstance(
@@ -338,13 +340,13 @@ onMounted(async () => {
                 )
         "
     />
-    <!-- Warrant Type: reference datatype -->
-    <label for="">{{ $gettext("Warrant Type") }}</label>
+    <p :id="formId + '-label-warrant'">{{ $gettext("Warrant Type") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_data_assignment_type"
         :mode="EDIT"
         :multi-value="false"
         :options="eventTypeOptions"
+        :pt-aria-labeled-by="formId + '-label-warrant'"
         @update="
             (val) =>
                 onUpdateReferenceDatatype(
@@ -358,3 +360,8 @@ onMounted(async () => {
         @click="save"
     ></Button>
 </template>
+<style scoped>
+p {
+    margin: 0;
+}
+</style>

@@ -16,6 +16,7 @@ const props = withDefaults(
         value?: ControlledListItem[];
         options?: ControlledListItem[];
         multiValue?: boolean;
+        ptAriaLabeledBy?: string;
     }>(),
     {
         value: () => [],
@@ -80,6 +81,7 @@ function getOptionLabels(item: ControlledListItem): string {
             option: { style: { fontFamily: 'sans-serif' } },
         }"
         :placeholder="$gettext('Select References')"
+        :aria-labelledby="props.ptAriaLabeledBy"
     />
     <MultiSelect
         v-if="props.multiValue"
@@ -93,5 +95,6 @@ function getOptionLabels(item: ControlledListItem): string {
             option: { style: { fontFamily: 'sans-serif' } },
         }"
         :placeholder="$gettext('Select References')"
+        :aria-labelledby="props.ptAriaLabeledBy"
     />
 </template>

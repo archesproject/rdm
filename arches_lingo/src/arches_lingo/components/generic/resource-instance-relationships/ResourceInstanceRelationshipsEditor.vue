@@ -10,6 +10,7 @@ const props = withDefaults(
     defineProps<{
         val?: string[];
         options?: ResourceInstanceReference[];
+        ptAriaLabeledBy?: string;
     }>(),
     {
         options: () => [],
@@ -41,5 +42,6 @@ const value = computed({
             option: { style: { fontFamily: 'sans-serif' } },
         }"
         :placeholder="$gettext('Select Resources')"
+        :aria-labelledby="props.ptAriaLabeledBy"
     />
 </template>

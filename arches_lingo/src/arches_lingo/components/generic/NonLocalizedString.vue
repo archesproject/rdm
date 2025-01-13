@@ -4,10 +4,12 @@ import NonLocalizedStringEditor from "@/arches_lingo/components/generic/non-loca
 import type { DataComponentMode } from "@/arches_lingo/types.ts";
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
-const { mode = VIEW } = defineProps<{
+const props = defineProps<{
     mode?: DataComponentMode;
     value?: string;
+    ptId?: string;
 }>();
+console.log(props);
 const emits = defineEmits(["update"]);
 const onUpdate = (val: string) => {
     emits("update", val);
@@ -21,6 +23,7 @@ const onUpdate = (val: string) => {
         <div v-if="mode === EDIT">
             <NonLocalizedStringEditor
                 :value="value ?? ''"
+                :pt-id="props.ptId"
                 @update="onUpdate"
             />
         </div>
