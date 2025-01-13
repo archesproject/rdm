@@ -10,6 +10,7 @@ interface Props {
     dateFormat?: string;
     mode?: DataComponentMode;
     value?: string;
+    ptAriaLabeledBy?: string;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -37,6 +38,7 @@ const onUpdate = (val: string) => {
             <DateDatatypeEditor
                 :date-format="dateFormat"
                 :value="value"
+                :pt-aria-labeled-by="ptAriaLabeledBy"
                 @update="onUpdate"
             />
         </div>

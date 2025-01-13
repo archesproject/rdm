@@ -6,6 +6,7 @@ import DatePicker from "primevue/datepicker";
 const props = defineProps<{
     value: string | undefined;
     dateFormat: string;
+    ptAriaLabeledBy?: string;
 }>();
 
 const emit = defineEmits(["update"]);
@@ -35,6 +36,7 @@ function parseDate(date: unknown): string | null {
         icon-display="input"
         :date-format="dateFormat"
         show-icon
+        :aria-labelledby="props.ptAriaLabeledBy"
         @update:model-value="() => emit('update', parseDate(modelValue))"
     />
 </template>
