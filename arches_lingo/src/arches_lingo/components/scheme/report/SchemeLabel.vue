@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGettext } from "vue3-gettext";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
@@ -54,6 +54,10 @@ const appellativeStatusToEdit = computed(() => {
 });
 
 defineExpose({ getSectionValue });
+
+watch(props, () => {
+    getSectionValue();
+});
 
 const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
@@ -117,8 +121,11 @@ function editSectionValue(tileId: string) {
     }
 }
 
-function update() {
-    emit(UPDATED);
+async function update(tileId: string | undefined) {
+    await emit(UPDATED);
+    if (tileId) {
+        await emit(OPEN_EDITOR, tileId);
+    }
 }
 </script>
 

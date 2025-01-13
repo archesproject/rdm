@@ -76,6 +76,7 @@ const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
 const textualWorkOptions = ref<ResourceInstanceReference[]>();
 
 function onUpdateString(node: keyof AppellativeStatus, val: string) {
+    console.log(formValue.value[node]);
     (formValue.value[node] as unknown) = toRaw(val);
 }
 
@@ -83,6 +84,7 @@ function onUpdateReferenceDatatype(
     node: keyof AppellativeStatus,
     val: ControlledListItem[],
 ) {
+    console.log(formValue.value[node]);
     (formValue.value[node] as unknown) = val.map((item) => toRaw(item));
 }
 
@@ -91,6 +93,7 @@ function onUpdateResourceInstance(
     val: string[],
     options: ResourceInstanceReference[],
 ) {
+    console.log(formValue.value[node]);
     if (val.length > 0) {
         const selectedOptions = options.filter((option) =>
             val.includes(option.resourceId),
@@ -111,7 +114,12 @@ async function save() {
                 params: { id: updated.resourceinstanceid },
             });
         } else if (!formValue.value.tileid) {
-            await createSchemeLabel(route.params.id as string, formValue.value);
+            const schemeLabel: AppellativeStatus = await createSchemeLabel(
+                route.params.id as string,
+                formValue.value,
+            );
+            valueRef.value = schemeLabel;
+            emit("update", schemeLabel.tileid);
         } else {
             await updateSchemeLabel(
                 route.params.id as string,
