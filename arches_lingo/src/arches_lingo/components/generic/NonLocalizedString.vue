@@ -9,7 +9,6 @@ const props = defineProps<{
     value?: string;
     ptId?: string;
 }>();
-console.log(props);
 const emits = defineEmits(["update"]);
 const onUpdate = (val: string) => {
     emits("update", val);
