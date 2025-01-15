@@ -1,3 +1,7 @@
+from rest_framework.exceptions import ValidationError
+
+from arches_references.models import ListItem
+
 from arches.app.models.models import ResourceInstance, TileModel
 from arches.app.models.serializers import ArchesModelSerializer, ArchesTileSerializer
 
@@ -48,6 +52,34 @@ class SchemeLabelTileSerializer(ArchesTileSerializer):
         graph_slug = "scheme"
         root_node = "appellative_status"
         fields = "__all__"
+
+    def validate(self, data):
+        data = super().validate(data)
+        graph_slug = self.Meta.graph_slug
+        PREF_LABEL_LIST_ITEM = ListItem.objects.get(list_item_values__value="prefLabel")
+
+        if data:
+            new_label_language = data["appellative_status_ascribed_name_language"][0]
+            new_label_type = data["appellative_status_ascribed_relation"][0]
+
+            resource_instance_id = self.instance.resourceinstance.pk
+            resource_instance = self.instance.resourceinstance.__class__.as_model(
+                graph_slug, resource_ids=[resource_instance_id]
+            ).get(pk=resource_instance_id)
+            current_labels = resource_instance.appellative_status
+            for label in current_labels:
+                if (
+                    data["tileid"] != label.tileid
+                    and new_label_type["uri"] == PREF_LABEL_LIST_ITEM.uri
+                    and label.appellative_status_ascribed_relation[0]["uri"]
+                    == PREF_LABEL_LIST_ITEM.uri
+                    and label.appellative_status_ascribed_name_language[0]["uri"]
+                    == new_label_language["uri"]
+                ):
+                    raise ValidationError(
+                        "A preferred label with the same language already exists for this scheme."
+                    )
+        return data
 
 
 class SchemeNoteSerializer(ArchesModelSerializer):
