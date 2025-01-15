@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { inject, onMounted, ref, toRaw, type Ref } from "vue";
-import { useRoute } from "vue-router";
+import { computed, inject, onMounted, ref, toRaw, type Ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
+    createScheme,
     fetchSchemeRights,
+    createSchemeRights,
     updateSchemeRights,
+    createSchemeRightStatement,
+    updateSchemeRightStatement,
+    deleteSchemeRightStatement,
     fetchPersonRdmSystemList,
     fetchGroupRdmSystemList,
     fetchControlledListOptions,
@@ -26,11 +31,15 @@ import type {
 import {
     selectedLanguageKey,
     NEW,
+    ERROR,
     VIEW,
     EDIT,
     OPEN_EDITOR,
     UPDATED,
     RIGHT_TYPE_CONTROLLED_LIST,
+    METATYPES_CONTROLLED_LIST,
+    LANGUAGE_CONTROLLED_LIST,
+    NOTE_CONTROLLED_LIST,
 } from "@/arches_lingo/constants.ts";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
@@ -41,21 +50,40 @@ onMounted(async () => {
     getSectionValue();
 });
 
-defineProps<{
-    mode?: DataComponentMode;
-}>();
-
 const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
 const schemeRight = ref<SchemeRights>();
-const schemeRightStatement = ref<SchemeRightStatement>();
+const schemeRightStatement = ref<SchemeRightStatement[]>();
 const schemeRightTileid = ref<string>();
 const schemeRightStatementTileid = ref<string>();
 const route = useRoute();
+const router = useRouter();
+const toast = useToast();
 const { $gettext } = useGettext();
 const actorRdmOptions = ref<ResourceInstanceReference[]>();
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const rightTypeOptions = ref<ControlledListItem[]>();
+const languageOptions = ref<ControlledListItem[]>();
+const noteOptions = ref<ControlledListItem[]>();
+const metatypesOptions = ref<ControlledListItem[]>();
+const editingStatement = ref<boolean>(false);
+
+const props = withDefaults(
+    defineProps<{
+        mode?: DataComponentMode;
+        tileId?: string | null;
+        args?: Array<object>;
+    }>(),
+    {
+        mode: VIEW,
+        tileId: null, // editor arg specifying what tile to operate on.
+    },
+);
+const currentSchemeRightStatement = computed(() => {
+    return schemeRightStatement.value?.find(
+        (tile) => tile.tileid === props.tileId,
+    );
+});
 
 const metaStringLabel: MetaStringText = {
     deleteConfirm: $gettext("Are you sure you want to delete this label?"),
@@ -93,13 +121,6 @@ async function getControlledListOptions(listId: string): Promise<ControlledListI
     return options;
 };
 
-function onUpdateReferenceDatatype(
-    node: keyof SchemeRights,
-    val: ControlledListItem[],
-) {
-    (schemeRight.value[node] as unknown) = val.map((item) => toRaw(item));
-};
-
 function onUpdateResourceInstance(
     node: keyof SchemeRights,
     val: string[],
@@ -113,14 +134,75 @@ function onUpdateResourceInstance(
     }
 };
 
-async function save() {
-    await updateSchemeRights(
-        route.params.id as string,
-        schemeRightTileid.value as string,
-        schemeRight.value as SchemeRights,
-    );
-    emit(UPDATED);
+function onUpdateSchemeRightReferenceDatatype(
+    node: keyof SchemeRights,
+    val: ControlledListItem[],
+) {
+    (schemeRight.value[node] as unknown) = val.map((item) => toRaw(item));
 };
+
+function onUpdateSchemeRightStatementReferenceDatatype(
+    node: keyof SchemeRightStatement,
+    val: ControlledListItem[],
+) {
+    (schemeRightStatement.value[node] as unknown) = val.map((item) => toRaw(item));
+};
+
+function onUpdateString(node: keyof SchemeRightStatement, val: string) {
+    (schemeRightStatement.value[node] as unknown) = toRaw(val);
+}
+
+async function saveRights() {
+    try {
+        if (route.params.id === NEW) {
+            const newSchemeInstance: SchemeInstance = {
+                rights: [toRaw(schemeRight.value)],
+            };
+            const updated = await createScheme(newSchemeInstance);
+            await router.push({
+                name: "scheme",
+                params: { id: updated.resourceinstanceid },
+            });
+        } else if (!schemeRight.value.tileid) {
+            await createSchemeRights(route.params.id as string, schemeRight?.value);
+        } else {
+            await updateSchemeRights(
+                route.params.id as string,
+                props.tileId as string,
+                schemeRight.value as SchemeRights,
+            );
+        }
+        emit(UPDATED);
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error saving scheme"),
+            detail: (error as Error).message,
+        });
+    }
+}
+
+async function saveRightStatement() {
+    try {
+        if (!currentSchemeRightStatement.value?.tileid) {
+            await createSchemeRightStatement(route.params.id as string, schemeRight.value);
+        } else {
+            await updateSchemeRightStatement(
+                route.params.id as string,
+                schemeRightTileid.value as string,
+                schemeRight.value as SchemeRights,
+            );
+        }
+        emit(UPDATED);
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error saving scheme"),
+            detail: (error as Error).message,
+        });
+    }
+}
+
 async function getSectionValue() {
     if (route.params.id === NEW) {
         return;
@@ -146,14 +228,49 @@ async function getSectionValue() {
         }
     });
     rightTypeOptions.value = await getControlledListOptions(RIGHT_TYPE_CONTROLLED_LIST);
+    languageOptions.value = await getControlledListOptions(LANGUAGE_CONTROLLED_LIST);
+    noteOptions.value = await getControlledListOptions(NOTE_CONTROLLED_LIST);
+    metatypesOptions.value = await getControlledListOptions(METATYPES_CONTROLLED_LIST);
 };
 
-async function deleteSectionValue() {
-    console.log("deleting");
+async function deleteStatementValue(tileId: string) {
+    let result = false;
+    try {
+        result = await deleteSchemeRightStatement(route.params.id as string, tileId);
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not delete selected label"),
+        });
+    }
+
+    if (result) {
+        getSectionValue();
+    }
 };
 
-function editSectionValue() {
-    console.log("editing");
+function editStatementValue(tileId: string) {
+    editingStatement.value = true;
+    const currentSchemeRightStatement = schemeRightStatement.value?.find(
+        (tile) => tile.tileid === tileId,
+    );
+    console.log(currentSchemeRightStatement?.tileid);
+
+    if (currentSchemeRightStatement && currentSchemeRightStatement?.tileid === tileId) {
+        console.log("this ran");
+        emit(OPEN_EDITOR, currentSchemeRightStatement?.tileid);
+    } else {
+        console.log("not this");
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail: $gettext("Could not find the selected statement to edit"),
+        });
+    }
 };
 
 defineExpose({ getSectionValue });
@@ -181,8 +298,8 @@ defineExpose({ getSectionValue });
                 <MetaStringViewer
                     :meta-strings="schemeRightStatement"
                     :meta-string-text="metaStringLabel"
-                    @edit-string="editSectionValue"
-                    @delete-string="deleteSectionValue"
+                    @edit-string="editStatementValue"
+                    @delete-string="deleteStatementValue"
                 >
                     <template #name="{ rowData }">
                         <span>
@@ -236,25 +353,83 @@ defineExpose({ getSectionValue });
             </SchemeReportSection>
         </div>
         <div v-if="mode === EDIT">
-            <h4>{{ $gettext('Rights Holders') }}</h4>
-            <ResourceInstanceRelationships
-                :value="schemeRight?.right_holder"
-                :options="actorRdmOptions"
-                :mode="EDIT"
-                @update="(val) => onUpdateResourceInstance('right_holder', val, actorRdmOptions ?? [])"
-            />
-            <h4>{{ $gettext('Rights Type') }}</h4>
-            <ReferenceDatatype
-                :value="schemeRight?.right_type"
-                :options="rightTypeOptions"
-                :multi-value="false"
-                :mode="EDIT"
-                @update="(val) => onUpdateReferenceDatatype('right_type', val)"
-            />
-            <Button
-                :label="$gettext('Update')"
-                @click="save"
-            ></Button>
+            <div v-if="!editingStatement">
+                <h4>{{ $gettext('Rights Holders') }}</h4>
+                <ResourceInstanceRelationships
+                    :value="schemeRight?.right_holder"
+                    :options="actorRdmOptions"
+                    :mode="EDIT"
+                    @update="(val) => onUpdateResourceInstance('right_holder', val, actorRdmOptions ?? [])"
+                />
+                <h4>{{ $gettext('Rights Type') }}</h4>
+                <ReferenceDatatype
+                    :value="schemeRight?.right_type"
+                    :options="rightTypeOptions"
+                    :multi-value="false"
+                    :mode="EDIT"
+                    @update="(val) => onUpdateSchemeRightReferenceDatatype('right_type', val)"
+                />
+                <Button
+                    :label="$gettext('Update')"
+                    @click="saveRights"
+                ></Button>
+            </div>
+            <div v-if="!editingStatement">
+                <h4>{{ $gettext('Statement') }}</h4>
+                <NonLocalizedString
+                    :value="currentSchemeRightStatement?.right_statement_content"
+                    :mode="EDIT"
+                    @update="
+                        (val) =>
+                            onUpdateString('right_statement_content', val)
+                    "
+                />
+                <h4>{{ $gettext('Statement Language') }}</h4>
+                <ReferenceDatatype
+                    :value="currentSchemeRightStatement?.right_statement_language"
+                    :mode="EDIT"
+                    :multi-value="false"
+                    :options="languageOptions"
+                    @update="
+                        (val) =>
+                            onUpdateSchemeRightStatementReferenceDatatype(
+                                'right_statement_language',
+                                val,
+                            )
+                    "
+                />
+                <h4>{{ $gettext('Statement Type') }}</h4>
+                <ReferenceDatatype
+                    :value="currentSchemeRightStatement?.right_statement_type"
+                    :mode="EDIT"
+                    :multi-value="false"
+                    :options="noteOptions"
+                    @update="
+                        (val) =>
+                            onUpdateSchemeRightStatementReferenceDatatype(
+                                'right_statement_type',
+                                val,
+                            )
+                    "
+                />
+                <h4>{{ $gettext('Statement Type Metatype') }}</h4>
+                <ReferenceDatatype
+                    :value="currentSchemeRightStatement?.right_statement_type_metatype"
+                    :mode="EDIT"
+                    :multi-value="false"
+                    :options="metatypesOptions"
+                    @update="
+                        (val) => onUpdateSchemeRightStatementReferenceDatatype(
+                            'right_statement_type_metatype',
+                            val
+                        )
+                    "
+                />
+                <Button
+                    :label="$gettext('Update')"
+                    @click="saveRightStatement"
+                ></Button>
+            </div>
         </div>
     </div>
 </template>

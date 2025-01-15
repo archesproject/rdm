@@ -41,3 +41,5 @@ export const METATYPES_CONTROLLED_LIST = "ef69e772-de53-45fe-98d4-bf3e7b10eb57";
 export const EVENT_TYPES_CONTROLLED_LIST =
     "6eaa2c6f-af83-464c-9200-051c4cfe7e8e";
 export const RIGHT_TYPE_CONTROLLED_LIST = "1c950e16-3fcf-4f33-9e5e-ce5c6c992cca";
+export const NOTE_CONTROLLED_LIST = "aba2a0b4-75a4-45ba-8b57-021f3ca92a6a";
+

@@ -21,8 +21,10 @@
     api_textualwork_list="{% url 'api-textualwork-list' %}"
     api_group_list="{% url 'api-group-list' %}"
     api_person_list="{% url 'api-person-list' %}"
-    api_scheme_rights='(pluginid)=>{return "{% url "api-scheme-rights" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" %}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", pluginid)}'
     api_scheme_rights='(resourceid)=>{return "{% url "api-scheme-rights" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" %}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", resourceid)}'
     api_scheme_rights_tile='(resourceid, tileid)=>{return "{% url "api-scheme-rights-tile" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab"%}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", resourceid).replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab", tileid)}'
+    api_scheme_rights_tile_create='{% url "api-scheme-rights-tile-create" %}'
+    api_scheme_right_statement_tile='(resourceid, tileid)=>{return "{% url "api-scheme-right-statement-tile" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab"%}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", resourceid).replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaab", tileid)}'
+    api_scheme_right_statement_tile_create='{% url "api-scheme-right-statement-tile-create" %}'
 ></div>
 {% endblock arches_urls %}

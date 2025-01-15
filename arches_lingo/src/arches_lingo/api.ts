@@ -5,6 +5,7 @@ import type {
     SchemeInstance,
     SchemeStatement,
     SchemeRights,
+    SchemeRightStatement,
 } from "@/arches_lingo/types";
 
 function getToken() {
@@ -272,8 +273,21 @@ export const updateSchemeNamespace = async (
     return parsed;
 };
 
-export const fetchSchemeRightStatement = async (schemeId: string) => {
-    const response = await fetch(arches.urls.api_scheme_right_statement_tile(schemeId, tileid1, tileid2));
+export const createSchemeRights = async (
+    schemeId: string,
+    schemeRightsValue: SchemeRights,
+) => {
+    const response = await fetch(arches.urls.api_scheme_rights_tile_create, {
+        method: "POST",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            resourceinstance: schemeId,
+            ...schemeRightsValue,
+        }),
+    });
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;
@@ -297,13 +311,32 @@ export const updateSchemeRights = async (
     return parsed;
 };
 
-export const updateSchemeRightStatement = async (
+export const deleteSchemeRights = async (
     schemeId: string,
     tileId: string,
-    childTileId: string,
+) => {
+    const response = await fetch(
+        arches.urls.api_scheme_rights_tile(schemeId, tileId),
+        {
+            method: "DELETE",
+            headers: { "X-CSRFTOKEN": getToken() },
+        },
+    );
+
+    if (!response.ok) {
+        const parsed = await response.json();
+        throw new Error(parsed.message || response.statusText);
+    } else {
+        return true;
+    }
+};
+
+export const createSchemeRightStatement = async (
+    schemeId: string,
+    tileId: string,
     schemeRightStatementValue: SchemeRightStatement,
 ) => {
-    const response = await fetch(arches.urls.api_scheme_right_statement_tile(schemeId, tileId, childTileId), {
+    const response = await fetch(arches.urls.api_scheme_right_statement_tile_create(schemeId, tileId), {
         method: "PATCH",
         headers: {
             "X-CSRFTOKEN": getToken(),
@@ -314,6 +347,40 @@ export const updateSchemeRightStatement = async (
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;
+};
+
+export const updateSchemeRightStatement = async (
+    schemeId: string,
+    tileId: string,
+    schemeRightStatementValue: SchemeRightStatement,
+) => {
+    const response = await fetch(arches.urls.api_scheme_right_statement_tile(schemeId, tileId), {
+        method: "PATCH",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(schemeRightStatementValue),
+    });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const deleteSchemeRightStatement = async (
+    schemeId: string,
+    tileId: string,
+) => {
+    const response = await fetch(arches.urls.api_scheme_right_statement_tile(schemeId, tileId), {
+        method: "DELETE",
+        headers: { "X-CSRFTOKEN": getToken() },
+    });
+    if (!response.ok) {
+        const parsed = await response.json();
+        throw new Error(parsed.message || response.statusText);
+    } else {
+        return true;
+    }
 };
 
 export const fetchSearchResults = async (
