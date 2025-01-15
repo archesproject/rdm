@@ -67,14 +67,15 @@ class SchemeLabelTileSerializer(ArchesTileSerializer):
                 graph_slug, resource_ids=[resource_instance_id]
             ).get(pk=resource_instance_id)
             current_labels = resource_instance.appellative_status
+
             for label in current_labels:
+                label_language = label.appellative_status_ascribed_name_language[0]
+                label_type = label.appellative_status_ascribed_relation[0]
                 if (
                     data["tileid"] != label.tileid
                     and new_label_type["uri"] == PREF_LABEL_LIST_ITEM.uri
-                    and label.appellative_status_ascribed_relation[0]["uri"]
-                    == PREF_LABEL_LIST_ITEM.uri
-                    and label.appellative_status_ascribed_name_language[0]["uri"]
-                    == new_label_language["uri"]
+                    and label_type["uri"] == PREF_LABEL_LIST_ITEM.uri
+                    and label_language["uri"] == new_label_language["uri"]
                 ):
                     raise ValidationError(
                         "A preferred label with the same language already exists for this scheme."
