@@ -137,7 +137,10 @@ export const updateSchemeLabel = async (
         },
     );
     const parsed = await response.json();
-    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    if (!response.ok)
+        throw new Error(
+            parsed.non_field_errors || parsed.message || response.statusText,
+        );
     return parsed;
 };
 
