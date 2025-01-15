@@ -54,8 +54,6 @@ const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
 const schemeRight = ref<SchemeRights>();
 const schemeRightStatement = ref<SchemeRightStatement[]>();
-const schemeRightTileid = ref<string>();
-const schemeRightStatementTileid = ref<string>();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
@@ -145,11 +143,11 @@ function onUpdateSchemeRightStatementReferenceDatatype(
     node: keyof SchemeRightStatement,
     val: ControlledListItem[],
 ) {
-    (schemeRightStatement.value[node] as unknown) = val.map((item) => toRaw(item));
+    (currentSchemeRightStatement.value[node] as unknown) = val.map((item) => toRaw(item));
 };
 
 function onUpdateString(node: keyof SchemeRightStatement, val: string) {
-    (schemeRightStatement.value[node] as unknown) = toRaw(val);
+    (currentSchemeRightStatement.value[node] as unknown) = toRaw(val);
 }
 
 async function saveRights() {
@@ -168,7 +166,7 @@ async function saveRights() {
         } else {
             await updateSchemeRights(
                 route.params.id as string,
-                props.tileId as string,
+                schemeRight.value.tileid as string,
                 schemeRight.value as SchemeRights,
             );
         }
@@ -189,8 +187,8 @@ async function saveRightStatement() {
         } else {
             await updateSchemeRightStatement(
                 route.params.id as string,
-                schemeRightTileid.value as string,
-                schemeRight.value as SchemeRights,
+                currentSchemeRightStatement.value.tileid as string,
+                currentSchemeRightStatement.value as SchemeRightStatement,
             );
         }
         emit(UPDATED);
@@ -214,8 +212,6 @@ async function getSectionValue() {
     }
     schemeRight.value = schemeInstance?.rights;
     schemeRightStatement.value = schemeInstance?.right_statement;
-    schemeRightTileid.value = schemeRight.value?.tileid;
-    schemeRightStatementTileid.value = schemeRightStatement.value?.tileid;
     actorRdmOptions.value = actorOptions.map((option) => {
         const savedSource = schemeRight.value?.right_holder?.find(
             (source: ResourceInstanceReference) =>
@@ -258,7 +254,6 @@ function editStatementValue(tileId: string) {
     const currentSchemeRightStatement = schemeRightStatement.value?.find(
         (tile) => tile.tileid === tileId,
     );
-    console.log(currentSchemeRightStatement?.tileid);
 
     if (currentSchemeRightStatement && currentSchemeRightStatement?.tileid === tileId) {
         console.log("this ran");

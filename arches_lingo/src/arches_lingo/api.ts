@@ -336,13 +336,16 @@ export const createSchemeRightStatement = async (
     tileId: string,
     schemeRightStatementValue: SchemeRightStatement,
 ) => {
-    const response = await fetch(arches.urls.api_scheme_right_statement_tile_create(schemeId, tileId), {
+    const response = await fetch(arches.urls.api_scheme_right_statement_tile_create, {
         method: "PATCH",
         headers: {
             "X-CSRFTOKEN": getToken(),
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(schemeRightStatementValue),
+        body: JSON.stringify({
+            resourceinstance: schemeId,
+            ...schemeRightStatementValue,
+        }),
     });
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
