@@ -333,7 +333,6 @@ export const deleteSchemeRights = async (
 
 export const createSchemeRightStatement = async (
     schemeId: string,
-    tileId: string,
     schemeRightStatementValue: SchemeRightStatement,
 ) => {
     const response = await fetch(arches.urls.api_scheme_right_statement_tile_create, {

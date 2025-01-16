@@ -183,7 +183,7 @@ async function saveRights() {
 async function saveRightStatement() {
     try {
         if (!currentSchemeRightStatement.value?.tileid) {
-            await createSchemeRightStatement(route.params.id as string, schemeRight.value);
+            await createSchemeRightStatement(route.params.id as string, currentSchemeRightStatement.value);
         } else {
             await updateSchemeRightStatement(
                 route.params.id as string,
@@ -256,10 +256,8 @@ function editStatementValue(tileId: string) {
     );
 
     if (currentSchemeRightStatement && currentSchemeRightStatement?.tileid === tileId) {
-        console.log("this ran");
         emit(OPEN_EDITOR, currentSchemeRightStatement?.tileid);
     } else {
-        console.log("not this");
         toast.add({
             severity: ERROR,
             summary: $gettext("Error"),
@@ -332,6 +330,7 @@ defineExpose({ getSectionValue });
                                     (rowData as SchemeRightStatement)
                                         .right_statement_label
                                 "
+                                :mode="VIEW"
                             ></NonLocalizedString>
                         </div>
                         <div>
@@ -341,6 +340,7 @@ defineExpose({ getSectionValue });
                                     (rowData as SchemeRightStatement)
                                         .right_statement_type_metatype
                                 "
+                                :mode="VIEW"
                             ></ReferenceDatatype>
                         </div>
                     </template>
