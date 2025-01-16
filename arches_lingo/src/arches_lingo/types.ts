@@ -36,6 +36,12 @@ export interface Scheme {
     top_concepts: Concept[];
 }
 
+export interface ControlledListResult {
+    id: string;
+    name: string;
+    items: ControlledListItem[];
+}
+
 export interface ControlledListItemLabelValue {
     id: string;
     valuetype_id: string;
