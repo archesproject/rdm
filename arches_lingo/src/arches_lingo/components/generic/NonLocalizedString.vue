@@ -7,7 +7,7 @@ import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 const props = defineProps<{
     mode?: DataComponentMode;
     value?: string;
-    ptId?: string;
+    passThruId?: string;
 }>();
 const emits = defineEmits(["update"]);
 const onUpdate = (val: string) => {
@@ -22,7 +22,7 @@ const onUpdate = (val: string) => {
         <div v-if="mode === EDIT">
             <NonLocalizedStringEditor
                 :value="value ?? ''"
-                :pt-id="props.ptId"
+                :pass-thru-id="props.passThruId"
                 @update="onUpdate"
             />
         </div>
