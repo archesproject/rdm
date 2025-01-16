@@ -241,7 +241,7 @@ onMounted(async () => {
     <NonLocalizedString
         :value="formValue?.appellative_status_ascribed_name_content"
         :mode="EDIT"
-        :pt-id="formId + '-label'"
+        :pass-thru-id="formId + '-label'"
         @update="
             (val) =>
                 onUpdateString('appellative_status_ascribed_name_content', val)

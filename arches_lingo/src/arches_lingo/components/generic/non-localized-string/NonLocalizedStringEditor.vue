@@ -4,7 +4,7 @@ import InputText from "primevue/inputtext";
 
 const props = defineProps<{
     value: string;
-    ptId?: string;
+    passThruId?: string;
 }>();
 
 const updateableValue = ref<string>(props.value as string);
@@ -22,7 +22,7 @@ watch(updateableValue, (newValue) => {
 <template>
     <div>
         <InputText
-            :id="props.ptId"
+            :id="props.passThruId"
             v-model="updateableValue"
             type="text"
         />
