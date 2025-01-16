@@ -6,10 +6,11 @@ import { useGettext } from "vue3-gettext";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
+import { fetchLists } from "@/arches_references/api.ts";
+
 import {
     createScheme,
     createSchemeLabel,
-    fetchControlledListOptions,
     fetchGroupRdmSystemList,
     fetchPersonRdmSystemList,
     fetchTextualWorkRdmSystemList,
@@ -24,17 +25,13 @@ import ResourceInstanceRelationships from "@/arches_lingo/components/generic/Res
 import {
     EDIT,
     ERROR,
-    EVENT_TYPES_CONTROLLED_LIST,
-    LABEL_CONTROLLED_LIST,
-    LANGUAGE_CONTROLLED_LIST,
-    METATYPES_CONTROLLED_LIST,
     NEW,
     selectedLanguageKey,
-    STATUSES_CONTROLLED_LIST,
 } from "@/arches_lingo/constants.ts";
 
 import type {
     AppellativeStatus,
+    ControlledListResult,
     ControlledListItem,
     ControlledListItemResult,
     ResourceInstanceReference,
@@ -74,6 +71,34 @@ const metatypeOptions = ref<ControlledListItem[]>([]);
 const eventTypeOptions = ref<ControlledListItem[]>([]);
 const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
 const textualWorkOptions = ref<ResourceInstanceReference[]>();
+
+const referenceNodeConfig = [
+    {
+        nodeAlias: "appellative_status_ascribed_name_language",
+        listRef: languageOptions,
+        listName: "Languages",
+    },
+    {
+        nodeAlias: "appellative_status_ascribed_relation",
+        listRef: typeOptions,
+        listName: "label",
+    },
+    {
+        nodeAlias: "appellative_status_status",
+        listRef: statusOptions,
+        listName: "Statuteses",
+    },
+    {
+        nodeAlias: "appellative_status_status_metatype",
+        listRef: metatypeOptions,
+        listName: "Metatypes",
+    },
+    {
+        nodeAlias: "appellative_status_data_assignment_type",
+        listRef: eventTypeOptions,
+        listName: "Event Types",
+    },
+];
 
 function onUpdateString(node: keyof AppellativeStatus, val: string) {
     (formValue.value[node] as unknown) = toRaw(val);
@@ -134,12 +159,12 @@ async function save() {
     }
 }
 
-async function getControlledListOptions(
-    listId: string,
-): Promise<ControlledListItem[]> {
+async function getControlledLists() {
     let parsed;
     try {
-        parsed = await fetchControlledListOptions(listId);
+        parsed = await fetchLists(
+            referenceNodeConfig.map((node) => node.nodeAlias),
+        );
     } catch (error) {
         toast.add({
             severity: ERROR,
@@ -151,14 +176,20 @@ async function getControlledListOptions(
         });
         return [];
     }
-    const options = parsed.items.map(
-        (item: ControlledListItemResult): ControlledListItem => ({
-            list_id: item.list_id,
-            uri: item.uri,
-            labels: item.values,
-        }),
-    );
-    return options;
+    const controlledLists = parsed.controlled_lists;
+    referenceNodeConfig.forEach((node) => {
+        const matchingList = controlledLists.find(
+            (list: ControlledListResult) => list.name === node.listName,
+        );
+        const options = matchingList.items.map(
+            (item: ControlledListItemResult): ControlledListItem => ({
+                list_id: item.list_id,
+                uri: item.uri,
+                labels: item.values,
+            }),
+        );
+        node.listRef.value = options;
+    });
 }
 
 async function getResourceInstanceOptions(
@@ -191,20 +222,7 @@ async function getResourceInstanceOptions(
 }
 
 onMounted(async () => {
-    const [languageOpts, typeOpts, statusOpts, metatypeOpts, eventTypeOpts] =
-        await Promise.all([
-            getControlledListOptions(LANGUAGE_CONTROLLED_LIST),
-            getControlledListOptions(LABEL_CONTROLLED_LIST),
-            getControlledListOptions(STATUSES_CONTROLLED_LIST),
-            getControlledListOptions(METATYPES_CONTROLLED_LIST),
-            getControlledListOptions(EVENT_TYPES_CONTROLLED_LIST),
-        ]);
-
-    languageOptions.value = languageOpts;
-    typeOptions.value = typeOpts;
-    statusOptions.value = statusOpts;
-    metatypeOptions.value = metatypeOpts;
-    eventTypeOptions.value = eventTypeOpts;
+    getControlledLists();
     groupAndPersonOptions.value = await getResourceInstanceOptions(
         fetchGroupRdmSystemList,
     );
