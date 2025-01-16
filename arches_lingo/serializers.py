@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from rest_framework.exceptions import ValidationError
 
 from arches_references.models import ListItem
@@ -55,30 +56,36 @@ class SchemeLabelTileSerializer(ArchesTileSerializer):
 
     def validate(self, data):
         data = super().validate(data)
-        graph_slug = self.Meta.graph_slug
         PREF_LABEL_LIST_ITEM = ListItem.objects.get(list_item_values__value="prefLabel")
 
         if data:
-            new_label_language = data["appellative_status_ascribed_name_language"][0]
-            new_label_type = data["appellative_status_ascribed_relation"][0]
-
-            resource_instance_id = self.instance.resourceinstance.pk
-            resource_instance = self.instance.resourceinstance.__class__.as_model(
-                graph_slug, resource_ids=[resource_instance_id]
-            ).get(pk=resource_instance_id)
-            current_labels = resource_instance.appellative_status
+            # TODO: reduce nested-fallback awkwardness by returning a dataclass from
+            # ReferenceDataType.to_python() and feeding incoming data to it.
+            new_label_language = next(
+                iter(data.get("appellative_status_ascribed_name_language", None) or []),
+                {},
+            )
+            new_label_type = next(
+                iter(data.get("appellative_status_ascribed_relation", None) or []), {}
+            )
+            current_labels = data["resourceinstance"].appellative_status
 
             for label in current_labels:
-                label_language = label.appellative_status_ascribed_name_language[0]
-                label_type = label.appellative_status_ascribed_relation[0]
+                label_language = next(
+                    iter(label.appellative_status_ascribed_name_language or []), {}
+                )
+                label_type = next(
+                    iter(label.appellative_status_ascribed_relation or []), {}
+                )
                 if (
-                    data["tileid"] != label.tileid
-                    and new_label_type["uri"] == PREF_LABEL_LIST_ITEM.uri
-                    and label_type["uri"] == PREF_LABEL_LIST_ITEM.uri
-                    and label_language["uri"] == new_label_language["uri"]
+                    data.get("tileid", None) not in (None, label.tileid)
+                    and new_label_type.get("uri", "") == PREF_LABEL_LIST_ITEM.uri
+                    and label_type.get("uri", "") == PREF_LABEL_LIST_ITEM.uri
+                    and label_language.get("uri", "")
+                    == new_label_language.get("uri", "")
                 ):
                     raise ValidationError(
-                        "A preferred label with the same language already exists for this scheme."
+                        _("Only one preferred label per language is permitted.")
                     )
         return data
 
