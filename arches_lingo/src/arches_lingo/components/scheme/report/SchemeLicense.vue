@@ -25,6 +25,7 @@ import type {
     MetaStringText,
     ResourceInstanceReference,
     ResourceInstanceResult,
+    SchemeInstance,
     SchemeRights,
     SchemeRightStatement,
 } from "@/arches_lingo/types";
@@ -52,12 +53,11 @@ onMounted(async () => {
 
 const emit = defineEmits([OPEN_EDITOR, UPDATED]);
 
-const schemeRight = ref<SchemeRights>();
-const schemeRightStatement = ref<SchemeRightStatement[]>();
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const { $gettext } = useGettext();
+
 const actorRdmOptions = ref<ResourceInstanceReference[]>();
 const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const rightTypeOptions = ref<ControlledListItem[]>();
@@ -77,11 +77,25 @@ const props = withDefaults(
         tileId: null, // editor arg specifying what tile to operate on.
     },
 );
-const currentSchemeRightStatement = computed(() => {
-    return schemeRightStatement.value?.find(
-        (tile) => tile.tileid === props.tileId,
-    );
-});
+
+const schemeRights = ref<SchemeRights>();
+const schemeRightStatement = ref<SchemeRightStatement[]>();
+const selectedSchemeRightStatement = computed(() => {
+        const selected = schemeRightStatement.value?.find(
+            (tile) => tile.tileid === props.tileId
+        );
+        if (!selected) {
+            return {
+                tileid: "",
+                right_statement_content: "",
+                right_statement_label: "",
+                right_statement_language: [],
+                right_statement_type: [],
+                right_statement_type_metatype: [],
+            } as SchemeRightStatement;
+        } else { return selected; }
+    },
+);
 
 const metaStringLabel: MetaStringText = {
     deleteConfirm: $gettext("Are you sure you want to delete this label?"),
@@ -128,7 +142,7 @@ function onUpdateResourceInstance(
         const selectedOptions = options.filter((option) =>
             val.includes(option.resourceId),
         );
-        (schemeRight.value[node] as unknown) = selectedOptions;
+        (schemeRights.value[node] as unknown) = selectedOptions;
     }
 };
 
@@ -136,38 +150,38 @@ function onUpdateSchemeRightReferenceDatatype(
     node: keyof SchemeRights,
     val: ControlledListItem[],
 ) {
-    (schemeRight.value[node] as unknown) = val.map((item) => toRaw(item));
+    (schemeRights.value[node] as unknown) = val.map((item) => toRaw(item));
 };
 
 function onUpdateSchemeRightStatementReferenceDatatype(
     node: keyof SchemeRightStatement,
     val: ControlledListItem[],
 ) {
-    (currentSchemeRightStatement.value[node] as unknown) = val.map((item) => toRaw(item));
+    (selectedSchemeRightStatement.value[node] as unknown) = val.map((item) => toRaw(item));
 };
 
 function onUpdateString(node: keyof SchemeRightStatement, val: string) {
-    (currentSchemeRightStatement.value[node] as unknown) = toRaw(val);
+    (selectedSchemeRightStatement.value[node] as unknown) = toRaw(val);
 }
 
 async function saveRights() {
     try {
         if (route.params.id === NEW) {
             const newSchemeInstance: SchemeInstance = {
-                rights: [toRaw(schemeRight.value)],
+                rights: [toRaw(schemeRights.value)],
             };
             const updated = await createScheme(newSchemeInstance);
             await router.push({
                 name: "scheme",
                 params: { id: updated.resourceinstanceid },
             });
-        } else if (!schemeRight.value.tileid) {
-            await createSchemeRights(route.params.id as string, schemeRight?.value);
+        } else if (!schemeRights.value?.tileid) {
+            await createSchemeRights(route.params.id as string, schemeRights.value ?? {});
         } else {
             await updateSchemeRights(
                 route.params.id as string,
-                schemeRight.value.tileid as string,
-                schemeRight.value as SchemeRights,
+                schemeRights.value?.tileid as string,
+                schemeRights.value as SchemeRights,
             );
         }
         emit(UPDATED);
@@ -182,13 +196,13 @@ async function saveRights() {
 
 async function saveRightStatement() {
     try {
-        if (!currentSchemeRightStatement.value?.tileid) {
-            await createSchemeRightStatement(route.params.id as string, currentSchemeRightStatement.value);
+        if (!selectedSchemeRightStatement.value?.tileid) {
+            await createSchemeRightStatement(route.params.id as string, selectedSchemeRightStatement.value);
         } else {
             await updateSchemeRightStatement(
                 route.params.id as string,
-                currentSchemeRightStatement.value.tileid as string,
-                currentSchemeRightStatement.value as SchemeRightStatement,
+                selectedSchemeRightStatement.value.tileid as string,
+                selectedSchemeRightStatement.value as SchemeRightStatement,
             );
         }
         emit(UPDATED);
@@ -210,10 +224,10 @@ async function getSectionValue() {
     if (schemeInstance?.right_statement && !Array.isArray(schemeInstance?.right_statement)) {
         schemeInstance.right_statement = [schemeInstance.right_statement];
     }
-    schemeRight.value = schemeInstance?.rights;
+    schemeRights.value = schemeInstance?.rights;
     schemeRightStatement.value = schemeInstance?.right_statement;
     actorRdmOptions.value = actorOptions.map((option) => {
-        const savedSource = schemeRight.value?.right_holder?.find(
+        const savedSource = schemeRights.value?.right_holder?.find(
             (source: ResourceInstanceReference) =>
                 source.resourceId === option.resourceId,
         );
@@ -251,12 +265,12 @@ async function deleteStatementValue(tileId: string) {
 
 function editStatementValue(tileId: string) {
     editingStatement.value = true;
-    const currentSchemeRightStatement = schemeRightStatement.value?.find(
+    const selectedSchemeRightStatement = schemeRightStatement.value?.find(
         (tile) => tile.tileid === tileId,
     );
 
-    if (currentSchemeRightStatement && currentSchemeRightStatement?.tileid === tileId) {
-        emit(OPEN_EDITOR, currentSchemeRightStatement?.tileid);
+    if (selectedSchemeRightStatement && selectedSchemeRightStatement?.tileid === tileId) {
+        emit(OPEN_EDITOR, selectedSchemeRightStatement?.tileid);
     } else {
         toast.add({
             severity: ERROR,
@@ -279,12 +293,12 @@ defineExpose({ getSectionValue });
             >
                 <h4>{{ $gettext('Rights Holders') }}</h4>
                 <ResourceInstanceRelationships
-                    :value="schemeRight?.right_holder"
+                    :value="schemeRights?.right_holder"
                     :mode=VIEW
                 />
                 <h4>{{ $gettext('Rights Type') }}</h4>
                 <ReferenceDatatype
-                    :value="schemeRight?.right_type"
+                    :value="schemeRights?.right_type"
                     :mode=VIEW
                 />
                 <h4>{{ $gettext('Rights Statements') }}</h4>
@@ -351,14 +365,14 @@ defineExpose({ getSectionValue });
             <div v-if="!editingStatement">
                 <h4>{{ $gettext('Rights Holders') }}</h4>
                 <ResourceInstanceRelationships
-                    :value="schemeRight?.right_holder"
+                    :value="schemeRights?.right_holder"
                     :options="actorRdmOptions"
                     :mode="EDIT"
                     @update="(val) => onUpdateResourceInstance('right_holder', val, actorRdmOptions ?? [])"
                 />
                 <h4>{{ $gettext('Rights Type') }}</h4>
                 <ReferenceDatatype
-                    :value="schemeRight?.right_type"
+                    :value="schemeRights?.right_type"
                     :options="rightTypeOptions"
                     :multi-value="false"
                     :mode="EDIT"
@@ -372,7 +386,7 @@ defineExpose({ getSectionValue });
             <div v-if="!editingStatement">
                 <h4>{{ $gettext('Statement') }}</h4>
                 <NonLocalizedString
-                    :value="currentSchemeRightStatement?.right_statement_content"
+                    :value="selectedSchemeRightStatement?.right_statement_content"
                     :mode="EDIT"
                     @update="
                         (val) =>
@@ -381,7 +395,7 @@ defineExpose({ getSectionValue });
                 />
                 <h4>{{ $gettext('Statement Language') }}</h4>
                 <ReferenceDatatype
-                    :value="currentSchemeRightStatement?.right_statement_language"
+                    :value="selectedSchemeRightStatement?.right_statement_language"
                     :mode="EDIT"
                     :multi-value="false"
                     :options="languageOptions"
@@ -395,7 +409,7 @@ defineExpose({ getSectionValue });
                 />
                 <h4>{{ $gettext('Statement Type') }}</h4>
                 <ReferenceDatatype
-                    :value="currentSchemeRightStatement?.right_statement_type"
+                    :value="selectedSchemeRightStatement?.right_statement_type"
                     :mode="EDIT"
                     :multi-value="false"
                     :options="noteOptions"
@@ -409,7 +423,7 @@ defineExpose({ getSectionValue });
                 />
                 <h4>{{ $gettext('Statement Type Metatype') }}</h4>
                 <ReferenceDatatype
-                    :value="currentSchemeRightStatement?.right_statement_type_metatype"
+                    :value="selectedSchemeRightStatement?.right_statement_type_metatype"
                     :mode="EDIT"
                     :multi-value="false"
                     :options="metatypesOptions"
