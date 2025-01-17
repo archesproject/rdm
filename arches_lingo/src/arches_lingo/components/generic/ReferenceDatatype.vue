@@ -13,7 +13,7 @@ defineProps<{
     value?: ControlledListItem[];
     multiValue?: boolean;
     options?: ControlledListItem[];
-    pt?: object;
+    ptAriaLabeledBy?: string;
 }>();
 const emit = defineEmits(["update"]);
 const onUpdate = (val: ControlledListItem[]) => {
@@ -30,7 +30,7 @@ const onUpdate = (val: ControlledListItem[]) => {
                 :value="value"
                 :options="options"
                 :multi-value="multiValue"
-                :pt="pt"
+                :pt-aria-labeled-by="ptAriaLabeledBy"
                 @update="onUpdate"
             />
         </div>
