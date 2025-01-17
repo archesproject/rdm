@@ -56,7 +56,16 @@ class SchemeLabelTileSerializer(ArchesTileSerializer):
 
     def validate(self, data):
         data = super().validate(data)
-        PREF_LABEL_LIST_ITEM = ListItem.objects.get(list_item_values__value="prefLabel")
+        try:
+            PREF_LABEL_LIST_ITEM = ListItem.objects.get(
+                list_item_values__value="prefLabel",
+            )
+        except ListItem.MultipleObjectsReturned:
+            raise RuntimeError(
+                _(
+                    "Ask your system administrator to deduplicate the prefLabel list items."
+                )
+            )
 
         if data:
             # TODO: reduce nested-fallback awkwardness by returning a dataclass from
