@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, toRef } from "vue";
+import { computed, inject, ref, toRef, watch } from "vue";
 import Select from "primevue/select";
 import MultiSelect from "primevue/multiselect";
 
@@ -46,6 +46,11 @@ const val = computed({
     },
 });
 
+const primeVuePickerVal = ref(val.value);
+watch(primeVuePickerVal, (newVal) => {
+    val.value = newVal;
+});
+
 function extractURI(item: ControlledListItem[]): string | string[] {
     if (item && !props.multiValue) {
         return item[0]?.uri;
@@ -70,7 +75,7 @@ function getOptionLabels(item: ControlledListItem): string {
 
 <template>
     <Select
-        v-model="val"
+        v-model="primeVuePickerVal"
         v-if:="!props.multiValue"
         :show-toggle-all="!!options?.length"
         :options
@@ -85,7 +90,7 @@ function getOptionLabels(item: ControlledListItem): string {
     />
     <MultiSelect
         v-if="props.multiValue"
-        v-model="val"
+        v-model="primeVuePickerVal"
         :show-toggle-all="!!options?.length"
         :options
         :option-label="getOptionLabels"
