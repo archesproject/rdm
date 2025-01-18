@@ -17,7 +17,7 @@ withDefaults(defineProps<{ value?: ResourceInstanceReference[] }>(), {
             class="resource-instance-relationship-view"
         >
             <a :href="`${arches.urls.resource_editor}${val.resourceId}`">
-                {{ val.display_value }}
+                {{ val.displayValue }}
             </a>
         </span>
     </span>

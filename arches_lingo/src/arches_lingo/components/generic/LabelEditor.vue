@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, toRaw, toRef, useId } from "vue";
+import { computed, onMounted, ref, toRaw, toRef, useId } from "vue";
 
 import Button from "primevue/button";
 import { useGettext } from "vue3-gettext";
@@ -11,9 +11,6 @@ import { fetchLists } from "@/arches_references/api.ts";
 import {
     createScheme,
     createSchemeLabel,
-    fetchGroupRdmSystemList,
-    fetchPersonRdmSystemList,
-    fetchTextualWorkRdmSystemList,
     updateSchemeLabel,
 } from "@/arches_lingo/api.ts";
 
@@ -22,30 +19,21 @@ import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedSt
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
-import {
-    EDIT,
-    ERROR,
-    NEW,
-    selectedLanguageKey,
-} from "@/arches_lingo/constants.ts";
+import { EDIT, ERROR, NEW } from "@/arches_lingo/constants.ts";
 
-import type { Ref } from "vue";
 import type {
     AppellativeStatus,
     ControlledListResult,
     ControlledListItem,
     ControlledListItemResult,
     ResourceInstanceReference,
-    ResourceInstanceResult,
     SchemeInstance,
 } from "@/arches_lingo/types.ts";
-import type { Language } from "@/arches_vue_utils/types.ts";
 
 const emit = defineEmits(["update"]);
 const toast = useToast();
 const route = useRoute();
 const router = useRouter();
-const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
 const props = withDefaults(
@@ -203,49 +191,9 @@ async function getControlledLists() {
     });
 }
 
-async function getResourceInstanceOptions(
-    fetchOptions: () => Promise<ResourceInstanceResult[]>,
-): Promise<ResourceInstanceReference[]> {
-    let options;
-    try {
-        options = await fetchOptions();
-    } catch (error) {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext("Could not fetch the resource instance options"),
-        });
-        return [];
-    }
-    const results = options.map((option: ResourceInstanceResult) => {
-        const result: ResourceInstanceReference = {
-            display_value: option.descriptors[selectedLanguage.value.code].name,
-            resourceId: option.resourceinstanceid,
-            ontologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-            inverseOntologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-        };
-        return result;
-    });
-    return results;
-}
-async function initializeSelectOptions() {
+onMounted(async () => {
     getControlledLists();
-    groupAndPersonOptions.value = await getResourceInstanceOptions(
-        fetchGroupRdmSystemList,
-    );
-    groupAndPersonOptions.value = [
-        ...(groupAndPersonOptions.value || []),
-        ...(await getResourceInstanceOptions(fetchPersonRdmSystemList)),
-    ];
-    textualWorkOptions.value = await getResourceInstanceOptions(
-        fetchTextualWorkRdmSystemList,
-    );
-}
-
-onMounted(initializeSelectOptions);
+});
 </script>
 
 <template>
@@ -345,10 +293,11 @@ onMounted(initializeSelectOptions);
     <ResourceInstanceRelationships
         :value="formValue?.appellative_status_data_assignment_actor"
         :mode="EDIT"
-        :options="groupAndPersonOptions"
         :pt-aria-labeled-by="labelContributorId"
+        graph-slug="scheme"
+        node-alias="appellative_status_data_assignment_actor"
         @update="
-            (val) =>
+            (val: string[]) =>
                 onUpdateResourceInstance(
                     'appellative_status_data_assignment_actor',
                     val,
@@ -360,10 +309,11 @@ onMounted(initializeSelectOptions);
     <ResourceInstanceRelationships
         :value="formValue?.appellative_status_data_assignment_object_used"
         :mode="EDIT"
-        :options="textualWorkOptions"
+        graph-slug="scheme"
+        node-alias="appellative_status_data_assignment_object_used"
         :pt-aria-labeled-by="labelSourcesId"
         @update="
-            (val) =>
+            (val: string[]) =>
                 onUpdateResourceInstance(
                     'appellative_status_data_assignment_object_used',
                     val,

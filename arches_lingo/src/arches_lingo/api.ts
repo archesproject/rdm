@@ -264,6 +264,19 @@ export const updateSchemeNamespace = async (
     return parsed;
 };
 
+export const fetchRelatableResources = async (
+    graphSlug: string,
+    nodeAlias: string,
+) => {
+    const response = await fetch(
+        `/api/graph/${graphSlug}/node/${nodeAlias}/relatable-resources`,
+    );
+
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const fetchSearchResults = async (
     searchTerm: string,
     items: number,

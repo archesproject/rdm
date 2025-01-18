@@ -73,13 +73,24 @@ export interface ResourceInstanceReference {
     ontologyProperty: string;
     resourceXresourceId?: string;
     inverseOntologyProperty: string;
-    display_value?: string;
+    displayValue?: string;
+}
+
+export interface NewResourceInstance {
+    displayValue: string;
+    graphId: string;
 }
 
 export interface ResourceInstanceResult {
     resourceinstanceid: string;
-    descriptors: { [key: string]: { name: string } };
+    display_value: string;
 }
+
+export interface GraphInfo {
+    graphid: string;
+    name: string;
+}
+
 interface ControlledListItemValue {
     value: string;
 }
