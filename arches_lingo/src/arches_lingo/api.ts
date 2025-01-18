@@ -39,6 +39,20 @@ export const fetchUser = async () => {
     return parsed;
 };
 
+export const fetchRelatableResources = async (
+    graphSlug: string,
+    nodeAlias: string,
+    page: number,
+) => {
+    const response = await fetch(
+        `/api/graph/${graphSlug}/node/${nodeAlias}/relatable-resources?page=${page}`,
+    );
+
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const fetchLingoResources = async (graphSlug: string) => {
     const response = await fetch(arches.urls.api_lingo_resources(graphSlug));
     const parsed = await response.json();
@@ -153,6 +167,19 @@ export const createScheme = async (newScheme: SchemeInstance) => {
         },
         body: JSON.stringify(newScheme),
     });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const fetchRelatableResources = async (
+    graphSlug: string,
+    nodeAlias: string,
+) => {
+    const response = await fetch(
+        `/api/graph/${graphSlug}/node/${nodeAlias}/relatable-resources`,
+    );
+
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;

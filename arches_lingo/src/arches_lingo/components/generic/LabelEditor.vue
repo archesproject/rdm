@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, toRaw, toRef, useId } from "vue";
+import { computed, onMounted, ref, toRaw, toRef, useId } from "vue";
 
 import Button from "primevue/button";
 import { useGettext } from "vue3-gettext";
@@ -19,30 +19,21 @@ import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedSt
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
-import {
-    EDIT,
-    ERROR,
-    NEW,
-    selectedLanguageKey,
-} from "@/arches_lingo/constants.ts";
+import { EDIT, ERROR, NEW } from "@/arches_lingo/constants.ts";
 
-import type { Ref } from "vue";
 import type {
     AppellativeStatus,
     ControlledListResult,
     ControlledListItem,
     ControlledListItemResult,
     ResourceInstanceReference,
-    ResourceInstanceResult,
     SchemeInstance,
 } from "@/arches_lingo/types.ts";
-import type { Language } from "@/arches_vue_utils/types.ts";
 
 const emit = defineEmits(["update"]);
 const toast = useToast();
 const route = useRoute();
 const router = useRouter();
-const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
 const props = withDefaults(
@@ -200,51 +191,9 @@ async function getControlledLists() {
     });
 }
 
-async function getResourceInstanceOptions(
-    fetchOptions: () => Promise<ResourceInstanceResult[]>,
-): Promise<ResourceInstanceReference[]> {
-    let options;
-    try {
-        options = await fetchOptions();
-    } catch (error) {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext("Could not fetch the resource instance options"),
-        });
-        return [];
-    }
-    const results = options.map((option: ResourceInstanceResult) => {
-        const result: ResourceInstanceReference = {
-            display_value: option.descriptors[selectedLanguage.value.code].name,
-            resourceId: option.resourceinstanceid,
-            ontologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-            inverseOntologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-        };
-        return result;
-    });
-    return results;
-}
-async function initializeSelectOptions() {
+onMounted(async () => {
     getControlledLists();
-    groupAndPersonOptions.value = await getResourceInstanceOptions(() =>
-        fetchLingoResources("group"),
-    );
-    groupAndPersonOptions.value = [
-        ...(groupAndPersonOptions.value || []),
-        ...(await getResourceInstanceOptions(() =>
-            fetchLingoResources("person"),
-        )),
-    ];
-    textualWorkOptions.value = await getResourceInstanceOptions(() =>
-        fetchLingoResources("textual_work"),
-    );
-}
-
-onMounted(initializeSelectOptions);
+});
 </script>
 
 <template>
@@ -253,10 +202,9 @@ onMounted(initializeSelectOptions);
         :value="formValue?.appellative_status_ascribed_name_content"
         :mode="EDIT"
         :pass-thru-id="labelId"
-        @update="
-            (val) =>
-                onUpdateString('appellative_status_ascribed_name_content', val)
-        "
+        @update="(val) =>
+            onUpdateString('appellative_status_ascribed_name_content', val)
+            "
     />
     <p :id="labelLanguageId">{{ $gettext("Label Language") }}</p>
     <ReferenceDatatype
@@ -265,13 +213,12 @@ onMounted(initializeSelectOptions);
         :multi-value="false"
         :options="languageOptions"
         :pt-aria-labeled-by="labelLanguageId"
-        @update="
-            (val) =>
-                onUpdateReferenceDatatype(
-                    'appellative_status_ascribed_name_language',
-                    val,
-                )
-        "
+        @update="(val) =>
+            onUpdateReferenceDatatype(
+                'appellative_status_ascribed_name_language',
+                val,
+            )
+            "
     />
     <p :id="labelTypeId">{{ $gettext("Label Type") }}</p>
     <ReferenceDatatype
@@ -280,13 +227,12 @@ onMounted(initializeSelectOptions);
         :multi-value="false"
         :options="typeOptions"
         :pt-aria-labeled-by="labelTypeId"
-        @update="
-            (val) =>
-                onUpdateReferenceDatatype(
-                    'appellative_status_ascribed_relation',
-                    val,
-                )
-        "
+        @update="(val) =>
+            onUpdateReferenceDatatype(
+                'appellative_status_ascribed_relation',
+                val,
+            )
+            "
     />
     <p :id="labelStatusId">{{ $gettext("Label Status") }}</p>
     <ReferenceDatatype
@@ -295,9 +241,8 @@ onMounted(initializeSelectOptions);
         :multi-value="false"
         :options="statusOptions"
         :pt-aria-labeled-by="labelStatusId"
-        @update="
-            (val) => onUpdateReferenceDatatype('appellative_status_status', val)
-        "
+        @update="(val) => onUpdateReferenceDatatype('appellative_status_status', val)
+            "
     />
     <p :id="labelMetatypeId">{{ $gettext("Label Metatype") }}</p>
     <ReferenceDatatype
@@ -306,69 +251,66 @@ onMounted(initializeSelectOptions);
         :multi-value="false"
         :options="metatypeOptions"
         :pt-aria-labeled-by="labelMetatypeId"
-        @update="
-            (val) =>
-                onUpdateReferenceDatatype(
-                    'appellative_status_status_metatype',
-                    val,
-                )
-        "
+        @update="(val) =>
+            onUpdateReferenceDatatype(
+                'appellative_status_status_metatype',
+                val,
+            )
+            "
     />
     <p :id="labelStartId">{{ $gettext("Label Temporal Validity Start") }}</p>
     <DateDatatype
         :value="formValue?.appellative_status_timespan_begin_of_the_begin"
         :mode="EDIT"
         :pt-aria-labeled-by="labelStartId"
-        @update="
-            (val) =>
-                onUpdateString(
-                    'appellative_status_timespan_begin_of_the_begin',
-                    val,
-                )
-        "
+        @update="(val) =>
+            onUpdateString(
+                'appellative_status_timespan_begin_of_the_begin',
+                val,
+            )
+            "
     />
     <p :id="labelEndId">{{ $gettext("Label Temporal Validity End") }}</p>
     <DateDatatype
         :value="formValue?.appellative_status_timespan_end_of_the_end"
         :mode="EDIT"
         :pt-aria-labeled-by="labelEndId"
-        @update="
-            (val) =>
-                onUpdateString(
-                    'appellative_status_timespan_end_of_the_end',
-                    val,
-                )
-        "
+        @update="(val) =>
+            onUpdateString(
+                'appellative_status_timespan_end_of_the_end',
+                val,
+            )
+            "
     />
     <p :id="labelContributorId">{{ $gettext("Contributor") }}</p>
     <ResourceInstanceRelationships
         :value="formValue?.appellative_status_data_assignment_actor"
         :mode="EDIT"
-        :options="groupAndPersonOptions"
         :pt-aria-labeled-by="labelContributorId"
-        @update="
-            (val) =>
-                onUpdateResourceInstance(
-                    'appellative_status_data_assignment_actor',
-                    val,
-                    groupAndPersonOptions ?? [],
-                )
-        "
+        graph-slug="scheme"
+        node-alias="appellative_status_data_assignment_actor"
+        @update="(val: string[]) =>
+            onUpdateResourceInstance(
+                'appellative_status_data_assignment_actor',
+                val,
+                groupAndPersonOptions ?? [],
+            )
+            "
     />
     <p :id="labelSourcesId">{{ $gettext("Sources") }}</p>
     <ResourceInstanceRelationships
         :value="formValue?.appellative_status_data_assignment_object_used"
         :mode="EDIT"
-        :options="textualWorkOptions"
+        graph-slug="scheme"
+        node-alias="appellative_status_data_assignment_object_used"
         :pt-aria-labeled-by="labelSourcesId"
-        @update="
-            (val) =>
-                onUpdateResourceInstance(
-                    'appellative_status_data_assignment_object_used',
-                    val,
-                    textualWorkOptions ?? [],
-                )
-        "
+        @update="(val: string[]) =>
+            onUpdateResourceInstance(
+                'appellative_status_data_assignment_object_used',
+                val,
+                textualWorkOptions ?? [],
+            )
+            "
     />
     <p :id="labelWarrantId">{{ $gettext("Warrant Type") }}</p>
     <ReferenceDatatype
@@ -377,13 +319,12 @@ onMounted(initializeSelectOptions);
         :multi-value="false"
         :options="eventTypeOptions"
         :pt-aria-labeled-by="labelWarrantId"
-        @update="
-            (val) =>
-                onUpdateReferenceDatatype(
-                    'appellative_status_data_assignment_type',
-                    val,
-                )
-        "
+        @update="(val) =>
+            onUpdateReferenceDatatype(
+                'appellative_status_data_assignment_type',
+                val,
+            )
+            "
     />
     <Button
         :label="$gettext('Update')"

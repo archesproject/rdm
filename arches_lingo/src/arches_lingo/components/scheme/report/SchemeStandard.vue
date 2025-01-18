@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, ref, type Ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 
@@ -15,7 +15,6 @@ import {
     updateLingoResource,
 } from "@/arches_lingo/api.ts";
 import {
-    selectedLanguageKey,
     VIEW,
     EDIT,
     OPEN_EDITOR,
@@ -34,10 +33,8 @@ import type {
 
 const toast = useToast();
 const schemeInstance = ref<SchemeInstance>({});
-const textualWorkOptions = ref<ResourceInstanceReference[]>();
 const route = useRoute();
 const router = useRouter();
-const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
 const { mode = VIEW } = defineProps<{
@@ -51,20 +48,6 @@ defineExpose({ getSectionValue });
 onMounted(async () => {
     getSectionValue();
 });
-
-async function getOptions(): Promise<ResourceInstanceReference[]> {
-    const options = await fetchLingoResources("textual_work");
-    const results = options.map((option: ResourceInstanceResult) => {
-        const result: ResourceInstanceReference = {
-            display_value: option.descriptors[selectedLanguage.value.code].name,
-            resourceId: option.resourceinstanceid,
-            ontologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-            inverseOntologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-        };
-        return result;
-    });
-    return results;
-}
 
 async function save() {
     try {
@@ -93,30 +76,7 @@ async function save() {
     }
 }
 
-async function getCachedOptions(): Promise<
-    ResourceInstanceReference[] | undefined
-> {
-    if (route.params.id === NEW) {
-        return;
-    }
-    try {
-        const options = textualWorkOptions.value || (await getOptions());
-        return options;
-    } catch (error) {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext("Could not fetch options for the standard"),
-        });
-    }
-}
-
-async function setSchemeInstance(
-    options: ResourceInstanceReference[] | undefined,
-) {
+async function setSchemeInstance() {
     try {
         const scheme = await fetchLingoResourcePartial(
             "scheme",
@@ -124,18 +84,6 @@ async function setSchemeInstance(
             "creation",
         );
 
-        const hydratedResults = options?.map((option) => {
-            const savedSource = scheme.creation?.creation_sources.find(
-                (source: ResourceInstanceReference) =>
-                    source.resourceId === option.resourceId,
-            );
-            if (savedSource) {
-                return savedSource;
-            } else {
-                return option;
-            }
-        });
-        textualWorkOptions.value = hydratedResults;
         schemeInstance.value = scheme;
     } catch (error) {
         toast.add({
@@ -150,24 +98,16 @@ async function setSchemeInstance(
 }
 
 async function getSectionValue() {
-    const options = await getCachedOptions();
-
-    if (options) {
-        setSchemeInstance(options);
-    }
+    setSchemeInstance();
 }
 
-function onCreationUpdate(val: string[]) {
+function onCreationUpdate(val: ResourceInstanceReference[]) {
     const schemeInstanceValue = schemeInstance.value!; // should never be null when updating
-    if (textualWorkOptions.value) {
-        const options = textualWorkOptions.value?.filter((option) =>
-            val.includes(option.resourceId),
-        );
-        if (!schemeInstanceValue?.creation) {
-            schemeInstanceValue.creation = { creation_sources: options };
-        } else {
-            schemeInstanceValue.creation.creation_sources = options;
-        }
+
+    if (!schemeInstanceValue?.creation) {
+        schemeInstanceValue.creation = { creation_sources: val };
+    } else {
+        schemeInstanceValue.creation.creation_sources = val;
     }
 }
 </script>
@@ -189,7 +129,8 @@ function onCreationUpdate(val: string[]) {
     <div v-if="mode === EDIT">
         <ResourceInstanceRelationships
             :value="schemeInstance?.creation?.creation_sources"
-            :options="textualWorkOptions"
+            graph-slug="scheme"
+            node-alias="creation_sources"
             :mode="EDIT"
             @update="onCreationUpdate"
         />
