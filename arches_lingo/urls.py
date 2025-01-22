@@ -21,6 +21,7 @@ from arches_lingo.views.api.pythonic_models import (
     SchemeNamespaceView,
     SchemeNoteTileView,
     SchemeNoteView,
+    SchemeNoteCreateView,
     SchemeStatementDetailView,
     SchemeStatementListCreateView,
     TextualWorkRdmSystemSerializerView,
@@ -85,6 +86,11 @@ urlpatterns = [
         "api/scheme/<uuid:resource_id>/note/<uuid:pk>",
         SchemeNoteTileView.as_view(),
         name="api-scheme-note-tile",
+    ),
+    path(
+        "api/scheme/note",
+        SchemeNoteCreateView.as_view(),
+        name="api-scheme-note-create",
     ),
     path(
         "api/textual-work",

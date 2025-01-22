@@ -1,22 +1,29 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, toRaw, toRef, useId } from "vue";
+import {
+    computed,
+    inject,
+    onMounted,
+    ref,
+    toRaw,
+    toRef,
+    useId,
+    type Ref,
+} from "vue";
 
 import Button from "primevue/button";
 import { useGettext } from "vue3-gettext";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
-import { fetchLists } from "@/arches_references/api.ts";
-
 import {
     createScheme,
-    createSchemeLabel,
+    createSchemeNote,
     fetchGroupRdmSystemList,
     fetchPersonRdmSystemList,
     fetchTextualWorkRdmSystemList,
-    updateSchemeLabel,
+    updateSchemeNote,
 } from "@/arches_lingo/api.ts";
-
+import { fetchLists } from "@/arches_references/api.ts";
 import DateDatatype from "@/arches_lingo/components/generic/DateDatatype.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
@@ -29,15 +36,14 @@ import {
     selectedLanguageKey,
 } from "@/arches_lingo/constants.ts";
 
-import type { Ref } from "vue";
 import type {
-    AppellativeStatus,
-    ControlledListResult,
     ControlledListItem,
     ControlledListItemResult,
+    ControlledListResult,
     ResourceInstanceReference,
     ResourceInstanceResult,
     SchemeInstance,
+    SchemeStatement,
 } from "@/arches_lingo/types.ts";
 import type { Language } from "@/arches_vue_utils/types.ts";
 
@@ -50,23 +56,27 @@ const { $gettext } = useGettext();
 
 const props = withDefaults(
     defineProps<{
-        value?: AppellativeStatus;
+        value?: SchemeStatement;
     }>(),
     {
-        value: () => ({}) as AppellativeStatus,
+        value: () => ({}) as SchemeStatement,
     },
 );
 const valueRef = toRef(props, "value");
+
 const formValue = computed({
     get: () => valueRef.value,
-    set: (newVal: AppellativeStatus) => {
+    set: (newVal: SchemeStatement) => {
         valueRef.value = newVal;
     },
 });
 
+onMounted(async () => {
+    initializeSelectOptions();
+});
+
 const languageOptions = ref<ControlledListItem[]>([]);
 const typeOptions = ref<ControlledListItem[]>([]);
-const statusOptions = ref<ControlledListItem[]>([]);
 const metatypeOptions = ref<ControlledListItem[]>([]);
 const eventTypeOptions = ref<ControlledListItem[]>([]);
 const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
@@ -75,7 +85,6 @@ const textualWorkOptions = ref<ResourceInstanceReference[]>();
 const labelId = useId();
 const labelLanguageId = useId();
 const labelTypeId = useId();
-const labelStatusId = useId();
 const labelMetatypeId = useId();
 const labelStartId = useId();
 const labelEndId = useId();
@@ -85,45 +94,40 @@ const labelWarrantId = useId();
 
 const referenceNodeConfig = [
     {
-        nodeAlias: "appellative_status_ascribed_name_language",
+        nodeAlias: "statement_language_n1",
         listRef: languageOptions,
         listName: "Languages",
     },
     {
-        nodeAlias: "appellative_status_ascribed_relation",
+        nodeAlias: "statement_type_n1",
         listRef: typeOptions,
-        listName: "label",
+        listName: "note",
     },
     {
-        nodeAlias: "appellative_status_status",
-        listRef: statusOptions,
-        listName: "Statuteses",
-    },
-    {
-        nodeAlias: "appellative_status_status_metatype",
+        nodeAlias: "statement_type_metatype_n1",
         listRef: metatypeOptions,
         listName: "Metatypes",
     },
     {
-        nodeAlias: "appellative_status_data_assignment_type",
+        nodeAlias: "statement_data_assignment_type",
         listRef: eventTypeOptions,
         listName: "Event Types",
     },
 ];
 
-function onUpdateString(node: keyof AppellativeStatus, val: string) {
+function onUpdateString(node: keyof SchemeStatement, val: string) {
     (formValue.value[node] as unknown) = toRaw(val);
 }
 
 function onUpdateReferenceDatatype(
-    node: keyof AppellativeStatus,
+    node: keyof SchemeStatement,
     val: ControlledListItem[],
 ) {
     (formValue.value[node] as unknown) = val.map((item) => toRaw(item));
 }
 
 function onUpdateResourceInstance(
-    node: keyof AppellativeStatus,
+    node: keyof SchemeStatement,
     val: string[],
     options: ResourceInstanceReference[],
 ) {
@@ -132,41 +136,6 @@ function onUpdateResourceInstance(
             val.includes(option.resourceId),
         );
         (formValue.value[node] as unknown) = selectedOptions;
-    }
-}
-
-async function save() {
-    try {
-        if (route.params.id === NEW) {
-            const newSchemeInstance: SchemeInstance = {
-                appellative_status: [toRaw(formValue.value)],
-            };
-            const updated = await createScheme(newSchemeInstance);
-            await router.push({
-                name: "scheme",
-                params: { id: updated.resourceinstanceid },
-            });
-        } else if (!formValue.value.tileid) {
-            const schemeLabel: AppellativeStatus = await createSchemeLabel(
-                route.params.id as string,
-                formValue.value,
-            );
-            valueRef.value = schemeLabel;
-            emit("update", schemeLabel.tileid);
-        } else {
-            await updateSchemeLabel(
-                route.params.id as string,
-                formValue.value.tileid,
-                formValue.value,
-            );
-        }
-        emit("update");
-    } catch (error) {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error saving scheme"),
-            detail: (error as Error).message,
-        });
     }
 }
 
@@ -203,23 +172,46 @@ async function getControlledLists() {
     });
 }
 
-async function getResourceInstanceOptions(
-    fetchOptions: () => Promise<ResourceInstanceResult[]>,
-): Promise<ResourceInstanceReference[]> {
-    let options;
+async function save() {
     try {
-        options = await fetchOptions();
+        if (route.params.id === NEW) {
+            const newSchemeInstance: SchemeInstance = {
+                statement: [toRaw(formValue.value)],
+            };
+            const updated = await createScheme(newSchemeInstance);
+            await router.push({
+                name: "scheme",
+                params: { id: updated.resourceinstanceid },
+            });
+        } else if (!formValue.value.tileid) {
+            const schemeStatement: SchemeStatement = await createSchemeNote(
+                route.params.id as string,
+                { ...formValue.value },
+            );
+            valueRef.value = schemeStatement;
+            emit("update", schemeStatement.tileid);
+            return;
+        } else {
+            await updateSchemeNote(
+                route.params.id as string,
+                formValue.value.tileid,
+                { ...formValue.value },
+            );
+        }
+        emit("update");
     } catch (error) {
         toast.add({
             severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext("Could not fetch the resource instance options"),
+            summary: $gettext("Error saving scheme"),
+            detail: (error as Error).message,
         });
-        return [];
     }
+}
+
+async function getResourceInstanceOptions(
+    fetchOptions: () => Promise<ResourceInstanceResult[]>,
+): Promise<ResourceInstanceReference[]> {
+    const options = await fetchOptions();
     const results = options.map((option: ResourceInstanceResult) => {
         const result: ResourceInstanceReference = {
             display_value: option.descriptors[selectedLanguage.value.code].name,
@@ -231,6 +223,7 @@ async function getResourceInstanceOptions(
     });
     return results;
 }
+
 async function initializeSelectOptions() {
     getControlledLists();
     groupAndPersonOptions.value = await getResourceInstanceOptions(
@@ -244,156 +237,136 @@ async function initializeSelectOptions() {
         fetchTextualWorkRdmSystemList,
     );
 }
-
-onMounted(initializeSelectOptions);
 </script>
 
 <template>
-    <p :for="labelId">{{ $gettext("Label") }}</p>
+    <!-- Statement: string -->
+    <label :for="labelId">{{ $gettext("Statement") }}</label>
     <NonLocalizedString
-        :value="formValue?.appellative_status_ascribed_name_content"
+        :value="formValue?.statement_content_n1 ?? ''"
         :mode="EDIT"
-        :pass-thru-id="labelId"
-        @update="
-            (val) =>
-                onUpdateString('appellative_status_ascribed_name_content', val)
-        "
+        @update="(val) => onUpdateString('statement_content_n1', val)"
     />
-    <p :for="labelLanguageId">{{ $gettext("Label Language") }}</p>
+    <!-- Statement Language: reference datatype -->
+    <label :for="labelLanguageId">{{ $gettext("Statement Language") }}</label>
     <ReferenceDatatype
-        :value="formValue?.appellative_status_ascribed_name_language"
+        :value="formValue?.statement_language_n1"
         :mode="EDIT"
         :multi-value="false"
         :options="languageOptions"
         :pt-aria-labeled-by="labelLanguageId"
         @update="
-            (val) =>
-                onUpdateReferenceDatatype(
-                    'appellative_status_ascribed_name_language',
-                    val,
-                )
+            (val) => onUpdateReferenceDatatype('statement_language_n1', val)
         "
     />
-    <p :for="labelTypeId">{{ $gettext("Label Type") }}</p>
+    <!-- Statement Type: reference datatype -->
+    <label :for="labelTypeId">{{ $gettext("Statement Type") }}</label>
     <ReferenceDatatype
-        :value="formValue?.appellative_status_ascribed_relation"
+        :value="formValue?.statement_type_n1"
         :mode="EDIT"
         :multi-value="false"
         :options="typeOptions"
         :pt-aria-labeled-by="labelTypeId"
-        @update="
-            (val) =>
-                onUpdateReferenceDatatype(
-                    'appellative_status_ascribed_relation',
-                    val,
-                )
-        "
+        @update="(val) => onUpdateReferenceDatatype('statement_type_n1', val)"
     />
-    <p :for="labelStatusId">{{ $gettext("Label Status") }}</p>
+
+    <!-- Statement Status Metatype: reference datatype -->
+    <label :for="labelMetatypeId">{{ $gettext("Statement Metatype") }}</label>
     <ReferenceDatatype
-        :value="formValue?.appellative_status_status"
-        :mode="EDIT"
-        :multi-value="false"
-        :options="statusOptions"
-        :pt-aria-labeled-by="labelStatusId"
-        @update="
-            (val) => onUpdateReferenceDatatype('appellative_status_status', val)
-        "
-    />
-    <p :for="labelMetatypeId">{{ $gettext("Label Metatype") }}</p>
-    <ReferenceDatatype
-        :value="formValue?.appellative_status_status_metatype"
+        :value="formValue?.statement_type_metatype_n1"
         :mode="EDIT"
         :multi-value="false"
         :options="metatypeOptions"
         :pt-aria-labeled-by="labelMetatypeId"
         @update="
             (val) =>
-                onUpdateReferenceDatatype(
-                    'appellative_status_status_metatype',
-                    val,
-                )
+                onUpdateReferenceDatatype('statement_type_metatype_n1', val)
         "
     />
-    <p :for="labelStartId">{{ $gettext("Label Temporal Validity Start") }}</p>
+
+    <!-- Statement Temporal Validity Start: date -->
+    <label :for="labelStartId">{{
+        $gettext("Statement Temporal Validity Start")
+    }}</label>
     <DateDatatype
-        :value="formValue?.appellative_status_timespan_begin_of_the_begin"
+        :value="
+            formValue?.statement_data_assignment_timespan_begin_of_the_begin
+        "
         :mode="EDIT"
         :pt-aria-labeled-by="labelStartId"
         @update="
             (val) =>
                 onUpdateString(
-                    'appellative_status_timespan_begin_of_the_begin',
+                    'statement_data_assignment_timespan_begin_of_the_begin',
                     val,
                 )
         "
     />
-    <p :for="labelEndId">{{ $gettext("Label Temporal Validity End") }}</p>
+
+    <!-- Statement Temporal Validity End: date -->
+    <label :for="labelEndId">{{
+        $gettext("Label Temporal Validity End")
+    }}</label>
     <DateDatatype
-        :value="formValue?.appellative_status_timespan_end_of_the_end"
+        :value="formValue?.statement_data_assignment_timespan_end_of_the_end"
         :mode="EDIT"
         :pt-aria-labeled-by="labelEndId"
         @update="
             (val) =>
                 onUpdateString(
-                    'appellative_status_timespan_end_of_the_end',
+                    'statement_data_assignment_timespan_end_of_the_end',
                     val,
                 )
         "
     />
-    <p :id="labelContributorId">{{ $gettext("Contributor") }}</p>
+
+    <!-- Contributor: resource instance -->
+    <label :for="labelContributorId">{{ $gettext("Contributor") }}</label>
     <ResourceInstanceRelationships
-        :value="formValue?.appellative_status_data_assignment_actor"
+        :value="formValue?.statement_data_assignment_actor"
         :mode="EDIT"
         :options="groupAndPersonOptions"
         :pt-aria-labeled-by="labelContributorId"
         @update="
             (val) =>
                 onUpdateResourceInstance(
-                    'appellative_status_data_assignment_actor',
+                    'statement_data_assignment_actor',
                     val,
                     groupAndPersonOptions ?? [],
                 )
         "
     />
-    <p :id="labelSourcesId">{{ $gettext("Sources") }}</p>
+    <!-- Sources: resource instance -->
+    <label :for="labelSourcesId">{{ $gettext("Sources") }}</label>
     <ResourceInstanceRelationships
-        :value="formValue?.appellative_status_data_assignment_object_used"
+        :value="formValue?.statement_data_assignment_object_used"
         :mode="EDIT"
         :options="textualWorkOptions"
         :pt-aria-labeled-by="labelSourcesId"
         @update="
             (val) =>
                 onUpdateResourceInstance(
-                    'appellative_status_data_assignment_object_used',
+                    'statement_data_assignment_object_used',
                     val,
                     textualWorkOptions ?? [],
                 )
         "
     />
-    <p :id="labelWarrantId">{{ $gettext("Warrant Type") }}</p>
+    <!-- Warrant Type: reference datatype -->
+    <label :for="labelWarrantId">{{ $gettext("Warrant Type") }}</label>
     <ReferenceDatatype
-        :value="formValue?.appellative_status_data_assignment_type"
+        :value="formValue?.statement_data_assignment_type"
         :mode="EDIT"
         :multi-value="false"
         :options="eventTypeOptions"
         :pt-aria-labeled-by="labelWarrantId"
         @update="
             (val) =>
-                onUpdateReferenceDatatype(
-                    'appellative_status_data_assignment_type',
-                    val,
-                )
+                onUpdateReferenceDatatype('statement_data_assignment_type', val)
         "
     />
     <Button
         :label="$gettext('Update')"
         @click="save"
-    />
+    ></Button>
 </template>
-
-<style scoped>
-p {
-    margin: 0;
-}
-</style>

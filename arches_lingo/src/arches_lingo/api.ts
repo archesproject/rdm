@@ -1,6 +1,10 @@
 import arches from "arches";
 import Cookies from "js-cookie";
-import type { AppellativeStatus, SchemeInstance } from "@/arches_lingo/types";
+import type {
+    AppellativeStatus,
+    SchemeInstance,
+    SchemeStatement,
+} from "@/arches_lingo/types";
 
 function getToken() {
     const token = Cookies.get("csrftoken");
@@ -100,6 +104,26 @@ export const createSchemeLabel = async (
     return parsed;
 };
 
+export const createSchemeNote = async (
+    schemeId: string,
+    statement: SchemeStatement,
+) => {
+    const response = await fetch(arches.urls.api_scheme_note_create, {
+        method: "POST",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            resourceinstance: schemeId,
+            ...statement,
+        }),
+    });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const deleteSchemeLabelTile = async (
     schemeId: string,
     tileId: string,
@@ -146,6 +170,27 @@ export const updateSchemeLabel = async (
 
 export const fetchSchemeNotes = async (schemeId: string) => {
     const response = await fetch(arches.urls.api_scheme_note(schemeId));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const updateSchemeNote = async (
+    schemeId: string,
+    tileId: string,
+    schemeStatement: SchemeStatement,
+) => {
+    const response = await fetch(
+        arches.urls.api_scheme_note_tile(schemeId, tileId),
+        {
+            method: "PATCH",
+            headers: {
+                "X-CSRFTOKEN": getToken(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(schemeStatement),
+        },
+    );
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;

@@ -131,8 +131,12 @@ export interface SchemeStatement {
     statement_content_n1: string;
     statement_language_n1?: ControlledListItem[];
     statement_type_n1?: ControlledListItem[];
+    statement_type_metatype_n1?: ControlledListItem[];
     statement_data_assignment_object_used: ResourceInstanceReference[];
     statement_data_assignment_actor: ResourceInstanceReference[];
+    statement_data_assignment_type: ControlledListItem[];
+    statement_data_assignment_timespan_begin_of_the_begin: string;
+    statement_data_assignment_timespan_end_of_the_end: string;
 }
 
 export interface SchemeInstance {
