@@ -141,7 +141,6 @@ urlpatterns = [
     ),
     path(
         "api/person-rdm-system",
-        "api/person",
         PersonRdmSystemSerializerView.as_view(),
         name="api-person-list",
     ),
