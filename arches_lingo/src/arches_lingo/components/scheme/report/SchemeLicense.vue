@@ -16,9 +16,11 @@ import {
     deleteSchemeRightStatement,
     fetchPersonRdmSystemList,
     fetchGroupRdmSystemList,
-    fetchControlledListOptions,
 } from "@/arches_lingo/api.ts";
+import { fetchLists } from "@/arches_references/api.ts";
+
 import type {
+    ControlledListResult,
     ControlledListItem,
     ControlledListItemResult,
     DataComponentMode,
@@ -37,10 +39,6 @@ import {
     EDIT,
     OPEN_EDITOR,
     UPDATED,
-    RIGHT_TYPE_CONTROLLED_LIST,
-    METATYPES_CONTROLLED_LIST,
-    LANGUAGE_CONTROLLED_LIST,
-    NOTE_CONTROLLED_LIST,
 } from "@/arches_lingo/constants.ts";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
@@ -101,6 +99,29 @@ const metaStringLabel: MetaStringText = {
     noRecords: $gettext("No scheme right statement were found."),
 };
 
+const referenceNodeConfig = [
+{
+        nodeAlias: "appellative_status_status",
+        listRef: rightTypeOptions,
+        listName: "Right Types",
+    },
+    {
+        nodeAlias: "appellative_status_ascribed_name_language",
+        listRef: languageOptions,
+        listName: "Languages",
+    },
+    {
+        nodeAlias: "appellative_status_ascribed_relation",
+        listRef: noteOptions,
+        listName: "note",
+    },
+    {
+        nodeAlias: "appellative_status_status_metatype",
+        listRef: metatypesOptions,
+        listName: "Metatypes",
+    },
+];
+
 async function getActorOptions(): Promise<ResourceInstanceReference[]> {
     const options_person = await fetchPersonRdmSystemList();
     const options_group = await fetchGroupRdmSystemList();
@@ -117,16 +138,37 @@ async function getActorOptions(): Promise<ResourceInstanceReference[]> {
     });
     return results;
 };
-async function getControlledListOptions(listId: string): Promise<ControlledListItem[]> {
-    const parsed = await fetchControlledListOptions(listId);
-    const options = parsed.items.map(
-        (item: ControlledListItemResult): ControlledListItem => ({
-            list_id: item.list_id,
-            uri: item.uri,
-            labels: item.values
-        }),
-    );
-    return options;
+async function getControlledLists() {
+    let parsed;
+    try {
+        parsed = await fetchLists(
+            referenceNodeConfig.map((node) => node.nodeAlias),
+        );
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            summary: $gettext("Error"),
+            detail:
+                error instanceof Error
+                    ? error.message
+                    : $gettext("Could not fetch the controlled list options"),
+        });
+        return [];
+    }
+    const controlledLists = parsed.controlled_lists;
+    referenceNodeConfig.forEach((node) => {
+        const matchingList = controlledLists.find(
+            (list: ControlledListResult) => list.name === node.listName,
+        );
+        const options = matchingList.items.map(
+            (item: ControlledListItemResult): ControlledListItem => ({
+                list_id: item.list_id,
+                uri: item.uri,
+                labels: item.values,
+            }),
+        );
+        node.listRef.value = options;
+    });
 };
 
 function onUpdateResourceInstance(
@@ -245,10 +287,7 @@ async function getSectionValue() {
             return option;
         }
     });
-    rightTypeOptions.value = await getControlledListOptions(RIGHT_TYPE_CONTROLLED_LIST);
-    languageOptions.value = await getControlledListOptions(LANGUAGE_CONTROLLED_LIST);
-    noteOptions.value = await getControlledListOptions(NOTE_CONTROLLED_LIST);
-    metatypesOptions.value = await getControlledListOptions(METATYPES_CONTROLLED_LIST);
+    getControlledLists();
 };
 
 async function deleteStatementValue(tileId: string) {
