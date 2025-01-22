@@ -64,7 +64,8 @@ const rightTypeOptions = ref<ControlledListItem[]>();
 const languageOptions = ref<ControlledListItem[]>();
 const noteOptions = ref<ControlledListItem[]>();
 const metatypesOptions = ref<ControlledListItem[]>();
-const editingStatement = ref<boolean>(false);
+const editingStatement = ref(false);
+const parentExists = ref(false);
 
 const props = withDefaults(
     defineProps<{
@@ -80,19 +81,14 @@ const props = withDefaults(
 
 const schemeRights = ref<SchemeRights>();
 const schemeRightStatement = ref<SchemeRightStatement[]>();
+const rightsTileId = ref<string>();
+const rightStatementTileId = ref<string>();
 const selectedSchemeRightStatement = computed(() => {
         const selected = schemeRightStatement.value?.find(
             (tile) => tile.tileid === props.tileId
         );
         if (!selected) {
-            return {
-                tileid: "",
-                right_statement_content: "",
-                right_statement_label: "",
-                right_statement_language: [],
-                right_statement_type: [],
-                right_statement_type_metatype: [],
-            } as SchemeRightStatement;
+            return {} as SchemeRightStatement;
         } else { return selected; }
     },
 );
@@ -195,9 +191,16 @@ async function saveRights() {
 }
 
 async function saveRightStatement() {
+    if (!selectedSchemeRightStatement.value) {
+        return;
+    }
     try {
         if (!selectedSchemeRightStatement.value?.tileid) {
-            await createSchemeRightStatement(route.params.id as string, selectedSchemeRightStatement.value);
+            await createSchemeRightStatement(
+                route.params.id as string,
+                rightStatementTileId.value ?? '',
+                selectedSchemeRightStatement.value
+            );
         } else {
             await updateSchemeRightStatement(
                 route.params.id as string,
@@ -221,10 +224,15 @@ async function getSectionValue() {
     }
     const actorOptions = await getActorOptions();
     const schemeInstance = await fetchSchemeRights(route.params.id as string);
+    rightsTileId.value = schemeInstance?.rights?.tileid ?? '';
+    rightStatementTileId.value = schemeInstance?.right_statement?.tileid ?? '';
     if (schemeInstance?.right_statement && !Array.isArray(schemeInstance?.right_statement)) {
         schemeInstance.right_statement = [schemeInstance.right_statement];
     }
-    schemeRights.value = schemeInstance?.rights;
+    schemeRights.value = schemeInstance?.rights ?? {};
+    if (schemeInstance?.rights) {
+        parentExists.value = true;
+    }
     schemeRightStatement.value = schemeInstance?.right_statement;
     actorRdmOptions.value = actorOptions.map((option) => {
         const savedSource = schemeRights.value?.right_holder?.find(
@@ -261,6 +269,10 @@ async function deleteStatementValue(tileId: string) {
     if (result) {
         getSectionValue();
     }
+};
+
+function addStatementValue() {
+    editingStatement.value = true;
 };
 
 function editStatementValue(tileId: string) {
@@ -362,7 +374,7 @@ defineExpose({ getSectionValue });
             </SchemeReportSection>
         </div>
         <div v-if="mode === EDIT">
-            <div v-if="!editingStatement">
+            <div>
                 <h4>{{ $gettext('Rights Holders') }}</h4>
                 <ResourceInstanceRelationships
                     :value="schemeRights?.right_holder"
@@ -382,8 +394,13 @@ defineExpose({ getSectionValue });
                     :label="$gettext('Update')"
                     @click="saveRights"
                 ></Button>
+                <Button
+                    if-show="parentExists"
+                    :label="$gettext('Add Scheme Right Statement')"
+                    @click="addStatementValue"
+                ></Button>
             </div>
-            <div v-if="!editingStatement">
+            <div v-show="editingStatement">
                 <h4>{{ $gettext('Statement') }}</h4>
                 <NonLocalizedString
                     :value="selectedSchemeRightStatement?.right_statement_content"

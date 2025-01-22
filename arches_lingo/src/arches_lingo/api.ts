@@ -333,16 +333,18 @@ export const deleteSchemeRights = async (
 
 export const createSchemeRightStatement = async (
     schemeId: string,
+    parentTileId: string,
     schemeRightStatementValue: SchemeRightStatement,
 ) => {
     const response = await fetch(arches.urls.api_scheme_right_statement_tile_create, {
-        method: "PATCH",
+        method: "POST",
         headers: {
             "X-CSRFTOKEN": getToken(),
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
             resourceinstance: schemeId,
+            parenttile: parentTileId,
             ...schemeRightStatementValue,
         }),
     });
