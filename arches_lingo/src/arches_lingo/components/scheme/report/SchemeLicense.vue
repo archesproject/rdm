@@ -179,11 +179,11 @@ function onUpdateSchemeRightStatementReferenceDatatype(
     node: keyof SchemeRightStatement,
     val: ControlledListItem[],
 ) {
-    (selectedSchemeRightStatement.value[node] as unknown) = val.map((item) => toRaw(item));
+    (schemeRightStatement.value[node] as unknown) = val.map((item) => toRaw(item));
 }
 
 function onUpdateString(node: keyof SchemeRightStatement, val: string) {
-    (selectedSchemeRightStatement.value[node] as unknown) = toRaw(val);
+    (schemeRightStatement.value[node] as unknown) = toRaw(val);
 }
 
 async function saveRights() {
@@ -217,21 +217,21 @@ async function saveRights() {
 }
 
 async function saveRightStatement() {
-    if (!selectedSchemeRightStatement.value) {
+    if (!schemeRightStatement.value) {
         return;
     }
     try {
-        if (!selectedSchemeRightStatement.value?.tileid) {
+        if (!schemeRightStatement.value?.tileid) {
             await createSchemeRightStatement(
                 route.params.id as string,
                 rightStatementTileId.value ?? '',
-                selectedSchemeRightStatement.value
+                schemeRightStatement.value
             );
         } else {
             await updateSchemeRightStatement(
                 route.params.id as string,
-                selectedSchemeRightStatement.value.tileid as string,
-                selectedSchemeRightStatement.value as SchemeRightStatement,
+                schemeRightStatement.value.tileid as string,
+                schemeRightStatement.value as SchemeRightStatement,
             );
         }
         emit(UPDATED);
@@ -272,34 +272,14 @@ async function getSectionValue() {
     getControlledLists();
 }
 
-async function deleteStatementValue(tileId: string) {
-    let result = false;
-    try {
-        result = await deleteSchemeRightStatement(route.params.id as string, tileId);
-    } catch (error) {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext("Could not delete selected label"),
-        });
-    }
-
-    if (result) {
-        getSectionValue();
-    }
-}
-
 function editStatementValue(tileId: string) {
     editingStatement.value = true;
-    const selectedSchemeRightStatement = schemeRightStatement.value?.find(
+    const schemeRightStatement = schemeRightStatement.value?.find(
         (tile) => tile.tileid === tileId,
     );
 
-    if (selectedSchemeRightStatement && selectedSchemeRightStatement?.tileid === tileId) {
-        emit(OPEN_EDITOR, selectedSchemeRightStatement?.tileid);
+    if (schemeRightStatement && schemeRightStatement?.tileid === tileId) {
+        emit(OPEN_EDITOR, schemeRightStatement?.tileid);
     } else {
         toast.add({
             severity: ERROR,
@@ -378,7 +358,7 @@ defineExpose({ getSectionValue });
             <div>
                 <h4>{{ $gettext('Statement') }}</h4>
                 <NonLocalizedString
-                    :value="selectedSchemeRightStatement?.right_statement_content"
+                    :value="schemeRightStatement?.right_statement_content"
                     :mode="EDIT"
                     @update="
                         (val) =>
@@ -387,7 +367,7 @@ defineExpose({ getSectionValue });
                 />
                 <h4>{{ $gettext('Statement Language') }}</h4>
                 <ReferenceDatatype
-                    :value="selectedSchemeRightStatement?.right_statement_language"
+                    :value="schemeRightStatement?.right_statement_language"
                     :mode="EDIT"
                     :multi-value="false"
                     :options="languageOptions"
@@ -401,7 +381,7 @@ defineExpose({ getSectionValue });
                 />
                 <h4>{{ $gettext('Statement Type') }}</h4>
                 <ReferenceDatatype
-                    :value="selectedSchemeRightStatement?.right_statement_type"
+                    :value="schemeRightStatement?.right_statement_type"
                     :mode="EDIT"
                     :multi-value="false"
                     :options="noteOptions"
@@ -415,7 +395,7 @@ defineExpose({ getSectionValue });
                 />
                 <h4>{{ $gettext('Statement Type Metatype') }}</h4>
                 <ReferenceDatatype
-                    :value="selectedSchemeRightStatement?.right_statement_type_metatype"
+                    :value="schemeRightStatement?.right_statement_type_metatype"
                     :mode="EDIT"
                     :multi-value="false"
                     :options="metatypesOptions"
@@ -428,7 +408,7 @@ defineExpose({ getSectionValue });
                 />
                 <Button
                     :label="$gettext('Update')"
-                    @click="saveRightStatement"
+                    @click="saveRights"
                 ></Button>
             </div>
         </div>
