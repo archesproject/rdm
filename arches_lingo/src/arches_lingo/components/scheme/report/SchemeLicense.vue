@@ -137,7 +137,8 @@ async function getActorOptions(): Promise<ResourceInstanceReference[]> {
         return result;
     });
     return results;
-};
+}
+
 async function getControlledLists() {
     let parsed;
     try {
@@ -169,7 +170,7 @@ async function getControlledLists() {
         );
         node.listRef.value = options;
     });
-};
+}
 
 function onUpdateResourceInstance(
     node: keyof SchemeRights,
@@ -182,21 +183,21 @@ function onUpdateResourceInstance(
         );
         (schemeRights.value[node] as unknown) = selectedOptions;
     }
-};
+}
 
 function onUpdateSchemeRightReferenceDatatype(
     node: keyof SchemeRights,
     val: ControlledListItem[],
 ) {
     (schemeRights.value[node] as unknown) = val.map((item) => toRaw(item));
-};
+}
 
 function onUpdateSchemeRightStatementReferenceDatatype(
     node: keyof SchemeRightStatement,
     val: ControlledListItem[],
 ) {
     (selectedSchemeRightStatement.value[node] as unknown) = val.map((item) => toRaw(item));
-};
+}
 
 function onUpdateString(node: keyof SchemeRightStatement, val: string) {
     (selectedSchemeRightStatement.value[node] as unknown) = toRaw(val);
@@ -264,7 +265,6 @@ async function getSectionValue() {
     if (route.params.id === NEW) {
         return;
     }
-    const actorOptions = await getActorOptions();
     const schemeInstance = await fetchSchemeRights(route.params.id as string);
     rightsTileId.value = schemeInstance?.rights?.tileid ?? '';
     rightStatementTileId.value = schemeInstance?.right_statement?.tileid ?? '';
@@ -276,6 +276,8 @@ async function getSectionValue() {
         parentExists.value = true;
     }
     schemeRightStatement.value = schemeInstance?.right_statement;
+
+    const actorOptions = await getActorOptions();
     actorRdmOptions.value = actorOptions.map((option) => {
         const savedSource = schemeRights.value?.right_holder?.find(
             (source: ResourceInstanceReference) =>
@@ -288,7 +290,7 @@ async function getSectionValue() {
         }
     });
     getControlledLists();
-};
+}
 
 async function deleteStatementValue(tileId: string) {
     let result = false;
@@ -308,11 +310,11 @@ async function deleteStatementValue(tileId: string) {
     if (result) {
         getSectionValue();
     }
-};
+}
 
 function addStatementValue() {
     editingStatement.value = true;
-};
+}
 
 function editStatementValue(tileId: string) {
     editingStatement.value = true;
@@ -329,7 +331,7 @@ function editStatementValue(tileId: string) {
             detail: $gettext("Could not find the selected statement to edit"),
         });
     }
-};
+}
 
 defineExpose({ getSectionValue });
 </script>
