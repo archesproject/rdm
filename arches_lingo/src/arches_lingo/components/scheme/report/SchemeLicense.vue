@@ -78,26 +78,9 @@ const props = withDefaults(
 );
 
 const schemeRights = ref<SchemeRights>();
-const schemeRightStatement = ref<SchemeRightStatement[]>();
+const schemeRightStatement = ref<SchemeRightStatement>();
 const rightsTileId = ref<string>();
 const rightStatementTileId = ref<string>();
-const selectedSchemeRightStatement = computed(() => {
-        const selected = schemeRightStatement.value?.find(
-            (tile) => tile.tileid === props.tileId
-        );
-        if (!selected) {
-            return {} as SchemeRightStatement;
-        } else { return selected; }
-    },
-);
-
-const metaStringLabel: MetaStringText = {
-    deleteConfirm: $gettext("Are you sure you want to delete this label?"),
-    language: $gettext("Statement Language"),
-    name: $gettext("Statement"),
-    type: $gettext("Statement Type"),
-    noRecords: $gettext("No scheme right statement were found."),
-};
 
 const referenceNodeConfig = [
 {
@@ -268,9 +251,6 @@ async function getSectionValue() {
     const schemeInstance = await fetchSchemeRights(route.params.id as string);
     rightsTileId.value = schemeInstance?.rights?.tileid ?? '';
     rightStatementTileId.value = schemeInstance?.right_statement?.tileid ?? '';
-    if (schemeInstance?.right_statement && !Array.isArray(schemeInstance?.right_statement)) {
-        schemeInstance.right_statement = [schemeInstance.right_statement];
-    }
     schemeRights.value = schemeInstance?.rights ?? {};
     if (schemeInstance?.rights) {
         parentExists.value = true;
@@ -312,10 +292,6 @@ async function deleteStatementValue(tileId: string) {
     }
 }
 
-function addStatementValue() {
-    editingStatement.value = true;
-}
-
 function editStatementValue(tileId: string) {
     editingStatement.value = true;
     const selectedSchemeRightStatement = schemeRightStatement.value?.find(
@@ -354,64 +330,31 @@ defineExpose({ getSectionValue });
                     :value="schemeRights?.right_type"
                     :mode=VIEW
                 />
-                <h4>{{ $gettext('Rights Statements') }}</h4>
-                <MetaStringViewer
-                    :meta-strings="schemeRightStatement"
-                    :meta-string-text="metaStringLabel"
-                    @edit-string="editStatementValue"
-                    @delete-string="deleteStatementValue"
-                >
-                    <template #name="{ rowData }">
-                        <span>
-                            {{
-                                (rowData as SchemeRightStatement)
-                                    .right_statement_content
-                            }}
-                        </span>
-                    </template>
-                    <template #type="{ rowData }">
-                        <ReferenceDatatype
-                            :value="
-                                (rowData as SchemeRightStatement)
-                                    .right_statement_type
-                            "
-                            :mode="VIEW"
-                        >
-                        </ReferenceDatatype>
-                    </template>
-                    <template #language="{ rowData }">
-                        <ReferenceDatatype
-                            :value="
-                                (rowData as SchemeRightStatement)
-                                    .right_statement_language
-                            "
-                            :mode="VIEW"
-                        >
-                        </ReferenceDatatype>
-                    </template>
-                    <template #drawer="{ rowData }">
-                        <div>
-                            <span>{{ $gettext("Right Statement Label:") }}</span>
-                            <NonLocalizedString
-                                :value="
-                                    (rowData as SchemeRightStatement)
-                                        .right_statement_label
-                                "
-                                :mode="VIEW"
-                            ></NonLocalizedString>
-                        </div>
-                        <div>
-                            <span>{{ $gettext("Right Statement Type Metatype:") }}</span>
-                            <ReferenceDatatype
-                                :value="
-                                    (rowData as SchemeRightStatement)
-                                        .right_statement_type_metatype
-                                "
-                                :mode="VIEW"
-                            ></ReferenceDatatype>
-                        </div>
-                    </template>
-                </MetaStringViewer>
+                <h4>{{ $gettext('Rights Statement') }}</h4>
+                <NonLocalizedString
+                    :value="schemeRightStatement?.right_statement_content"
+                    :mode="VIEW"
+                ></NonLocalizedString>
+                <h4>{{ $gettext('Right Statement Language') }}</h4>
+                <ReferenceDatatype
+                    :value="schemeRightStatement?.right_statement_language"
+                    :mode="VIEW"
+                ></ReferenceDatatype>
+                <h4>{{ $gettext('Right Statement Type') }}</h4>
+                <ReferenceDatatype
+                    :value="schemeRightStatement?.right_statement_type"
+                    :mode="VIEW"
+                ></ReferenceDatatype>
+                <h4>{{ $gettext("Right Statement Type Metatype") }}</h4>
+                <ReferenceDatatype
+                    :value="schemeRightStatement?.right_statement_type_metatype"
+                    :mode="VIEW"
+                ></ReferenceDatatype>
+                <h4>{{ $gettext("Right Statement Label") }}</h4>
+                <NonLocalizedString
+                    :value="schemeRightStatement?.right_statement_label"
+                    :mode="VIEW"
+                ></NonLocalizedString>
             </SchemeReportSection>
         </div>
         <div v-if="mode === EDIT">
@@ -431,17 +374,8 @@ defineExpose({ getSectionValue });
                     :mode="EDIT"
                     @update="(val) => onUpdateSchemeRightReferenceDatatype('right_type', val)"
                 />
-                <Button
-                    :label="$gettext('Update')"
-                    @click="saveRights"
-                ></Button>
-                <Button
-                    if-show="parentExists"
-                    :label="$gettext('Add Scheme Right Statement')"
-                    @click="addStatementValue"
-                ></Button>
             </div>
-            <div v-show="editingStatement">
+            <div>
                 <h4>{{ $gettext('Statement') }}</h4>
                 <NonLocalizedString
                     :value="selectedSchemeRightStatement?.right_statement_content"
