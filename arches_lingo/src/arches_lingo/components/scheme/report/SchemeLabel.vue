@@ -178,8 +178,6 @@ async function update(tileId: string | undefined) {
                                 (rowData as AppellativeStatus)
                                     .appellative_status_data_assignment_object_used
                             "
-                            graph-slug=""
-                            node-alias=""
                         ></ResourceInstanceRelationships>
                     </div>
                     <div>
@@ -189,8 +187,6 @@ async function update(tileId: string | undefined) {
                                 (rowData as AppellativeStatus)
                                     .appellative_status_data_assignment_actor
                             "
-                            graph-slug=""
-                            node-alias=""
                         ></ResourceInstanceRelationships>
                     </div>
                 </template>
