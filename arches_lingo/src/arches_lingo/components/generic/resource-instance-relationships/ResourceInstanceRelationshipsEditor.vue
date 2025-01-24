@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, toRef, watch } from "vue";
 import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
+import Dialog from "primevue/dialog";
 import type {
     GraphInfo,
     NewResourceInstance,
@@ -10,9 +11,20 @@ import type {
 } from "@/arches_lingo/types";
 import { useGettext } from "vue3-gettext";
 import { fetchRelatableResources } from "@/arches_lingo/api.ts";
-import { UPDATED, CREATE_NEW_RESOURCE } from "@/arches_lingo/constants.ts";
+import {
+    UPDATED,
+    CREATE_NEW_RESOURCE,
+    ERROR,
+    DEFAULT_ERROR_TOAST_LIFE,
+} from "@/arches_lingo/constants.ts";
+import type { VirtualScrollerLazyEvent } from "primevue/virtualscroller";
+import { useToast } from "primevue/usetoast";
 
+const ITEM_HEIGHT = 38;
+const RESULTS_PER_PAGE = 25;
+const showNewResource = ref(false);
 const { $gettext } = useGettext();
+const toast = useToast();
 
 const props = defineProps<{
     val?: string[];
@@ -22,31 +34,35 @@ const props = defineProps<{
 }>();
 const options = ref<ResourceInstanceReference[]>([]);
 const newElements = ref<NewResourceInstance[]>([]);
+const isLoading = ref(false);
+const isLoadingAdditionalResults = ref(false);
+const computedResourceResultsHeight = ref("");
+const resourceResultsPage = ref(1);
+const resourceResultsTotalCount = ref(RESULTS_PER_PAGE);
+
+watch(options, (resourceResults) => {
+    if (resourceResults?.length) {
+        const rootFontSize = parseFloat(
+            getComputedStyle(document.documentElement).fontSize,
+        );
+        const itemHeightInRem = ITEM_HEIGHT / rootFontSize; // Convert to rem based on the root font size
+        const computedHeightInRem = resourceResults.length * itemHeightInRem;
+
+        const viewHeightInPixels = window.innerHeight * 0.6;
+        const viewHeightInRem = viewHeightInPixels / rootFontSize; // Convert 60vh to rem
+
+        if (computedHeightInRem > viewHeightInRem) {
+            computedResourceResultsHeight.value = "60vh";
+        } else {
+            computedResourceResultsHeight.value = `${computedHeightInRem}rem`;
+        }
+    } else {
+        computedResourceResultsHeight.value = "2.25rem";
+    }
+});
 
 onMounted(async () => {
-    console.log(props);
-    const resourceData = await fetchRelatableResources(
-        props.graphSlug,
-        props.nodeAlias,
-    );
-    options.value = resourceData.data.map(
-        (
-            resourceRecord: ResourceInstanceResult,
-        ): ResourceInstanceReference => ({
-            displayValue: resourceRecord.display_value,
-            resourceId: resourceRecord.resourceinstanceid,
-            ontologyProperty: "",
-            inverseOntologyProperty: "",
-        }),
-    );
-    newElements.value = resourceData.graphs.map(
-        (graphInfo: GraphInfo): NewResourceInstance => ({
-            displayValue: $gettext("Add a new %{graphName}", {
-                graphName: graphInfo.name,
-            }),
-            graphId: graphInfo.graphid,
-        }),
-    );
+    await fetchData(1);
 });
 
 const emit = defineEmits([UPDATED, CREATE_NEW_RESOURCE]);
@@ -69,6 +85,74 @@ const primeVuePickerVal = ref(value.value);
 watch(primeVuePickerVal, (newVal) => {
     value.value = newVal;
 });
+
+async function fetchData(page: number) {
+    try {
+        const resourceData = await fetchRelatableResources(
+            props.graphSlug,
+            props.nodeAlias,
+            page,
+        );
+        const references = resourceData.data.map(
+            (
+                resourceRecord: ResourceInstanceResult,
+            ): ResourceInstanceReference => ({
+                displayValue: resourceRecord.display_value,
+                resourceId: resourceRecord.resourceinstanceid,
+                ontologyProperty: "",
+                inverseOntologyProperty: "",
+            }),
+        );
+
+        if (page === 1) {
+            options.value = references;
+            newElements.value = resourceData.graphs.map(
+                (graphInfo: GraphInfo): NewResourceInstance => ({
+                    displayValue: $gettext("Add a new %{graphName}", {
+                        graphName: graphInfo.name,
+                    }),
+                    graphId: graphInfo.graphid,
+                }),
+            );
+        } else {
+            options.value = [...options.value, ...references];
+        }
+
+        resourceResultsPage.value = resourceData.current_page;
+        resourceResultsTotalCount.value = resourceData.total_results;
+    } catch (error) {
+        toast.add({
+            severity: ERROR,
+            life: DEFAULT_ERROR_TOAST_LIFE,
+            summary: $gettext("Failed to fetch data."),
+            detail: error instanceof Error ? error.message : undefined,
+        });
+
+        options.value = [];
+        resourceResultsPage.value = 1;
+        resourceResultsTotalCount.value = 0;
+    } finally {
+        isLoading.value = false;
+        isLoadingAdditionalResults.value = false;
+    }
+}
+
+async function onLazyLoadResources(event: VirtualScrollerLazyEvent) {
+    console.log("ohai", event);
+    if (
+        event.last >= resourceResultsPage.value * RESULTS_PER_PAGE &&
+        event.last <= resourceResultsTotalCount.value
+    ) {
+        isLoadingAdditionalResults.value = true;
+        const page = resourceResultsPage.value + 1;
+        fetchData(page);
+    }
+}
+
+function createNewResource(graphId: string) {
+    showNewResource.value = true;
+    console.log(graphId);
+}
 </script>
 <template>
     <MultiSelect
@@ -77,11 +161,23 @@ watch(primeVuePickerVal, (newVal) => {
         :options
         option-label="displayValue"
         option-value="resourceId"
+        class="resource-instance-relationships-selector"
+        :virtual-scroller-options="{
+            itemSize: ITEM_HEIGHT,
+            lazy: true,
+            onLazyLoad: onLazyLoadResources,
+            scrollHeight: computedResourceResultsHeight,
+            style: {
+                minHeight: computedResourceResultsHeight,
+                maxHeight: computedResourceResultsHeight,
+            },
+        }"
         :pt="{
             emptyMessage: { style: { fontFamily: 'sans-serif' } },
             option: { style: { fontFamily: 'sans-serif' } },
             overlay: { style: { fontFamily: 'sans-serif' } },
         }"
+        :loading="isLoading && !isLoadingAdditionalResults"
         :placeholder="$gettext('Select Resources')"
         :aria-labelledby="props.ptAriaLabeledBy"
     >
@@ -95,15 +191,34 @@ watch(primeVuePickerVal, (newVal) => {
                     :label="element.displayValue"
                     severity="secondary"
                     variant="text"
-                    @click="$emit(CREATE_NEW_RESOURCE, element.graphId)"
+                    @click="createNewResource(element.graphId)"
                 />
             </div>
         </template>
     </MultiSelect>
+    <Dialog
+        v-model:visible="showNewResource"
+        :header="$gettext('New Resource')"
+        :dismissable-mask="true"
+        :close-on-escape="true"
+        :modal="true"
+        :pt="{
+            root: {
+                style: {
+                    borderRadius: '0',
+                    fontFamily: 'sans-serif',
+                },
+            },
+        }"
+    ></Dialog>
 </template>
 <style lang="css" scoped>
 .relationship-footer-btn {
     width: 100%;
     border-radius: unset;
+}
+
+.resource-instance-relationships-selector {
+    max-width: 12rem;
 }
 </style>

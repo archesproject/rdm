@@ -1,20 +1,11 @@
 <script setup lang="ts">
 import ResourceInstanceRelationshipsViewer from "@/arches_lingo/components/generic/resource-instance-relationships/ResourceInstanceRelationshipsViewer.vue";
 import ResourceInstanceRelationshipsEditor from "@/arches_lingo/components/generic/resource-instance-relationships/ResourceInstanceRelationshipsEditor.vue";
-import Dialog from "primevue/dialog";
-import {
-    EDIT,
-    UPDATED,
-    VIEW,
-    CREATE_NEW_RESOURCE,
-} from "@/arches_lingo/constants.ts";
+import { EDIT, UPDATED, VIEW } from "@/arches_lingo/constants.ts";
 import type {
     DataComponentMode,
     ResourceInstanceReference,
 } from "@/arches_lingo/types";
-import { ref } from "vue";
-
-const showNewResource = ref(false);
 
 const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
@@ -24,15 +15,10 @@ const { mode = VIEW } = defineProps<{
     ptAriaLabeledBy?: string;
 }>();
 
-const emit = defineEmits([UPDATED, CREATE_NEW_RESOURCE]);
+const emit = defineEmits([UPDATED]);
 
 function onUpdate(val: ResourceInstanceReference[]) {
     emit(UPDATED, val);
-}
-
-function createNewResource(graphId: string) {
-    showNewResource.value = true;
-    console.log(graphId);
 }
 </script>
 <template>
@@ -48,8 +34,6 @@ function createNewResource(graphId: string) {
             :graph-slug="graphSlug"
             :node-alias="nodeAlias"
             @updated="onUpdate"
-            @create-new-resource="createNewResource"
         />
     </div>
-    <Dialog :visible="showNewResource"></Dialog>
 </template>

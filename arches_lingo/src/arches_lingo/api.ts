@@ -267,9 +267,10 @@ export const updateSchemeNamespace = async (
 export const fetchRelatableResources = async (
     graphSlug: string,
     nodeAlias: string,
+    page: number,
 ) => {
     const response = await fetch(
-        `/api/graph/${graphSlug}/node/${nodeAlias}/relatable-resources`,
+        `/api/graph/${graphSlug}/node/${nodeAlias}/relatable-resources?page=${page}`,
     );
 
     const parsed = await response.json();

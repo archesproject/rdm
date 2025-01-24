@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import {
-    computed,
-    inject,
-    onMounted,
-    ref,
-    toRaw,
-    toRef,
-    useId,
-    type Ref,
-} from "vue";
+import { computed, onMounted, ref, toRaw, toRef, useId } from "vue";
 
 import Button from "primevue/button";
 import { useGettext } from "vue3-gettext";
@@ -18,9 +9,6 @@ import { useToast } from "primevue/usetoast";
 import {
     createScheme,
     createSchemeNote,
-    fetchGroupRdmSystemList,
-    fetchPersonRdmSystemList,
-    fetchTextualWorkRdmSystemList,
     updateSchemeNote,
 } from "@/arches_lingo/api.ts";
 import { fetchLists } from "@/arches_references/api.ts";
@@ -29,29 +17,21 @@ import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedSt
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
-import {
-    EDIT,
-    ERROR,
-    NEW,
-    selectedLanguageKey,
-} from "@/arches_lingo/constants.ts";
+import { EDIT, ERROR, NEW } from "@/arches_lingo/constants.ts";
 
 import type {
     ControlledListItem,
     ControlledListItemResult,
     ControlledListResult,
     ResourceInstanceReference,
-    ResourceInstanceResult,
     SchemeInstance,
     SchemeStatement,
 } from "@/arches_lingo/types.ts";
-import type { Language } from "@/arches_vue_utils/types.ts";
 
 const emit = defineEmits(["update"]);
 const toast = useToast();
 const route = useRoute();
 const router = useRouter();
-const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
 const props = withDefaults(
@@ -208,34 +188,8 @@ async function save() {
     }
 }
 
-async function getResourceInstanceOptions(
-    fetchOptions: () => Promise<ResourceInstanceResult[]>,
-): Promise<ResourceInstanceReference[]> {
-    const options = await fetchOptions();
-    const results = options.map((option: ResourceInstanceResult) => {
-        const result: ResourceInstanceReference = {
-            display_value: option.descriptors[selectedLanguage.value.code].name,
-            resourceId: option.resourceinstanceid,
-            ontologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-            inverseOntologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-        };
-        return result;
-    });
-    return results;
-}
-
 async function initializeSelectOptions() {
     getControlledLists();
-    groupAndPersonOptions.value = await getResourceInstanceOptions(
-        fetchGroupRdmSystemList,
-    );
-    groupAndPersonOptions.value = [
-        ...(groupAndPersonOptions.value || []),
-        ...(await getResourceInstanceOptions(fetchPersonRdmSystemList)),
-    ];
-    textualWorkOptions.value = await getResourceInstanceOptions(
-        fetchTextualWorkRdmSystemList,
-    );
 }
 </script>
 
@@ -247,6 +201,7 @@ async function initializeSelectOptions() {
         :mode="EDIT"
         @update="(val) => onUpdateString('statement_content_n1', val)"
     />
+
     <!-- Statement Language: reference datatype -->
     <label :for="labelLanguageId">{{ $gettext("Statement Language") }}</label>
     <ReferenceDatatype
@@ -259,6 +214,7 @@ async function initializeSelectOptions() {
             (val) => onUpdateReferenceDatatype('statement_language_n1', val)
         "
     />
+
     <!-- Statement Type: reference datatype -->
     <label :for="labelTypeId">{{ $gettext("Statement Type") }}</label>
     <ReferenceDatatype
@@ -325,10 +281,11 @@ async function initializeSelectOptions() {
     <ResourceInstanceRelationships
         :value="formValue?.statement_data_assignment_actor"
         :mode="EDIT"
-        :options="groupAndPersonOptions"
+        graph-slug="scheme"
+        node-alias="statement_data_assignment_actor"
         :pt-aria-labeled-by="labelContributorId"
-        @update="
-            (val) =>
+        @updated="
+            (val: string[]) =>
                 onUpdateResourceInstance(
                     'statement_data_assignment_actor',
                     val,
@@ -336,15 +293,17 @@ async function initializeSelectOptions() {
                 )
         "
     />
+
     <!-- Sources: resource instance -->
     <label :for="labelSourcesId">{{ $gettext("Sources") }}</label>
     <ResourceInstanceRelationships
         :value="formValue?.statement_data_assignment_object_used"
         :mode="EDIT"
-        :options="textualWorkOptions"
+        graph-slug="scheme"
+        node-alias="statement_data_assignment_object_used"
         :pt-aria-labeled-by="labelSourcesId"
-        @update="
-            (val) =>
+        @updated="
+            (val: string[]) =>
                 onUpdateResourceInstance(
                     'statement_data_assignment_object_used',
                     val,
@@ -352,6 +311,7 @@ async function initializeSelectOptions() {
                 )
         "
     />
+
     <!-- Warrant Type: reference datatype -->
     <label :for="labelWarrantId">{{ $gettext("Warrant Type") }}</label>
     <ReferenceDatatype
@@ -365,6 +325,7 @@ async function initializeSelectOptions() {
                 onUpdateReferenceDatatype('statement_data_assignment_type', val)
         "
     />
+
     <Button
         :label="$gettext('Update')"
         @click="save"

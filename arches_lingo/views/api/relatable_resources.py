@@ -33,7 +33,9 @@ class RelatableResourcesView(View):
             "name", "graphid"
         )
 
-        resources = ResourceInstance.objects.filter(graph_id__in=graphs)
+        resources = ResourceInstance.objects.filter(graph_id__in=graphs).order_by(
+            "descriptors__{}__name".format(get_language())
+        )
 
         paginator = Paginator(resources, items_per_page)
         if paginator.count:
