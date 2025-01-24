@@ -46,6 +46,8 @@ import type { Language } from "@/arches_vue_utils/types.ts";
 import NonLocalizedString from "../../generic/NonLocalizedString.vue";
 
 onMounted(async () => {
+    getActorOptions();
+    getControlledLists();
     getSectionValue();
 });
 
@@ -62,7 +64,6 @@ const rightTypeOptions = ref<ControlledListItem[]>();
 const languageOptions = ref<ControlledListItem[]>();
 const noteOptions = ref<ControlledListItem[]>();
 const metatypesOptions = ref<ControlledListItem[]>();
-const editingStatement = ref(false);
 const parentExists = ref(false);
 
 const props = withDefaults(
@@ -105,12 +106,12 @@ const referenceNodeConfig = [
     },
 ];
 
-async function getActorOptions(): Promise<ResourceInstanceReference[]> {
+async function getActorOptions() {
     const options_person = await fetchPersonRdmSystemList();
     const options_group = await fetchGroupRdmSystemList();
     const options = options_person.concat(options_group);
 
-    const results = options.map((option: ResourceInstanceResult) => {
+    actorRdmOptions.value = options.map((option: ResourceInstanceResult) => {
         const result: ResourceInstanceReference = {
             display_value: option.descriptors[selectedLanguage.value.code].name,
             resourceId: option.resourceinstanceid,
@@ -119,7 +120,6 @@ async function getActorOptions(): Promise<ResourceInstanceReference[]> {
         };
         return result;
     });
-    return results;
 }
 
 async function getControlledLists() {
@@ -216,34 +216,6 @@ async function saveRights() {
     }
 }
 
-async function saveRightStatement() {
-    if (!schemeRightStatement.value) {
-        return;
-    }
-    try {
-        if (!schemeRightStatement.value?.tileid) {
-            await createSchemeRightStatement(
-                route.params.id as string,
-                rightStatementTileId.value ?? '',
-                schemeRightStatement.value
-            );
-        } else {
-            await updateSchemeRightStatement(
-                route.params.id as string,
-                schemeRightStatement.value.tileid as string,
-                schemeRightStatement.value as SchemeRightStatement,
-            );
-        }
-        emit(UPDATED);
-    } catch (error) {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error saving scheme"),
-            detail: (error as Error).message,
-        });
-    }
-}
-
 async function getSectionValue() {
     if (route.params.id === NEW) {
         return;
@@ -256,37 +228,6 @@ async function getSectionValue() {
         parentExists.value = true;
     }
     schemeRightStatement.value = schemeInstance?.right_statement;
-
-    const actorOptions = await getActorOptions();
-    actorRdmOptions.value = actorOptions.map((option) => {
-        const savedSource = schemeRights.value?.right_holder?.find(
-            (source: ResourceInstanceReference) =>
-                source.resourceId === option.resourceId,
-        );
-        if (savedSource) {
-            return savedSource;
-        } else {
-            return option;
-        }
-    });
-    getControlledLists();
-}
-
-function editStatementValue(tileId: string) {
-    editingStatement.value = true;
-    const schemeRightStatement = schemeRightStatement.value?.find(
-        (tile) => tile.tileid === tileId,
-    );
-
-    if (schemeRightStatement && schemeRightStatement?.tileid === tileId) {
-        emit(OPEN_EDITOR, schemeRightStatement?.tileid);
-    } else {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error"),
-            detail: $gettext("Could not find the selected statement to edit"),
-        });
-    }
 }
 
 defineExpose({ getSectionValue });
