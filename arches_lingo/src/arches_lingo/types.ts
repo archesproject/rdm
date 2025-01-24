@@ -165,7 +165,7 @@ export interface SchemeInstance {
     appellative_status?: AppellativeStatus[];
     statement?: SchemeStatement[];
     rights?: SchemeRights;
-    right_statement?: SchemeRightStatement[];
+    right_statement?: SchemeRightStatement;
 }
 
 export interface SchemeResource {

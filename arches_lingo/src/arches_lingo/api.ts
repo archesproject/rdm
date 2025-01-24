@@ -273,20 +273,16 @@ export const updateSchemeNamespace = async (
     return parsed;
 };
 
-export const createSchemeRights = async (
-    schemeId: string,
-    schemeRightsValue: SchemeRights,
+export const createSchemeFromRights = async (
+    schemeRightsValue: SchemeInstance,
 ) => {
-    const response = await fetch(arches.urls.api_scheme_rights_tile_create, {
+    const response = await fetch(arches.urls.api_scheme_rights_list_create, {
         method: "POST",
         headers: {
             "X-CSRFTOKEN": getToken(),
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            resourceinstance: schemeId,
-            ...schemeRightsValue,
-        }),
+        body: JSON.stringify({ schemeRightsValue }),
     });
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
@@ -295,96 +291,24 @@ export const createSchemeRights = async (
 
 export const updateSchemeRights = async (
     schemeId: string,
-    tileId: string,
     schemeRightsValue: SchemeRights,
-) => {
-    const response = await fetch(arches.urls.api_scheme_rights_tile(schemeId, tileId), {
-        method: "PATCH",
-        headers: {
-            "X-CSRFTOKEN": getToken(),
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(schemeRightsValue),
-    });
-    const parsed = await response.json();
-    if (!response.ok) throw new Error(parsed.message || response.statusText);
-    return parsed;
-};
-
-export const deleteSchemeRights = async (
-    schemeId: string,
-    tileId: string,
-) => {
-    const response = await fetch(
-        arches.urls.api_scheme_rights_tile(schemeId, tileId),
-        {
-            method: "DELETE",
-            headers: { "X-CSRFTOKEN": getToken() },
-        },
-    );
-
-    if (!response.ok) {
-        const parsed = await response.json();
-        throw new Error(parsed.message || response.statusText);
-    } else {
-        return true;
-    }
-};
-
-export const createSchemeRightStatement = async (
-    schemeId: string,
-    parentTileId: string,
     schemeRightStatementValue: SchemeRightStatement,
 ) => {
-    const response = await fetch(arches.urls.api_scheme_right_statement_tile_create, {
-        method: "POST",
+    const response = await fetch(arches.urls.api_scheme_rights(schemeId), {
+        method: "PATCH",
         headers: {
             "X-CSRFTOKEN": getToken(),
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            resourceinstance: schemeId,
-            parenttile: parentTileId,
-            ...schemeRightStatementValue,
+            resourceinstanceid: schemeId,
+            rights: schemeRightsValue,
+            right_statement: schemeRightStatementValue
         }),
     });
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;
-};
-
-export const updateSchemeRightStatement = async (
-    schemeId: string,
-    tileId: string,
-    schemeRightStatementValue: SchemeRightStatement,
-) => {
-    const response = await fetch(arches.urls.api_scheme_right_statement_tile(schemeId, tileId), {
-        method: "PATCH",
-        headers: {
-            "X-CSRFTOKEN": getToken(),
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(schemeRightStatementValue),
-    });
-    const parsed = await response.json();
-    if (!response.ok) throw new Error(parsed.message || response.statusText);
-    return parsed;
-};
-
-export const deleteSchemeRightStatement = async (
-    schemeId: string,
-    tileId: string,
-) => {
-    const response = await fetch(arches.urls.api_scheme_right_statement_tile(schemeId, tileId), {
-        method: "DELETE",
-        headers: { "X-CSRFTOKEN": getToken() },
-    });
-    if (!response.ok) {
-        const parsed = await response.json();
-        throw new Error(parsed.message || response.statusText);
-    } else {
-        return true;
-    }
 };
 
 export const fetchSearchResults = async (

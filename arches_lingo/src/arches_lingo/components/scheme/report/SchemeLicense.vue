@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, toRaw, type Ref } from "vue";
+import { inject, onMounted, ref, toRaw, type Ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
-import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
-    createScheme,
     fetchSchemeRights,
-    createSchemeRights,
+    createSchemeFromRights,
     updateSchemeRights,
-    createSchemeRightStatement,
-    updateSchemeRightStatement,
-    deleteSchemeRightStatement,
     fetchPersonRdmSystemList,
     fetchGroupRdmSystemList,
 } from "@/arches_lingo/api.ts";
@@ -24,7 +19,6 @@ import type {
     ControlledListItem,
     ControlledListItemResult,
     DataComponentMode,
-    MetaStringText,
     ResourceInstanceReference,
     ResourceInstanceResult,
     SchemeInstance,
@@ -43,7 +37,7 @@ import {
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 import type { Language } from "@/arches_vue_utils/types.ts";
-import NonLocalizedString from "../../generic/NonLocalizedString.vue";
+import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 
 onMounted(async () => {
     getActorOptions();
@@ -80,8 +74,6 @@ const props = withDefaults(
 
 const schemeRights = ref<SchemeRights>();
 const schemeRightStatement = ref<SchemeRightStatement>();
-const rightsTileId = ref<string>();
-const rightStatementTileId = ref<string>();
 
 const referenceNodeConfig = [
 {
@@ -190,20 +182,19 @@ async function saveRights() {
     try {
         if (route.params.id === NEW) {
             const newSchemeInstance: SchemeInstance = {
-                rights: [toRaw(schemeRights.value)],
+                rights: toRaw(schemeRights.value),
+                right_statement: toRaw(schemeRightStatement.value),
             };
-            const updated = await createScheme(newSchemeInstance);
+            const updated = await createSchemeFromRights(newSchemeInstance);
             await router.push({
                 name: "scheme",
                 params: { id: updated.resourceinstanceid },
             });
-        } else if (!schemeRights.value?.tileid) {
-            await createSchemeRights(route.params.id as string, schemeRights.value ?? {});
         } else {
             await updateSchemeRights(
                 route.params.id as string,
-                schemeRights.value?.tileid as string,
                 schemeRights.value as SchemeRights,
+                schemeRightStatement.value as SchemeRightStatement,
             );
         }
         emit(UPDATED);
@@ -221,13 +212,11 @@ async function getSectionValue() {
         return;
     }
     const schemeInstance = await fetchSchemeRights(route.params.id as string);
-    rightsTileId.value = schemeInstance?.rights?.tileid ?? '';
-    rightStatementTileId.value = schemeInstance?.right_statement?.tileid ?? '';
     schemeRights.value = schemeInstance?.rights ?? {};
     if (schemeInstance?.rights) {
         parentExists.value = true;
     }
-    schemeRightStatement.value = schemeInstance?.right_statement;
+    schemeRightStatement.value = schemeInstance?.right_statement ?? {};
 }
 
 defineExpose({ getSectionValue });
@@ -238,44 +227,45 @@ defineExpose({ getSectionValue });
         <div v-if="!mode || mode === VIEW">
             <SchemeReportSection
                 :title-text="$gettext('Scheme Rights')"
-                :button-text="$gettext('Update Scheme Rights')"
+                :button-text="
+                    parentExists
+                        ? $gettext('Edit Scheme Rights')
+                        : $gettext('Add New Scheme Rights')
+                "
                 @open-editor="$emit(OPEN_EDITOR)"
             >
-                <h4>{{ $gettext('Rights Holders') }}</h4>
-                <ResourceInstanceRelationships
-                    :value="schemeRights?.right_holder"
-                    :mode=VIEW
-                />
-                <h4>{{ $gettext('Rights Type') }}</h4>
-                <ReferenceDatatype
-                    :value="schemeRights?.right_type"
-                    :mode=VIEW
-                />
-                <h4>{{ $gettext('Rights Statement') }}</h4>
-                <NonLocalizedString
-                    :value="schemeRightStatement?.right_statement_content"
-                    :mode="VIEW"
-                ></NonLocalizedString>
-                <h4>{{ $gettext('Right Statement Language') }}</h4>
-                <ReferenceDatatype
-                    :value="schemeRightStatement?.right_statement_language"
-                    :mode="VIEW"
-                ></ReferenceDatatype>
-                <h4>{{ $gettext('Right Statement Type') }}</h4>
-                <ReferenceDatatype
-                    :value="schemeRightStatement?.right_statement_type"
-                    :mode="VIEW"
-                ></ReferenceDatatype>
-                <h4>{{ $gettext("Right Statement Type Metatype") }}</h4>
-                <ReferenceDatatype
-                    :value="schemeRightStatement?.right_statement_type_metatype"
-                    :mode="VIEW"
-                ></ReferenceDatatype>
-                <h4>{{ $gettext("Right Statement Label") }}</h4>
-                <NonLocalizedString
-                    :value="schemeRightStatement?.right_statement_label"
-                    :mode="VIEW"
-                ></NonLocalizedString>
+                <div v-show="parentExists">
+                    <h4>{{ $gettext('Rights Holders') }}</h4>
+                    <ResourceInstanceRelationships
+                        :value="schemeRights?.right_holder"
+                        :mode=VIEW
+                    />
+                    <h4>{{ $gettext('Rights Type') }}</h4>
+                    <ReferenceDatatype
+                        :value="schemeRights?.right_type"
+                        :mode=VIEW
+                    />
+                    <h4>{{ $gettext('Rights Statement') }}</h4>
+                    <NonLocalizedString
+                        :value="schemeRightStatement?.right_statement_content"
+                        :mode="VIEW"
+                    ></NonLocalizedString>
+                    <h4>{{ $gettext('Right Statement Language') }}</h4>
+                    <ReferenceDatatype
+                        :value="schemeRightStatement?.right_statement_language"
+                        :mode="VIEW"
+                    ></ReferenceDatatype>
+                    <h4>{{ $gettext('Right Statement Type') }}</h4>
+                    <ReferenceDatatype
+                        :value="schemeRightStatement?.right_statement_type"
+                        :mode="VIEW"
+                    ></ReferenceDatatype>
+                    <h4>{{ $gettext("Right Statement Type Metatype") }}</h4>
+                    <ReferenceDatatype
+                        :value="schemeRightStatement?.right_statement_type_metatype"
+                        :mode="VIEW"
+                    ></ReferenceDatatype>
+                </div>
             </SchemeReportSection>
         </div>
         <div v-if="mode === EDIT">
