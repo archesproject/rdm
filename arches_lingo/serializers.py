@@ -38,6 +38,7 @@ class SchemeCreationSerializer(ArchesModelSerializer):
         nodegroups = ["creation"]
         fields = "__all__"
 
+
 class SchemeRightsSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance
@@ -51,7 +52,23 @@ class SchemeRightsTileSerializer(ArchesTileSerializer):
         model = TileModel
         graph_slug = "scheme"
         root_node = "rights"
-        fields = "__all__"
+        # child_nodegroups = ["right_statement"]
+        # fields = "__all__"
+
+        fields = ["resourceinstance", "rights"]
+
+    def create(self, validated_data, *args, **kwargs):
+        # check the resource
+        resource = validated_data["resourceinstance"]
+        if not resource.rights:
+            # create the parent tile
+            resource.rights = validated_data["rights"]
+            resource.save()
+            # get the parent tile's id
+            parent_tile_id = resource.right_statement.tileid
+            validated_data["parenttile_id"] = parent_tile_id
+
+        super().create(validated_data, *args, **kwargs)
 
 
 class SchemeRightStatementTileSerializer(ArchesTileSerializer):
