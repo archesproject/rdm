@@ -23,9 +23,6 @@ from arches_lingo.serializers import (
     SchemeNoteSerializer,
     SchemeNoteTileSerializer,
     SchemeSerializer,
-    SchemeRightsSerializer,
-    SchemeRightsTileSerializer,
-    SchemeRightStatementTileSerializer,
     SchemeStatementSerializer,
     TextualWorkRdmSystemSerializer,
     GroupRdmSystemSerializer,
@@ -69,29 +66,14 @@ class SchemeCreationView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = SchemeCreationSerializer
 
 
-class SchemeRightsView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+class SchemeRightsListCreateView(ArchesModelAPIMixin, ListCreateAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeRightsSerializer
 
 
-class SchemeRightsTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+class SchemeRightsView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
-    serializer_class = SchemeRightsTileSerializer
-
-
-class SchemeRightsTileCreateView(ArchesModelAPIMixin, ListCreateAPIView):
-    permission_classes = [RDMAdministrator]
-    serializer_class = SchemeRightsTileSerializer
-
-
-class SchemeRightStatementTileView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [RDMAdministrator]
-    serializer_class = SchemeRightStatementTileSerializer
-
-
-class SchemeRightStatementTileCreateView(ArchesModelAPIMixin, ListCreateAPIView):
-    permission_classes = [RDMAdministrator]
-    serializer_class = SchemeRightStatementTileSerializer
+    serializer_class = SchemeRightsSerializer
 
 
 class SchemeLabelView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
@@ -124,15 +106,11 @@ class SchemeNoteCreateView(ArchesModelAPIMixin, ListCreateAPIView):
     serializer_class = SchemeNoteTileSerializer
 
 
-class SchemeRightsView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
-    permission_classes = [RDMAdministrator]
-    serializer_class = SchemeRightsSerializer
-
-
 class TextualWorkRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = TextualWorkRdmSystemSerializer
     pagination_class = None
+
 
 class GroupRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
     permission_classes = [RDMAdministrator]
