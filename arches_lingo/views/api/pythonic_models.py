@@ -9,10 +9,6 @@ from arches.app.views.api.mixins import ArchesModelAPIMixin
 
 from arches_lingo.serializers import (
     ConceptSerializer,
-    SchemeCreationSerializer,
-    SchemeNamespaceSerializer,
-    SchemeSerializer,
-    SchemeRightsSerializer,
     ConceptStatementSerializer,
     GroupRdmSystemSerializer,
     PersonRdmSystemSerializer,
@@ -24,9 +20,8 @@ from arches_lingo.serializers import (
     SchemeNoteTileSerializer,
     SchemeSerializer,
     SchemeStatementSerializer,
+    SchemeRightsSerializer,
     TextualWorkRdmSystemSerializer,
-    GroupRdmSystemSerializer,
-    PersonRdmSystemSerializer,
 )
 
 
