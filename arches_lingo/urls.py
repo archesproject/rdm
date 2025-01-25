@@ -27,8 +27,6 @@ from arches_lingo.views.api.pythonic_models import (
     SchemeStatementDetailView,
     SchemeStatementListCreateView,
     TextualWorkRdmSystemSerializerView,
-    PersonRdmSystemSerializerView,
-    GroupRdmSystemSerializerView,
 )
 
 urlpatterns = [
