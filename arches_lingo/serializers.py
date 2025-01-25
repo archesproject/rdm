@@ -146,22 +146,6 @@ class TextualWorkRdmSystemSerializer(ArchesModelSerializer):
         fields = "__all__"
 
 
-class GroupRdmSystemSerializer(ArchesModelSerializer):
-    class Meta:
-        model = ResourceInstance
-        graph_slug = "group"
-        nodegroups = "__all__"
-        fields = "__all__"
-
-
-class PersonRdmSystemSerializer(ArchesModelSerializer):
-    class Meta:
-        model = ResourceInstance
-        graph_slug = "person"
-        nodegroups = "__all__"
-        fields = "__all__"
-
-
 class ConceptStatementSerializer(ArchesTileSerializer):
     class Meta:
         model = TileModel
