@@ -60,7 +60,7 @@ const noteOptions = ref<ControlledListItem[]>();
 const metatypesOptions = ref<ControlledListItem[]>();
 const parentExists = ref(false);
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         mode?: DataComponentMode;
         tileId?: string | null;
