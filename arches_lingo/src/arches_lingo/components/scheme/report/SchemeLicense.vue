@@ -146,9 +146,9 @@ async function getControlledLists() {
                 });
             if (item.children) {
                 item.children.forEach((child) => {
-                    const indentation = ' ';
+                    const indentation = '- ';
                         child.values.map((value) => {
-                            value.value = indentation.repeat(child.depth * 4) + value.value;
+                            value.value = indentation.repeat(child.depth) + value.value;
                         });
                     options.push({
                         uri: child.uri,
