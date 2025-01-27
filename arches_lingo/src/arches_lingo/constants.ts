@@ -9,6 +9,7 @@ export const CONTRAST = "contrast";
 export const EDIT = "edit";
 export const VIEW = "view";
 export const OPEN_EDITOR = "openEditor";
+export const CREATE_NEW_RESOURCE = "createNewResource";
 export const UPDATED = "updated";
 export const NEW = "new";
 export const MAXIMIZE = "maximize";
