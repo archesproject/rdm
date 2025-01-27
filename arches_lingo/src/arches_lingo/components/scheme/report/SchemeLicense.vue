@@ -136,12 +136,28 @@ async function getControlledLists() {
         const matchingList = controlledLists.find(
             (list: ControlledListResult) => list.name === node.listName,
         );
-        const options = matchingList.items.map(
-            (item: ControlledListItemResult): ControlledListItem => ({
-                list_id: item.list_id,
-                uri: item.uri,
-                labels: item.values,
-            }),
+        const options: ControlledListItem[] = [];
+        matchingList.items.forEach(
+            (item: ControlledListItemResult) => {
+                options.push({
+                    uri: item.uri,
+                    list_id: item.list_id,
+                    labels: item.values,
+                });
+            if (item.children) {
+                item.children.forEach((child) => {
+                    const indentation = ' ';
+                        child.values.map((value) => {
+                            value.value = indentation.repeat(child.depth * 4) + value.value;
+                        });
+                    options.push({
+                        uri: child.uri,
+                        list_id: child.list_id,
+                        labels: child.values,
+                    });
+                });
+            }
+            },
         );
         node.listRef.value = options;
     });

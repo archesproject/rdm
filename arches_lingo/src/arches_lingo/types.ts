@@ -66,6 +66,8 @@ export interface ControlledListItemResult {
     sortorder?: number;
     guide?: boolean;
     values: ControlledListItemLabelValue[];
+    children: ControlledListItemResult[];
+    depth: number;
 }
 
 export interface ResourceInstanceReference {
