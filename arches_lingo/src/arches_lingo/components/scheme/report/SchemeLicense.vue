@@ -77,22 +77,22 @@ const schemeRightStatement = ref<SchemeRightStatement>();
 
 const referenceNodeConfig = [
 {
-        nodeAlias: "appellative_status_status",
+        nodeAlias: "right_type",
         listRef: rightTypeOptions,
         listName: "Right Types",
     },
     {
-        nodeAlias: "appellative_status_ascribed_name_language",
+        nodeAlias: "right_statement_language",
         listRef: languageOptions,
         listName: "Languages",
     },
     {
-        nodeAlias: "appellative_status_ascribed_relation",
+        nodeAlias: "right_statement_type",
         listRef: noteOptions,
         listName: "note",
     },
     {
-        nodeAlias: "appellative_status_status_metatype",
+        nodeAlias: "right_statement_type_metatype",
         listRef: metatypesOptions,
         listName: "Metatypes",
     },
