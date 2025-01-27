@@ -7,10 +7,10 @@ from arches.app.models.models import Node, ResourceInstance, GraphModel
 from arches.app.utils.response import JSONResponse
 from arches.app.utils.betterJSONSerializer import JSONDeserializer
 
+from arches.app.utils.decorators import can_edit_resource_instance
 
-@method_decorator(
-    group_required("RDM Administrator", raise_exception=True), name="dispatch"
-)
+
+@method_decorator(can_edit_resource_instance, name="dispatch")
 class RelatableResourcesView(View):
     def get(self, request, graph_slug, node_alias):
         node = Node.objects.get(
@@ -21,13 +21,9 @@ class RelatableResourcesView(View):
         )
         page_number = request.GET.get("page", 1)
         items_per_page = request.GET.get("items", 25)
-        try:
-            graphs = [
-                graph["graphid"]
-                for graph in JSONDeserializer().deserialize(node.config.value)["graphs"]
-            ]
-        except KeyError:
-            graphs = []
+
+        config = JSONDeserializer().deserialize(node.config.value)
+        graphs = [graph["graphid"] for graph in config.get("graphs", [])]
 
         graph_models = GraphModel.objects.filter(graphid__in=graphs).values(
             "name", "graphid"
@@ -38,22 +34,15 @@ class RelatableResourcesView(View):
         )
 
         paginator = Paginator(resources, items_per_page)
-        if paginator.count:
-            data = [
-                {
-                    "resourceinstanceid": resource.resourceinstanceid,
-                    "display_value": resource.descriptors[get_language()]["name"],
-                }
-                for resource in paginator.get_page(page_number)
-            ]
-        else:
-            data = [
-                {
-                    "resourceinstanceid": resource.resourceinstanceid,
-                    "display_value": resource.descriptors[get_language()]["name"],
-                }
-                for resource in resources
-            ]
+        page_object = paginator.get_page(page_number)
+        language = get_language()
+        data = [
+            {
+                "resourceinstanceid": resource.resourceinstanceid,
+                "display_value": resource.descriptors[language]["name"],
+            }
+            for resource in page_object
+        ]
 
         return JSONResponse(
             {

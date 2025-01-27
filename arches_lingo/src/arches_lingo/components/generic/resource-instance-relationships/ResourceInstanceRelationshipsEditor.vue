@@ -20,17 +20,24 @@ import {
 import type { VirtualScrollerLazyEvent } from "primevue/virtualscroller";
 import { useToast } from "primevue/usetoast";
 
-const ITEM_HEIGHT = 38;
-const RESULTS_PER_PAGE = 25;
 const showNewResource = ref(false);
 const { $gettext } = useGettext();
 const toast = useToast();
 
-const props = defineProps<{
+const {
+    val,
+    graphSlug,
+    nodeAlias,
+    ptAriaLabeledBy,
+    itemHeight = 38,
+    resultsPerPage = 25,
+} = defineProps<{
     val?: string[];
     graphSlug: string;
     nodeAlias: string;
     ptAriaLabeledBy?: string;
+    itemHeight?: number;
+    resultsPerPage?: number;
 }>();
 const options = ref<ResourceInstanceReference[]>([]);
 const newElements = ref<NewResourceInstance[]>([]);
@@ -38,14 +45,14 @@ const isLoading = ref(false);
 const isLoadingAdditionalResults = ref(false);
 const computedResourceResultsHeight = ref("");
 const resourceResultsPage = ref(1);
-const resourceResultsTotalCount = ref(RESULTS_PER_PAGE);
+const resourceResultsTotalCount = ref(resultsPerPage);
 
 watch(options, (resourceResults) => {
     if (resourceResults?.length) {
         const rootFontSize = parseFloat(
             getComputedStyle(document.documentElement).fontSize,
         );
-        const itemHeightInRem = ITEM_HEIGHT / rootFontSize; // Convert to rem based on the root font size
+        const itemHeightInRem = itemHeight / rootFontSize; // Convert to rem based on the root font size
         const computedHeightInRem = resourceResults.length * itemHeightInRem;
 
         const viewHeightInPixels = window.innerHeight * 0.6;
@@ -61,13 +68,13 @@ watch(options, (resourceResults) => {
     }
 });
 
-onMounted(async () => {
-    await fetchData(1);
+onMounted(() => {
+    fetchData(1);
 });
 
 const emit = defineEmits([UPDATED, CREATE_NEW_RESOURCE]);
 
-const valRef = toRef(props, "val");
+const valRef = toRef(val);
 
 const value = computed({
     get() {
@@ -89,8 +96,8 @@ watch(primeVuePickerVal, (newVal) => {
 async function fetchData(page: number) {
     try {
         const resourceData = await fetchRelatableResources(
-            props.graphSlug,
-            props.nodeAlias,
+            graphSlug,
+            nodeAlias,
             page,
         );
         const references = resourceData.data.map(
@@ -138,9 +145,8 @@ async function fetchData(page: number) {
 }
 
 async function onLazyLoadResources(event: VirtualScrollerLazyEvent) {
-    console.log("ohai", event);
     if (
-        event.last >= resourceResultsPage.value * RESULTS_PER_PAGE &&
+        event.last >= resourceResultsPage.value * resultsPerPage &&
         event.last <= resourceResultsTotalCount.value
     ) {
         isLoadingAdditionalResults.value = true;
@@ -163,7 +169,7 @@ function createNewResource(graphId: string) {
         option-value="resourceId"
         class="resource-instance-relationships-selector"
         :virtual-scroller-options="{
-            itemSize: ITEM_HEIGHT,
+            itemSize: itemHeight,
             lazy: true,
             onLazyLoad: onLazyLoadResources,
             scrollHeight: computedResourceResultsHeight,
@@ -179,7 +185,7 @@ function createNewResource(graphId: string) {
         }"
         :loading="isLoading && !isLoadingAdditionalResults"
         :placeholder="$gettext('Select Resources')"
-        :aria-labelledby="props.ptAriaLabeledBy"
+        :aria-labelledby="ptAriaLabeledBy"
     >
         <template #footer>
             <div
@@ -191,7 +197,7 @@ function createNewResource(graphId: string) {
                     :label="element.displayValue"
                     severity="secondary"
                     variant="text"
-                    @click="createNewResource(element.graphId)"
+                    @click="() => createNewResource(element.graphId)"
                 />
             </div>
         </template>
