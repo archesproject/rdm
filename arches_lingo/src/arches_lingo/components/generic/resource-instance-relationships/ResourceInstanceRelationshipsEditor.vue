@@ -74,7 +74,7 @@ onMounted(() => {
 
 const emit = defineEmits([UPDATED, CREATE_NEW_RESOURCE]);
 
-const valRef = toRef(val);
+const valRef = toRef(() => val);
 
 const value = computed({
     get() {
