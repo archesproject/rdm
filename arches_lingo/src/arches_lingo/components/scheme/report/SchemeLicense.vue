@@ -76,7 +76,7 @@ const schemeRights = ref<SchemeRights>();
 const schemeRightStatement = ref<SchemeRightStatement>();
 
 const referenceNodeConfig = [
-{
+    {
         nodeAlias: "right_type",
         listRef: rightTypeOptions,
         listName: "Right Types",
@@ -137,19 +137,19 @@ async function getControlledLists() {
             (list: ControlledListResult) => list.name === node.listName,
         );
         const options: ControlledListItem[] = [];
-        matchingList.items.forEach(
-            (item: ControlledListItemResult) => {
-                options.push({
-                    uri: item.uri,
-                    list_id: item.list_id,
-                    labels: item.values,
-                });
+        matchingList.items.forEach((item: ControlledListItemResult) => {
+            options.push({
+                uri: item.uri,
+                list_id: item.list_id,
+                labels: item.values,
+            });
             if (item.children) {
                 item.children.forEach((child) => {
-                    const indentation = '- ';
-                        child.values.map((value) => {
-                            value.value = indentation.repeat(child.depth) + value.value;
-                        });
+                    const indentation = "- ";
+                    child.values.map((value) => {
+                        value.value =
+                            indentation.repeat(child.depth) + value.value;
+                    });
                     options.push({
                         uri: child.uri,
                         list_id: child.list_id,
@@ -157,8 +157,7 @@ async function getControlledLists() {
                     });
                 });
             }
-            },
-        );
+        });
         node.listRef.value = options;
     });
 }
@@ -172,7 +171,8 @@ function onUpdateResourceInstance(
         const selectedOptions = options.filter((option) =>
             val.includes(option.resourceId),
         );
-        (schemeRights.value![node] as ResourceInstanceReference[]) = selectedOptions;
+        (schemeRights.value![node] as ResourceInstanceReference[]) =
+            selectedOptions;
     }
 }
 
@@ -180,14 +180,18 @@ function onUpdateSchemeRightReferenceDatatype(
     node: keyof SchemeRights,
     val: ControlledListItem[],
 ) {
-    (schemeRights.value![node] as ControlledListItem[]) = val.map((item) => toRaw(item));
+    (schemeRights.value![node] as ControlledListItem[]) = val.map((item) =>
+        toRaw(item),
+    );
 }
 
 function onUpdateSchemeRightStatementReferenceDatatype(
     node: keyof SchemeRightStatement,
     val: ControlledListItem[],
 ) {
-    (schemeRightStatement.value![node] as ControlledListItem[]) = val.map((item) => toRaw(item));
+    (schemeRightStatement.value![node] as ControlledListItem[]) = val.map(
+        (item) => toRaw(item),
+    );
 }
 
 function onUpdateString(node: keyof SchemeRightStatement, val: string) {
@@ -251,34 +255,36 @@ defineExpose({ getSectionValue });
                 @open-editor="$emit(OPEN_EDITOR)"
             >
                 <div v-show="parentExists">
-                    <h4>{{ $gettext('Rights Holders') }}</h4>
+                    <h4>{{ $gettext("Rights Holders") }}</h4>
                     <ResourceInstanceRelationships
                         :value="schemeRights?.right_holder"
-                        :mode=VIEW
+                        :mode="VIEW"
                     />
-                    <h4>{{ $gettext('Rights Type') }}</h4>
+                    <h4>{{ $gettext("Rights Type") }}</h4>
                     <ReferenceDatatype
                         :value="schemeRights?.right_type"
-                        :mode=VIEW
+                        :mode="VIEW"
                     />
-                    <h4>{{ $gettext('Rights Statement') }}</h4>
+                    <h4>{{ $gettext("Rights Statement") }}</h4>
                     <NonLocalizedString
                         :value="schemeRightStatement?.right_statement_content"
                         :mode="VIEW"
                     ></NonLocalizedString>
-                    <h4>{{ $gettext('Right Statement Language') }}</h4>
+                    <h4>{{ $gettext("Right Statement Language") }}</h4>
                     <ReferenceDatatype
                         :value="schemeRightStatement?.right_statement_language"
                         :mode="VIEW"
                     ></ReferenceDatatype>
-                    <h4>{{ $gettext('Right Statement Type') }}</h4>
+                    <h4>{{ $gettext("Right Statement Type") }}</h4>
                     <ReferenceDatatype
                         :value="schemeRightStatement?.right_statement_type"
                         :mode="VIEW"
                     ></ReferenceDatatype>
                     <h4>{{ $gettext("Right Statement Type Metatype") }}</h4>
                     <ReferenceDatatype
-                        :value="schemeRightStatement?.right_statement_type_metatype"
+                        :value="
+                            schemeRightStatement?.right_statement_type_metatype
+                        "
                         :mode="VIEW"
                     ></ReferenceDatatype>
                 </div>
@@ -286,33 +292,45 @@ defineExpose({ getSectionValue });
         </div>
         <div v-if="mode === EDIT">
             <div>
-                <h4>{{ $gettext('Rights Holders') }}</h4>
+                <h4>{{ $gettext("Rights Holders") }}</h4>
                 <ResourceInstanceRelationships
                     :value="schemeRights?.right_holder"
                     :options="actorRdmOptions"
                     :mode="EDIT"
-                    @update="(val) => onUpdateResourceInstance('right_holder', val, actorRdmOptions ?? [])"
+                    @update="
+                        (val) =>
+                            onUpdateResourceInstance(
+                                'right_holder',
+                                val,
+                                actorRdmOptions ?? [],
+                            )
+                    "
                 />
-                <h4>{{ $gettext('Rights Type') }}</h4>
+                <h4>{{ $gettext("Rights Type") }}</h4>
                 <ReferenceDatatype
                     :value="schemeRights?.right_type"
                     :options="rightTypeOptions"
                     :multi-value="false"
                     :mode="EDIT"
-                    @update="(val) => onUpdateSchemeRightReferenceDatatype('right_type', val)"
+                    @update="
+                        (val) =>
+                            onUpdateSchemeRightReferenceDatatype(
+                                'right_type',
+                                val,
+                            )
+                    "
                 />
             </div>
             <div>
-                <h4>{{ $gettext('Statement') }}</h4>
+                <h4>{{ $gettext("Statement") }}</h4>
                 <NonLocalizedString
                     :value="schemeRightStatement?.right_statement_content"
                     :mode="EDIT"
                     @update="
-                        (val) =>
-                            onUpdateString('right_statement_content', val)
+                        (val) => onUpdateString('right_statement_content', val)
                     "
                 />
-                <h4>{{ $gettext('Statement Language') }}</h4>
+                <h4>{{ $gettext("Statement Language") }}</h4>
                 <ReferenceDatatype
                     :value="schemeRightStatement?.right_statement_language"
                     :mode="EDIT"
@@ -326,7 +344,7 @@ defineExpose({ getSectionValue });
                             )
                     "
                 />
-                <h4>{{ $gettext('Statement Type') }}</h4>
+                <h4>{{ $gettext("Statement Type") }}</h4>
                 <ReferenceDatatype
                     :value="schemeRightStatement?.right_statement_type"
                     :mode="EDIT"
@@ -340,17 +358,18 @@ defineExpose({ getSectionValue });
                             )
                     "
                 />
-                <h4>{{ $gettext('Statement Type Metatype') }}</h4>
+                <h4>{{ $gettext("Statement Type Metatype") }}</h4>
                 <ReferenceDatatype
                     :value="schemeRightStatement?.right_statement_type_metatype"
                     :mode="EDIT"
                     :multi-value="false"
                     :options="metatypesOptions"
                     @update="
-                        (val) => onUpdateSchemeRightStatementReferenceDatatype(
-                            'right_statement_type_metatype',
-                            val
-                        )
+                        (val) =>
+                            onUpdateSchemeRightStatementReferenceDatatype(
+                                'right_statement_type_metatype',
+                                val,
+                            )
                     "
                 />
                 <Button

@@ -303,7 +303,7 @@ export const updateSchemeRights = async (
         body: JSON.stringify({
             resourceinstanceid: schemeId,
             rights: schemeRightsValue,
-            right_statement: schemeRightStatementValue
+            right_statement: schemeRightStatementValue,
         }),
     });
     const parsed = await response.json();
