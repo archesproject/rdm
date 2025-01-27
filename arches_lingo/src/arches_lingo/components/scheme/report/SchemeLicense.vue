@@ -172,7 +172,7 @@ function onUpdateResourceInstance(
         const selectedOptions = options.filter((option) =>
             val.includes(option.resourceId),
         );
-        (schemeRights.value![node] as unknown) = selectedOptions;
+        (schemeRights.value![node] as ResourceInstanceReference[]) = selectedOptions;
     }
 }
 
@@ -180,18 +180,18 @@ function onUpdateSchemeRightReferenceDatatype(
     node: keyof SchemeRights,
     val: ControlledListItem[],
 ) {
-    (schemeRights.value![node] as unknown) = val.map((item) => toRaw(item));
+    (schemeRights.value![node] as ControlledListItem[]) = val.map((item) => toRaw(item));
 }
 
 function onUpdateSchemeRightStatementReferenceDatatype(
     node: keyof SchemeRightStatement,
     val: ControlledListItem[],
 ) {
-    (schemeRightStatement.value![node] as unknown) = val.map((item) => toRaw(item));
+    (schemeRightStatement.value![node] as ControlledListItem[]) = val.map((item) => toRaw(item));
 }
 
 function onUpdateString(node: keyof SchemeRightStatement, val: string) {
-    (schemeRightStatement.value![node] as unknown) = toRaw(val);
+    (schemeRightStatement.value![node] as string) = toRaw(val);
 }
 
 async function saveRights() {
