@@ -39,6 +39,18 @@ import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDataty
 import type { Language } from "@/arches_vue_utils/types.ts";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 
+withDefaults(
+    defineProps<{
+        mode?: DataComponentMode;
+        tileId?: string | null;
+        args?: Array<object>;
+    }>(),
+    {
+        mode: VIEW,
+        tileId: null, // editor arg specifying what tile to operate on.
+    },
+);
+
 onMounted(async () => {
     getActorOptions();
     getControlledLists();
@@ -59,19 +71,6 @@ const languageOptions = ref<ControlledListItem[]>();
 const noteOptions = ref<ControlledListItem[]>();
 const metatypesOptions = ref<ControlledListItem[]>();
 const parentExists = ref(false);
-
-withDefaults(
-    defineProps<{
-        mode?: DataComponentMode;
-        tileId?: string | null;
-        args?: Array<object>;
-    }>(),
-    {
-        mode: VIEW,
-        tileId: null, // editor arg specifying what tile to operate on.
-    },
-);
-
 const schemeRights = ref<SchemeRights>();
 const schemeRightStatement = ref<SchemeRightStatement>();
 
