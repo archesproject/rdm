@@ -106,8 +106,8 @@ async function getActorOptions() {
         const result: ResourceInstanceReference = {
             display_value: option.descriptors[selectedLanguage.value.code].name,
             resourceId: option.resourceinstanceid,
-            ontologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-            inverseOntologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
+            ontologyProperty: "",
+            inverseOntologyProperty: "",
         };
         return result;
     });
