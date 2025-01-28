@@ -163,7 +163,7 @@ function createNewResource(graphId: string) {
 <template>
     <MultiSelect
         v-model="primeVuePickerVal"
-        :show-toggle-all="!!options?.length"
+        :show-toggle-all="options?.length > 1"
         :options
         option-label="displayValue"
         option-value="resourceId"
