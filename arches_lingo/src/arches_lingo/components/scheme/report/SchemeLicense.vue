@@ -242,140 +242,105 @@ defineExpose({ getSectionValue });
 </script>
 
 <template>
-    <div>
-        <div v-if="!mode || mode === VIEW">
-            <SchemeReportSection
-                :title-text="$gettext('Scheme Rights')"
-                :button-text="
-                    parentExists
-                        ? $gettext('Edit Scheme Rights')
-                        : $gettext('Add New Scheme Rights')
-                "
-                @open-editor="$emit(OPEN_EDITOR)"
-            >
-                <div v-show="parentExists">
-                    <h4>{{ $gettext("Rights Holders") }}</h4>
-                    <ResourceInstanceRelationships
-                        :value="schemeRights?.right_holder"
-                        :mode="VIEW"
-                    />
-                    <h4>{{ $gettext("Rights Type") }}</h4>
-                    <ReferenceDatatype
-                        :value="schemeRights?.right_type"
-                        :mode="VIEW"
-                    />
-                    <h4>{{ $gettext("Rights Statement") }}</h4>
-                    <NonLocalizedString
-                        :value="schemeRightStatement?.right_statement_content"
-                        :mode="VIEW"
-                    ></NonLocalizedString>
-                    <h4>{{ $gettext("Right Statement Language") }}</h4>
-                    <ReferenceDatatype
-                        :value="schemeRightStatement?.right_statement_language"
-                        :mode="VIEW"
-                    ></ReferenceDatatype>
-                    <h4>{{ $gettext("Right Statement Type") }}</h4>
-                    <ReferenceDatatype
-                        :value="schemeRightStatement?.right_statement_type"
-                        :mode="VIEW"
-                    ></ReferenceDatatype>
-                    <h4>{{ $gettext("Right Statement Type Metatype") }}</h4>
-                    <ReferenceDatatype
-                        :value="
-                            schemeRightStatement?.right_statement_type_metatype
-                        "
-                        :mode="VIEW"
-                    ></ReferenceDatatype>
-                </div>
-            </SchemeReportSection>
-        </div>
-        <div v-if="mode === EDIT">
-            <div>
-                <h4>{{ $gettext("Rights Holders") }}</h4>
-                <ResourceInstanceRelationships
-                    :value="schemeRights?.right_holder"
-                    :options="actorRdmOptions"
-                    :mode="EDIT"
-                    @update="
-                        (val) =>
-                            onUpdateResourceInstance(
-                                'right_holder',
-                                val,
-                                actorRdmOptions ?? [],
-                            )
-                    "
-                />
-                <h4>{{ $gettext("Rights Type") }}</h4>
-                <ReferenceDatatype
-                    :value="schemeRights?.right_type"
-                    :options="rightTypeOptions"
-                    :multi-value="false"
-                    :mode="EDIT"
-                    @update="
-                        (val) =>
-                            onUpdateSchemeRightReferenceDatatype(
-                                'right_type',
-                                val,
-                            )
-                    "
-                />
-            </div>
-            <div>
-                <h4>{{ $gettext("Statement") }}</h4>
-                <NonLocalizedString
-                    :value="schemeRightStatement?.right_statement_content"
-                    :mode="EDIT"
-                    @update="
-                        (val) => onUpdateString('right_statement_content', val)
-                    "
-                />
-                <h4>{{ $gettext("Statement Language") }}</h4>
-                <ReferenceDatatype
-                    :value="schemeRightStatement?.right_statement_language"
-                    :mode="EDIT"
-                    :multi-value="false"
-                    :options="languageOptions"
-                    @update="
-                        (val) =>
-                            onUpdateSchemeRightStatementReferenceDatatype(
-                                'right_statement_language',
-                                val,
-                            )
-                    "
-                />
-                <h4>{{ $gettext("Statement Type") }}</h4>
-                <ReferenceDatatype
-                    :value="schemeRightStatement?.right_statement_type"
-                    :mode="EDIT"
-                    :multi-value="false"
-                    :options="noteOptions"
-                    @update="
-                        (val) =>
-                            onUpdateSchemeRightStatementReferenceDatatype(
-                                'right_statement_type',
-                                val,
-                            )
-                    "
-                />
-                <h4>{{ $gettext("Statement Type Metatype") }}</h4>
-                <ReferenceDatatype
-                    :value="schemeRightStatement?.right_statement_type_metatype"
-                    :mode="EDIT"
-                    :multi-value="false"
-                    :options="metatypesOptions"
-                    @update="
-                        (val) =>
-                            onUpdateSchemeRightStatementReferenceDatatype(
-                                'right_statement_type_metatype',
-                                val,
-                            )
-                    "
-                />
-                <Button
-                    :label="$gettext('Update')"
-                    @click="saveRights"
-                ></Button>
-            </div>
-        </div>
+    <SchemeReportSection
+        v-if="!mode || mode === VIEW"
+        :title-text="$gettext('Scheme Rights')"
+        :button-text="
+            parentExists
+                ? $gettext('Edit Scheme Rights')
+                : $gettext('Add New Scheme Rights')
+        "
+        @open-editor="$emit(OPEN_EDITOR)"
+    >
+    </SchemeReportSection>
+    <div v-if="parentExists || mode === EDIT" class="section">
+        <h4>{{ $gettext("Rights Holders") }}</h4>
+        <ResourceInstanceRelationships
+            :value="schemeRights?.right_holder"
+            :options="actorRdmOptions"
+            :mode="mode"
+            @update="
+                (val) =>
+                    onUpdateResourceInstance(
+                        'right_holder',
+                        val,
+                        actorRdmOptions ?? [],
+                    )
+            "
+        />
+        <h4>{{ $gettext("Rights Type") }}</h4>
+        <ReferenceDatatype
+            :value="schemeRights?.right_type"
+            :options="rightTypeOptions"
+            :multi-value="false"
+            :mode="mode"
+            @update="
+                (val) =>
+                    onUpdateSchemeRightReferenceDatatype(
+                        'right_type',
+                        val,
+                    )
+            "
+        />
+        <h4>{{ $gettext("Statement") }}</h4>
+        <NonLocalizedString
+            :value="schemeRightStatement?.right_statement_content"
+            :mode="mode"
+            @update="
+                (val) => onUpdateString('right_statement_content', val)
+            "
+        />
+        <h4>{{ $gettext("Statement Language") }}</h4>
+        <ReferenceDatatype
+            :value="schemeRightStatement?.right_statement_language"
+            :mode="mode"
+            :multi-value="false"
+            :options="languageOptions"
+            @update="
+                (val) =>
+                    onUpdateSchemeRightStatementReferenceDatatype(
+                        'right_statement_language',
+                        val,
+                    )
+            "
+        />
+        <h4>{{ $gettext("Statement Type") }}</h4>
+        <ReferenceDatatype
+            :value="schemeRightStatement?.right_statement_type"
+            :mode="mode"
+            :multi-value="false"
+            :options="noteOptions"
+            @update="
+                (val) =>
+                    onUpdateSchemeRightStatementReferenceDatatype(
+                        'right_statement_type',
+                        val,
+                    )
+            "
+        />
+        <h4>{{ $gettext("Statement Type Metatype") }}</h4>
+        <ReferenceDatatype
+            :value="schemeRightStatement?.right_statement_type_metatype"
+            :mode="mode"
+            :multi-value="false"
+            :options="metatypesOptions"
+            @update="
+                (val) =>
+                    onUpdateSchemeRightStatementReferenceDatatype(
+                        'right_statement_type_metatype',
+                        val,
+                    )
+            "
+        />
+        <Button
+            v-if="mode === EDIT"
+            :label="$gettext('Update')"
+            @click="saveRights"
+        ></Button>
     </div>
 </template>
+<style scoped>
+.section {
+    margin: 0 1rem;
+}
+</style>
