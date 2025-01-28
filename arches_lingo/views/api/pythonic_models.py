@@ -20,6 +20,7 @@ from arches_lingo.serializers import (
     SchemeNoteTileSerializer,
     SchemeSerializer,
     SchemeStatementSerializer,
+    SchemeRightsSerializer,
     TextualWorkRdmSystemSerializer,
 )
 
@@ -60,6 +61,16 @@ class SchemeCreationView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = SchemeCreationSerializer
 
 
+class SchemeRightsListCreateView(ArchesModelAPIMixin, ListCreateAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeRightsSerializer
+
+
+class SchemeRightsView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = SchemeRightsSerializer
+
+
 class SchemeLabelView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeLabelSerializer
@@ -93,6 +104,18 @@ class SchemeNoteCreateView(ArchesModelAPIMixin, ListCreateAPIView):
 class TextualWorkRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = TextualWorkRdmSystemSerializer
+    pagination_class = None
+
+
+class GroupRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = GroupRdmSystemSerializer
+    pagination_class = None
+
+
+class PersonRdmSystemSerializerView(ArchesModelAPIMixin, ListAPIView):
+    permission_classes = [RDMAdministrator]
+    serializer_class = PersonRdmSystemSerializer
     pagination_class = None
 
 

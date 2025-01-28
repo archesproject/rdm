@@ -39,6 +39,29 @@ class SchemeCreationSerializer(ArchesModelSerializer):
         fields = "__all__"
 
 
+class SchemeRightsSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = "scheme"
+        nodegroups = ["rights", "right_statement"]
+        fields = "__all__"
+
+    def update(self, instance, validated_data):
+        """Repair parenttile until fixed in core."""
+        updated = super().update(instance, validated_data)
+        if updated.right_statement:
+            self.repair_right_statement(updated)
+        return updated
+
+    def repair_right_statement(self, instance):
+        # Shouldn't need to refresh_from_db() here, but I'll (jtw)
+        # look into that later, since this is all just a workaround.
+        instance.refresh_from_db()
+        instance.right_statement.parenttile = instance.rights
+        instance.right_statement.save()
+        return instance
+
+
 class SchemeLabelSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance

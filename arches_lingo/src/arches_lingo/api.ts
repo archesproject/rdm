@@ -4,6 +4,8 @@ import type {
     AppellativeStatus,
     SchemeInstance,
     SchemeStatement,
+    SchemeRights,
+    SchemeRightStatement,
 } from "@/arches_lingo/types";
 
 function getToken() {
@@ -230,6 +232,13 @@ export const createScheme = async (newScheme: SchemeInstance) => {
     return parsed;
 };
 
+export const fetchSchemeRights = async (schemeId: string) => {
+    const response = await fetch(arches.urls.api_scheme_rights(schemeId));
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const updateSchemeCreation = async (
     schemeId: string,
     schemeInstance: SchemeInstance,
@@ -258,6 +267,44 @@ export const updateSchemeNamespace = async (
             "Content-Type": "application/json",
         },
         body: JSON.stringify(schemeNamespace),
+    });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const createSchemeFromRights = async (
+    schemeRightsValue: SchemeInstance,
+) => {
+    const response = await fetch(arches.urls.api_scheme_rights_list_create, {
+        method: "POST",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ schemeRightsValue }),
+    });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
+export const updateSchemeRights = async (
+    schemeId: string,
+    schemeRightsValue: SchemeRights,
+    schemeRightStatementValue: SchemeRightStatement,
+) => {
+    const response = await fetch(arches.urls.api_scheme_rights(schemeId), {
+        method: "PATCH",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            resourceinstanceid: schemeId,
+            rights: schemeRightsValue,
+            right_statement: schemeRightStatementValue,
+        }),
     });
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
