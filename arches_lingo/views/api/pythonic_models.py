@@ -7,6 +7,8 @@ from rest_framework.generics import (
 from arches.app.permissions.rest_framework import RDMAdministrator
 from arches.app.views.api.mixins import ArchesModelAPIMixin
 
+from arches.app.models.serializers import ArchesModelSerializer
+from arches.app.models.models import ResourceInstance
 from arches_lingo.serializers import (
     ConceptSerializer,
     ConceptStatementSerializer,
@@ -28,6 +30,26 @@ class SchemeListCreateView(ArchesModelAPIMixin, ListCreateAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = SchemeSerializer
     pagination_class = None
+
+
+class GenericCreateView(ArchesModelAPIMixin, ListCreateAPIView):
+    permission_classes = [RDMAdministrator]
+    pagination_class = None
+
+    def get_serializer_class(self):
+        model = self.kwargs["model"]
+
+        def get_serializer(base):
+            class NewSerializer(ArchesModelSerializer):
+                class Meta:
+                    model = ResourceInstance
+                    graph_slug = base
+                    nodegroups = "__all__"
+                    fields = "__all__"
+
+            return NewSerializer
+
+        return get_serializer(model)
 
 
 class SchemeDetailView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
