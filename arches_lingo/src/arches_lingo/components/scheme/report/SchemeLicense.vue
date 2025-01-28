@@ -253,7 +253,10 @@ defineExpose({ getSectionValue });
         @open-editor="$emit(OPEN_EDITOR)"
     >
     </SchemeReportSection>
-    <div v-if="parentExists || mode === EDIT" class="section">
+    <div
+        v-if="parentExists || mode === EDIT"
+        class="section"
+    >
         <h4>{{ $gettext("Rights Holders") }}</h4>
         <ResourceInstanceRelationships
             :value="schemeRights?.right_holder"
@@ -275,20 +278,14 @@ defineExpose({ getSectionValue });
             :multi-value="false"
             :mode="mode"
             @update="
-                (val) =>
-                    onUpdateSchemeRightReferenceDatatype(
-                        'right_type',
-                        val,
-                    )
+                (val) => onUpdateSchemeRightReferenceDatatype('right_type', val)
             "
         />
         <h4>{{ $gettext("Statement") }}</h4>
         <NonLocalizedString
             :value="schemeRightStatement?.right_statement_content"
             :mode="mode"
-            @update="
-                (val) => onUpdateString('right_statement_content', val)
-            "
+            @update="(val) => onUpdateString('right_statement_content', val)"
         />
         <h4>{{ $gettext("Statement Language") }}</h4>
         <ReferenceDatatype
