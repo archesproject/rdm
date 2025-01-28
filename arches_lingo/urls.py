@@ -11,6 +11,7 @@ from arches_lingo.views.api.pythonic_models import (
     ConceptListCreateView,
     ConceptStatementDetailView,
     ConceptStatementListCreateView,
+    GenericCreateView,
     GroupRdmSystemSerializerView,
     PersonRdmSystemSerializerView,
     SchemeCreationView,
@@ -57,6 +58,11 @@ urlpatterns = [
         name="concept-statement-detail",
     ),
     path("api/schemes", SchemeListCreateView.as_view(), name="schemes-list-create"),
+    path(
+        "api/<slug:model>/list",
+        GenericCreateView.as_view(),
+        name="schemes-list-create",
+    ),
     path("api/scheme/<uuid:pk>", SchemeDetailView.as_view(), name="scheme-detail"),
     path(
         "api/scheme/<uuid:pk>/namespace",
