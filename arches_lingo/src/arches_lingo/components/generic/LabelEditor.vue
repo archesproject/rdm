@@ -249,7 +249,7 @@ onMounted(initializeSelectOptions);
 </script>
 
 <template>
-    <p :for="labelId">{{ $gettext("Label") }}</p>
+    <label :for="labelId">{{ $gettext("Label") }}</label>
     <NonLocalizedString
         :value="formValue?.appellative_status_ascribed_name_content"
         :mode="EDIT"
@@ -259,7 +259,7 @@ onMounted(initializeSelectOptions);
                 onUpdateString('appellative_status_ascribed_name_content', val)
         "
     />
-    <p :for="labelLanguageId">{{ $gettext("Label Language") }}</p>
+    <p :id="labelLanguageId">{{ $gettext("Label Language") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_ascribed_name_language"
         :mode="EDIT"
@@ -274,7 +274,7 @@ onMounted(initializeSelectOptions);
                 )
         "
     />
-    <p :for="labelTypeId">{{ $gettext("Label Type") }}</p>
+    <p :id="labelTypeId">{{ $gettext("Label Type") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_ascribed_relation"
         :mode="EDIT"
@@ -289,7 +289,7 @@ onMounted(initializeSelectOptions);
                 )
         "
     />
-    <p :for="labelStatusId">{{ $gettext("Label Status") }}</p>
+    <p :id="labelStatusId">{{ $gettext("Label Status") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_status"
         :mode="EDIT"
@@ -300,7 +300,7 @@ onMounted(initializeSelectOptions);
             (val) => onUpdateReferenceDatatype('appellative_status_status', val)
         "
     />
-    <p :for="labelMetatypeId">{{ $gettext("Label Metatype") }}</p>
+    <p :id="labelMetatypeId">{{ $gettext("Label Metatype") }}</p>
     <ReferenceDatatype
         :value="formValue?.appellative_status_status_metatype"
         :mode="EDIT"
@@ -315,7 +315,7 @@ onMounted(initializeSelectOptions);
                 )
         "
     />
-    <p :for="labelStartId">{{ $gettext("Label Temporal Validity Start") }}</p>
+    <p :id="labelStartId">{{ $gettext("Label Temporal Validity Start") }}</p>
     <DateDatatype
         :value="formValue?.appellative_status_timespan_begin_of_the_begin"
         :mode="EDIT"
@@ -328,7 +328,7 @@ onMounted(initializeSelectOptions);
                 )
         "
     />
-    <p :for="labelEndId">{{ $gettext("Label Temporal Validity End") }}</p>
+    <p :id="labelEndId">{{ $gettext("Label Temporal Validity End") }}</p>
     <DateDatatype
         :value="formValue?.appellative_status_timespan_end_of_the_end"
         :mode="EDIT"
