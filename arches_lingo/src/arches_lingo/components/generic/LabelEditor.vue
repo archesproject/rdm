@@ -249,7 +249,7 @@ onMounted(initializeSelectOptions);
 </script>
 
 <template>
-    <p :id="labelId">{{ $gettext("Label") }}</p>
+    <label :for="labelId">{{ $gettext("Label") }}</label>
     <NonLocalizedString
         :value="formValue?.appellative_status_ascribed_name_content"
         :mode="EDIT"
