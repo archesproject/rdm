@@ -6,6 +6,7 @@ import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNames
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
 import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
+import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
 import type { SectionTypes } from "@/arches_lingo/types.ts";
 import {
     OPEN_EDITOR,
@@ -51,6 +52,11 @@ const schemeComponents = [
         component: SchemeNote,
         id: "note",
         editorName: $gettext("Scheme Notes"),
+    },
+    {
+        component: SchemeLicense,
+        id: "license",
+        editorName: $gettext("Scheme Rights"),
     },
 ];
 

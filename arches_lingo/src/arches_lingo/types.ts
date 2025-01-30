@@ -66,6 +66,8 @@ export interface ControlledListItemResult {
     sortorder?: number;
     guide?: boolean;
     values: ControlledListItemLabelValue[];
+    children: ControlledListItemResult[];
+    depth: number;
 }
 
 export interface ResourceInstanceReference {
@@ -139,6 +141,21 @@ export interface SchemeStatement {
     statement_data_assignment_timespan_end_of_the_end: string;
 }
 
+export interface SchemeRights {
+    tileid: string;
+    right_holder?: ResourceInstanceReference[];
+    right_type?: ControlledListItem[];
+}
+
+export interface SchemeRightStatement {
+    tileid: string;
+    right_statement_content?: string;
+    right_statement_label?: string;
+    right_statement_language?: ControlledListItem[];
+    right_statement_type?: ControlledListItem[];
+    right_statement_type_metatype?: ControlledListItem[];
+}
+
 export interface SchemeInstance {
     namespace?: {
         namespace_name: string;
@@ -149,6 +166,8 @@ export interface SchemeInstance {
     };
     appellative_status?: AppellativeStatus[];
     statement?: SchemeStatement[];
+    rights?: SchemeRights;
+    right_statement?: SchemeRightStatement;
 }
 
 export interface SchemeResource {
