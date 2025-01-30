@@ -61,7 +61,7 @@ urlpatterns = [
     path(
         "api/<slug:model>/list",
         GenericCreateView.as_view(),
-        name="schemes-list-create",
+        name="generic-list-create",
     ),
     path("api/scheme/<uuid:pk>", SchemeDetailView.as_view(), name="scheme-detail"),
     path(

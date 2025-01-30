@@ -278,6 +278,19 @@ export const fetchRelatableResources = async (
     return parsed;
 };
 
+export const fetchResourceOptions = async (graphSlug: string) => {
+    const response = await fetch(arches.urls.api_uri_generic_list(graphSlug), {
+        method: "OPTIONS",
+        headers: {
+            "X-CSRFTOKEN": getToken(),
+            "Content-Type": "application/json",
+        },
+    });
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const fetchSearchResults = async (
     searchTerm: string,
     items: number,

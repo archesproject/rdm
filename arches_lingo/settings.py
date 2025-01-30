@@ -162,9 +162,9 @@ UPLOADED_FILES_DIR = "uploadedfiles"
 chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_optional_env_variable(
-    "ARCHES_SECRET_KEY", "django-insecure-" + get_random_string(50, chars)
+    "ARCHES_SECRET_KEY", "django-insecure-"  # + get_random_string(50, chars)
 )
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 ROOT_URLCONF = "arches_lingo.urls"
 
 ELASTICSEARCH_HOSTS = [{"scheme": ES_PROTOCOL, "host": ES_HOST, "port": ES_PORT}]

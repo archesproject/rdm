@@ -26,7 +26,7 @@ class RelatableResourcesView(View):
         graphs = [graph["graphid"] for graph in config.get("graphs", [])]
 
         graph_models = GraphModel.objects.filter(graphid__in=graphs).values(
-            "name", "graphid"
+            "name", "graphid", "slug"
         )
 
         resources = ResourceInstance.objects.filter(graph_id__in=graphs).order_by(
