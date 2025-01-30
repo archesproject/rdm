@@ -17,11 +17,8 @@ import { useToast } from "primevue/usetoast";
 
 import {
     createScheme,
-    createSchemeNote,
-    fetchGroupRdmSystemList,
-    fetchPersonRdmSystemList,
-    fetchTextualWorkRdmSystemList,
-    updateSchemeNote,
+    fetchLingoResources,
+    upsertLingoTile,
 } from "@/arches_lingo/api.ts";
 import { fetchLists } from "@/arches_references/api.ts";
 import DateDatatype from "@/arches_lingo/components/generic/DateDatatype.vue";
@@ -183,19 +180,15 @@ async function save() {
                 name: "scheme",
                 params: { id: updated.resourceinstanceid },
             });
-        } else if (!formValue.value.tileid) {
-            const schemeStatement: SchemeStatement = await createSchemeNote(
-                route.params.id as string,
-                { ...formValue.value },
-            );
-            valueRef.value = schemeStatement;
-            emit("update", schemeStatement.tileid);
-            return;
         } else {
-            await updateSchemeNote(
-                route.params.id as string,
+            await upsertLingoTile(
+                "scheme",
+                "statement",
+                {
+                    resourceinstance: route.params.id as string,
+                    ...formValue.value,
+                },
                 formValue.value.tileid,
-                { ...formValue.value },
             );
         }
         emit("update");
@@ -226,15 +219,17 @@ async function getResourceInstanceOptions(
 
 async function initializeSelectOptions() {
     getControlledLists();
-    groupAndPersonOptions.value = await getResourceInstanceOptions(
-        fetchGroupRdmSystemList,
+    groupAndPersonOptions.value = await getResourceInstanceOptions(() =>
+        fetchLingoResources("group"),
     );
     groupAndPersonOptions.value = [
         ...(groupAndPersonOptions.value || []),
-        ...(await getResourceInstanceOptions(fetchPersonRdmSystemList)),
+        ...(await getResourceInstanceOptions(() =>
+            fetchLingoResources("person"),
+        )),
     ];
-    textualWorkOptions.value = await getResourceInstanceOptions(
-        fetchTextualWorkRdmSystemList,
+    textualWorkOptions.value = await getResourceInstanceOptions(() =>
+        fetchLingoResources("textual_work"),
     );
 }
 </script>

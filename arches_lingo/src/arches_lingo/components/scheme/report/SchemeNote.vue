@@ -5,7 +5,7 @@ import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
-import { deleteSchemeNoteTile, fetchSchemeNotes } from "@/arches_lingo/api.ts";
+import { deleteLingoTile, fetchLingoResource } from "@/arches_lingo/api.ts";
 import {
     ERROR,
     NEW,
@@ -70,7 +70,11 @@ async function getSectionValue() {
         return;
     }
     try {
-        const result = await fetchSchemeNotes(route.params.id as string);
+        const result = await fetchLingoResource(
+            "scheme",
+            route.params.id as string,
+            "statement",
+        );
         schemeInstance.value = {
             statement: result.statement,
         };
@@ -89,7 +93,7 @@ async function getSectionValue() {
 async function deleteSectionValue(tileId: string) {
     let result = false;
     try {
-        result = await deleteSchemeNoteTile(route.params.id as string, tileId);
+        result = await deleteLingoTile("scheme", "statement", tileId);
     } catch (error) {
         toast.add({
             severity: ERROR,
