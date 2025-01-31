@@ -37,7 +37,6 @@ class LingoResourceSerializer(ArchesModelSerializer):
         graph_slug = None  # generic
         nodegroups = "__all__"
         fields = "__all__"
-        read_only_graphs = ["group", "person", "textual_work"]
 
 
 class LingoTileSerializer(ArchesTileSerializer):
