@@ -38,7 +38,7 @@ urlpatterns = [
     path(
         "api/lingo/<slug:graph>/<uuid:pk>/<slug:nodegroup_alias>",
         LingoResourceDetailView.as_view(),
-        name="api-lingo-resource",
+        name="api-lingo-resource-partial",
     ),
     path(
         "api/lingo/<slug:graph>/<slug:nodegroup_alias>",

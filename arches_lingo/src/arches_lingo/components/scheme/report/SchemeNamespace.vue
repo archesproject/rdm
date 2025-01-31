@@ -7,7 +7,7 @@ import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeS
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import {
     createScheme,
-    fetchLingoResource,
+    fetchLingoResourcePartial,
     updateLingoResource,
 } from "@/arches_lingo/api.ts";
 import {
@@ -77,7 +77,7 @@ async function getSectionValue() {
         return;
     }
     try {
-        const response = await fetchLingoResource(
+        const response = await fetchLingoResourcePartial(
             "scheme",
             route.params.id as string,
             "namespace",

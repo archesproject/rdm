@@ -10,7 +10,7 @@ import ResourceInstanceRelationships from "@/arches_lingo/components/generic/Res
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
     createScheme,
-    fetchLingoResource,
+    fetchLingoResourcePartial,
     fetchLingoResources,
     updateLingoResource,
 } from "@/arches_lingo/api.ts";
@@ -118,7 +118,7 @@ async function setSchemeInstance(
     options: ResourceInstanceReference[] | undefined,
 ) {
     try {
-        const scheme = await fetchLingoResource(
+        const scheme = await fetchLingoResourcePartial(
             "scheme",
             route.params.id as string,
             "creation",

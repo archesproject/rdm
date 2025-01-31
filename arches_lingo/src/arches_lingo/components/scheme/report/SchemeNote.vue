@@ -5,7 +5,10 @@ import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
-import { deleteLingoTile, fetchLingoResource } from "@/arches_lingo/api.ts";
+import {
+    deleteLingoTile,
+    fetchLingoResourcePartial,
+} from "@/arches_lingo/api.ts";
 import {
     ERROR,
     NEW,
@@ -70,7 +73,7 @@ async function getSectionValue() {
         return;
     }
     try {
-        const result = await fetchLingoResource(
+        const result = await fetchLingoResourcePartial(
             "scheme",
             route.params.id as string,
             "statement",

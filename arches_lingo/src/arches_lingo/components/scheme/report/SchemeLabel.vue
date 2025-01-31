@@ -12,7 +12,10 @@ import {
     VIEW,
     UPDATED,
 } from "@/arches_lingo/constants.ts";
-import { deleteLingoTile, fetchLingoResource } from "@/arches_lingo/api.ts";
+import {
+    deleteLingoTile,
+    fetchLingoResourcePartial,
+} from "@/arches_lingo/api.ts";
 import LabelEditor from "@/arches_lingo/components/generic/LabelEditor.vue";
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
@@ -70,7 +73,7 @@ async function getSectionValue() {
         return;
     }
     try {
-        const result = await fetchLingoResource(
+        const result = await fetchLingoResourcePartial(
             "scheme",
             route.params.id as string,
             "appellative_status",

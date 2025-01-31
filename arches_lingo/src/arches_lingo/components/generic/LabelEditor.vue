@@ -134,17 +134,19 @@ function onUpdateResourceInstance(
 
 async function save() {
     try {
+        let newTileId;
         if (route.params.id === NEW) {
             const newSchemeInstance: SchemeInstance = {
                 appellative_status: [toRaw(formValue.value)],
             };
             const updated = await createScheme(newSchemeInstance);
+            newTileId = updated.appellative_status[0].tileid;
             await router.push({
                 name: "scheme",
                 params: { id: updated.resourceinstanceid },
             });
         } else {
-            await upsertLingoTile(
+            const updated = await upsertLingoTile(
                 "scheme",
                 "appellative_status",
                 {
@@ -153,8 +155,9 @@ async function save() {
                 },
                 formValue.value.tileid,
             );
+            newTileId = updated.tileid;
         }
-        emit("update");
+        emit("update", newTileId);
     } catch (error) {
         toast.add({
             severity: ERROR,

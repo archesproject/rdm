@@ -47,13 +47,17 @@ export const fetchLingoResources = async (graphSlug: string) => {
     return parsed;
 };
 
-export const fetchLingoResource = async (
+export const fetchLingoResourcePartial = async (
     graphSlug: string,
     schemeId: string,
-    nodegroupAlias: string | undefined,
+    nodegroupAlias: string,
 ) => {
     const response = await fetch(
-        arches.urls.api_lingo_resource(graphSlug, schemeId, nodegroupAlias),
+        arches.urls.api_lingo_resource_partial(
+            graphSlug,
+            schemeId,
+            nodegroupAlias,
+        ),
     );
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
@@ -66,7 +70,7 @@ export const updateLingoResource = async (
     schemeInstance: SchemeInstance,
 ) => {
     const response = await fetch(
-        arches.urls.api_lingo_resource(graphSlug, "scheme", schemeId),
+        arches.urls.api_lingo_resource(graphSlug, schemeId),
         {
             method: "PATCH",
             headers: {
