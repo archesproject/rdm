@@ -77,6 +77,7 @@ class SchemeLabelTileSerializer(ArchesTileSerializer):
                     raise ValidationError(msg)
         return data
 
+
 class LingoResourceSerializer(ArchesModelSerializer):
     # Link any custom serializers here.
     # TODO: put these back in, need some sort of check/wrapper

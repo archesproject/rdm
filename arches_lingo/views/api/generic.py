@@ -6,7 +6,11 @@ from rest_framework.generics import (
 from arches.app.permissions.rest_framework import RDMAdministrator
 from arches.app.views.api.mixins import ArchesModelAPIMixin
 
-from arches_lingo.serializers import LingoResourceSerializer, LingoTileSerializer, SchemeRightsSerializer
+from arches_lingo.serializers import (
+    LingoResourceSerializer,
+    LingoTileSerializer,
+    SchemeRightsSerializer,
+)
 
 
 class LingoResourceListCreateView(ArchesModelAPIMixin, ListCreateAPIView):
@@ -18,6 +22,7 @@ class LingoResourceListCreateView(ArchesModelAPIMixin, ListCreateAPIView):
 class LingoResourceDetailView(ArchesModelAPIMixin, RetrieveUpdateDestroyAPIView):
     permission_classes = [RDMAdministrator]
     serializer_class = LingoResourceSerializer
+
 
 class LingoTileListCreateView(ArchesModelAPIMixin, ListCreateAPIView):
     permission_classes = [RDMAdministrator]

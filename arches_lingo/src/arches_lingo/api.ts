@@ -1,8 +1,12 @@
 import arches from "arches";
 import Cookies from "js-cookie";
 
-import type { SchemeInstance, SchemeRights,
-    SchemeRightStatement, SchemeTile } from "@/arches_lingo/types";
+import type {
+    SchemeInstance,
+    SchemeRights,
+    SchemeRightStatement,
+    SchemeTile,
+} from "@/arches_lingo/types";
 
 function getToken() {
     const token = Cookies.get("csrftoken");
@@ -168,18 +172,21 @@ export const updateSchemeRights = async (
     schemeRightsValue: SchemeRights,
     schemeRightStatementValue: SchemeRightStatement,
 ) => {
-    const response = await fetch(arches.urls.api_scheme_rights_detail(schemeId), {
-        method: "PATCH",
-        headers: {
-            "X-CSRFTOKEN": getToken(),
-            "Content-Type": "application/json",
+    const response = await fetch(
+        arches.urls.api_scheme_rights_detail(schemeId),
+        {
+            method: "PATCH",
+            headers: {
+                "X-CSRFTOKEN": getToken(),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                resourceinstanceid: schemeId,
+                rights: schemeRightsValue,
+                right_statement: schemeRightStatementValue,
+            }),
         },
-        body: JSON.stringify({
-            resourceinstanceid: schemeId,
-            rights: schemeRightsValue,
-            right_statement: schemeRightStatementValue,
-        }),
-    });
+    );
     const parsed = await response.json();
     if (!response.ok) throw new Error(parsed.message || response.statusText);
     return parsed;

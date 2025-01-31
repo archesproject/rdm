@@ -26,6 +26,16 @@ urlpatterns = [
     path("api/concept-tree", ConceptTreeView.as_view(), name="api-concepts"),
     path("api/search", ValueSearchView.as_view(), name="api-search"),
     path(
+        "api/lingo/scheme/scheme-rights",
+        SchemeRightsListCreateView.as_view(),
+        name="api-scheme-rights-list-create",
+    ),
+    path(
+        "api/lingo/scheme/<uuid:pk>/scheme-rights",
+        SchemeRightsDetailView.as_view(),
+        name="api-scheme-rights-detail",
+    ),
+    path(
         "api/lingo/<slug:graph>",
         LingoResourceListCreateView.as_view(),
         name="api-lingo-resources",
@@ -49,16 +59,6 @@ urlpatterns = [
         "api/lingo/<slug:graph>/<slug:nodegroup_alias>/<uuid:pk>",
         LingoTileDetailView.as_view(),
         name="api-lingo-tile",
-    ),
-    path(
-        "api/lingo/scheme/scheme-rights",
-        SchemeRightsListCreateView.as_view(),
-        name="api-scheme-rights-list-create",
-    ),
-    path(
-        "api/lingo/scheme/<uuid:pk>/scheme-rights",
-        SchemeRightsDetailView.as_view(),
-        name="api-scheme-rights-detail",
     ),
     path("", include("arches_references.urls")),
 ]
