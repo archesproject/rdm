@@ -22,7 +22,10 @@ const items = ref([
             :key="item.routeName"
         >
             <RouterLink
-                v-tooltip="item.linkName"
+                v-tooltip="{
+                    value: item.linkName,
+                    pt: { text: { style: { fontFamily: 'sans-serif' } } },
+                }"
                 :to="{ name: item.routeName }"
                 class="p-button p-component p-button-primary"
                 style="text-decoration: none"
@@ -41,13 +44,13 @@ const items = ref([
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 3rem;
+    min-width: var(--p-button-icon-only-width);
     border-right: 1px solid var(--p-menubar-border-color);
 }
 
 .p-button {
-    min-height: 3rem;
-    min-width: 3rem;
+    min-height: var(--p-button-icon-only-width);
+    min-width: var(--p-button-icon-only-width);
     border-radius: 0;
     font-size: 1.5rem;
 }

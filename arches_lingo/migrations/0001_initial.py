@@ -23,8 +23,7 @@ class Migration(migrations.Migration):
     CREATE VIEW arches_lingo__vw_label_values AS (
     SELECT
         t.resourceinstanceid AS conceptid,
-        ROW_TO_JSON(JSONB_EACH(t.tiledata -> '{CONCEPT_NAME_CONTENT_NODE}'))
-            -> 'value' ->> 'value' AS value
+        t.tiledata ->> '{CONCEPT_NAME_CONTENT_NODE}' AS value
     FROM
         tiles t
     ORDER BY

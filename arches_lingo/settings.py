@@ -2,10 +2,7 @@
 Django settings for arches_lingo project.
 """
 
-import json
 import os
-import sys
-import arches
 import inspect
 import semantic_version
 from datetime import datetime, timedelta
@@ -249,6 +246,7 @@ INSTALLED_APPS = (
     "guardian",
     "captcha",
     "revproxy",
+    "rest_framework",
     "corsheaders",
     "oauth2_provider",
     "django_celery_results",

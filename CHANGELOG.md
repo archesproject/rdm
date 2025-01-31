@@ -10,9 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 -   Add login interface [#13](https://github.com/archesproject/arches-lingo/issues/13)
 -   Add front-end router [#11](https://github.com/archesproject/arches-lingo/issues/11)
+-   Add dark mode toggle [#91](https://github.com/archesproject/arches-lingo/issues/91)
+-   Add concept and scheme serializers [#103](https://github.com/archesproject/arches-lingo/issues/103)
 -   Add backend for search [#67](https://github.com/archesproject/arches-lingo/issues/67)
+-   Add concept and scheme pages [#15](https://github.com/archesproject/arches-lingo/issues/15)
+-   Add concept hierarchy component [#18](https://github.com/archesproject/arches-lingo/issues/18)
+-   Add scheme creation [#157](https://github.com/archesproject/arches-lingo/issues/157)
 
 ### Fixed
+-   Merge language finder implementations [#92](https://github.com/archesproject/arches-lingo/issues/92)
 
 ### Deprecated
 

@@ -1,8 +1,10 @@
+import io
 import os
-from django.db import migrations
+
 from django.core import management
+from django.db import migrations
+
 from arches_lingo.settings import APP_ROOT
-from arches_references.models import List, ListItem, ListItemValue
 
 
 class Migration(migrations.Migration):
@@ -22,6 +24,7 @@ class Migration(migrations.Migration):
                 "controlled_lists",
                 "lingo_lists.json",
             ),
+            stdout=io.StringIO(),
         )
 
     operations = [

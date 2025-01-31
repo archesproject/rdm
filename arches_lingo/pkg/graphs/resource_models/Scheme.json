@@ -285,6 +285,7 @@
                 {
                     "card_id": "6811fb53-2860-40c5-8c40-db6e6ae8aa4c",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -306,6 +307,21 @@
                 {
                     "card_id": "59dbe9fd-6e92-45f4-bd63-5990bbfd8c28",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "7f18f8f8-f1ab-46a1-93ca-55370f66fe93",
+                                        "language_id": "en",
+                                        "list_item_id": "929bfdbf-a592-4f70-bd8b-9c11deb6bff9",
+                                        "value": "controlled vocabularies",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "fb5dd406-33ef-4e83-a6a9-9ea02c1ada17",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/929bfdbf-a592-4f70-bd8b-9c11deb6bff9"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -349,6 +365,21 @@
                 {
                     "card_id": "ef87ae08-11de-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "24559510-c6c6-4558-b411-7cd127642657",
+                                        "language_id": "en",
+                                        "list_item_id": "14751cb1-f7af-45d9-b32a-59d150bdac0f",
+                                        "value": "warrant assertion event",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "6eaa2c6f-af83-464c-9200-051c4cfe7e8e",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/14751cb1-f7af-45d9-b32a-59d150bdac0f"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -370,6 +401,7 @@
                 {
                     "card_id": "7b9b459f-bc56-41e4-a172-d0e3f289495e",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -391,6 +423,21 @@
                 {
                     "card_id": "92c68f1f-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "19b88d0c-4607-401b-b5ee-6312832d0e0c",
+                                        "language_id": "en",
+                                        "list_item_id": "de263fe8-5ebd-4d6c-a7c7-8068598ba962",
+                                        "value": "namespace",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "a8da34eb-575b-498c-ada7-161ee745fd16",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/de263fe8-5ebd-4d6c-a7c7-8068598ba962"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -412,6 +459,21 @@
                 {
                     "card_id": "59dbe9fd-6e92-45f4-bd63-5990bbfd8c28",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "1cea8e22-2bc3-43aa-abfd-0d04719d99d1",
+                                        "language_id": "en",
+                                        "list_item_id": "9c93be63-b900-4f63-b0cf-7351e5129508",
+                                        "value": "classification",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "ef69e772-de53-45fe-98d4-bf3e7b10eb57",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/9c93be63-b900-4f63-b0cf-7351e5129508"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -454,6 +516,7 @@
                 {
                     "card_id": "87fac835-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -475,6 +538,7 @@
                 {
                     "card_id": "8e34b481-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -517,6 +581,21 @@
                 {
                     "card_id": "7131bd94-11e0-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "51ccf153-fa7b-4b22-8d0d-d1a57a6c84c2",
+                                        "language_id": "en",
+                                        "list_item_id": "02a0fc69-9f92-4bef-b657-af1ed37c1d3e",
+                                        "value": "brief texts",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "ef69e772-de53-45fe-98d4-bf3e7b10eb57",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/02a0fc69-9f92-4bef-b657-af1ed37c1d3e"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -538,6 +617,21 @@
                 {
                     "card_id": "7131bd94-11e0-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "4f8699ea-aca7-4e84-9243-f6c9158f7c11",
+                                        "language_id": "en",
+                                        "list_item_id": "52eb8678-485d-418c-9ad2-aa97d077ac56",
+                                        "value": "scopeNote",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "aba2a0b4-75a4-45ba-8b57-021f3ca92a6a",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/52eb8678-485d-418c-9ad2-aa97d077ac56"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -559,6 +653,7 @@
                 {
                     "card_id": "7131bd94-11e0-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -675,12 +770,7 @@
                 {
                     "card_id": "7131bd94-11e0-11ef-9493-0a58a9feac02",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -690,7 +780,7 @@
                             "en": "Enter text"
                         },
                         "uneditable": false,
-                        "width": "100%"
+                        "width": "100%%"
                     },
                     "id": "7131cd3e-11e0-11ef-9493-0a58a9feac02",
                     "label": {
@@ -700,7 +790,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "7131bd94-11e0-11ef-9493-0a58a9feac02",
@@ -756,6 +846,21 @@
                 {
                     "card_id": "7131bd94-11e0-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "24559510-c6c6-4558-b411-7cd127642657",
+                                        "language_id": "en",
+                                        "list_item_id": "14751cb1-f7af-45d9-b32a-59d150bdac0f",
+                                        "value": "warrant assertion event",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "6eaa2c6f-af83-464c-9200-051c4cfe7e8e",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/14751cb1-f7af-45d9-b32a-59d150bdac0f"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -855,14 +960,14 @@
                         "i18n_properties": [
                             "placeholder"
                         ],
-                        "label": "Standards / Sources ",
+                        "label": "Standards / Sources",
                         "placeholder": {
                             "en": ""
                         }
                     },
                     "id": "7e5c3bed-423c-11ee-8a8d-11afefc4bff7",
                     "label": {
-                        "en": "Standards / Sources "
+                        "en": "Standards / Sources"
                     },
                     "node_id": "7e5c3be5-423c-11ee-8a8d-11afefc4bff7",
                     "sortorder": 1,
@@ -873,12 +978,7 @@
                 {
                     "card_id": "87fac835-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -888,7 +988,7 @@
                             "en": "Enter text"
                         },
                         "uneditable": false,
-                        "width": "100%"
+                        "width": "100%%"
                     },
                     "id": "87fac840-423c-11ee-8a8d-11afefc4bff7",
                     "label": {
@@ -898,7 +998,7 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000005"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "87fac835-423c-11ee-8a8d-11afefc4bff7",
@@ -985,12 +1085,7 @@
                 {
                     "card_id": "87fac838-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1000,7 +1095,7 @@
                             "en": "Enter text"
                         },
                         "uneditable": false,
-                        "width": "100%"
+                        "width": "100%%"
                     },
                     "id": "87fac84b-423c-11ee-8a8d-11afefc4bff7",
                     "label": {
@@ -1010,7 +1105,7 @@
                     "sortorder": 10,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "8e34b481-423c-11ee-8a8d-11afefc4bff7",
@@ -1075,6 +1170,21 @@
                 {
                     "card_id": "97351c47-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "e77aa058-8cbf-4c41-bc03-ede1cebb5ce0",
+                                        "language_id": "en",
+                                        "list_item_id": "926aa6de-a7e6-4959-9fc4-5ea87c46d677",
+                                        "value": "versions",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "a8da34eb-575b-498c-ada7-161ee745fd16",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/926aa6de-a7e6-4959-9fc4-5ea87c46d677"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1096,6 +1206,7 @@
                 {
                     "card_id": "87fac835-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1117,6 +1228,7 @@
                 {
                     "card_id": "87fac838-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1138,6 +1250,7 @@
                 {
                     "card_id": "ef87ae08-11de-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": null,
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1159,6 +1272,7 @@
                 {
                     "card_id": "ef87ae08-11de-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1245,12 +1359,7 @@
                 {
                     "card_id": "ef87ae08-11de-11ef-9493-0a58a9feac02",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1260,7 +1369,7 @@
                             "en": "Enter text"
                         },
                         "uneditable": false,
-                        "width": "100%"
+                        "width": "100%%"
                     },
                     "id": "ef87b84e-11de-11ef-9493-0a58a9feac02",
                     "label": {
@@ -1270,11 +1379,12 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "ef87ae08-11de-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1317,6 +1427,21 @@
                 {
                     "card_id": "ef87ae08-11de-11ef-9493-0a58a9feac02",
                     "config": {
+                        "defaultValue": [
+                            {
+                                "labels": [
+                                    {
+                                        "id": "f8abdf58-1a22-43e1-86d9-d30a1d1466fb",
+                                        "language_id": "en",
+                                        "list_item_id": "7b873aed-1dbd-45e4-98e7-85143ee453c6",
+                                        "value": "informational status",
+                                        "valuetype_id": "prefLabel"
+                                    }
+                                ],
+                                "listid": "ef69e772-de53-45fe-98d4-bf3e7b10eb57",
+                                "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/7b873aed-1dbd-45e4-98e7-85143ee453c6"
+                            }
+                        ],
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -1338,20 +1463,13 @@
                 {
                     "card_id": "92c68f1f-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
-                        "defaultValue": {
-                            "en": {
-                                "direction": "ltr",
-                                "value": ""
-                            }
-                        },
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
                         "label": "Namespace Name",
                         "maxLength": null,
-                        "placeholder": {
-                            "en": "Enter text"
-                        },
+                        "placeholder":"Enter text",
                         "uneditable": false,
                         "width": "100%"
                     },
@@ -1363,11 +1481,12 @@
                     "sortorder": 0,
                     "source_identifier_id": null,
                     "visible": true,
-                    "widget_id": "10000000-0000-0000-0000-000000000001"
+                    "widget_id": "46ef064b-2611-4708-9f52-60136bd8a65b"
                 },
                 {
                     "card_id": "87fac835-423c-11ee-8a8d-11afefc4bff7",
                     "config": {
+                        "defaultValue": "",
                         "i18n_properties": [
                             "placeholder"
                         ],
@@ -2202,7 +2321,7 @@
                     "alias": "right_statement_language",
                     "config": {
                         "controlledList": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
-                        "multiValue": true
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2429,7 +2548,7 @@
                     "alias": "statement_language_n1",
                     "config": {
                         "controlledList": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
-                        "multiValue": true
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -2529,7 +2648,7 @@
                 {
                     "alias": "statement_content_n1",
                     "config": {},
-                    "datatype": "string",
+                    "datatype": "non-localized-string",
                     "description": "* Collection_id: LAP.4_Statement\n* Field_id: LAF.15_statement_content\n* Category_id: CAT.4_Description",
                     "exportable": false,
                     "fieldname": null,
@@ -2744,7 +2863,7 @@
                     "sourcebranchpublication_id": null
                 },
                 {
-                    "alias": "creation_sources_",
+                    "alias": "creation_sources",
                     "config": {
                         "graphs": [
                             {
@@ -2770,7 +2889,7 @@
                     "isrequired": false,
                     "issearchable": true,
                     "istopnode": false,
-                    "name": "creation_sources ",
+                    "name": "creation_sources",
                     "nodegroup_id": "7e5c3bc5-423c-11ee-8a8d-11afefc4bff7",
                     "nodeid": "7e5c3be5-423c-11ee-8a8d-11afefc4bff7",
                     "ontologyclass": "http://www.cidoc-crm.org/cidoc-crm/E33_Linguistic_Object",
@@ -2866,7 +2985,7 @@
                 {
                     "alias": "right_statement_content",
                     "config": {},
-                    "datatype": "string",
+                    "datatype": "non-localized-string",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -3070,7 +3189,7 @@
                 {
                     "alias": "namespace_name",
                     "config": {},
-                    "datatype": "string",
+                    "datatype": "non-localized-string",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -3482,7 +3601,7 @@
                     "config": {
                         "en": ""
                     },
-                    "datatype": "string",
+                    "datatype": "non-localized-string",
                     "description": null,
                     "exportable": false,
                     "fieldname": null,
@@ -3621,7 +3740,7 @@
                     "alias": "appellative_status_ascribed_name_language",
                     "config": {
                         "controlledList": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
-                        "multiValue": true
+                        "multiValue": false
                     },
                     "datatype": "reference",
                     "description": null,
@@ -3783,9 +3902,9 @@
             "publication": {
                 "graph_id": "56788995-423b-11ee-8a8d-11afefc4bff7",
                 "most_recent_edit_id": null,
-                "notes": "update graph slug",
-                "publicationid": "2bb9e172-978e-11ef-aa96-0aa766c61b64",
-                "published_time": "2024-10-31T08:43:54.652"
+                "notes": "Migrated selected string nodes to non-localized string nodes",
+                "publicationid": "dfda523c-a2f5-11ef-afb4-0aa766c61b64",
+                "published_time": "2024-11-14T20:03:57.808"
             },
             "relatable_resource_model_ids": [],
             "resource_2_resource_constraints": [],
@@ -3868,8 +3987,8 @@
     ],
     "metadata": {
         "db": "PostgreSQL 17.0 (Postgres.app) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 15.0.0 (clang-1500.3.9.4), 64-bit",
-        "git hash": "5006223ef6 2024-10-30 15:47:56 -0400",
+        "git hash": "92539cdf5 2024-11-14 19:28:17 -0500",
         "os": "Darwin",
-        "os version": "24.0.0"
+        "os version": "24.1.0"
     }
 }
