@@ -6,6 +6,7 @@ from arches.app.models.serializers import ArchesModelSerializer, ArchesTileSeria
 from arches_references.models import ListItem
 
 
+# Temporary until parent/child developer experience finalized in core.
 class SchemeRightsSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance
@@ -29,16 +30,24 @@ class SchemeRightsSerializer(ArchesModelSerializer):
         return instance
 
 
-### Custom serializers for implementing business logic.
-class SchemeLabelTileSerializer(ArchesTileSerializer):
+# Generic serializers for Lingo.
+class LingoResourceSerializer(ArchesModelSerializer):
+    class Meta:
+        model = ResourceInstance
+        graph_slug = None  # generic
+        nodegroups = "__all__"
+        fields = "__all__"
+        read_only_graphs = ["group", "person", "textual_work"]
+
+
+class LingoTileSerializer(ArchesTileSerializer):
     class Meta:
         model = TileModel
-        graph_slug = "scheme"
-        root_node = "appellative_status"
+        graph_slug = None  # generic
+        root_node = None  # generic
         fields = "__all__"
 
-    def validate(self, data):
-        data = super().validate(data)
+    def validate_appellative_status(self, data):
         try:
             PREF_LABEL = ListItem.objects.get(list_item_values__value="prefLabel")
         except ListItem.MultipleObjectsReturned:
@@ -76,27 +85,3 @@ class SchemeLabelTileSerializer(ArchesTileSerializer):
                     msg = _("Only one preferred label per language is permitted.")
                     raise ValidationError(msg)
         return data
-
-
-class LingoResourceSerializer(ArchesModelSerializer):
-    # Link any custom serializers here.
-    # TODO: put these back in, need some sort of check/wrapper
-    # appellative_status = SchemeLabelTileSerializer(
-    #     many=True, required=False, allow_null=True
-    # )
-
-    class Meta:
-        model = ResourceInstance
-        graph_slug = None  # generic
-        read_only_graphs = ["group", "person", "textual_work"]  # optional attribute
-        nodegroups = "__all__"
-        fields = "__all__"
-
-
-class LingoTileSerializer(ArchesTileSerializer):
-    # Link any custom serializers here.
-    class Meta:
-        model = TileModel
-        graph_slug = None  # generic
-        root_node = None  # generic
-        fields = "__all__"
