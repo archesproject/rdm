@@ -51,6 +51,18 @@ export const fetchLingoResources = async (graphSlug: string) => {
     return parsed;
 };
 
+export const fetchLingoResource = async (
+    graphSlug: string,
+    schemeId: string,
+) => {
+    const response = await fetch(
+        arches.urls.api_lingo_resource(graphSlug, schemeId),
+    );
+    const parsed = await response.json();
+    if (!response.ok) throw new Error(parsed.message || response.statusText);
+    return parsed;
+};
+
 export const fetchLingoResourcePartial = async (
     graphSlug: string,
     schemeId: string,

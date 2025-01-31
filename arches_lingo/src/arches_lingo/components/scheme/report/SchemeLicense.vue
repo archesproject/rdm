@@ -7,8 +7,8 @@ import Button from "primevue/button";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
     createSchemeFromRights,
+    fetchLingoResource,
     fetchLingoResources,
-    fetchLingoResourcePartial,
     updateSchemeRights,
 } from "@/arches_lingo/api.ts";
 import { fetchLists } from "@/arches_references/api.ts";
@@ -229,10 +229,9 @@ async function getSectionValue() {
     if (route.params.id === NEW) {
         return;
     }
-    const schemeInstance = await fetchLingoResourcePartial(
+    const schemeInstance = await fetchLingoResource(
         "scheme",
         route.params.id as string,
-        "rights",
     );
     schemeRights.value = schemeInstance?.rights ?? {};
     if (schemeInstance?.rights) {
