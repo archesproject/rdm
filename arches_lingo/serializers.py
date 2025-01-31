@@ -57,16 +57,14 @@ class SchemeRightsSerializer(ArchesModelSerializer):
         # Shouldn't need to refresh_from_db() here, but I'll (jtw)
         # look into that later, since this is all just a workaround.
         instance.refresh_from_db()
-        if instance.rights:
-            instance.right_statement.parenttile = instance.rights
-        else:
-            blank_parent = Tile.get_blank_tile_from_nodegroup_id(
+        if not instance.rights:
+            instance.rights = Tile.get_blank_tile_from_nodegroup_id(
                 instance.right_statement.nodegroup.parentnodegroup_id,
                 resourceid=instance.resourceinstanceid,
             )
-            blank_parent.save()
-            instance.right_statement.parenttile = blank_parent
+            instance.rights.save()
 
+        instance.right_statement.parenttile = instance.rights
         instance.right_statement.save()
         return instance
 
