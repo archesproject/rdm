@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.urls import include, path
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 from arches_lingo.views.root import LingoRootView
 from arches_lingo.views.api.concepts import ConceptTreeView, ValueSearchView
@@ -68,6 +69,9 @@ urlpatterns.append(path("", include("arches.urls")))
 
 # Adds URL pattern to serve media files during development
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+urlpatterns += debug_toolbar_urls()
 
 # Only handle i18n routing in active project. This will still handle the routes provided by Arches core and Arches applications,
 # but handling i18n routes in multiple places causes application errors.

@@ -249,6 +249,7 @@ INSTALLED_APPS = (
     "rest_framework",
     "corsheaders",
     "oauth2_provider",
+    "debug_toolbar",
     "django_celery_results",
     # "silk",
 )
@@ -259,6 +260,7 @@ ROOT_HOSTCONF = "arches_lingo.hosts"
 DEFAULT_HOST = "arches_lingo"
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
