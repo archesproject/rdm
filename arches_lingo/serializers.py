@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from arches.app.models.models import ResourceInstance, TileModel
 from arches.app.models.serializers import ArchesModelSerializer, ArchesTileSerializer
+from arches.app.models.tile import Tile
 from arches_references.models import ListItem
 
 
@@ -25,6 +26,13 @@ class SchemeRightsSerializer(ArchesModelSerializer):
         # Shouldn't need to refresh_from_db() here, but I'll (jtw)
         # look into that later, since this is all just a workaround.
         instance.refresh_from_db()
+        if not instance.rights:
+            instance.rights = Tile.get_blank_tile_from_nodegroup_id(
+                instance.right_statement.nodegroup.parentnodegroup_id,
+                resourceid=instance.resourceinstanceid,
+            )
+            instance.rights.save()
+
         instance.right_statement.parenttile = instance.rights
         instance.right_statement.save()
         return instance
