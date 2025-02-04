@@ -14,7 +14,5 @@
     api_lingo_resource_partial='(graphslug, resourceinstanceid, nodegroupAlias) => { return "{% url "api-lingo-resource-partial" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" "cccccccc-cccc-cccc-cccc-cccccccccccc" %}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", graphslug).replace("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", resourceinstanceid).replace("cccccccc-cccc-cccc-cccc-cccccccccccc", nodegroupAlias)}'
     api_lingo_tiles='(graphslug, nodegroupAlias) => { return "{% url "api-lingo-tiles" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" %}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", graphslug).replace("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", nodegroupAlias)}'
     api_lingo_tile='(graphslug, nodegroupAlias, tileid) => { return "{% url "api-lingo-tile" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" "cccccccc-cccc-cccc-cccc-cccccccccccc" %}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", graphslug).replace("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", nodegroupAlias).replace("cccccccc-cccc-cccc-cccc-cccccccccccc", tileid)}'
-    api_scheme_rights_list_create="{% url 'api-scheme-rights-list-create' %}"
-    api_scheme_rights_detail='(resourceid)=>{return "{% url "api-scheme-rights-detail" "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" %}".replace("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", resourceid)}'
 ></div>
 {% endblock arches_urls %}

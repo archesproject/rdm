@@ -69,8 +69,8 @@ const languageOptions = ref<ControlledListItem[]>();
 const noteOptions = ref<ControlledListItem[]>();
 const metatypesOptions = ref<ControlledListItem[]>();
 const parentExists = ref(false);
-const schemeRights = ref<SchemeRights>();
-const schemeRightStatement = ref<SchemeRightStatement>();
+const schemeRights = ref<SchemeRights>({});
+const schemeRightStatement = ref<SchemeRightStatement>({});
 
 const referenceNodeConfig = [
     {

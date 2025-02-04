@@ -4,16 +4,24 @@ from rest_framework.exceptions import ValidationError
 from arches.app.models.models import ResourceInstance, TileModel
 from arches.app.models.serializers import ArchesModelSerializer, ArchesTileSerializer
 from arches.app.models.tile import Tile
+
 from arches_references.models import ListItem
 
 
-# Temporary until parent/child developer experience finalized in core.
-class SchemeRightsSerializer(ArchesModelSerializer):
+# Generic serializers for Lingo.
+class LingoResourceSerializer(ArchesModelSerializer):
     class Meta:
         model = ResourceInstance
-        graph_slug = "scheme"
-        nodegroups = ["rights", "right_statement"]
+        graph_slug = None  # generic
+        nodegroups = "__all__"
         fields = "__all__"
+
+    def create(self, validated_data):
+        """Repair parenttile until fixed in core."""
+        created = super().create(validated_data)
+        if created.right_statement:
+            self.repair_right_statement(created)
+        return created
 
     def update(self, instance, validated_data):
         """Repair parenttile until fixed in core."""
@@ -36,15 +44,6 @@ class SchemeRightsSerializer(ArchesModelSerializer):
         instance.right_statement.parenttile = instance.rights
         instance.right_statement.save()
         return instance
-
-
-# Generic serializers for Lingo.
-class LingoResourceSerializer(ArchesModelSerializer):
-    class Meta:
-        model = ResourceInstance
-        graph_slug = None  # generic
-        nodegroups = "__all__"
-        fields = "__all__"
 
 
 class LingoTileSerializer(ArchesTileSerializer):

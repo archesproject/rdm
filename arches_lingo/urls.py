@@ -10,8 +10,6 @@ from arches_lingo.views.api.generic import (
     LingoResourceListCreateView,
     LingoTileDetailView,
     LingoTileListCreateView,
-    SchemeRightsListCreateView,
-    SchemeRightsDetailView,
 )
 
 urlpatterns = [
@@ -25,16 +23,6 @@ urlpatterns = [
     path("concept/<uuid:id>", LingoRootView.as_view(), name="concept"),
     path("api/concept-tree", ConceptTreeView.as_view(), name="api-concepts"),
     path("api/search", ValueSearchView.as_view(), name="api-search"),
-    path(
-        "api/lingo/scheme/scheme-rights",
-        SchemeRightsListCreateView.as_view(),
-        name="api-scheme-rights-list-create",
-    ),
-    path(
-        "api/lingo/scheme/<uuid:pk>/scheme-rights",
-        SchemeRightsDetailView.as_view(),
-        name="api-scheme-rights-detail",
-    ),
     path(
         "api/lingo/<slug:graph>",
         LingoResourceListCreateView.as_view(),

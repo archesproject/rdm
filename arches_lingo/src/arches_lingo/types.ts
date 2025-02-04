@@ -144,13 +144,13 @@ export interface SchemeStatement {
 }
 
 export interface SchemeRights {
-    tileid: string;
+    tileid?: string;
     right_holder?: ResourceInstanceReference[];
     right_type?: ControlledListItem[];
 }
 
 export interface SchemeRightStatement {
-    tileid: string;
+    tileid?: string;
     right_statement_content?: string;
     right_statement_label?: string;
     right_statement_language?: ControlledListItem[];
