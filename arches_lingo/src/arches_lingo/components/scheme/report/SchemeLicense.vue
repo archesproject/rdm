@@ -6,10 +6,10 @@ import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
-    createSchemeFromRights,
+    createScheme,
     fetchLingoResource,
     fetchLingoResources,
-    updateSchemeRights,
+    updateLingoResource,
 } from "@/arches_lingo/api.ts";
 import { fetchLists } from "@/arches_references/api.ts";
 
@@ -20,7 +20,6 @@ import type {
     DataComponentMode,
     ResourceInstanceReference,
     ResourceInstanceResult,
-    SchemeInstance,
     SchemeRights,
     SchemeRightStatement,
 } from "@/arches_lingo/types";
@@ -197,24 +196,26 @@ function onUpdateString(node: keyof SchemeRightStatement, val: string) {
 }
 
 async function saveRights() {
+    const schemeInstance = {
+        rights: schemeRights.value,
+        right_statement: schemeRightStatement.value,
+    };
     try {
+        let updated;
         if (route.params.id === NEW) {
-            const newSchemeInstance: SchemeInstance = {
-                rights: toRaw(schemeRights.value),
-                right_statement: toRaw(schemeRightStatement.value),
-            };
-            const updated = await createSchemeFromRights(newSchemeInstance);
+            updated = await createScheme(schemeInstance);
             await router.push({
                 name: "scheme",
                 params: { id: updated.resourceinstanceid },
             });
         } else {
-            await updateSchemeRights(
+            updated = await updateLingoResource(
+                "scheme",
                 route.params.id as string,
-                schemeRights.value as SchemeRights,
-                schemeRightStatement.value as SchemeRightStatement,
+                schemeInstance,
             );
         }
+        // TODO: could use updated server response here.
         emit(UPDATED);
     } catch (error) {
         toast.add({
