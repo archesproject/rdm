@@ -6,11 +6,10 @@ import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
-    fetchSchemeRights,
-    createSchemeFromRights,
-    updateSchemeRights,
-    fetchPersonRdmSystemList,
-    fetchGroupRdmSystemList,
+    createScheme,
+    fetchLingoResource,
+    fetchLingoResources,
+    updateLingoResource,
 } from "@/arches_lingo/api.ts";
 import { fetchLists } from "@/arches_references/api.ts";
 
@@ -21,7 +20,6 @@ import type {
     DataComponentMode,
     ResourceInstanceReference,
     ResourceInstanceResult,
-    SchemeInstance,
     SchemeRights,
     SchemeRightStatement,
 } from "@/arches_lingo/types";
@@ -71,8 +69,8 @@ const languageOptions = ref<ControlledListItem[]>();
 const noteOptions = ref<ControlledListItem[]>();
 const metatypesOptions = ref<ControlledListItem[]>();
 const parentExists = ref(false);
-const schemeRights = ref<SchemeRights>();
-const schemeRightStatement = ref<SchemeRightStatement>();
+const schemeRights = ref<SchemeRights>({});
+const schemeRightStatement = ref<SchemeRightStatement>({});
 
 const referenceNodeConfig = [
     {
@@ -98,8 +96,8 @@ const referenceNodeConfig = [
 ];
 
 async function getActorOptions() {
-    const options_person = await fetchPersonRdmSystemList();
-    const options_group = await fetchGroupRdmSystemList();
+    const options_person = await fetchLingoResources("person");
+    const options_group = await fetchLingoResources("group");
     const options = options_person.concat(options_group);
 
     actorRdmOptions.value = options.map((option: ResourceInstanceResult) => {
@@ -198,24 +196,26 @@ function onUpdateString(node: keyof SchemeRightStatement, val: string) {
 }
 
 async function saveRights() {
+    const schemeInstance = {
+        rights: schemeRights.value,
+        right_statement: schemeRightStatement.value,
+    };
     try {
+        let updated;
         if (route.params.id === NEW) {
-            const newSchemeInstance: SchemeInstance = {
-                rights: toRaw(schemeRights.value),
-                right_statement: toRaw(schemeRightStatement.value),
-            };
-            const updated = await createSchemeFromRights(newSchemeInstance);
+            updated = await createScheme(schemeInstance);
             await router.push({
                 name: "scheme",
                 params: { id: updated.resourceinstanceid },
             });
         } else {
-            await updateSchemeRights(
+            updated = await updateLingoResource(
+                "scheme",
                 route.params.id as string,
-                schemeRights.value as SchemeRights,
-                schemeRightStatement.value as SchemeRightStatement,
+                schemeInstance,
             );
         }
+        // TODO: could use updated server response here.
         emit(UPDATED);
     } catch (error) {
         toast.add({
@@ -230,7 +230,10 @@ async function getSectionValue() {
     if (route.params.id === NEW) {
         return;
     }
-    const schemeInstance = await fetchSchemeRights(route.params.id as string);
+    const schemeInstance = await fetchLingoResource(
+        "scheme",
+        route.params.id as string,
+    );
     schemeRights.value = schemeInstance?.rights ?? {};
     if (schemeInstance?.rights) {
         parentExists.value = true;
