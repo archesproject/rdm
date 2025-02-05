@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, ref, toRaw, type Ref } from "vue";
+import { inject, onMounted, ref, toRaw, useId, type Ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
@@ -71,6 +71,13 @@ const metatypesOptions = ref<ControlledListItem[]>();
 const parentExists = ref(false);
 const schemeRights = ref<SchemeRights>({});
 const schemeRightStatement = ref<SchemeRightStatement>({});
+
+const rightHolderId = useId();
+const rightTypeId = useId();
+const rightStatementContentId = useId();
+const rightStatementLanguageId = useId();
+const rightStatementTypeId = useId();
+const rightStatementTypeMetatypeId = useId();
 
 const referenceNodeConfig = [
     {
@@ -256,15 +263,13 @@ defineExpose({ getSectionValue });
         @open-editor="$emit(OPEN_EDITOR)"
     >
     </SchemeReportSection>
-    <div
-        v-if="parentExists || mode === EDIT"
-        class="section"
-    >
-        <h4>{{ $gettext("Rights Holders") }}</h4>
+    <div v-if="parentExists || mode === EDIT">
+        <p :id="rightHolderId">{{ $gettext("Rights Holders") }}</p>
         <ResourceInstanceRelationships
             :value="schemeRights?.right_holder"
-            :options="actorRdmOptions"
             :mode="mode"
+            :options="actorRdmOptions"
+            :pt-aria-labeled-by="rightHolderId"
             @update="
                 (val) =>
                     onUpdateResourceInstance(
@@ -274,28 +279,35 @@ defineExpose({ getSectionValue });
                     )
             "
         />
-        <h4>{{ $gettext("Rights Type") }}</h4>
+        <p :id="rightTypeId">{{ $gettext("Rights Type") }}</p>
         <ReferenceDatatype
             :value="schemeRights?.right_type"
-            :options="rightTypeOptions"
-            :multi-value="false"
             :mode="mode"
+            :multi-value="false"
+            :options="rightTypeOptions"
+            :pt-aria-labeled-by="rightTypeId"
             @update="
                 (val) => onUpdateSchemeRightReferenceDatatype('right_type', val)
             "
         />
-        <h4>{{ $gettext("Statement") }}</h4>
+        <label :for="rightStatementContentId">{{
+            $gettext("Statement")
+        }}</label>
         <NonLocalizedString
             :value="schemeRightStatement?.right_statement_content"
             :mode="mode"
+            :pass-thru-id="rightStatementContentId"
             @update="(val) => onUpdateString('right_statement_content', val)"
         />
-        <h4>{{ $gettext("Statement Language") }}</h4>
+        <p :id="rightStatementLanguageId">
+            {{ $gettext("Statement Language") }}
+        </p>
         <ReferenceDatatype
             :value="schemeRightStatement?.right_statement_language"
             :mode="mode"
             :multi-value="false"
             :options="languageOptions"
+            :pt-aria-labeled-by="rightStatementLanguageId"
             @update="
                 (val) =>
                     onUpdateSchemeRightStatementReferenceDatatype(
@@ -304,12 +316,13 @@ defineExpose({ getSectionValue });
                     )
             "
         />
-        <h4>{{ $gettext("Statement Type") }}</h4>
+        <p :id="rightStatementTypeId">{{ $gettext("Statement Type") }}</p>
         <ReferenceDatatype
             :value="schemeRightStatement?.right_statement_type"
             :mode="mode"
             :multi-value="false"
             :options="noteOptions"
+            :pt-aria-labeled-by="rightStatementTypeId"
             @update="
                 (val) =>
                     onUpdateSchemeRightStatementReferenceDatatype(
@@ -318,12 +331,15 @@ defineExpose({ getSectionValue });
                     )
             "
         />
-        <h4>{{ $gettext("Statement Type Metatype") }}</h4>
+        <p :id="rightStatementTypeMetatypeId">
+            {{ $gettext("Statement Type Metatype") }}
+        </p>
         <ReferenceDatatype
             :value="schemeRightStatement?.right_statement_type_metatype"
             :mode="mode"
             :multi-value="false"
             :options="metatypesOptions"
+            :pt-aria-labeled-by="rightStatementTypeMetatypeId"
             @update="
                 (val) =>
                     onUpdateSchemeRightStatementReferenceDatatype(
@@ -339,8 +355,9 @@ defineExpose({ getSectionValue });
         ></Button>
     </div>
 </template>
+
 <style scoped>
-.section {
-    margin: 0 1rem;
+p {
+    margin: 0;
 }
 </style>
