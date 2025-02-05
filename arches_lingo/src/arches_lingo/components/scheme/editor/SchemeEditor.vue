@@ -146,4 +146,7 @@ function onSectionUpdate() {
 .header div h3 {
     flex: 1;
 }
+.content {
+    margin: 0 1rem;
+}
 </style>
