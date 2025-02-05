@@ -5,6 +5,7 @@ from arches.app.models.models import ResourceInstance, TileModel
 from arches.app.models.serializers import ArchesModelSerializer, ArchesTileSerializer
 from arches.app.models.tile import Tile
 
+from arches_references.datatypes.datatypes import ReferenceDataType
 from arches_references.models import ListItem
 
 
@@ -63,30 +64,37 @@ class LingoTileSerializer(ArchesTileSerializer):
             raise ValidationError(msg)
 
         if data:
-            # TODO: reduce nested-fallback awkwardness by returning a dataclass from
-            # ReferenceDataType.to_python() and feeding incoming data to it.
-            new_label_language = next(
-                iter(data.get("appellative_status_ascribed_name_language", None) or []),
-                {},
+            # TODO: consider having serializer run to_python().
+            new_label_languages = ReferenceDataType.to_python(
+                data.get("appellative_status_ascribed_name_language")
             )
-            new_label_type = next(
-                iter(data.get("appellative_status_ascribed_relation", None) or []), {}
+            if new_label_languages:
+                new_label_language = new_label_languages[0]
+            else:
+                return data
+            new_label_types = ReferenceDataType.to_python(
+                data.get("appellative_status_ascribed_relation")
             )
-            current_labels = data["resourceinstance"].appellative_status
+            if new_label_types:
+                new_label_type = new_label_types[0]
+            else:
+                return data
 
+            current_labels = data["resourceinstance"].appellative_status or []
             for label in current_labels:
-                label_language = next(
-                    iter(label.appellative_status_ascribed_name_language or []), {}
-                )
-                label_type = next(
-                    iter(label.appellative_status_ascribed_relation or []), {}
-                )
+                if label_languages := label.appellative_status_ascribed_name_language:
+                    label_language = label_languages[0]
+                else:
+                    continue
+                if label_types := label.appellative_status_ascribed_relation:
+                    label_type = label_types[0]
+                else:
+                    continue
                 if (
-                    data.get("tileid", None) not in (None, label.tileid)
-                    and new_label_type.get("uri", "") == PREF_LABEL.uri
-                    and label_type.get("uri", "") == PREF_LABEL.uri
-                    and label_language.get("uri", "")
-                    == new_label_language.get("uri", "")
+                    data.get("tileid") != label.tileid
+                    and new_label_type.uri == PREF_LABEL.uri
+                    and label_type.uri == PREF_LABEL.uri
+                    and label_language.uri == new_label_language.uri
                 ):
                     msg = _("Only one preferred label per language is permitted.")
                     raise ValidationError(msg)
