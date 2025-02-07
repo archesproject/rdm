@@ -81,6 +81,7 @@ export interface ResourceInstanceReference {
 export interface NewResourceInstance {
     displayValue: string;
     graphId: string;
+    graphSlug: string;
 }
 
 export interface ResourceInstanceResult {
@@ -91,6 +92,7 @@ export interface ResourceInstanceResult {
 export interface GraphInfo {
     graphid: string;
     name: string;
+    slug: string;
 }
 
 interface ControlledListItemValue {

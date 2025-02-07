@@ -5,7 +5,6 @@ import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import type {
     GraphInfo,
-    NewResourceInstance,
     ResourceInstanceReference,
     ResourceInstanceResult,
 } from "@/arches_lingo/types";
@@ -19,8 +18,10 @@ import {
 } from "@/arches_lingo/constants.ts";
 import type { VirtualScrollerLazyEvent } from "primevue/virtualscroller";
 import { useToast } from "primevue/usetoast";
+import NewResourceBuilder from "../NewResourceBuilder.vue";
 
 const showNewResource = ref(false);
+const newResourceGraphId = ref<string | null>(null);
 const { $gettext } = useGettext();
 const toast = useToast();
 
@@ -40,7 +41,7 @@ const {
     resultsPerPage?: number;
 }>();
 const options = ref<ResourceInstanceReference[]>([]);
-const newElements = ref<NewResourceInstance[]>([]);
+const newElements = ref<GraphInfo[]>([]);
 const isLoading = ref(false);
 const isLoadingAdditionalResults = ref(false);
 const computedResourceResultsHeight = ref("");
@@ -113,14 +114,7 @@ async function fetchData(page: number) {
 
         if (page === 1) {
             options.value = references;
-            newElements.value = resourceData.graphs.map(
-                (graphInfo: GraphInfo): NewResourceInstance => ({
-                    displayValue: $gettext("Add a new %{graphName}", {
-                        graphName: graphInfo.name,
-                    }),
-                    graphId: graphInfo.graphid,
-                }),
-            );
+            newElements.value = resourceData.graphs;
         } else {
             options.value = [...options.value, ...references];
         }
@@ -155,9 +149,20 @@ async function onLazyLoadResources(event: VirtualScrollerLazyEvent) {
     }
 }
 
-function createNewResource(graphId: string) {
+function createNewResource(slug: string) {
     showNewResource.value = true;
-    console.log(graphId);
+    newResourceGraphId.value = slug;
+}
+
+function toggleSelectAll() {
+    // check all selected then remove all selected items
+    if (this.$refs.selectAll.allSelected) {
+        this.selectedItems = [];
+        return;
+    }
+
+    // else add all items
+    this.selectAll = true;
 }
 </script>
 <template>
@@ -187,17 +192,30 @@ function createNewResource(graphId: string) {
         :placeholder="$gettext('Select Resources')"
         :aria-labelledby="ptAriaLabeledBy"
     >
+        <template #header>
+            <div
+                v-if="options.length > 1"
+                class="select-all"
+                @click="toggleSelectAll"
+            >
+                {{ $gettext("Select All Items") }}
+            </div>
+        </template>
         <template #footer>
             <div
                 v-for="element in newElements"
-                :key="`new-${element.graphId}`"
+                :key="`new-${element.slug}`"
             >
                 <Button
                     class="relationship-footer-btn"
-                    :label="element.displayValue"
+                    :label="
+                        $gettext('Create a new %{resourceName}', {
+                            resourceName: element.name,
+                        })
+                    "
                     severity="secondary"
                     variant="text"
-                    @click="() => createNewResource(element.graphId)"
+                    @click="() => createNewResource(element.slug)"
                 />
             </div>
         </template>
@@ -216,15 +234,25 @@ function createNewResource(graphId: string) {
                 },
             },
         }"
-    ></Dialog>
+        ><NewResourceBuilder
+            v-if="newResourceGraphId"
+            :graph-slug="newResourceGraphId"
+    /></Dialog>
 </template>
 <style lang="css" scoped>
 .relationship-footer-btn {
     width: 100%;
     border-radius: unset;
+    justify-content: flex-start;
 }
 
 .resource-instance-relationships-selector {
     max-width: 12rem;
+}
+
+.select-all {
+    position: absolute;
+    top: 0.6rem;
+    left: 2.7rem;
 }
 </style>

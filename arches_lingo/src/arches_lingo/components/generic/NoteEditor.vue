@@ -6,11 +6,7 @@ import { useGettext } from "vue3-gettext";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
-import {
-    createScheme,
-    fetchLingoResources,
-    upsertLingoTile,
-} from "@/arches_lingo/api.ts";
+import { createScheme, upsertLingoTile } from "@/arches_lingo/api.ts";
 import { fetchLists } from "@/arches_references/api.ts";
 import DateDatatype from "@/arches_lingo/components/generic/DateDatatype.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
@@ -59,8 +55,6 @@ const languageOptions = ref<ControlledListItem[]>([]);
 const typeOptions = ref<ControlledListItem[]>([]);
 const metatypeOptions = ref<ControlledListItem[]>([]);
 const eventTypeOptions = ref<ControlledListItem[]>([]);
-const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
-const textualWorkOptions = ref<ResourceInstanceReference[]>();
 
 const labelId = useId();
 const labelLanguageId = useId();
@@ -108,15 +102,9 @@ function onUpdateReferenceDatatype(
 
 function onUpdateResourceInstance(
     node: keyof SchemeStatement,
-    val: string[],
-    options: ResourceInstanceReference[],
+    val: ResourceInstanceReference[],
 ) {
-    if (val.length > 0) {
-        const selectedOptions = options.filter((option) =>
-            val.includes(option.resourceId),
-        );
-        (formValue.value[node] as unknown) = selectedOptions;
-    }
+    (formValue.value[node] as unknown) = val ?? [];
 }
 
 async function getControlledLists() {
@@ -209,8 +197,9 @@ async function initializeSelectOptions() {
         :multi-value="false"
         :options="languageOptions"
         :pt-aria-labeled-by="labelLanguageId"
-        @update="(val) => onUpdateReferenceDatatype('statement_language_n1', val)
-            "
+        @update="
+            (val) => onUpdateReferenceDatatype('statement_language_n1', val)
+        "
     />
 
     <!-- Statement Type: reference datatype -->
@@ -232,9 +221,10 @@ async function initializeSelectOptions() {
         :multi-value="false"
         :options="metatypeOptions"
         :pt-aria-labeled-by="labelMetatypeId"
-        @update="(val) =>
-            onUpdateReferenceDatatype('statement_type_metatype_n1', val)
-            "
+        @update="
+            (val) =>
+                onUpdateReferenceDatatype('statement_type_metatype_n1', val)
+        "
     />
 
     <!-- Statement Temporal Validity Start: date -->
@@ -242,16 +232,18 @@ async function initializeSelectOptions() {
         $gettext("Statement Temporal Validity Start")
     }}</label>
     <DateDatatype
-        :value="formValue?.statement_data_assignment_timespan_begin_of_the_begin
-            "
+        :value="
+            formValue?.statement_data_assignment_timespan_begin_of_the_begin
+        "
         :mode="EDIT"
         :pt-aria-labeled-by="labelStartId"
-        @update="(val) =>
-            onUpdateString(
-                'statement_data_assignment_timespan_begin_of_the_begin',
-                val,
-            )
-            "
+        @update="
+            (val) =>
+                onUpdateString(
+                    'statement_data_assignment_timespan_begin_of_the_begin',
+                    val,
+                )
+        "
     />
 
     <!-- Statement Temporal Validity End: date -->
@@ -262,12 +254,13 @@ async function initializeSelectOptions() {
         :value="formValue?.statement_data_assignment_timespan_end_of_the_end"
         :mode="EDIT"
         :pt-aria-labeled-by="labelEndId"
-        @update="(val) =>
-            onUpdateString(
-                'statement_data_assignment_timespan_end_of_the_end',
-                val,
-            )
-            "
+        @update="
+            (val) =>
+                onUpdateString(
+                    'statement_data_assignment_timespan_end_of_the_end',
+                    val,
+                )
+        "
     />
 
     <!-- Contributor: resource instance -->
@@ -278,13 +271,10 @@ async function initializeSelectOptions() {
         graph-slug="scheme"
         node-alias="statement_data_assignment_actor"
         :pt-aria-labeled-by="labelContributorId"
-        @updated="(val) =>
-            onUpdateResourceInstance(
-                'statement_data_assignment_actor',
-                val,
-                groupAndPersonOptions ?? [],
-            )
-            "
+        @updated="
+            (val: ResourceInstanceReference[]) =>
+                onUpdateResourceInstance('statement_data_assignment_actor', val)
+        "
     />
 
     <!-- Sources: resource instance -->
@@ -295,13 +285,13 @@ async function initializeSelectOptions() {
         graph-slug="scheme"
         node-alias="statement_data_assignment_object_used"
         :pt-aria-labeled-by="labelSourcesId"
-        @updated="(val: string[]) =>
-            onUpdateResourceInstance(
-                'statement_data_assignment_object_used',
-                val,
-                textualWorkOptions ?? [],
-            )
-            "
+        @updated="
+            (val: ResourceInstanceReference[]) =>
+                onUpdateResourceInstance(
+                    'statement_data_assignment_object_used',
+                    val,
+                )
+        "
     />
 
     <!-- Warrant Type: reference datatype -->
@@ -312,9 +302,10 @@ async function initializeSelectOptions() {
         :multi-value="false"
         :options="eventTypeOptions"
         :pt-aria-labeled-by="labelWarrantId"
-        @updated="(val) =>
-            onUpdateReferenceDatatype('statement_data_assignment_type', val)
-            "
+        @updated="
+            (val: ControlledListItem[]) =>
+                onUpdateReferenceDatatype('statement_data_assignment_type', val)
+        "
     />
 
     <Button
