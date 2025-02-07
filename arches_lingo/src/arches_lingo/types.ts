@@ -147,6 +147,7 @@ export interface SchemeRights {
     tileid?: string;
     right_holder?: ResourceInstanceReference[];
     right_type?: ControlledListItem[];
+    right_statement?: SchemeRightStatement;
 }
 
 export interface SchemeRightStatement {
@@ -184,7 +185,6 @@ export interface SchemeInstance {
     appellative_status?: AppellativeStatus[];
     statement?: SchemeStatement[];
     rights?: SchemeRights;
-    right_statement?: SchemeRightStatement;
 }
 
 export interface SchemeResource {
