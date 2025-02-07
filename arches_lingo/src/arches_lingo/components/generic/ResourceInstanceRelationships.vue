@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ResourceInstanceRelationshipsViewer from "@/arches_lingo/components/generic/resource-instance-relationships/ResourceInstanceRelationshipsViewer.vue";
 import ResourceInstanceRelationshipsEditor from "@/arches_lingo/components/generic/resource-instance-relationships/ResourceInstanceRelationshipsEditor.vue";
-import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
+import { EDIT, UPDATED, VIEW } from "@/arches_lingo/constants.ts";
 import type {
     DataComponentMode,
     ResourceInstanceReference,
@@ -10,28 +10,30 @@ import type {
 const { mode = VIEW } = defineProps<{
     mode?: DataComponentMode;
     value?: ResourceInstanceReference[];
-    options?: ResourceInstanceReference[];
+    graphSlug?: string;
+    nodeAlias?: string;
     ptAriaLabeledBy?: string;
 }>();
 
-const emits = defineEmits(["update"]);
+const emit = defineEmits([UPDATED]);
 
-function onUpdate(val: string[]) {
-    emits("update", val);
+function onUpdate(val: ResourceInstanceReference[]) {
+    emit(UPDATED, val);
 }
 </script>
 <template>
     <div v-if="mode === VIEW">
         <ResourceInstanceRelationshipsViewer :value="value" />
     </div>
-    <div v-if="mode === EDIT">
+    <div v-if="mode === EDIT && graphSlug && nodeAlias">
         <ResourceInstanceRelationshipsEditor
-            :options="options"
             :val="
                 value?.map((referenceValue) => referenceValue.resourceId) ?? []
             "
             :pt-aria-labeled-by="ptAriaLabeledBy"
-            @update="onUpdate"
+            :graph-slug="graphSlug"
+            :node-alias="nodeAlias"
+            @updated="onUpdate"
         />
     </div>
 </template>

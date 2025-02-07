@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, ref, toRaw, type Ref } from "vue";
+import { onMounted, ref, toRaw } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
@@ -8,7 +8,6 @@ import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeS
 import {
     createScheme,
     fetchLingoResource,
-    fetchLingoResources,
     updateLingoResource,
 } from "@/arches_lingo/api.ts";
 import { fetchLists } from "@/arches_references/api.ts";
@@ -19,12 +18,10 @@ import type {
     ControlledListItemResult,
     DataComponentMode,
     ResourceInstanceReference,
-    ResourceInstanceResult,
     SchemeRights,
     SchemeRightStatement,
 } from "@/arches_lingo/types";
 import {
-    selectedLanguageKey,
     NEW,
     ERROR,
     VIEW,
@@ -34,7 +31,6 @@ import {
 } from "@/arches_lingo/constants.ts";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
-import type { Language } from "@/arches_vue_utils/types.ts";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 
 withDefaults(
@@ -50,7 +46,6 @@ withDefaults(
 );
 
 onMounted(async () => {
-    getActorOptions();
     getControlledLists();
     getSectionValue();
 });
@@ -62,8 +57,6 @@ const router = useRouter();
 const toast = useToast();
 const { $gettext } = useGettext();
 
-const actorRdmOptions = ref<ResourceInstanceReference[]>();
-const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const rightTypeOptions = ref<ControlledListItem[]>();
 const languageOptions = ref<ControlledListItem[]>();
 const noteOptions = ref<ControlledListItem[]>();
@@ -94,22 +87,6 @@ const referenceNodeConfig = [
         listName: "Metatypes",
     },
 ];
-
-async function getActorOptions() {
-    const options_person = await fetchLingoResources("person");
-    const options_group = await fetchLingoResources("group");
-    const options = options_person.concat(options_group);
-
-    actorRdmOptions.value = options.map((option: ResourceInstanceResult) => {
-        const result: ResourceInstanceReference = {
-            display_value: option.descriptors[selectedLanguage.value.code].name,
-            resourceId: option.resourceinstanceid,
-            ontologyProperty: "",
-            inverseOntologyProperty: "",
-        };
-        return result;
-    });
-}
 
 async function getControlledLists() {
     let parsed;
@@ -161,16 +138,9 @@ async function getControlledLists() {
 
 function onUpdateResourceInstance(
     node: keyof SchemeRights,
-    val: string[],
-    options: ResourceInstanceReference[],
+    val: ResourceInstanceReference[],
 ) {
-    if (val.length > 0) {
-        const selectedOptions = options.filter((option) =>
-            val.includes(option.resourceId),
-        );
-        (schemeRights.value![node] as ResourceInstanceReference[]) =
-            selectedOptions;
-    }
+    (schemeRights.value![node] as ResourceInstanceReference[]) = val ?? [];
 }
 
 function onUpdateSchemeRightReferenceDatatype(
@@ -263,21 +233,17 @@ defineExpose({ getSectionValue });
         <h4>{{ $gettext("Rights Holders") }}</h4>
         <ResourceInstanceRelationships
             :value="schemeRights?.right_holder"
-            :options="actorRdmOptions"
             :mode="mode"
-            @update="
-                (val) =>
-                    onUpdateResourceInstance(
-                        'right_holder',
-                        val,
-                        actorRdmOptions ?? [],
-                    )
+            graph-slug="scheme"
+            node-alias="right_holder"
+            @updated="
+                (val: ResourceInstanceReference[]) =>
+                    onUpdateResourceInstance('right_holder', val)
             "
         />
         <h4>{{ $gettext("Rights Type") }}</h4>
         <ReferenceDatatype
             :value="schemeRights?.right_type"
-            :options="rightTypeOptions"
             :multi-value="false"
             :mode="mode"
             @update="
