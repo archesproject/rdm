@@ -159,6 +159,17 @@ function createNewResource(graphId: string) {
     showNewResource.value = true;
     console.log(graphId);
 }
+
+function toggleSelectAll() {
+    // check all selected then remove all selected items
+    if (this.$refs.selectAll.allSelected) {
+        this.selectedItems = [];
+        return;
+    }
+
+    // else add all items
+    this.selectAll = true;
+}
 </script>
 <template>
     <MultiSelect
@@ -187,6 +198,15 @@ function createNewResource(graphId: string) {
         :placeholder="$gettext('Select Resources')"
         :aria-labelledby="ptAriaLabeledBy"
     >
+        <template #header>
+            <div
+                v-if="options.length > 1"
+                class="select-all"
+                @click="toggleSelectAll"
+            >
+                {{ $gettext("Select All Items") }}
+            </div>
+        </template>
         <template #footer>
             <div
                 v-for="element in newElements"
@@ -222,9 +242,16 @@ function createNewResource(graphId: string) {
 .relationship-footer-btn {
     width: 100%;
     border-radius: unset;
+    justify-content: flex-start;
 }
 
 .resource-instance-relationships-selector {
     max-width: 12rem;
+}
+
+.select-all {
+    position: absolute;
+    top: 0.6rem;
+    left: 2.7rem;
 }
 </style>

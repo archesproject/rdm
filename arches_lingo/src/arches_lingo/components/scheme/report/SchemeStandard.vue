@@ -11,7 +11,6 @@ import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeS
 import {
     createScheme,
     fetchLingoResourcePartial,
-    fetchLingoResources,
     updateLingoResource,
 } from "@/arches_lingo/api.ts";
 import {
@@ -23,11 +22,9 @@ import {
     ERROR,
 } from "@/arches_lingo/constants.ts";
 
-import type { Language } from "@/arches_vue_utils/types.ts";
 import type {
     DataComponentMode,
     ResourceInstanceReference,
-    ResourceInstanceResult,
     SchemeInstance,
 } from "@/arches_lingo/types";
 
