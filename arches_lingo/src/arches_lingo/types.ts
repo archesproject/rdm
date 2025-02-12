@@ -51,12 +51,8 @@ export interface ControlledListItemLabelValue {
 }
 
 export interface ControlledListItem {
-    item_id?: string;
-    list_id: string;
-    uri: string;
-    sortorder?: number;
-    guide?: boolean;
-    labels: ControlledListItemLabelValue[];
+    list_item_id: string;
+    display_value: string;
 }
 
 export interface ControlledListItemResult {

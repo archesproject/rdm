@@ -14,13 +14,13 @@ withDefaults(
     <span v-if="value instanceof Array">
         <span
             v-for="val in value"
-            :key="val.list_id"
+            :key="val.list_item_id"
         >
-            <span>{{ val.labels[0].value }}</span>
+            <span>{{ val.display_value }}</span>
         </span>
     </span>
     <span v-else-if="value">
-        <span>{{ (value as ControlledListItem).labels[0].value }}</span>
+        <span>{{ value.display_value }}</span>
     </span>
     <span v-else>
         <span>{{ $gettext("None") }}</span>
