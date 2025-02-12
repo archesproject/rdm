@@ -11,7 +11,7 @@ import {
     fetchLingoResources,
     updateLingoResource,
 } from "@/arches_lingo/api.ts";
-import { fetchLists } from "@/arches_references/api.ts";
+import { fetchLists } from "@/arches_controlled_lists/api.ts";
 
 import type {
     ControlledListResult,

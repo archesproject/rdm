@@ -6,7 +6,7 @@ import { useToast } from "primevue/usetoast";
 import {
     DEFAULT_ERROR_TOAST_LIFE,
     ERROR,
-} from "@/arches_references/constants.ts";
+} from "@/arches_controlled_lists/constants.ts";
 
 import SchemeCard from "@/arches_lingo/components/scheme/SchemeCard.vue";
 import { fetchLingoResources } from "@/arches_lingo/api.ts";
