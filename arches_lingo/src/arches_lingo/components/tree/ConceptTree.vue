@@ -7,12 +7,12 @@ import { useToast } from "primevue/usetoast";
 import Tree from "primevue/tree";
 
 import { getItemLabel } from "@/arches_vue_utils/utils.ts";
-import PresentationControls from "@/arches_references/components/tree/PresentationControls.vue";
+import PresentationControls from "@/arches_controlled_lists/components/tree/PresentationControls.vue";
 import {
     DEFAULT_ERROR_TOAST_LIFE,
     ERROR,
-} from "@/arches_references/constants.ts";
-import { findNodeInTree } from "@/arches_references/utils.ts";
+} from "@/arches_controlled_lists/constants.ts";
+import { findNodeInTree } from "@/arches_controlled_lists/utils.ts";
 import { fetchConcepts } from "@/arches_lingo/api.ts";
 import {
     displayedRowKey,

@@ -48,7 +48,7 @@ urlpatterns = [
         LingoTileDetailView.as_view(),
         name="api-lingo-tile",
     ),
-    path("", include("arches_references.urls")),
+    path("", include("arches_controlled_lists.urls")),
 ]
 
 # Ensure Arches core urls are superseded by project-level urls

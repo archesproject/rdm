@@ -4,8 +4,8 @@ from rest_framework.exceptions import ValidationError
 from arches.app.models.models import ResourceInstance, TileModel
 from arches.app.models.serializers import ArchesModelSerializer, ArchesTileSerializer
 
-from arches_references.datatypes.datatypes import ReferenceDataType
-from arches_references.models import ListItem
+from arches_controlled_lists.datatypes.datatypes import ReferenceDataType
+from arches_controlled_lists.models import ListItem
 
 
 # Generic serializers for Lingo.

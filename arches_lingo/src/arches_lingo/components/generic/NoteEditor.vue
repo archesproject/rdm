@@ -20,7 +20,7 @@ import {
     fetchLingoResources,
     upsertLingoTile,
 } from "@/arches_lingo/api.ts";
-import { fetchLists } from "@/arches_references/api.ts";
+import { fetchLists } from "@/arches_controlled_lists/api.ts";
 import DateDatatype from "@/arches_lingo/components/generic/DateDatatype.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
