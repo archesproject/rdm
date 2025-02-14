@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onMounted, ref, toRaw, toRef, useId } from "vue";
+import { computed, onMounted, ref, toRaw, toRef, useId } from "vue";
 
 import Button from "primevue/button";
 import { useGettext } from "vue3-gettext";
@@ -8,41 +8,25 @@ import { useToast } from "primevue/usetoast";
 
 import { fetchLists } from "@/arches_references/api.ts";
 
-import {
-    createScheme,
-    fetchLingoResources,
-    upsertLingoTile,
-} from "@/arches_lingo/api.ts";
+import { createScheme, upsertLingoTile } from "@/arches_lingo/api.ts";
 
 import DateDatatype from "@/arches_lingo/components/generic/DateDatatype.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
-import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
-
-import {
-    EDIT,
-    ERROR,
-    NEW,
-    selectedLanguageKey,
-} from "@/arches_lingo/constants.ts";
-
-import type { Ref } from "vue";
+import ResourceInstanceSelectWidget from "@/arches_component_lab/widgets/ResourceInstanceSelectWidget/ResourceInstanceSelectWidget.vue";
+import { EDIT, ERROR, NEW } from "@/arches_lingo/constants.ts";
 import type {
     AppellativeStatus,
     ControlledListResult,
     ControlledListItem,
     ControlledListItemResult,
-    ResourceInstanceReference,
-    ResourceInstanceResult,
     SchemeInstance,
 } from "@/arches_lingo/types.ts";
-import type { Language } from "@/arches_vue_utils/types.ts";
 
 const emit = defineEmits(["update"]);
 const toast = useToast();
 const route = useRoute();
 const router = useRouter();
-const selectedLanguage = inject(selectedLanguageKey) as Ref<Language>;
 const { $gettext } = useGettext();
 
 const props = withDefaults(
@@ -66,8 +50,6 @@ const typeOptions = ref<ControlledListItem[]>([]);
 const statusOptions = ref<ControlledListItem[]>([]);
 const metatypeOptions = ref<ControlledListItem[]>([]);
 const eventTypeOptions = ref<ControlledListItem[]>([]);
-const groupAndPersonOptions = ref<ResourceInstanceReference[]>();
-const textualWorkOptions = ref<ResourceInstanceReference[]>();
 
 const labelId = useId();
 const labelLanguageId = useId();
@@ -76,8 +58,6 @@ const labelStatusId = useId();
 const labelMetatypeId = useId();
 const labelStartId = useId();
 const labelEndId = useId();
-const labelContributorId = useId();
-const labelSourcesId = useId();
 const labelWarrantId = useId();
 
 const referenceNodeConfig = [
@@ -117,19 +97,6 @@ function onUpdateReferenceDatatype(
     val: ControlledListItem[],
 ) {
     (formValue.value[node] as unknown) = val.map((item) => toRaw(item));
-}
-
-function onUpdateResourceInstance(
-    node: keyof AppellativeStatus,
-    val: string[],
-    options: ResourceInstanceReference[],
-) {
-    if (val.length > 0) {
-        const selectedOptions = options.filter((option) =>
-            val.includes(option.resourceId),
-        );
-        (formValue.value[node] as unknown) = selectedOptions;
-    }
 }
 
 async function save() {
@@ -200,48 +167,8 @@ async function getControlledLists() {
     });
 }
 
-async function getResourceInstanceOptions(
-    fetchOptions: () => Promise<ResourceInstanceResult[]>,
-): Promise<ResourceInstanceReference[]> {
-    let options;
-    try {
-        options = await fetchOptions();
-    } catch (error) {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext("Could not fetch the resource instance options"),
-        });
-        return [];
-    }
-    const results = options.map((option: ResourceInstanceResult) => {
-        const result: ResourceInstanceReference = {
-            display_value: option.descriptors[selectedLanguage.value.code].name,
-            resourceId: option.resourceinstanceid,
-            ontologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-            inverseOntologyProperty: "ac41d9be-79db-4256-b368-2f4559cfbe55",
-        };
-        return result;
-    });
-    return results;
-}
 async function initializeSelectOptions() {
     getControlledLists();
-    groupAndPersonOptions.value = await getResourceInstanceOptions(() =>
-        fetchLingoResources("group"),
-    );
-    groupAndPersonOptions.value = [
-        ...(groupAndPersonOptions.value || []),
-        ...(await getResourceInstanceOptions(() =>
-            fetchLingoResources("person"),
-        )),
-    ];
-    textualWorkOptions.value = await getResourceInstanceOptions(() =>
-        fetchLingoResources("textual_work"),
-    );
 }
 
 onMounted(initializeSelectOptions);
@@ -340,35 +267,27 @@ onMounted(initializeSelectOptions);
                 )
         "
     />
-    <p :id="labelContributorId">{{ $gettext("Contributor") }}</p>
-    <ResourceInstanceRelationships
-        :value="formValue?.appellative_status_data_assignment_actor"
-        :mode="EDIT"
-        :options="groupAndPersonOptions"
-        :pt-aria-labeled-by="labelContributorId"
-        @update="
-            (val) =>
-                onUpdateResourceInstance(
-                    'appellative_status_data_assignment_actor',
-                    val,
-                    groupAndPersonOptions ?? [],
-                )
-        "
+    <ResourceInstanceSelectWidget
+        v-if="formValue.appellative_status_data_assignment_actor"
+        :value="formValue.appellative_status_data_assignment_actor"
+        mode="EDIT"
+        :configuration="{
+            graphSlug: 'scheme',
+            nodeAlias: 'appellative_status_data_assignment_actor',
+            createNew: true,
+        }"
     />
-    <p :id="labelSourcesId">{{ $gettext("Sources") }}</p>
-    <ResourceInstanceRelationships
-        :value="formValue?.appellative_status_data_assignment_object_used"
-        :mode="EDIT"
-        :options="textualWorkOptions"
-        :pt-aria-labeled-by="labelSourcesId"
-        @update="
-            (val) =>
-                onUpdateResourceInstance(
-                    'appellative_status_data_assignment_object_used',
-                    val,
-                    textualWorkOptions ?? [],
-                )
+    <ResourceInstanceSelectWidget
+        v-if="formValue.appellative_status_data_assignment_object_used"
+        :initial-value="
+            formValue.appellative_status_data_assignment_object_used
         "
+        :configuration="{
+            graphSlug: 'scheme',
+            nodeAlias: 'appellative_status_data_assignment_object_used',
+            createNew: true,
+        }"
+        mode="EDIT"
     />
     <p :id="labelWarrantId">{{ $gettext("Warrant Type") }}</p>
     <ReferenceDatatype
