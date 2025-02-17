@@ -9,7 +9,7 @@ import { useConfirm } from "primevue/useconfirm";
 
 import type { MetaString, MetaStringText } from "@/arches_lingo/types.ts";
 import { SECONDARY } from "@/arches_lingo/constants.ts";
-import { DANGER } from "@/arches_references/constants.ts";
+import { DANGER } from "@/arches_controlled_lists/constants.ts";
 
 const { $gettext } = useGettext();
 const expandedRows = ref([]);

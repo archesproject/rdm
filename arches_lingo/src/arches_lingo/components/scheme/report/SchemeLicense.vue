@@ -11,7 +11,7 @@ import {
     fetchLingoResources,
     updateLingoResource,
 } from "@/arches_lingo/api.ts";
-import { fetchLists } from "@/arches_references/api.ts";
+import { fetchLists } from "@/arches_controlled_lists/api.ts";
 
 import type {
     ControlledListResult,
@@ -20,6 +20,7 @@ import type {
     DataComponentMode,
     ResourceInstanceReference,
     ResourceInstanceResult,
+    SchemeInstance,
     SchemeRights,
     SchemeRightStatement,
 } from "@/arches_lingo/types";
@@ -196,9 +197,13 @@ function onUpdateString(node: keyof SchemeRightStatement, val: string) {
 }
 
 async function saveRights() {
-    const schemeInstance = {
-        rights: schemeRights.value,
-        right_statement: schemeRightStatement.value,
+    const schemeInstance: SchemeInstance = {
+        // We could have just tracked a dirty value of the partial
+        // scheme, but since we didn't, build it now.
+        rights: {
+            ...schemeRights.value,
+            right_statement: schemeRightStatement.value,
+        },
     };
     try {
         let updated;
@@ -238,7 +243,7 @@ async function getSectionValue() {
     if (schemeInstance?.rights) {
         parentExists.value = true;
     }
-    schemeRightStatement.value = schemeInstance?.right_statement ?? {};
+    schemeRightStatement.value = schemeInstance?.rights?.right_statement ?? {};
 }
 
 defineExpose({ getSectionValue });

@@ -3,9 +3,9 @@ from rest_framework.exceptions import ValidationError
 
 from arches.app.models.models import ResourceInstance, TileModel
 from arches.app.models.serializers import ArchesModelSerializer, ArchesTileSerializer
-from arches.app.models.tile import Tile
 
-from arches_references.models import ListItem
+from arches_controlled_lists.datatypes.datatypes import ReferenceDataType
+from arches_controlled_lists.models import ListItem
 
 
 # Generic serializers for Lingo.
@@ -16,44 +16,33 @@ class LingoResourceSerializer(ArchesModelSerializer):
         nodegroups = "__all__"
         fields = "__all__"
 
-    def create(self, validated_data):
-        """Repair parenttile until fixed in core."""
-        created = super().create(validated_data)
-        if created.right_statement:
-            self.repair_right_statement(created)
-        return created
-
-    def update(self, instance, validated_data):
-        """Repair parenttile until fixed in core."""
-        updated = super().update(instance, validated_data)
-        if updated.right_statement:
-            self.repair_right_statement(updated)
-        return updated
-
-    def repair_right_statement(self, instance):
-        # Shouldn't need to refresh_from_db() here, but I'll (jtw)
-        # look into that later, since this is all just a workaround.
-        instance.refresh_from_db()
-        if not instance.rights:
-            instance.rights = Tile.get_blank_tile_from_nodegroup_id(
-                instance.right_statement.nodegroup.parentnodegroup_id,
-                resourceid=instance.resourceinstanceid,
-            )
-            instance.rights.save()
-
-        instance.right_statement.parenttile = instance.rights
-        instance.right_statement.save()
-        return instance
-
 
 class LingoTileSerializer(ArchesTileSerializer):
     class Meta:
         model = TileModel
-        graph_slug = None  # generic
-        root_node = None  # generic
+        graph_slug = None
+        root_node = None
         fields = "__all__"
 
     def validate_appellative_status(self, data):
+        if data:
+            # TODO: consider having serializer run to_python().
+            if new_label_languages := ReferenceDataType().to_python(
+                data.get("appellative_status_ascribed_name_language")
+            ):
+                new_label_lang = new_label_languages[0]
+            if new_label_types := ReferenceDataType().to_python(
+                data.get("appellative_status_ascribed_relation")
+            ):
+                new_label_type = new_label_types[0]
+
+            if new_label_lang and new_label_type:
+                self._check_pref_label_uniqueness(data, new_label_lang, new_label_type)
+
+        return data
+
+    @staticmethod
+    def _check_pref_label_uniqueness(data, new_label_language, new_label_type):
         try:
             PREF_LABEL = ListItem.objects.get(list_item_values__value="prefLabel")
         except ListItem.MultipleObjectsReturned:
@@ -62,32 +51,20 @@ class LingoTileSerializer(ArchesTileSerializer):
             )
             raise ValidationError(msg)
 
-        if data:
-            # TODO: reduce nested-fallback awkwardness by returning a dataclass from
-            # ReferenceDataType.to_python() and feeding incoming data to it.
-            new_label_language = next(
-                iter(data.get("appellative_status_ascribed_name_language", None) or []),
-                {},
-            )
-            new_label_type = next(
-                iter(data.get("appellative_status_ascribed_relation", None) or []), {}
-            )
-            current_labels = data["resourceinstance"].appellative_status
-
-            for label in current_labels:
-                label_language = next(
-                    iter(label.appellative_status_ascribed_name_language or []), {}
-                )
-                label_type = next(
-                    iter(label.appellative_status_ascribed_relation or []), {}
-                )
-                if (
-                    data.get("tileid", None) not in (None, label.tileid)
-                    and new_label_type.get("uri", "") == PREF_LABEL.uri
-                    and label_type.get("uri", "") == PREF_LABEL.uri
-                    and label_language.get("uri", "")
-                    == new_label_language.get("uri", "")
-                ):
-                    msg = _("Only one preferred label per language is permitted.")
-                    raise ValidationError(msg)
-        return data
+        for label in data["resourceinstance"].appellative_status or []:
+            if label_languages := label.appellative_status_ascribed_name_language:
+                label_language = label_languages[0]
+            else:
+                continue
+            if label_types := label.appellative_status_ascribed_relation:
+                label_type = label_types[0]
+            else:
+                continue
+            if (
+                data.get("tileid") != label.tileid
+                and new_label_type.uri == PREF_LABEL.uri
+                and label_type.uri == PREF_LABEL.uri
+                and label_language.uri == new_label_language.uri
+            ):
+                msg = _("Only one preferred label per language is permitted.")
+                raise ValidationError(msg)

@@ -9,7 +9,7 @@ import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 
 import { getItemLabel } from "@/arches_vue_utils/utils.ts";
-import { shouldUseContrast } from "@/arches_references/utils.ts";
+import { shouldUseContrast } from "@/arches_controlled_lists/utils.ts";
 import {
     CONTRAST,
     SECONDARY,

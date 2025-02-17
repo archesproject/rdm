@@ -35,7 +35,7 @@
                                             "valuetype_id": "prefLabel"
                                         }
                                     ],
-                                    "listid": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
+                                    "list_id": "55ce793b-a51a-4b25-811d-d08ea797f8c3",
                                     "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/989ca6d8-2376-45c1-af07-3689d41e5602"
                                 }
                             ],
@@ -50,7 +50,7 @@
                                             "valuetype_id": "prefLabel"
                                         }
                                     ],
-                                    "listid": "deb847fc-f4c3-4e82-be19-04641579f129",
+                                    "list_id": "deb847fc-f4c3-4e82-be19-04641579f129",
                                     "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/2e3a2045-b44e-47fc-a27b-3078b17e08e4"
                                 }
                             ]
@@ -81,7 +81,7 @@
                                             "valuetype_id": "prefLabel"
                                         }
                                     ],
-                                    "listid": "38fc54d4-67ef-4183-8934-66669f1f504c",
+                                    "list_id": "38fc54d4-67ef-4183-8934-66669f1f504c",
                                     "uri": "https://rdm.dev.fargeo.com/plugins/controlled-list-manager/item/9baf3cd5-33d4-4fbc-b1d1-a2d218732f1e"
                                 }
                             ]

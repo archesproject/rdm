@@ -6,7 +6,7 @@ import { useGettext } from "vue3-gettext";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
-import { fetchLists } from "@/arches_references/api.ts";
+import { fetchLists } from "@/arches_controlled_lists/api.ts";
 
 import {
     createScheme,
