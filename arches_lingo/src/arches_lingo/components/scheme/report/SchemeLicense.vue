@@ -4,6 +4,10 @@ import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
 import Button from "primevue/button";
+
+import type { Language } from "@/arches_vue_utils/types.ts";
+import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
+
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
     createScheme,
@@ -34,8 +38,6 @@ import {
     UPDATED,
 } from "@/arches_lingo/constants.ts";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
-import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
-import type { Language } from "@/arches_vue_utils/types.ts";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
 
 withDefaults(
@@ -280,7 +282,7 @@ defineExpose({ getSectionValue });
             "
         />
         <h4>{{ $gettext("Rights Type") }}</h4>
-        <ReferenceDatatype
+        <ReferenceSelectWidget
             :value="schemeRights?.right_type"
             :options="rightTypeOptions"
             :multi-value="false"
@@ -296,7 +298,7 @@ defineExpose({ getSectionValue });
             @update="(val) => onUpdateString('right_statement_content', val)"
         />
         <h4>{{ $gettext("Statement Language") }}</h4>
-        <ReferenceDatatype
+        <ReferenceSelectWidget
             :value="schemeRightStatement?.right_statement_language"
             :mode="mode"
             :multi-value="false"
@@ -310,7 +312,7 @@ defineExpose({ getSectionValue });
             "
         />
         <h4>{{ $gettext("Statement Type") }}</h4>
-        <ReferenceDatatype
+        <ReferenceSelectWidget
             :value="schemeRightStatement?.right_statement_type"
             :mode="mode"
             :multi-value="false"
@@ -324,7 +326,7 @@ defineExpose({ getSectionValue });
             "
         />
         <h4>{{ $gettext("Statement Type Metatype") }}</h4>
-        <ReferenceDatatype
+        <ReferenceSelectWidget
             :value="schemeRightStatement?.right_statement_type_metatype"
             :mode="mode"
             :multi-value="false"

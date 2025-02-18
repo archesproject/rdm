@@ -3,6 +3,8 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useGettext } from "vue3-gettext";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
+import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
+
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
@@ -25,7 +27,6 @@ import type {
     SchemeStatement,
 } from "@/arches_lingo/types.ts";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
-import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 
 const { $gettext } = useGettext();
 const schemeInstance = ref<SchemeInstance>();
@@ -154,13 +155,13 @@ async function update(tileId: string | undefined) {
                     </span>
                 </template>
                 <template #type="{ rowData }">
-                    <ReferenceDatatype
+                    <ReferenceSelectWidget
                         :value="(rowData as SchemeStatement).statement_type_n1"
                         :mode="VIEW"
                     />
                 </template>
                 <template #language="{ rowData }">
-                    <ReferenceDatatype
+                    <ReferenceSelectWidget
                         :value="
                             (rowData as SchemeStatement).statement_language_n1
                         "

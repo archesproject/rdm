@@ -4,6 +4,8 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
+import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
+
 import {
     EDIT,
     ERROR,
@@ -19,7 +21,6 @@ import {
 import LabelEditor from "@/arches_lingo/components/generic/LabelEditor.vue";
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
-import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 
 import type {
@@ -158,24 +159,24 @@ async function update(tileId: string | undefined) {
                     </span>
                 </template>
                 <template #type="{ rowData }">
-                    <ReferenceDatatype
+                    <ReferenceSelectWidget
                         :value="
                             (rowData as AppellativeStatus)
                                 .appellative_status_ascribed_relation
                         "
                         :mode="VIEW"
                     >
-                    </ReferenceDatatype>
+                    </ReferenceSelectWidget>
                 </template>
                 <template #language="{ rowData }">
-                    <ReferenceDatatype
+                    <ReferenceSelectWidget
                         :value="
                             (rowData as AppellativeStatus)
                                 .appellative_status_ascribed_name_language
                         "
                         :mode="VIEW"
                     >
-                    </ReferenceDatatype>
+                    </ReferenceSelectWidget>
                 </template>
                 <template #drawer="{ rowData }">
                     <div>

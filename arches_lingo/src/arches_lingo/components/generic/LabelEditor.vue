@@ -8,6 +8,8 @@ import { useToast } from "primevue/usetoast";
 
 import { fetchLists } from "@/arches_controlled_lists/api.ts";
 
+import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
+
 import {
     createScheme,
     fetchLingoResources,
@@ -16,7 +18,6 @@ import {
 
 import DateDatatype from "@/arches_lingo/components/generic/DateDatatype.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
-import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
 import {
@@ -259,7 +260,7 @@ onMounted(initializeSelectOptions);
         "
     />
     <p :id="labelLanguageId">{{ $gettext("Label Language") }}</p>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.appellative_status_ascribed_name_language"
         :mode="EDIT"
         :multi-value="false"
@@ -274,7 +275,7 @@ onMounted(initializeSelectOptions);
         "
     />
     <p :id="labelTypeId">{{ $gettext("Label Type") }}</p>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.appellative_status_ascribed_relation"
         :mode="EDIT"
         :multi-value="false"
@@ -289,7 +290,7 @@ onMounted(initializeSelectOptions);
         "
     />
     <p :id="labelStatusId">{{ $gettext("Label Status") }}</p>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.appellative_status_status"
         :mode="EDIT"
         :multi-value="false"
@@ -300,7 +301,7 @@ onMounted(initializeSelectOptions);
         "
     />
     <p :id="labelMetatypeId">{{ $gettext("Label Metatype") }}</p>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.appellative_status_status_metatype"
         :mode="EDIT"
         :multi-value="false"
@@ -371,7 +372,7 @@ onMounted(initializeSelectOptions);
         "
     />
     <p :id="labelWarrantId">{{ $gettext("Warrant Type") }}</p>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.appellative_status_data_assignment_type"
         :mode="EDIT"
         :multi-value="false"

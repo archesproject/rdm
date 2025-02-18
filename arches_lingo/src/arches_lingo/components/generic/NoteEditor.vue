@@ -15,6 +15,8 @@ import { useGettext } from "vue3-gettext";
 import { useRoute, useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
 
+import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
+
 import {
     createScheme,
     fetchLingoResources,
@@ -23,7 +25,6 @@ import {
 import { fetchLists } from "@/arches_controlled_lists/api.ts";
 import DateDatatype from "@/arches_lingo/components/generic/DateDatatype.vue";
 import NonLocalizedString from "@/arches_lingo/components/generic/NonLocalizedString.vue";
-import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
 
 import {
@@ -247,7 +248,7 @@ async function initializeSelectOptions() {
     />
     <!-- Statement Language: reference datatype -->
     <label :for="labelLanguageId">{{ $gettext("Statement Language") }}</label>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.statement_language_n1"
         :mode="EDIT"
         :multi-value="false"
@@ -259,7 +260,7 @@ async function initializeSelectOptions() {
     />
     <!-- Statement Type: reference datatype -->
     <label :for="labelTypeId">{{ $gettext("Statement Type") }}</label>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.statement_type_n1"
         :mode="EDIT"
         :multi-value="false"
@@ -270,7 +271,7 @@ async function initializeSelectOptions() {
 
     <!-- Statement Status Metatype: reference datatype -->
     <label :for="labelMetatypeId">{{ $gettext("Statement Metatype") }}</label>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.statement_type_metatype_n1"
         :mode="EDIT"
         :multi-value="false"
@@ -352,7 +353,7 @@ async function initializeSelectOptions() {
     />
     <!-- Warrant Type: reference datatype -->
     <label :for="labelWarrantId">{{ $gettext("Warrant Type") }}</label>
-    <ReferenceDatatype
+    <ReferenceSelectWidget
         :value="formValue?.statement_data_assignment_type"
         :mode="EDIT"
         :multi-value="false"
