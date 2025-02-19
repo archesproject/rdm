@@ -16,8 +16,9 @@ import { upsertLingoTile } from "@/arches_lingo/api.ts";
 
 import { EDIT } from "@/arches_lingo/constants.ts";
 
-import { deepEqual } from "@/arches_lingo/utils.ts";
+import { checkDeepEquality } from "@/arches_lingo/utils.ts";
 
+import type { FormSubmitEvent } from "@primevue/forms";
 import type { AppellativeStatus } from "@/arches_lingo/types.ts";
 
 const props = withDefaults(
@@ -32,36 +33,51 @@ const props = withDefaults(
 const route = useRoute();
 const { $gettext } = useGettext();
 
-const formRef = useTemplateRef("formRef");
+// this is to compensate for the of a Form type in the primevue/forms module
+interface FormInstance {
+    fields: Record<
+        string,
+        {
+            options: { name: string };
+            states: { value: unknown };
+        }
+    >;
+}
+
+const formRef = useTemplateRef<FormInstance>("formRef");
 const formKey = ref(0);
 
 const isFormDirty = computed(() => {
     if (!formRef.value) return false;
 
     return Object.values(formRef.value.fields).some((fieldData) => {
-        return !deepEqual(
-            props.value[fieldData.options.name],
+        return !checkDeepEquality(
+            props.value[fieldData.options.name as keyof AppellativeStatus],
             fieldData.states.value,
         );
     });
 });
 
-async function save(e) {
+async function save(e: FormSubmitEvent) {
     upsertLingoTile(
         "scheme",
         "appellative_status",
         {
             resourceinstance: route.params.id as string,
-            ...Object.entries(e.states).reduce((acc, [key, state]) => {
-                acc[key] = state.value;
-                return acc;
-            }, {}),
+            ...Object.entries(e.states).reduce(
+                (acc, [key, state]) => {
+                    acc[key] = state.value;
+                    return acc;
+                },
+                {} as Record<string, unknown>,
+            ),
+            tileid: props.value.tileid,
         },
         props.value.tileid,
     );
 }
 
-function resetForm() {
+function reset() {
     formKey.value += 1;
 }
 </script>
@@ -72,7 +88,7 @@ function resetForm() {
         ref="formRef"
         :key="formKey"
         @submit="save"
-        @reset="resetForm"
+        @reset="reset"
     >
         <NonLocalizedStringWidget
             graph-slug="scheme"
@@ -149,15 +165,17 @@ function resetForm() {
             :mode="EDIT"
         />
 
-        <template v-if="isFormDirty">
+        <div style="display: flex">
             <Button
                 :label="$gettext('Update')"
                 type="submit"
+                :disabled="!isFormDirty"
             />
             <Button
                 :label="$gettext('Reset')"
                 type="reset"
+                :disabled="!isFormDirty"
             />
-        </template>
+        </div>
     </Form>
 </template>

@@ -101,35 +101,36 @@ export function treeFromSchemes(
     return reshapedSchemes;
 }
 
-export function deepEqual(firstItem, secondItem) {
-    if (firstItem === secondItem) return true;
+export function checkDeepEquality(
+    firstValue: unknown,
+    secondValue: unknown,
+): boolean {
+    if (firstValue === secondValue) {
+        return true;
+    }
 
-    if (
-        typeof firstItem !== "object" ||
-        firstItem === null ||
-        typeof secondItem !== "object" ||
-        secondItem === null
-    ) {
+    const firstValueIsArray = Array.isArray(firstValue);
+    const secondValueIsArray = Array.isArray(secondValue);
+
+    if (firstValueIsArray !== secondValueIsArray) {
         return false;
     }
 
-    const aIsArray = Array.isArray(firstItem);
-    const bIsArray = Array.isArray(secondItem);
-    if (aIsArray !== bIsArray) return false;
-
-    const keysA = Object.keys(firstItem);
-    const keysB = Object.keys(secondItem);
-
-    if (keysA.length !== keysB.length) return false;
-
-    for (const key of keysA) {
-        if (
-            !keysB.includes(key) ||
-            !deepEqual(firstItem[key], secondItem[key])
-        ) {
+    if (firstValueIsArray && secondValueIsArray) {
+        if (firstValue.length !== secondValue.length) {
             return false;
         }
+        return firstValue.every((element, index) =>
+            checkDeepEquality(element, secondValue[index]),
+        );
     }
 
-    return true;
+    const firstObject = firstValue as Record<string, unknown>;
+    const secondObject = secondValue as Record<string, unknown>;
+
+    return Object.keys(firstObject).every(
+        (objectKey) =>
+            objectKey in secondObject &&
+            checkDeepEquality(firstObject[objectKey], secondObject[objectKey]),
+    );
 }
