@@ -100,3 +100,36 @@ export function treeFromSchemes(
 
     return reshapedSchemes;
 }
+
+export function deepEqual(firstItem, secondItem) {
+    if (firstItem === secondItem) return true;
+
+    if (
+        typeof firstItem !== "object" ||
+        firstItem === null ||
+        typeof secondItem !== "object" ||
+        secondItem === null
+    ) {
+        return false;
+    }
+
+    const aIsArray = Array.isArray(firstItem);
+    const bIsArray = Array.isArray(secondItem);
+    if (aIsArray !== bIsArray) return false;
+
+    const keysA = Object.keys(firstItem);
+    const keysB = Object.keys(secondItem);
+
+    if (keysA.length !== keysB.length) return false;
+
+    for (const key of keysA) {
+        if (
+            !keysB.includes(key) ||
+            !deepEqual(firstItem[key], secondItem[key])
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
