@@ -26,6 +26,8 @@ class LingoTileSerializer(ArchesTileSerializer):
 
     def validate_appellative_status(self, data):
         if data:
+            new_label_lang = None
+            new_label_type = None
             # TODO: consider having serializer run to_python().
             if new_label_languages := ReferenceDataType().to_python(
                 data.get("appellative_status_ascribed_name_language")
