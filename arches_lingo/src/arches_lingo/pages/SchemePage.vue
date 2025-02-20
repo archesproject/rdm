@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import SchemeLabel from "@/arches_lingo/components/scheme/report/SchemeLabel.vue";
+import SchemeLabel from "@/arches_lingo/components/scheme/SchemeLabel/SchemeLabel.vue";
 import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
 import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
@@ -72,11 +72,7 @@ const getRef = (el: object | null, index: number) => {
                     :is="component.component"
                     :ref="(el) => getRef(el, index)"
                     v-bind="component.props"
-                    @open-editor="
-                        (tileId: string) => {
-                            onOpenEditor(component.id, tileId);
-                        }
-                    "
+                    mode="view"
                 />
             </template>
         </SplitterPanel>
