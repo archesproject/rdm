@@ -183,15 +183,10 @@ async function save() {
                 params: { id: updated.resourceinstanceid },
             });
         } else {
-            const updated = await upsertLingoTile(
-                "scheme",
-                "statement",
-                {
-                    resourceinstance: route.params.id as string,
-                    ...formValue.value,
-                },
-                formValue.value.tileid,
-            );
+            const updated = await upsertLingoTile("scheme", "statement", {
+                resourceinstance: route.params.id as string,
+                ...formValue.value, // includes tileid
+            });
             newTileId = updated.tileid;
         }
         emit("update", newTileId);

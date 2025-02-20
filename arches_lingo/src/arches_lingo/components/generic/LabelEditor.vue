@@ -151,9 +151,8 @@ async function save() {
                 "appellative_status",
                 {
                     resourceinstance: route.params.id as string,
-                    ...formValue.value,
+                    ...formValue.value, // includes tileid
                 },
-                formValue.value.tileid,
             );
             newTileId = updated.tileid;
         }
