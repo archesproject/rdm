@@ -30,9 +30,6 @@ const props = withDefaults(
     },
 );
 
-const route = useRoute();
-const { $gettext } = useGettext();
-
 // this is to compensate for the of a Form type in the primevue/forms module
 interface FormInstance {
     fields: Record<
@@ -43,6 +40,9 @@ interface FormInstance {
         }
     >;
 }
+
+const route = useRoute();
+const { $gettext } = useGettext();
 
 const formRef = useTemplateRef<FormInstance>("formRef");
 const formKey = ref(0);
