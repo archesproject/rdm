@@ -2,7 +2,7 @@
 import { computed, ref, useTemplateRef } from "vue";
 
 import { useGettext } from "vue3-gettext";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import { Form } from "@primevue/forms";
 import Button from "primevue/button";
@@ -12,9 +12,9 @@ import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSe
 import ResourceInstanceMultiSelectWidget from "@/arches_component_lab/widgets/ResourceInstanceMultiSelectWidget/ResourceInstanceMultiSelectWidget.vue";
 import DateWidget from "@/arches_component_lab/widgets/DateWidget/DateWidget.vue";
 
-import { upsertLingoTile } from "@/arches_lingo/api.ts";
+import { createScheme, upsertLingoTile } from "@/arches_lingo/api.ts";
 
-import { EDIT } from "@/arches_lingo/constants.ts";
+import { EDIT, NEW } from "@/arches_lingo/constants.ts";
 
 import { checkDeepEquality } from "@/arches_lingo/utils.ts";
 
@@ -22,6 +22,7 @@ import type { FormSubmitEvent } from "@primevue/forms";
 import type { AppellativeStatus } from "@/arches_lingo/types.ts";
 
 const route = useRoute();
+const router = useRouter();
 const { $gettext } = useGettext();
 
 const props = defineProps<{
@@ -47,6 +48,9 @@ const forceSectionRefresh = inject<(componentName: string) => void>(
     "forceSectionRefresh",
 );
 
+const openEditor =
+    inject<(componentName: string, tileid: string) => void>("openEditor");
+
 const isFormDirty = computed(() => {
     if (!formRef.value) return false;
     if (!props.schemeLabel) return false;
@@ -63,24 +67,49 @@ const isFormDirty = computed(() => {
 
 async function save(e: FormSubmitEvent) {
     try {
-        await upsertLingoTile(
-            "scheme",
-            "appellative_status",
-            {
-                resourceinstance: route.params.id as string,
-                ...Object.entries(e.states).reduce(
-                    (acc, [key, state]) => {
-                        acc[key] = state.value;
-                        return acc;
+        if (route.params.id === NEW) {
+            const updated = await createScheme({
+                appellative_status: [
+                    {
+                        ...Object.entries(e.states).reduce(
+                            (acc, [key, state]) => {
+                                acc[key] = state.value;
+                                return acc;
+                            },
+                            {},
+                        ),
                     },
-                    {} as Record<string, unknown>,
-                ),
-                tileid: props.schemeLabel?.tileid,
-            },
-            props.schemeLabel?.tileid,
-        );
+                ],
+            });
 
-        forceSectionRefresh!("SchemeLabel");
+            await router.push({
+                name: "scheme",
+                params: { id: updated.resourceinstanceid },
+            });
+
+            forceSectionRefresh!("SchemeLabel");
+            // console.log(updated);  // UPDATED DOES NOT RETURN A TILEID!
+            // openEditor!("SchemeLabel", updated.appellative_status[0].tileid);
+        } else {
+            await upsertLingoTile(
+                "scheme",
+                "appellative_status",
+                {
+                    resourceinstance: route.params.id as string,
+                    ...Object.entries(e.states).reduce(
+                        (acc, [key, state]) => {
+                            acc[key] = state.value;
+                            return acc;
+                        },
+                        {} as Record<string, unknown>,
+                    ),
+                    tileid: props.schemeLabel?.tileid,
+                },
+                props.schemeLabel?.tileid,
+            );
+
+            forceSectionRefresh!("SchemeLabel");
+        }
     } catch (error) {
         console.error(error);
     }

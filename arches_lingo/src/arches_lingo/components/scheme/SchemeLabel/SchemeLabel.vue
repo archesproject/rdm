@@ -10,7 +10,7 @@ import ProgressSpinner from "primevue/progressspinner";
 import SchemeLabelEditor from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelEditor.vue";
 import SchemeLabelViewer from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelViewer.vue";
 
-import { EDIT, ERROR, VIEW } from "@/arches_lingo/constants.ts";
+import { EDIT, ERROR, NEW, VIEW } from "@/arches_lingo/constants.ts";
 
 import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
@@ -32,29 +32,30 @@ const { $gettext } = useGettext();
 const toast = useToast();
 const route = useRoute();
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 const schemeLabels = ref<AppellativeStatus[]>([]);
 
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
 onMounted(async () => {
+    if (route.params.id === NEW) return;
+
     if (props.mode === VIEW || !shouldCreateNewTile) {
         const sectionValue = await getSectionValue();
 
         if (props.tileId) {
             schemeLabels.value = sectionValue.appellative_status.filter(
-                (appellativeStatus: AppellativeStatus) =>
-                    appellativeStatus.tileid === props.tileId,
+                (status: AppellativeStatus) => status.tileid === props.tileId,
             );
         } else {
             schemeLabels.value = sectionValue.appellative_status;
         }
     }
-
-    isLoading.value = false;
 });
 
 async function getSectionValue() {
+    isLoading.value = true;
+
     try {
         return await fetchLingoResourcePartial(
             "scheme",
@@ -70,6 +71,8 @@ async function getSectionValue() {
                     ? error.message
                     : $gettext("Could not fetch the labels for the resource"),
         });
+    } finally {
+        isLoading.value = false;
     }
 }
 </script>
