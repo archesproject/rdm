@@ -14,18 +14,22 @@ import { DANGER } from "@/arches_lingo/constants.ts";
 
 import type { MetaStringText } from "@/arches_lingo/types.ts";
 
-const { $gettext } = useGettext();
-const confirm = useConfirm();
-
-const openEditor = inject<(tileid: string) => void>("openEditor");
-const forceSectionRefresh = inject<() => void>("forceSectionRefresh");
-
 const props = defineProps<{
     metaStringText: MetaStringText;
     metaStrings?: object[];
     graphSlug: string;
     nodeAlias: string;
+    componentName: string;
 }>();
+
+const { $gettext } = useGettext();
+const confirm = useConfirm();
+
+const openEditor =
+    inject<(componentName: string, tileid: string) => void>("openEditor");
+const forceSectionRefresh = inject<(componentName: string) => void>(
+    "forceSectionRefresh",
+);
 
 const expandedRows = ref([]);
 
@@ -52,7 +56,7 @@ function confirmDelete(tileId: string) {
 async function deleteSectionValue(tileId: string) {
     try {
         await deleteLingoTile(props.graphSlug, props.nodeAlias, tileId);
-        forceSectionRefresh!();
+        forceSectionRefresh!(props.componentName);
     } catch (error) {
         // toast.add({
         //     severity: ERROR,
@@ -119,7 +123,9 @@ async function deleteSectionValue(tileId: string) {
                         <Button
                             icon="pi pi-file-edit"
                             :aria-label="$gettext('edit')"
-                            @click="openEditor!(slotProps.data.tileid)"
+                            @click="
+                                openEditor(componentName, slotProps.data.tileid)
+                            "
                         />
                         <Button
                             icon="pi pi-trash"

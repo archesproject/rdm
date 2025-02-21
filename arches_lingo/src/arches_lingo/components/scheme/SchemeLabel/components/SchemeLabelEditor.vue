@@ -43,7 +43,9 @@ const formRef = useTemplateRef<FormInstance>("formRef");
 const formKey = ref(0);
 
 import { inject } from "vue";
-const forceSectionRefresh = inject("forceSectionRefresh");
+const forceSectionRefresh = inject<(componentName: string) => void>(
+    "forceSectionRefresh",
+);
 
 const isFormDirty = computed(() => {
     if (!formRef.value) return false;
@@ -78,7 +80,7 @@ async function save(e: FormSubmitEvent) {
             props.schemeLabel?.tileid,
         );
 
-        forceSectionRefresh();
+        forceSectionRefresh!("SchemeLabel");
     } catch (error) {
         console.error(error);
     }

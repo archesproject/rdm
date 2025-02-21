@@ -6,7 +6,7 @@ import { EDIT, MAXIMIZE, MINIMIZE, CLOSE } from "@/arches_lingo/constants.ts";
 
 const { $gettext } = useGettext();
 const props = defineProps<{
-    editorMax: boolean;
+    isEditorMaximized: boolean;
     component: any;
     tileId?: string;
 }>();
@@ -14,10 +14,10 @@ const props = defineProps<{
 const emit = defineEmits([MAXIMIZE, MINIMIZE, CLOSE]);
 
 function toggleSize() {
-    if (props.editorMax) {
-        emit(MAXIMIZE);
-    } else {
+    if (props.isEditorMaximized) {
         emit(MINIMIZE);
+    } else {
+        emit(MAXIMIZE);
     }
 }
 </script>
@@ -34,8 +34,8 @@ function toggleSize() {
                     <i
                         :class="{
                             pi: true,
-                            'pi-window-maximize': props.editorMax,
-                            'pi-window-minimize': !props.editorMax,
+                            'pi-window-maximize': props.isEditorMaximized,
+                            'pi-window-minimize': !props.isEditorMaximized,
                         }"
                         aria-hidden="true"
                     />
@@ -56,7 +56,7 @@ function toggleSize() {
         <!-- <h3>{{ props.component.name }}</h3> -->
 
         <component
-            :is="props.component.component"
+            :is="props.component"
             v-bind="{ mode: EDIT, tileId: props.tileId }"
         />
     </div>

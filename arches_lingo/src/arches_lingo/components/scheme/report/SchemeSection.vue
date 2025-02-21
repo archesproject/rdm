@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { inject } from "vue";
+// import { inject } from "vue";
 
-import Button from "primevue/button";
+// import Button from "primevue/button";
 
-const openEditor = inject<() => void>("openEditor");
+// const openEditor = inject<() => void>("openEditor");
 
-const props = defineProps<{
-    titleText: string;
-    buttonText: string;
-}>();
+// const props = defineProps<{
+//     titleText: string;
+//     buttonText: string;
+// }>();
 </script>
 
 <template>
-    <div class="section">
+    <!-- <div class="section">
         <div class="header">
             <h3>{{ props.titleText }}</h3>
             <div>
@@ -25,11 +25,11 @@ const props = defineProps<{
         <div class="content">
             <slot></slot>
         </div>
-    </div>
+    </div> -->
 </template>
 
 <style scoped>
-.section {
+/* .section {
     margin: 0 1rem;
 }
 .section .header {
@@ -42,5 +42,5 @@ const props = defineProps<{
 }
 .content {
     margin: 1rem 0;
-}
+} */
 </style>

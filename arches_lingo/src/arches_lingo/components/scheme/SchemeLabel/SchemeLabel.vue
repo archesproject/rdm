@@ -10,13 +10,7 @@ import ProgressSpinner from "primevue/progressspinner";
 import SchemeLabelEditor from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelEditor.vue";
 import SchemeLabelViewer from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelViewer.vue";
 
-import {
-    EDIT,
-    ERROR,
-    NEW,
-    OPEN_EDITOR,
-    VIEW,
-} from "@/arches_lingo/constants.ts";
+import { EDIT, ERROR, VIEW } from "@/arches_lingo/constants.ts";
 
 import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
@@ -25,12 +19,14 @@ import type {
     DataComponentMode,
 } from "@/arches_lingo/types.ts";
 
+defineOptions({
+    componentName: "SchemeLabel",
+});
+
 const props = defineProps<{
     mode: DataComponentMode;
     tileId?: string | null;
 }>();
-
-console.log("(D(D(DD())))", props.tileId);
 
 const { $gettext } = useGettext();
 const toast = useToast();

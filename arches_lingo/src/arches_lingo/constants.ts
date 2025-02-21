@@ -13,8 +13,11 @@ export const OPEN_EDITOR = "openEditor";
 export const UPDATED = "updated";
 export const NEW = "new";
 export const MAXIMIZE = "maximize";
+export const MAXIMIZED = "maximized";
 export const MINIMIZE = "minimize";
+export const MINIMIZED = "minimized";
 export const CLOSE = "close";
+export const CLOSED = "closed";
 
 export const DEFAULT_ERROR_TOAST_LIFE = 8000;
 export const SEARCH_RESULTS_PER_PAGE = 25;
