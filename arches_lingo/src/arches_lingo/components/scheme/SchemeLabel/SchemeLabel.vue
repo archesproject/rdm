@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 
 import { useGettext } from "vue3-gettext";
 import { useRoute } from "vue-router";
@@ -10,13 +10,19 @@ import ProgressSpinner from "primevue/progressspinner";
 import SchemeLabelEditor from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelEditor.vue";
 import SchemeLabelViewer from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelViewer.vue";
 
-import { EDIT, ERROR, NEW, VIEW } from "@/arches_lingo/constants.ts";
+import {
+    EDIT,
+    ERROR,
+    NEW,
+    OPEN_EDITOR,
+    VIEW,
+} from "@/arches_lingo/constants.ts";
 
 import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
 import type {
+    AppellativeStatus,
     DataComponentMode,
-    SchemeInstance,
 } from "@/arches_lingo/types.ts";
 
 const props = defineProps<{
@@ -24,25 +30,29 @@ const props = defineProps<{
     tileId?: string | null;
 }>();
 
+console.log("(D(D(DD())))", props.tileId);
+
 const { $gettext } = useGettext();
 const toast = useToast();
 const route = useRoute();
 
 const isLoading = ref(true);
-const schemeInstance = ref<SchemeInstance>();
-const appellativeStatusToEdit = computed(() => {
-    return schemeInstance.value?.appellative_status?.find(
-        (tile) => tile.tileid === props.tileId,
-    );
-});
+const schemeLabels = ref<AppellativeStatus[]>([]);
+
+const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
 onMounted(async () => {
-    if (route.params.id !== NEW) {
+    if (props.mode === VIEW || !shouldCreateNewTile) {
         const sectionValue = await getSectionValue();
 
-        schemeInstance.value = {
-            appellative_status: sectionValue.appellative_status,
-        };
+        if (props.tileId) {
+            schemeLabels.value = sectionValue.appellative_status.filter(
+                (appellativeStatus: AppellativeStatus) =>
+                    appellativeStatus.tileid === props.tileId,
+            );
+        } else {
+            schemeLabels.value = sectionValue.appellative_status;
+        }
     }
 
     isLoading.value = false;
@@ -66,13 +76,6 @@ async function getSectionValue() {
         });
     }
 }
-
-async function update(tileId: string | undefined) {
-    // await emit(UPDATED);
-    // if (tileId) {
-    //     await emit(OPEN_EDITOR, tileId);
-    // }
-}
 </script>
 
 <template>
@@ -84,12 +87,11 @@ async function update(tileId: string | undefined) {
     <template v-else>
         <SchemeLabelViewer
             v-if="mode === VIEW"
-            :scheme-instance="schemeInstance"
+            :scheme-labels="schemeLabels"
         />
         <SchemeLabelEditor
             v-else-if="mode === EDIT"
-            :value="appellativeStatusToEdit"
-            @update="update"
+            :scheme-label="shouldCreateNewTile ? undefined : schemeLabels[0]"
         />
     </template>
 </template>

@@ -50,6 +50,8 @@ const props = withDefaults(
     },
 );
 
+console.log("NIE THE SCHEME NOTE");
+
 watch(props, () => {
     getSectionValue();
 });

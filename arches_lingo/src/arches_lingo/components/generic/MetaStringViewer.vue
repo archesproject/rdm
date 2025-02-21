@@ -1,26 +1,33 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import { useGettext } from "vue3-gettext";
+
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 
-import type { MetaString, MetaStringText } from "@/arches_lingo/types.ts";
+import { deleteLingoTile } from "@/arches_lingo/api.ts";
 import { SECONDARY } from "@/arches_lingo/constants.ts";
-import { DANGER } from "@/arches_controlled_lists/constants.ts";
+import { DANGER } from "@/arches_lingo/constants.ts";
+
+import type { MetaStringText } from "@/arches_lingo/types.ts";
 
 const { $gettext } = useGettext();
-const expandedRows = ref([]);
 const confirm = useConfirm();
+
+const openEditor = inject<(tileid: string) => void>("openEditor");
+const forceSectionRefresh = inject<() => void>("forceSectionRefresh");
 
 const props = defineProps<{
     metaStringText: MetaStringText;
     metaStrings?: object[];
+    graphSlug: string;
+    nodeAlias: string;
 }>();
 
-const emits = defineEmits(["editString", "deleteString"]);
+const expandedRows = ref([]);
 
 function confirmDelete(tileId: string) {
     confirm.require({
@@ -28,7 +35,7 @@ function confirmDelete(tileId: string) {
         message: props.metaStringText.deleteConfirm,
         group: props.metaStringText.name,
         accept: () => {
-            emits("deleteString", tileId);
+            deleteSectionValue(tileId);
         },
         rejectProps: {
             label: $gettext("Cancel"),
@@ -40,6 +47,22 @@ function confirmDelete(tileId: string) {
             severity: DANGER,
         },
     });
+}
+
+async function deleteSectionValue(tileId: string) {
+    try {
+        await deleteLingoTile(props.graphSlug, props.nodeAlias, tileId);
+        forceSectionRefresh!();
+    } catch (error) {
+        // toast.add({
+        //     severity: ERROR,
+        //     summary: $gettext("Error"),
+        //     detail:
+        //         error instanceof Error
+        //             ? error.message
+        //             : $gettext("Could not delete selected label"),
+        // });
+    }
 }
 </script>
 
@@ -96,25 +119,14 @@ function confirmDelete(tileId: string) {
                         <Button
                             icon="pi pi-file-edit"
                             :aria-label="$gettext('edit')"
-                            @click="
-                                () =>
-                                    emits(
-                                        'editString',
-                                        (slotProps.data as MetaString).tileid,
-                                    )
-                            "
+                            @click="openEditor!(slotProps.data.tileid)"
                         />
                         <Button
                             icon="pi pi-trash"
                             :aria-label="$gettext('delete')"
                             severity="danger"
                             outlined
-                            @click="
-                                () =>
-                                    confirmDelete(
-                                        (slotProps.data as MetaString).tileid,
-                                    )
-                            "
+                            @click="confirmDelete(slotProps.data.tileid)"
                         />
                     </div>
                 </template>

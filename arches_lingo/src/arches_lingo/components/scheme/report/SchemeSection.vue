@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import Button from "primevue/button";
-import { OPEN_EDITOR } from "@/arches_lingo/constants.ts";
+import { inject } from "vue";
 
-defineEmits([OPEN_EDITOR]);
+import Button from "primevue/button";
+
+const openEditor = inject<() => void>("openEditor");
 
 const props = defineProps<{
     titleText: string;
@@ -17,7 +18,7 @@ const props = defineProps<{
             <div>
                 <Button
                     :label="props.buttonText"
-                    @click="$emit(OPEN_EDITOR)"
+                    @click="() => openEditor!()"
                 ></Button>
             </div>
         </div>

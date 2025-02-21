@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { markRaw, provide, ref } from "vue";
+
+import { useGettext } from "vue3-gettext";
+
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
 import SchemeLabel from "@/arches_lingo/components/scheme/SchemeLabel/SchemeLabel.vue";
@@ -8,21 +11,24 @@ import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
-import type { SectionTypes } from "@/arches_lingo/types.ts";
+import { VIEW } from "@/arches_lingo/constants.ts";
 
+const { $gettext } = useGettext();
+
+provide("openEditor", openEditor);
+provide("forceSectionRefresh", forceSectionRefresh);
+
+const editorPanelKey = ref(0);
 const editorVisible = ref(false);
 const sectionVisible = ref(true);
-const editorForm = ref<string>();
 const editorTileId = ref<string>();
 
-const childRefs = ref<Array<SectionTypes>>([]);
 const onMaximize = () => {
     editorVisible.value = true;
     sectionVisible.value = false;
 };
 
-const onSide = () => {
-    editorVisible.value = true;
+const onMinimize = () => {
     editorVisible.value = true;
     sectionVisible.value = true;
 };
@@ -32,29 +38,42 @@ const onClose = () => {
     sectionVisible.value = true;
 };
 
-const onOpenEditor = (form: string, tileId: string) => {
-    editorForm.value = form;
+// Make the components array reactive and include a key for SchemeLabel
+const components = ref([
+    {
+        component: markRaw(SchemeLabel),
+        name: $gettext("Scheme Label"),
+        id: "label",
+        key: 0,
+    },
+    // { component: SchemeNote, id: "note", props: {}, key: 0 },
+    // { component: SchemeStandard, id: "standard", props: {} },
+    // { component: SchemeLicense, id: "license", props: {} },
+    // { component: SchemeNamespace, id: "namespace", props: {} },
+]);
+
+function closeEditor() {
+    editorVisible.value = false;
+    sectionVisible.value = true;
+    editorTileId.value = undefined;
+
+    editorPanelKey.value++;
+}
+
+function openEditor(tileId?: string) {
+    closeEditor();
+
     editorVisible.value = true;
     sectionVisible.value = true;
     editorTileId.value = tileId;
-};
-const onUpdated = () => {
-    childRefs.value.forEach((ref) => {
-        ref?.getSectionValue();
-    });
-};
+}
 
-const components = [
-    { component: SchemeLabel, id: "label", props: {} },
-    { component: SchemeNote, id: "note", props: {} },
-    { component: SchemeStandard, id: "standard", props: {} },
-    { component: SchemeLicense, id: "license", props: {} },
-    { component: SchemeNamespace, id: "namespace", props: {} },
-];
-
-const getRef = (el: object | null, index: number) => {
-    if (el != null) childRefs.value[index] = el as SectionTypes;
-};
+function forceSectionRefresh() {
+    const labelComponent = components.value.find((c) => c.id === "label");
+    if (labelComponent) {
+        labelComponent.key++;
+    }
+}
 </script>
 
 <template>
@@ -65,32 +84,28 @@ const getRef = (el: object | null, index: number) => {
             :min-size="33"
         >
             <template
-                v-for="(component, index) in components"
-                :key="component.id"
+                v-for="component in components"
+                :key="component.id + '-' + component.key"
             >
                 <component
                     :is="component.component"
-                    :ref="(el) => getRef(el, index)"
-                    v-bind="component.props"
-                    mode="view"
+                    :mode="VIEW"
                 />
             </template>
         </SplitterPanel>
         <SplitterPanel
             v-if="editorVisible"
+            :key="editorPanelKey"
             :size="33"
             :min-size="33"
         >
             <SchemeEditor
-                v-if="editorForm"
                 :editor-max="sectionVisible"
-                :editor-form="editorForm"
+                :component="{ component: SchemeLabel, id: 'label' }"
                 :tile-id="editorTileId"
                 @maximize="onMaximize"
-                @side="onSide"
+                @minimize="onMinimize"
                 @close="onClose"
-                @updated="onUpdated"
-                @open-editor="onOpenEditor"
             />
         </SplitterPanel>
     </Splitter>
