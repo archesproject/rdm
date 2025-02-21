@@ -124,7 +124,10 @@ async function deleteSectionValue(tileId: string) {
                             icon="pi pi-file-edit"
                             :aria-label="$gettext('edit')"
                             @click="
-                                openEditor(componentName, slotProps.data.tileid)
+                                openEditor!(
+                                    componentName,
+                                    slotProps.data.tileid,
+                                )
                             "
                         />
                         <Button

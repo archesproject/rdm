@@ -2,8 +2,6 @@
 import { useGettext } from "vue3-gettext";
 
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
-import ResourceInstanceRelationships from "@/arches_lingo/components/generic/ResourceInstanceRelationships.vue";
-import ReferenceDatatype from "@/arches_lingo/components/generic/ReferenceDatatype.vue";
 
 import NonLocalizedStringWidget from "@/arches_component_lab/widgets/NonLocalizedStringWidget/NonLocalizedStringWidget.vue";
 import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
@@ -15,13 +13,12 @@ import type {
     AppellativeStatus,
     MetaStringText,
 } from "@/arches_lingo/types.ts";
-import { getCurrentInstance } from "vue";
-
-const { $gettext } = useGettext();
 
 const props = defineProps<{
     schemeLabels: AppellativeStatus[];
 }>();
+
+const { $gettext } = useGettext();
 
 const metaStringLabel: MetaStringText = {
     deleteConfirm: $gettext("Are you sure you want to delete this label?"),
@@ -41,52 +38,53 @@ const metaStringLabel: MetaStringText = {
         node-alias="appellative_status"
     >
         <template #name="{ rowData }">
-            <span>
-                {{
-                    (rowData as AppellativeStatus)
-                        .appellative_status_ascribed_name_content
-                }}
-            </span>
+            <NonLocalizedStringWidget
+                graph-slug="scheme"
+                node-alias="appellative_status_ascribed_name_content"
+                :initial-value="
+                    rowData.appellative_status_ascribed_name_content
+                "
+                :mode="VIEW"
+                :hide-label="true"
+            />
         </template>
         <template #type="{ rowData }">
-            <ReferenceDatatype
-                :value="
-                    (rowData as AppellativeStatus)
-                        .appellative_status_ascribed_relation
-                "
+            <ReferenceSelectWidget
+                graph-slug="scheme"
+                node-alias="appellative_status_ascribed_relation"
+                :initial-value="rowData.appellative_status_ascribed_relation"
                 :mode="VIEW"
-            >
-            </ReferenceDatatype>
+                :hide-label="true"
+            />
         </template>
         <template #language="{ rowData }">
-            <ReferenceDatatype
-                :value="
-                    (rowData as AppellativeStatus)
-                        .appellative_status_ascribed_name_language
+            <ReferenceSelectWidget
+                graph-slug="scheme"
+                node-alias="appellative_status_ascribed_name_language"
+                :initial-value="
+                    rowData.appellative_status_ascribed_name_language
                 "
                 :mode="VIEW"
-            >
-            </ReferenceDatatype>
+                :hide-label="true"
+            />
         </template>
         <template #drawer="{ rowData }">
-            <div>
-                <span>{{ $gettext("Bibliographic Sources:") }}</span>
-                <ResourceInstanceRelationships
-                    :value="
-                        (rowData as AppellativeStatus)
-                            .appellative_status_data_assignment_object_used
-                    "
-                ></ResourceInstanceRelationships>
-            </div>
-            <div>
-                <span>{{ $gettext("Contributors:") }}</span>
-                <ResourceInstanceRelationships
-                    :value="
-                        (rowData as AppellativeStatus)
-                            .appellative_status_data_assignment_actor
-                    "
-                ></ResourceInstanceRelationships>
-            </div>
+            <ResourceInstanceMultiSelectWidget
+                graph-slug="scheme"
+                node-alias="appellative_status_data_assignment_object_used"
+                :initial-value="
+                    rowData.appellative_status_data_assignment_object_used
+                "
+                :mode="VIEW"
+            />
+            <ResourceInstanceMultiSelectWidget
+                graph-slug="scheme"
+                node-alias="appellative_status_data_assignment_actor"
+                :initial-value="
+                    rowData.appellative_status_data_assignment_actor
+                "
+                :mode="VIEW"
+            />
         </template>
     </MetaStringViewer>
 </template>
