@@ -58,14 +58,7 @@ async function deleteSectionValue(tileId: string) {
         await deleteLingoTile(props.graphSlug, props.nodeAlias, tileId);
         forceSectionRefresh!(props.componentName);
     } catch (error) {
-        // toast.add({
-        //     severity: ERROR,
-        //     summary: $gettext("Error"),
-        //     detail:
-        //         error instanceof Error
-        //             ? error.message
-        //             : $gettext("Could not delete selected label"),
-        // });
+        console.error(error);
     }
 }
 </script>

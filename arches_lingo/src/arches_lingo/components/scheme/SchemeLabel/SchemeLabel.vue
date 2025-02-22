@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 
-import { useGettext } from "vue3-gettext";
-import { useRoute } from "vue-router";
-import { useToast } from "primevue/usetoast";
-
 import ProgressSpinner from "primevue/progressspinner";
 
 import SchemeLabelEditor from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelEditor.vue";
 import SchemeLabelViewer from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelViewer.vue";
 
-import { EDIT, ERROR, NEW, VIEW } from "@/arches_lingo/constants.ts";
+import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
 import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
@@ -26,11 +22,10 @@ defineOptions({
 const props = defineProps<{
     mode: DataComponentMode;
     tileId?: string | null;
+    graphSlug: string;
+    nodeGroupAlias: string;
+    resourceInstanceId: string | undefined;
 }>();
-
-const { $gettext } = useGettext();
-const toast = useToast();
-const route = useRoute();
 
 const isLoading = ref(false);
 const schemeLabels = ref<AppellativeStatus[]>([]);
@@ -38,7 +33,7 @@ const schemeLabels = ref<AppellativeStatus[]>([]);
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
 onMounted(async () => {
-    if (route.params.id === NEW) return;
+    if (!props.resourceInstanceId) return;
 
     if (props.mode === VIEW || !shouldCreateNewTile) {
         const sectionValue = await getSectionValue();
@@ -58,19 +53,12 @@ async function getSectionValue() {
 
     try {
         return await fetchLingoResourcePartial(
-            "scheme",
-            route.params.id as string,
-            "appellative_status",
+            props.graphSlug,
+            props.resourceInstanceId,
+            props.nodeGroupAlias,
         );
     } catch (error) {
-        toast.add({
-            severity: ERROR,
-            summary: $gettext("Error"),
-            detail:
-                error instanceof Error
-                    ? error.message
-                    : $gettext("Could not fetch the labels for the resource"),
-        });
+        console.error(error);
     } finally {
         isLoading.value = false;
     }

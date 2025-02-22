@@ -1,224 +1,99 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from "vue";
-
 import { useGettext } from "vue3-gettext";
-import { useRoute, useRouter } from "vue-router";
-
-import { Form } from "@primevue/forms";
-import Button from "primevue/button";
 
 import NonLocalizedStringWidget from "@/arches_component_lab/widgets/NonLocalizedStringWidget/NonLocalizedStringWidget.vue";
 import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
 import ResourceInstanceMultiSelectWidget from "@/arches_component_lab/widgets/ResourceInstanceMultiSelectWidget/ResourceInstanceMultiSelectWidget.vue";
 import DateWidget from "@/arches_component_lab/widgets/DateWidget/DateWidget.vue";
 
-import { createScheme, upsertLingoTile } from "@/arches_lingo/api.ts";
+import { EDIT } from "@/arches_lingo/constants.ts";
 
-import { EDIT, NEW } from "@/arches_lingo/constants.ts";
-
-import { checkDeepEquality } from "@/arches_lingo/utils.ts";
-
-import type { FormSubmitEvent } from "@primevue/forms";
 import type { AppellativeStatus } from "@/arches_lingo/types.ts";
 
-const route = useRoute();
-const router = useRouter();
 const { $gettext } = useGettext();
 
 const props = defineProps<{
     schemeLabel: AppellativeStatus | undefined;
 }>();
-
-// this is to compensate for the lack of a Form type in the primevue/forms module
-interface FormInstance {
-    fields: Record<
-        string,
-        {
-            options: { name: string };
-            states: { value: unknown };
-        }
-    >;
-}
-
-const formRef = useTemplateRef<FormInstance>("formRef");
-const formKey = ref(0);
-
-import { inject } from "vue";
-const forceSectionRefresh = inject<(componentName: string) => void>(
-    "forceSectionRefresh",
-);
-
-const openEditor =
-    inject<(componentName: string, tileid: string) => void>("openEditor");
-
-const isFormDirty = computed(() => {
-    if (!formRef.value) return false;
-    if (!props.schemeLabel) return false;
-
-    return Object.values(formRef.value.fields).some((fieldData) => {
-        return !checkDeepEquality(
-            props.schemeLabel![
-                fieldData.options.name as keyof AppellativeStatus
-            ],
-            fieldData.states.value,
-        );
-    });
-});
-
-async function save(e: FormSubmitEvent) {
-    try {
-        if (route.params.id === NEW) {
-            const updated = await createScheme({
-                appellative_status: [
-                    {
-                        ...Object.entries(e.states).reduce(
-                            (acc, [key, state]) => {
-                                acc[key] = state.value;
-                                return acc;
-                            },
-                            {},
-                        ),
-                    },
-                ],
-            });
-
-            await router.push({
-                name: "scheme",
-                params: { id: updated.resourceinstanceid },
-            });
-
-            forceSectionRefresh!("SchemeLabel");
-            // console.log(updated);  // UPDATED DOES NOT RETURN A TILEID!
-            // openEditor!("SchemeLabel", updated.appellative_status[0].tileid);
-        } else {
-            await upsertLingoTile(
-                "scheme",
-                "appellative_status",
-                {
-                    resourceinstance: route.params.id as string,
-                    ...Object.entries(e.states).reduce(
-                        (acc, [key, state]) => {
-                            acc[key] = state.value;
-                            return acc;
-                        },
-                        {} as Record<string, unknown>,
-                    ),
-                    tileid: props.schemeLabel?.tileid,
-                },
-                props.schemeLabel?.tileid,
-            );
-
-            forceSectionRefresh!("SchemeLabel");
-        }
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-function reset() {
-    formKey.value += 1;
-}
 </script>
 
 <template>
-    <Form
-        ref="formRef"
-        :key="formKey"
-        @submit="save"
-        @reset="reset"
-    >
-        <NonLocalizedStringWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_ascribed_name_content"
-            :initial-value="
-                props.schemeLabel?.appellative_status_ascribed_name_content
-            "
-            :mode="EDIT"
-        />
-        <DateWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_timespan_begin_of_the_begin"
-            :initial-value="
-                props.schemeLabel
-                    ?.appellative_status_timespan_begin_of_the_begin
-            "
-            :mode="EDIT"
-        />
-        <DateWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_timespan_end_of_the_end"
-            :initial-value="
-                props.schemeLabel?.appellative_status_timespan_end_of_the_end
-            "
-            :mode="EDIT"
-        />
+    <h4>{{ $gettext("Scheme Label") }}</h4>
 
-        <ResourceInstanceMultiSelectWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_data_assignment_actor"
-            :initial-value="
-                props.schemeLabel?.appellative_status_data_assignment_actor
-            "
-            :mode="EDIT"
-        />
-        <ResourceInstanceMultiSelectWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_data_assignment_object_used"
-            :initial-value="
-                props.schemeLabel
-                    ?.appellative_status_data_assignment_object_used
-            "
-            :mode="EDIT"
-        />
+    <NonLocalizedStringWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_ascribed_name_content"
+        :initial-value="
+            props.schemeLabel?.appellative_status_ascribed_name_content
+        "
+        :mode="EDIT"
+    />
+    <DateWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_timespan_begin_of_the_begin"
+        :initial-value="
+            props.schemeLabel?.appellative_status_timespan_begin_of_the_begin
+        "
+        :mode="EDIT"
+    />
+    <DateWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_timespan_end_of_the_end"
+        :initial-value="
+            props.schemeLabel?.appellative_status_timespan_end_of_the_end
+        "
+        :mode="EDIT"
+    />
 
-        <ReferenceSelectWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_ascribed_name_language"
-            :initial-value="
-                props.schemeLabel?.appellative_status_ascribed_name_language
-            "
-            :mode="EDIT"
-        />
-        <ReferenceSelectWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_ascribed_relation"
-            :initial-value="
-                props.schemeLabel?.appellative_status_ascribed_relation
-            "
-            :mode="EDIT"
-        />
-        <ReferenceSelectWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_status"
-            :initial-value="props.schemeLabel?.appellative_status_status"
-            :mode="EDIT"
-        />
-        <ReferenceSelectWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_status_metatype"
-            :initial-value="
-                props.schemeLabel?.appellative_status_status_metatype
-            "
-            :mode="EDIT"
-        />
-        <ReferenceSelectWidget
-            graph-slug="scheme"
-            node-alias="appellative_status_data_assignment_type"
-            :initial-value="
-                props.schemeLabel?.appellative_status_data_assignment_type
-            "
-            :mode="EDIT"
-        />
+    <ResourceInstanceMultiSelectWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_data_assignment_actor"
+        :initial-value="
+            props.schemeLabel?.appellative_status_data_assignment_actor
+        "
+        :mode="EDIT"
+    />
+    <ResourceInstanceMultiSelectWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_data_assignment_object_used"
+        :initial-value="
+            props.schemeLabel?.appellative_status_data_assignment_object_used
+        "
+        :mode="EDIT"
+    />
 
-        <div style="display: flex">
-            <Button
-                :label="$gettext('Update')"
-                type="submit"
-            />
-            <Button
-                :label="$gettext('Reset')"
-                type="reset"
-            />
-        </div>
-    </Form>
+    <ReferenceSelectWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_ascribed_name_language"
+        :initial-value="
+            props.schemeLabel?.appellative_status_ascribed_name_language
+        "
+        :mode="EDIT"
+    />
+    <ReferenceSelectWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_ascribed_relation"
+        :initial-value="props.schemeLabel?.appellative_status_ascribed_relation"
+        :mode="EDIT"
+    />
+    <ReferenceSelectWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_status"
+        :initial-value="props.schemeLabel?.appellative_status_status"
+        :mode="EDIT"
+    />
+    <ReferenceSelectWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_status_metatype"
+        :initial-value="props.schemeLabel?.appellative_status_status_metatype"
+        :mode="EDIT"
+    />
+    <ReferenceSelectWidget
+        graph-slug="scheme"
+        node-alias="appellative_status_data_assignment_type"
+        :initial-value="
+            props.schemeLabel?.appellative_status_data_assignment_type
+        "
+        :mode="EDIT"
+    />
 </template>

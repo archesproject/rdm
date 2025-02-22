@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { markRaw, provide, ref } from "vue";
+import { computed, markRaw, provide, ref } from "vue";
 
 import { useGettext } from "vue3-gettext";
-
-import Button from "primevue/button";
 
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
@@ -17,6 +15,7 @@ import {
     CLOSED,
     MAXIMIZED,
     MINIMIZED,
+    NEW,
     VIEW,
 } from "@/arches_lingo/constants.ts";
 
@@ -30,10 +29,21 @@ const editorTileId = ref();
 const editorState = ref(CLOSED);
 const selectedComponentDatum = ref();
 
+import { useRoute } from "vue-router";
+const route = useRoute();
+
+const resourceInstanceId = computed(() => {
+    if (route.params.id !== NEW) {
+        return route.params.id;
+    }
+});
+
 const componentData = ref([
     {
         component: markRaw(SchemeLabel),
         name: $gettext("Scheme Label"),
+        graphSlug: "scheme",
+        nodeGroupAlias: "appellative_status",
         key: 0,
     },
     // { component: SchemeNote, sectionId: "note", props: {}, key: 0 },
@@ -87,29 +97,19 @@ function forceSectionRefresh(componentName: string) {
             v-show="editorState !== MAXIMIZED"
             :size="66"
         >
-            <div
-                v-for="component in componentData"
-                :key="component.component.componentName + '-' + component.key"
-                class="section"
-            >
-                <div class="header">
-                    <h3>{{ component.name }}</h3>
-                    <div>
-                        <Button
-                            label="buttonText"
-                            @click="
-                                openEditor(component.component.componentName)
-                            "
-                        ></Button>
-                    </div>
-                </div>
-                <div class="content">
-                    <component
-                        :is="component.component"
-                        :mode="VIEW"
-                    />
-                </div>
-            </div>
+            <component
+                :is="componentDatum.component"
+                v-for="componentDatum in componentData"
+                :key="
+                    componentDatum.component.componentName +
+                    '-' +
+                    componentDatum.key
+                "
+                :graph-slug="componentDatum.graphSlug"
+                :node-group-alias="componentDatum.nodeGroupAlias"
+                :resource-instance-id="resourceInstanceId"
+                :mode="VIEW"
+            />
         </SplitterPanel>
 
         <SplitterPanel
@@ -120,6 +120,9 @@ function forceSectionRefresh(componentName: string) {
             <SchemeEditor
                 :is-editor-maximized="editorState === MAXIMIZED"
                 :component="selectedComponentDatum.component"
+                :graph-slug="selectedComponentDatum.graphSlug"
+                :node-group-alias="selectedComponentDatum.nodeGroupAlias"
+                :resource-instance-id="resourceInstanceId"
                 :tile-id="editorTileId"
                 @maximize="maximizeEditor"
                 @minimize="minimizeEditor"
@@ -128,19 +131,3 @@ function forceSectionRefresh(componentName: string) {
         </SplitterPanel>
     </Splitter>
 </template>
-<style scoped>
-.section {
-    margin: 0 1rem;
-}
-.section .header {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--p-menubar-border-color);
-}
-.section .header h3 {
-    flex: 1;
-}
-.content {
-    margin: 1rem 0;
-}
-</style>

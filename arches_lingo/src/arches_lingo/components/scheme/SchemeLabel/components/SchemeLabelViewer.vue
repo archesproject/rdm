@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { inject } from "vue";
 import { useGettext } from "vue3-gettext";
+
+import Button from "primevue/button";
 
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
 
@@ -18,7 +21,11 @@ const props = defineProps<{
     schemeLabels: AppellativeStatus[];
 }>();
 
+// need NodeGroup info here ( cardinality ) for proper button text
+
 const { $gettext } = useGettext();
+
+const openEditor = inject<(componentName: string) => void>("openEditor");
 
 const metaStringLabel: MetaStringText = {
     deleteConfirm: $gettext("Are you sure you want to delete this label?"),
@@ -30,6 +37,24 @@ const metaStringLabel: MetaStringText = {
 </script>
 
 <template>
+    <div
+        style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 0.125rem solid var(--p-menubar-border-color);
+        "
+    >
+        <h3>{{ $gettext("Scheme Label") }}</h3>
+
+        <div>
+            <Button
+                :label="$gettext('Add New Scheme Label')"
+                @click="openEditor!('SchemeLabel')"
+            ></Button>
+        </div>
+    </div>
+
     <MetaStringViewer
         :meta-strings="props.schemeLabels"
         :meta-string-text="metaStringLabel"
@@ -88,6 +113,7 @@ const metaStringLabel: MetaStringText = {
         </template>
     </MetaStringViewer>
 </template>
+
 <style scoped>
 :deep(.drawer) {
     padding: 1rem 2rem;
