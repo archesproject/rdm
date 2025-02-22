@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from "vue";
+import { inject, ref, type Component } from "vue";
 
 import { useGettext } from "vue3-gettext";
 import { useRouter } from "vue-router";
@@ -14,7 +14,7 @@ import type { FormSubmitEvent } from "@primevue/forms";
 
 const props = defineProps<{
     isEditorMaximized: boolean;
-    component: any;
+    component: Component;
     graphSlug: string;
     nodeGroupAlias: string;
     resourceInstanceId: string | undefined;
@@ -71,6 +71,7 @@ async function save(e: FormSubmitEvent) {
             );
         }
 
+        // @ts-expect-error componentName is declared via defineOptions
         forceSectionRefresh!(props.component.componentName);
     } catch (error) {
         console.error(error);

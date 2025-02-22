@@ -2,6 +2,7 @@
 import { computed, markRaw, provide, ref } from "vue";
 
 import { useGettext } from "vue3-gettext";
+import { useRoute } from "vue-router";
 
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
@@ -22,6 +23,7 @@ import {
 provide("openEditor", openEditor);
 provide("forceSectionRefresh", forceSectionRefresh);
 
+const route = useRoute();
 const { $gettext } = useGettext();
 
 const editorPanelKey = ref(0);
@@ -29,13 +31,12 @@ const editorTileId = ref();
 const editorState = ref(CLOSED);
 const selectedComponentDatum = ref();
 
-import { useRoute } from "vue-router";
-const route = useRoute();
-
-const resourceInstanceId = computed(() => {
+const resourceInstanceId = computed<string | undefined>(() => {
     if (route.params.id !== NEW) {
-        return route.params.id;
+        return route.params.id as string;
     }
+
+    return undefined;
 });
 
 const componentData = ref([
