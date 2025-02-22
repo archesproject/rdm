@@ -1,31 +1,18 @@
 from django.utils.translation import gettext as _
 from rest_framework.exceptions import ValidationError
 
-from arches.app.models.models import ResourceInstance, TileModel
-from arches.app.models.serializers import ArchesModelSerializer, ArchesTileSerializer
+from arches.app.models.serializers import ArchesTileSerializer
 
 from arches_controlled_lists.datatypes.datatypes import ReferenceDataType
 from arches_controlled_lists.models import ListItem
 
 
-# Generic serializers for Lingo.
-class LingoResourceSerializer(ArchesModelSerializer):
-    class Meta:
-        model = ResourceInstance
-        graph_slug = None  # generic
-        nodegroups = "__all__"
-        fields = "__all__"
-
-
 class LingoTileSerializer(ArchesTileSerializer):
-    class Meta:
-        model = TileModel
-        graph_slug = None
-        root_node = None
-        fields = "__all__"
 
     def validate_appellative_status(self, data):
         if data:
+            new_label_lang = None
+            new_label_type = None
             # TODO: consider having serializer run to_python().
             if new_label_languages := ReferenceDataType().to_python(
                 data.get("appellative_status_ascribed_name_language")
