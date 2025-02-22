@@ -54,7 +54,7 @@ async function getSectionValue() {
     try {
         return await fetchLingoResourcePartial(
             props.graphSlug,
-            props.resourceInstanceId,
+            props.resourceInstanceId as string,
             props.nodeGroupAlias,
         );
     } catch (error) {

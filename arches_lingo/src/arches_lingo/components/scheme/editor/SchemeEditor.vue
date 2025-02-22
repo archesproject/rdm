@@ -123,7 +123,11 @@ function reset() {
             <div class="editor-content">
                 <component
                     :is="props.component"
-                    v-bind="{ mode: EDIT, tileId: props.tileId }"
+                    :mode="EDIT"
+                    :tile-id="props.tileId"
+                    :graph-slug="props.graphSlug"
+                    :node-group-alias="props.nodeGroupAlias"
+                    :resource-instance-id="props.resourceInstanceId"
                 />
             </div>
             <div>
