@@ -15,6 +15,7 @@ import type { FormSubmitEvent } from "@primevue/forms";
 const props = defineProps<{
     isEditorMaximized: boolean;
     component: Component;
+    componentName: string;
     graphSlug: string;
     nodeGroupAlias: string;
     resourceInstanceId: string | undefined;
@@ -71,8 +72,7 @@ async function save(e: FormSubmitEvent) {
             );
         }
 
-        // @ts-expect-error componentName is declared via defineOptions
-        forceSectionRefresh!(props.component.componentName);
+        forceSectionRefresh!(props.componentName);
     } catch (error) {
         console.error(error);
     }

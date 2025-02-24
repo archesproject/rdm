@@ -15,10 +15,6 @@ import type {
     DataComponentMode,
 } from "@/arches_lingo/types.ts";
 
-defineOptions({
-    componentName: "SchemeLabel",
-});
-
 const props = defineProps<{
     mode: DataComponentMode;
     tileId?: string | null;

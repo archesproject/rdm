@@ -42,6 +42,7 @@ const resourceInstanceId = computed<string | undefined>(() => {
 const componentData = ref([
     {
         component: markRaw(SchemeLabel),
+        componentName: "SchemeLabel",
         name: $gettext("Scheme Label"),
         graphSlug: "scheme",
         nodeGroupAlias: "appellative_status",
@@ -65,7 +66,7 @@ function openEditor(componentName: string, tileId?: string) {
 
     selectedComponentDatum.value = componentData.value.find(
         (componentDatum) => {
-            return componentDatum.component.componentName === componentName;
+            return componentDatum.componentName === componentName;
         },
     );
 
@@ -83,7 +84,7 @@ function minimizeEditor() {
 
 function forceSectionRefresh(componentName: string) {
     const componentDatum = componentData.value.find((componentDatum) => {
-        return componentDatum.component.componentName === componentName;
+        return componentDatum.componentName === componentName;
     });
 
     if (componentDatum) {
@@ -101,11 +102,7 @@ function forceSectionRefresh(componentName: string) {
             <component
                 :is="componentDatum.component"
                 v-for="componentDatum in componentData"
-                :key="
-                    componentDatum.component.componentName +
-                    '-' +
-                    componentDatum.key
-                "
+                :key="componentDatum.componentName + '-' + componentDatum.key"
                 :graph-slug="componentDatum.graphSlug"
                 :node-group-alias="componentDatum.nodeGroupAlias"
                 :resource-instance-id="resourceInstanceId"
@@ -121,6 +118,7 @@ function forceSectionRefresh(componentName: string) {
             <SchemeEditor
                 :is-editor-maximized="editorState === MAXIMIZED"
                 :component="selectedComponentDatum.component"
+                :component-name="selectedComponentDatum.componentName"
                 :graph-slug="selectedComponentDatum.graphSlug"
                 :node-group-alias="selectedComponentDatum.nodeGroupAlias"
                 :resource-instance-id="resourceInstanceId"
