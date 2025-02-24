@@ -251,6 +251,7 @@ INSTALLED_APPS = (
     "oauth2_provider",
     "django_celery_results",
     # "silk",
+    "drf_spectacular",
 )
 
 INSTALLED_APPS += ("arches.app",)
@@ -535,6 +536,21 @@ SHOW_LANGUAGE_SWITCH = len(LANGUAGES) > 1
 
 # TODO: remove when finalizing release
 SILENCED_SYSTEM_CHECKS += ["arches.E002"]
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Lingo API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': str(APP_VERSION),
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+    'PREPROCESSING_HOOKS': [
+        "arches_lingo.utils.spectacular.filter_out_tile_endpoints"
+    ],
+    'GRAPH_SLUG_FOR_GENERIC_SERIALIZER': "concept",
+}
 
 try:
     from .package_settings import *
