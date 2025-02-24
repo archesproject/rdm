@@ -106,15 +106,6 @@ export function checkDeepEquality(value1: unknown, value2: unknown): boolean {
         return false;
     }
 
-    if (
-        typeof value1 !== "object" ||
-        value1 === null ||
-        typeof value2 !== "object" ||
-        value2 === null
-    ) {
-        return value1 === value2;
-    }
-
     if (Array.isArray(value1) && Array.isArray(value2)) {
         return (
             value1.length === value2.length &&
@@ -122,6 +113,15 @@ export function checkDeepEquality(value1: unknown, value2: unknown): boolean {
                 checkDeepEquality(item, value2[index]),
             )
         );
+    }
+
+    if (
+        typeof value1 !== "object" ||
+        value1 === null ||
+        typeof value2 !== "object" ||
+        value2 === null
+    ) {
+        return value1 === value2;
     }
 
     const object1 = value1 as Record<string, unknown>;
