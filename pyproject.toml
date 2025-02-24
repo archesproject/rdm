@@ -28,6 +28,7 @@ dependencies = [
     "arches >= 8.0.0a0",
     "arches_vue_utils @ git+https://github.com/archesproject/arches-vue-utils.git@main",
     "arches_controlled_lists @ git+https://github.com/archesproject/arches-controlled-lists.git@main",
+    "drf-spectacular",
 ]
 version = "0.0.1"
 
