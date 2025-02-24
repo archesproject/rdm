@@ -6,12 +6,17 @@ import { useRoute } from "vue-router";
 
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
+
+import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
+
 import SchemeLabel from "@/arches_lingo/components/scheme/SchemeLabel/SchemeLabel.vue";
+import SchemeNote from "@/arches_lingo/components/scheme/SchemeNote/SchemeNote.vue";
+
+// old -- to be deleted
 import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
-import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
-import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
+
 import {
     CLOSED,
     MAXIMIZED,
@@ -48,7 +53,14 @@ const componentData = ref([
         nodeGroupAlias: "appellative_status",
         key: 0,
     },
-    // { component: SchemeNote, sectionId: "note", props: {}, key: 0 },
+    {
+        component: markRaw(SchemeNote),
+        componentName: "SchemeNote",
+        name: $gettext("Scheme Note"),
+        graphSlug: "scheme",
+        nodeGroupAlias: "statement",
+        key: 0,
+    },
     // { component: SchemeStandard, sectionId: "standard", props: {} },
     // { component: SchemeLicense, sectionId: "license", props: {} },
     // { component: SchemeNamespace, sectionId: "namespace", props: {} },
