@@ -146,6 +146,9 @@ async function deleteSectionValue(tileId: string) {
     <div v-else>{{ props.metaStringText.noRecords }}</div>
 </template>
 <style scoped>
+:deep(.drawer) {
+    padding: 1rem 2rem;
+}
 .controls {
     display: flex;
     flex-direction: row;

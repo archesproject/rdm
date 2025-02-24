@@ -113,9 +113,3 @@ const metaStringLabel: MetaStringText = {
         </template>
     </MetaStringViewer>
 </template>
-
-<style scoped>
-:deep(.drawer) {
-    padding: 1rem 2rem;
-}
-</style>
