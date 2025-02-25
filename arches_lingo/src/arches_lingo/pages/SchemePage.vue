@@ -10,7 +10,7 @@ import SchemeLabel from "@/arches_lingo/components/scheme/SchemeLabel/SchemeLabe
 import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
 import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
-import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
+import SchemeStandard from "@/arches_lingo/components/scheme/SchemeStandard/SchemeStandard.vue";
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
 import {
     CLOSED,
@@ -46,6 +46,14 @@ const componentData = ref([
         name: $gettext("Scheme Label"),
         graphSlug: "scheme",
         nodeGroupAlias: "appellative_status",
+        key: 0,
+    },
+    {
+        component: markRaw(SchemeStandard),
+        componentName: "SchemeStandard",
+        name: $gettext("Scheme Standard"),
+        graphSlug: "scheme",
+        nodeGroupAlias: "creation",
         key: 0,
     },
     // { component: SchemeNote, sectionId: "note", props: {}, key: 0 },
