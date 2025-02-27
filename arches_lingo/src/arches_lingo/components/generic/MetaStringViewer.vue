@@ -18,7 +18,7 @@ const props = defineProps<{
     metaStringText: MetaStringText;
     metaStrings?: object[];
     graphSlug: string;
-    nodeAlias: string;
+    nodegroupAlias: string;
     componentName: string;
 }>();
 
@@ -26,7 +26,7 @@ const { $gettext } = useGettext();
 const confirm = useConfirm();
 
 const openEditor =
-    inject<(componentName: string, tileid: string) => void>("openEditor");
+    inject<(componentName: string, tileid?: string) => void>("openEditor");
 const forceSectionRefresh = inject<(componentName: string) => void>(
     "forceSectionRefresh",
 );
@@ -55,8 +55,10 @@ function confirmDelete(tileId: string) {
 
 async function deleteSectionValue(tileId: string) {
     try {
-        await deleteLingoTile(props.graphSlug, props.nodeAlias, tileId);
+        await deleteLingoTile(props.graphSlug, props.nodegroupAlias, tileId);
+
         forceSectionRefresh!(props.componentName);
+        openEditor!(props.componentName, undefined);
     } catch (error) {
         console.error(error);
     }
@@ -149,6 +151,7 @@ async function deleteSectionValue(tileId: string) {
 :deep(.drawer) {
     padding: 1rem 2rem;
 }
+
 .controls {
     display: flex;
     flex-direction: row;
