@@ -10,9 +10,9 @@ import SplitterPanel from "primevue/splitterpanel";
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
 import SchemeLabel from "@/arches_lingo/components/scheme/SchemeLabel/SchemeLabel.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/SchemeNamespace/SchemeNamespace.vue";
+import SchemeNote from "@/arches_lingo/components/scheme/SchemeNote/SchemeNote.vue";
 
 import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
-import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
 import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import {
     CLOSED,
@@ -59,10 +59,16 @@ const componentData = ref([
         nodegroupAlias: "namespace",
         key: 0,
     },
-    // { component: SchemeNote, sectionId: "note", props: {}, key: 0 },
+    {
+        component: markRaw(SchemeNote),
+        componentName: "SchemeNote",
+        sectionTitle: $gettext("Scheme Note"),
+        graphSlug: "scheme",
+        nodegroupAlias: "statement",
+        key: 0,
+    },
     // { component: SchemeStandard, sectionId: "standard", props: {} },
     // { component: SchemeLicense, sectionId: "license", props: {} },
-    // { component: SchemeNamespace, sectionId: "namespace", props: {} },
 ]);
 
 function closeEditor() {

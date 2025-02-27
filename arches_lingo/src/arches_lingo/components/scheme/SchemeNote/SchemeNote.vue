@@ -3,15 +3,16 @@ import { onMounted, ref } from "vue";
 
 import ProgressSpinner from "primevue/progressspinner";
 
-import SchemeNamespaceEditor from "@/arches_lingo/components/scheme/SchemeNamespace/components/SchemeNamespaceEditor.vue";
-import SchemeNamespaceViewer from "@/arches_lingo/components/scheme/SchemeNamespace/components/SchemeNamespaceViewer.vue";
+import SchemeNoteEditor from "@/arches_lingo/components/scheme/SchemeNote/components/SchemeNoteEditor.vue";
+import SchemeNoteViewer from "@/arches_lingo/components/scheme/SchemeNote/components/SchemeNoteViewer.vue";
 
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
+
 import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
 import type {
-    SchemeNamespace,
     DataComponentMode,
+    SchemeStatement,
 } from "@/arches_lingo/types.ts";
 
 const props = defineProps<{
@@ -24,10 +25,10 @@ const props = defineProps<{
     tileId?: string;
 }>();
 
-const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
-
 const isLoading = ref(false);
-const tileData = ref<SchemeNamespace | undefined>();
+const tileData = ref<SchemeStatement[]>([]);
+
+const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
 onMounted(async () => {
     if (
@@ -63,21 +64,24 @@ async function getSectionValue() {
     />
 
     <template v-else>
-        <SchemeNamespaceViewer
+        <SchemeNoteViewer
             v-if="mode === VIEW"
             :tile-data="tileData"
             :graph-slug="props.graphSlug"
             :component-name="props.componentName"
             :section-title="props.sectionTitle"
+            :nodegroup-alias="props.nodegroupAlias"
         />
-        <SchemeNamespaceEditor
+        <SchemeNoteEditor
             v-else-if="mode === EDIT"
-            :tile-data="shouldCreateNewTile ? undefined : tileData"
+            :tile-data="
+                tileData.find((tileDatum) => tileDatum.tileid === props.tileId)
+            "
+            :component-name="props.componentName"
             :section-title="props.sectionTitle"
             :graph-slug="props.graphSlug"
-            :component-name="props.componentName"
-            :resource-instance-id="props.resourceInstanceId"
             :nodegroup-alias="props.nodegroupAlias"
+            :resource-instance-id="props.resourceInstanceId"
             :tile-id="props.tileId"
         />
     </template>
