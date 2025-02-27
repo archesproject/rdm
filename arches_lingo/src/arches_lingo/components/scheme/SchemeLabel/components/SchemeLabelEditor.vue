@@ -31,11 +31,15 @@ const router = useRouter();
 const schemeEditorFormRef = inject<Ref<Component | null>>(
     "schemeEditorFormRef",
 );
+
+const openEditor =
+    inject<(componentName: string, tileid?: string) => void>("openEditor");
 const refreshReportSection = inject<(componentName: string) => void>(
     "refreshReportSection",
 );
 
 const formRef = useTemplateRef("form");
+
 watch(
     () => formRef.value,
     (formComponent) => (schemeEditorFormRef!.value = formComponent),
@@ -57,8 +61,10 @@ async function save(e: FormSubmitEvent) {
                 params: { id: updated.resourceinstanceid },
             });
 
-            // console.log(updated);  // UPDATED DOES NOT RETURN A TILEID!
-            // openEditor!("SchemeLabel", updated.appellative_status[0].tileid);
+            openEditor!(
+                props.componentName,
+                updated[props.nodegroupAlias][0].tileid,
+            );
         } else {
             await upsertLingoTile(
                 props.graphSlug,
