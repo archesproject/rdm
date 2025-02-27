@@ -8,10 +8,7 @@ import SchemeLicenseEditor from "@/arches_lingo/components/scheme/SchemeLicense/
 
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
-import {
-    // fetchLingoResourcePartial,
-    fetchLingoResource,
-} from "@/arches_lingo/api.ts";
+import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
 import type { DataComponentMode, SchemeRights } from "@/arches_lingo/types";
 
@@ -47,16 +44,11 @@ onMounted(async () => {
 
 async function getSectionValue() {
     try {
-        return await fetchLingoResource(
+        return await fetchLingoResourcePartial(
             props.graphSlug,
             props.resourceInstanceId as string,
+            props.nodegroupAlias,
         );
-
-        // return await fetchLingoResourcePartial(
-        //     props.graphSlug,
-        //     props.resourceInstanceId as string,
-        //     props.nodegroupAlias,
-        // );
     } catch (error) {
         console.error(error);
     }
