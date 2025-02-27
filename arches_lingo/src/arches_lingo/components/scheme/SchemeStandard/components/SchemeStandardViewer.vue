@@ -37,14 +37,10 @@ const buttonLabel = computed(() => {
     <div class="section-header">
         <h2>{{ props.sectionTitle }}</h2>
 
-        <div>
-            <Button
-                :label="buttonLabel"
-                @click="
-                    openEditor!(props.componentName, props.tileData?.tileid)
-                "
-            ></Button>
-        </div>
+        <Button
+            :label="buttonLabel"
+            @click="openEditor!(props.componentName, props.tileData?.tileid)"
+        ></Button>
     </div>
 
     <ResourceInstanceMultiSelectWidget

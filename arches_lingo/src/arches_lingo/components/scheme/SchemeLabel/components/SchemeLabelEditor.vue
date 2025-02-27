@@ -31,8 +31,8 @@ const router = useRouter();
 const schemeEditorFormRef = inject<Ref<Component | null>>(
     "schemeEditorFormRef",
 );
-const forceSectionRefresh = inject<(componentName: string) => void>(
-    "forceSectionRefresh",
+const refreshReportSection = inject<(componentName: string) => void>(
+    "refreshReportSection",
 );
 
 const formRef = useTemplateRef("form");
@@ -72,7 +72,7 @@ async function save(e: FormSubmitEvent) {
             );
         }
 
-        forceSectionRefresh!(props.componentName);
+        refreshReportSection!(props.componentName);
     } catch (error) {
         console.error(error);
     }
@@ -80,7 +80,7 @@ async function save(e: FormSubmitEvent) {
 </script>
 
 <template>
-    <h4>{{ props.sectionTitle }}</h4>
+    <h3>{{ props.sectionTitle }}</h3>
 
     <Form
         ref="form"

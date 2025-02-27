@@ -27,8 +27,8 @@ const confirm = useConfirm();
 
 const openEditor =
     inject<(componentName: string, tileid?: string) => void>("openEditor");
-const forceSectionRefresh = inject<(componentName: string) => void>(
-    "forceSectionRefresh",
+const refreshReportSection = inject<(componentName: string) => void>(
+    "refreshReportSection",
 );
 
 const expandedRows = ref([]);
@@ -57,7 +57,7 @@ async function deleteSectionValue(tileId: string) {
     try {
         await deleteLingoTile(props.graphSlug, props.nodegroupAlias, tileId);
 
-        forceSectionRefresh!(props.componentName);
+        refreshReportSection!(props.componentName);
         openEditor!(props.componentName, undefined);
     } catch (error) {
         console.error(error);

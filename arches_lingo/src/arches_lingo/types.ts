@@ -125,10 +125,32 @@ export interface SchemeRightStatement {
     right_statement_type_metatype?: ControlledListItem[];
 }
 
+export interface SchemeNamespace {
+    resourceinstance?: string;
+    tileid?: string;
+    namespace_name: string;
+    namespace_type: ControlledListItem[];
+}
+
 export interface SchemeCreation {
     resourceinstance?: string;
     tileid?: string;
     creation_sources: ResourceInstanceReference[];
+}
+
+export type SchemeTile =
+    | AppellativeStatus
+    | SchemeStatement
+    | SchemeNamespace
+    | SchemeCreation
+    | SchemeRights;
+
+export interface SchemeInstance {
+    namespace?: SchemeNamespace;
+    creation?: SchemeCreation;
+    appellative_status?: AppellativeStatus[];
+    statement?: SchemeStatement[];
+    rights?: SchemeRights;
 }
 
 export interface SchemeResource {
