@@ -1,26 +1,20 @@
 <script setup lang="ts">
-import { inject, onMounted, ref, toRaw, type Ref } from "vue";
+import { inject, onMounted, ref, type Ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useGettext } from "vue3-gettext";
 import { useToast } from "primevue/usetoast";
-import Button from "primevue/button";
-import SchemeReportSection from "@/arches_lingo/components/scheme/report/SchemeSection.vue";
 import {
-    createScheme,
     fetchLingoResource,
     fetchLingoResources,
-    updateLingoResource,
 } from "@/arches_lingo/api.ts";
 import { fetchLists } from "@/arches_controlled_lists/api.ts";
 
 import type {
     ControlledListResult,
-    ControlledListItem,
     ControlledListItemResult,
     DataComponentMode,
     ResourceInstanceReference,
     ResourceInstanceResult,
-    SchemeInstance,
     SchemeRights,
     SchemeRightStatement,
 } from "@/arches_lingo/types";
@@ -189,8 +183,8 @@ defineExpose({ getSectionValue });
         />
         <SchemeLicenseEditor
             v-else-if="mode === EDIT"
-            :scheme-rights="shouldCreateNewTile ? undefined : schemeRights[0]"
-            :scheme-right-statement="shouldCreateNewTile ? undefined : schemeRightStatement[0]"
+            :scheme-rights="shouldCreateNewTile ? undefined : schemeRights"
+            :scheme-right-statement="shouldCreateNewTile ? undefined : schemeRightStatement"
         />
     </template>
 </template>
