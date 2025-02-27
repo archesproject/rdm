@@ -18,10 +18,12 @@ import type {
 } from "@/arches_lingo/types.ts";
 
 const props = defineProps<{
-    schemeLabels: AppellativeStatus[];
+    tileData: AppellativeStatus[];
+    componentName: string;
+    sectionTitle: string;
+    graphSlug: string;
+    nodegroupAlias: string;
 }>();
-
-// need NodeGroup info here ( cardinality ) for proper button text
 
 const { $gettext } = useGettext();
 
@@ -37,34 +39,27 @@ const metaStringLabel: MetaStringText = {
 </script>
 
 <template>
-    <div
-        style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 0.125rem solid var(--p-menubar-border-color);
-        "
-    >
-        <h3>{{ $gettext("Scheme Label") }}</h3>
+    <div class="section-header">
+        <h2>{{ props.sectionTitle }}</h2>
 
         <div>
             <Button
                 :label="$gettext('Add New Scheme Label')"
-                @click="openEditor!('SchemeLabel')"
+                @click="openEditor!(props.componentName)"
             ></Button>
         </div>
     </div>
 
     <MetaStringViewer
-        :meta-strings="props.schemeLabels"
+        :meta-strings="props.tileData"
         :meta-string-text="metaStringLabel"
-        component-name="SchemeLabel"
-        graph-slug="scheme"
-        node-alias="appellative_status"
+        :component-name="props.componentName"
+        :graph-slug="props.graphSlug"
+        :nodegroup-alias="props.nodegroupAlias"
     >
         <template #name="{ rowData }">
             <NonLocalizedStringWidget
-                graph-slug="scheme"
+                :graph-slug="props.graphSlug"
                 node-alias="appellative_status_ascribed_name_content"
                 :initial-value="
                     rowData.appellative_status_ascribed_name_content
@@ -75,7 +70,7 @@ const metaStringLabel: MetaStringText = {
         </template>
         <template #type="{ rowData }">
             <ReferenceSelectWidget
-                graph-slug="scheme"
+                :graph-slug="props.graphSlug"
                 node-alias="appellative_status_ascribed_relation"
                 :initial-value="rowData.appellative_status_ascribed_relation"
                 :mode="VIEW"
@@ -84,7 +79,7 @@ const metaStringLabel: MetaStringText = {
         </template>
         <template #language="{ rowData }">
             <ReferenceSelectWidget
-                graph-slug="scheme"
+                :graph-slug="props.graphSlug"
                 node-alias="appellative_status_ascribed_name_language"
                 :initial-value="
                     rowData.appellative_status_ascribed_name_language
@@ -95,7 +90,7 @@ const metaStringLabel: MetaStringText = {
         </template>
         <template #drawer="{ rowData }">
             <ResourceInstanceMultiSelectWidget
-                graph-slug="scheme"
+                :graph-slug="props.graphSlug"
                 node-alias="appellative_status_data_assignment_object_used"
                 :initial-value="
                     rowData.appellative_status_data_assignment_object_used
@@ -103,7 +98,7 @@ const metaStringLabel: MetaStringText = {
                 :mode="VIEW"
             />
             <ResourceInstanceMultiSelectWidget
-                graph-slug="scheme"
+                :graph-slug="props.graphSlug"
                 node-alias="appellative_status_data_assignment_actor"
                 :initial-value="
                     rowData.appellative_status_data_assignment_actor
@@ -113,3 +108,12 @@ const metaStringLabel: MetaStringText = {
         </template>
     </MetaStringViewer>
 </template>
+
+<style scoped>
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0.125rem solid var(--p-menubar-border-color);
+}
+</style>
