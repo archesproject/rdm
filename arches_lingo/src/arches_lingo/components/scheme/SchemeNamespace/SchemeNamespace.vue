@@ -26,7 +26,7 @@ const props = defineProps<{
 
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
-const isLoading = ref(false);
+const isLoading = ref(true);
 const tileData = ref<SchemeNamespace | undefined>();
 
 onMounted(async () => {
@@ -34,8 +34,6 @@ onMounted(async () => {
         props.resourceInstanceId &&
         (props.mode === VIEW || !shouldCreateNewTile)
     ) {
-        isLoading.value = true;
-
         const sectionValue = await getSectionValue();
         tileData.value = sectionValue[props.nodegroupAlias];
 
