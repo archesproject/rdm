@@ -62,14 +62,13 @@ const componentData = ref([
     {
         component: markRaw(SchemeNote),
         componentName: "SchemeNote",
-        nsectionTitleame: $gettext("Scheme Note"),
+        sectionTitle: $gettext("Scheme Note"),
         graphSlug: "scheme",
-        nodeGroupAlias: "statement",
+        nodegroupAlias: "statement",
         key: 0,
     },
     // { component: SchemeStandard, sectionId: "standard", props: {} },
     // { component: SchemeLicense, sectionId: "license", props: {} },
-    // { component: SchemeNamespace, sectionId: "namespace", props: {} },
 ]);
 
 function closeEditor() {

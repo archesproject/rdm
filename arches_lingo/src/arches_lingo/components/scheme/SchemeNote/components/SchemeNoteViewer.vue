@@ -5,7 +5,6 @@ import { useGettext } from "vue3-gettext";
 import Button from "primevue/button";
 
 import MetaStringViewer from "@/arches_lingo/components/generic/MetaStringViewer.vue";
-
 import NonLocalizedStringWidget from "@/arches_component_lab/widgets/NonLocalizedStringWidget/NonLocalizedStringWidget.vue";
 import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
 import ResourceInstanceMultiSelectWidget from "@/arches_component_lab/widgets/ResourceInstanceMultiSelectWidget/ResourceInstanceMultiSelectWidget.vue";
@@ -15,10 +14,12 @@ import { VIEW } from "@/arches_lingo/constants.ts";
 import type { MetaStringText, SchemeStatement } from "@/arches_lingo/types.ts";
 
 const props = defineProps<{
-    schemeNotes: SchemeStatement[];
+    tileData: SchemeStatement[] | undefined;
+    componentName: string;
+    sectionTitle: string;
+    graphSlug: string;
+    nodegroupAlias: string;
 }>();
-
-// need NodeGroup info here ( cardinality ) for proper button text
 
 const { $gettext } = useGettext();
 
@@ -34,30 +35,23 @@ const metaStringLabel: MetaStringText = {
 </script>
 
 <template>
-    <div
-        style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 0.125rem solid var(--p-menubar-border-color);
-        "
-    >
-        <h3>{{ $gettext("Scheme Note") }}</h3>
+    <div class="section-header">
+        <h2>{{ props.sectionTitle }}</h2>
 
         <div>
             <Button
                 :label="$gettext('Add New Scheme Note')"
-                @click="openEditor!('SchemeNote')"
+                @click="openEditor!(props.componentName)"
             ></Button>
         </div>
     </div>
 
     <MetaStringViewer
-        :meta-strings="props.schemeNotes"
+        :meta-strings="props.tileData"
         :meta-string-text="metaStringLabel"
-        component-name="SchemeNote"
-        graph-slug="scheme"
-        node-alias="appellative_status"
+        :component-name="props.componentName"
+        :graph-slug="props.graphSlug"
+        :nodegroup-alias="props.nodegroupAlias"
     >
         <template #name="{ rowData }">
             <NonLocalizedStringWidget
@@ -102,3 +96,12 @@ const metaStringLabel: MetaStringText = {
         </template>
     </MetaStringViewer>
 </template>
+
+<style scoped>
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 0.125rem solid var(--p-menubar-border-color);
+}
+</style>

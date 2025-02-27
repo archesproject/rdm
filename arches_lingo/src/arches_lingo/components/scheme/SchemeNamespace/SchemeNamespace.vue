@@ -7,11 +7,7 @@ import SchemeNamespaceEditor from "@/arches_lingo/components/scheme/SchemeNamesp
 import SchemeNamespaceViewer from "@/arches_lingo/components/scheme/SchemeNamespace/components/SchemeNamespaceViewer.vue";
 
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
-
-import {
-    fetchLingoResourcePartial,
-    fetchNodegroup,
-} from "@/arches_lingo/api.ts";
+import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
 import type {
     SchemeNamespace,

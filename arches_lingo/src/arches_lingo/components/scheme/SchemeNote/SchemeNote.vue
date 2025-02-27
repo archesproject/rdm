@@ -17,46 +17,42 @@ import type {
 
 const props = defineProps<{
     mode: DataComponentMode;
-    tileId?: string | null;
+    sectionTitle: string;
+    componentName: string;
     graphSlug: string;
-    nodeGroupAlias: string;
+    nodegroupAlias: string;
     resourceInstanceId: string | undefined;
+    tileId?: string;
 }>();
 
 const isLoading = ref(false);
-const SchemeNotes = ref([]);
+const tileData = ref<SchemeStatement[]>([]);
 
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
 onMounted(async () => {
-    if (!props.resourceInstanceId) return;
+    if (
+        props.resourceInstanceId &&
+        (props.mode === VIEW || !shouldCreateNewTile)
+    ) {
+        isLoading.value = true;
 
-    if (props.mode === VIEW || !shouldCreateNewTile) {
         const sectionValue = await getSectionValue();
+        tileData.value = sectionValue[props.nodegroupAlias];
 
-        if (props.tileId) {
-            SchemeNotes.value = sectionValue[props.nodeGroupAlias].filter(
-                (status: SchemeStatement) => status.tileid === props.tileId,
-            );
-        } else {
-            SchemeNotes.value = sectionValue[props.nodeGroupAlias];
-        }
+        isLoading.value = false;
     }
 });
 
 async function getSectionValue() {
-    isLoading.value = true;
-
     try {
         return await fetchLingoResourcePartial(
             props.graphSlug,
             props.resourceInstanceId as string,
-            props.nodeGroupAlias,
+            props.nodegroupAlias,
         );
     } catch (error) {
         console.error(error);
-    } finally {
-        isLoading.value = false;
     }
 }
 </script>
@@ -70,11 +66,23 @@ async function getSectionValue() {
     <template v-else>
         <SchemeNoteViewer
             v-if="mode === VIEW"
-            :scheme-notes="SchemeNotes"
+            :tile-data="tileData"
+            :graph-slug="props.graphSlug"
+            :component-name="props.componentName"
+            :section-title="props.sectionTitle"
+            :nodegroup-alias="props.nodegroupAlias"
         />
         <SchemeNoteEditor
             v-else-if="mode === EDIT"
-            :scheme-note="shouldCreateNewTile ? undefined : SchemeNotes[0]"
+            :tile-data="
+                tileData.find((tileDatum) => tileDatum.tileid === props.tileId)
+            "
+            :component-name="props.componentName"
+            :section-title="props.sectionTitle"
+            :graph-slug="props.graphSlug"
+            :nodegroup-alias="props.nodegroupAlias"
+            :resource-instance-id="props.resourceInstanceId"
+            :tile-id="props.tileId"
         />
     </template>
 </template>
