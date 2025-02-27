@@ -1,51 +1,65 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { fetchLingoResource } from "@/arches_lingo/api.ts";
 
-import type {
-    DataComponentMode,
-    SchemeRights,
-    SchemeRightStatement,
-} from "@/arches_lingo/types";
-import {
-    NEW,
-    VIEW,
-    EDIT,
-} from "@/arches_lingo/constants.ts";
+import ProgressSpinner from "primevue/progressspinner";
+
 import SchemeLicenseViewer from "@/arches_lingo/components/scheme/SchemeLicense/components/SchemeLicenseViewer.vue";
 import SchemeLicenseEditor from "@/arches_lingo/components/scheme/SchemeLicense/components/SchemeLicenseEditor.vue";
 
+import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
+
+import {
+    // fetchLingoResourcePartial,
+    fetchLingoResource,
+} from "@/arches_lingo/api.ts";
+
+import type { DataComponentMode, SchemeRights } from "@/arches_lingo/types";
+
 const props = defineProps<{
     mode: DataComponentMode;
-    tileId?: string | null;
+    sectionTitle: string;
+    componentName: string;
     graphSlug: string;
-    nodeGroupAlias: string;
+    nodegroupAlias: string;
     resourceInstanceId: string | undefined;
+    tileId?: string;
 }>();
 
 const isLoading = ref(false);
-const schemeRights = ref<SchemeRights>({});
-const schemeRightStatement = ref<SchemeRightStatement>({});
+
+const tileData = ref<SchemeRights>();
+
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
 onMounted(async () => {
-    getSectionValue();
+    if (
+        props.resourceInstanceId &&
+        (props.mode === VIEW || !shouldCreateNewTile)
+    ) {
+        isLoading.value = true;
+
+        const sectionValue = await getSectionValue();
+        tileData.value = sectionValue[props.nodegroupAlias];
+
+        isLoading.value = false;
+    }
 });
 
-const route = useRoute();
-
-
 async function getSectionValue() {
-    if (route.params.id === NEW) {
-        return;
+    try {
+        return await fetchLingoResource(
+            props.graphSlug,
+            props.resourceInstanceId as string,
+        );
+
+        // return await fetchLingoResourcePartial(
+        //     props.graphSlug,
+        //     props.resourceInstanceId as string,
+        //     props.nodegroupAlias,
+        // );
+    } catch (error) {
+        console.error(error);
     }
-    const schemeInstance = await fetchLingoResource(
-        "scheme",
-        route.params.id as string,
-    );
-    schemeRights.value = schemeInstance?.rights ?? {};
-    schemeRightStatement.value = schemeInstance?.rights?.right_statement ?? {};
 }
 </script>
 
@@ -57,13 +71,20 @@ async function getSectionValue() {
     <template v-else>
         <SchemeLicenseViewer
             v-if="mode === VIEW"
-            :scheme-rights="schemeRights"
-            :scheme-right-statement="schemeRightStatement"
+            :tile-data="tileData"
+            :component-name="props.componentName"
+            :graph-slug="props.graphSlug"
+            :section-title="props.sectionTitle"
         />
         <SchemeLicenseEditor
             v-else-if="mode === EDIT"
-            :scheme-rights="shouldCreateNewTile ? undefined : schemeRights"
-            :scheme-right-statement="shouldCreateNewTile ? undefined : schemeRightStatement"
+            :tile-data="shouldCreateNewTile ? undefined : tileData"
+            :section-title="props.sectionTitle"
+            :graph-slug="props.graphSlug"
+            :component-name="props.componentName"
+            :resource-instance-id="props.resourceInstanceId"
+            :nodegroup-alias="props.nodegroupAlias"
+            :tile-id="props.tileId"
         />
     </template>
 </template>

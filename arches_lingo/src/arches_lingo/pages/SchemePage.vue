@@ -75,9 +75,9 @@ const componentData = ref([
     {
         component: markRaw(SchemeLicense),
         componentName: "SchemeLicense",
-        name: $gettext("Scheme Rights"),
+        sectionTitle: $gettext("Scheme Rights"),
         graphSlug: "scheme",
-        nodeGroupAlias: "rights",
+        nodegroupAlias: "rights",
         key: 0,
     },
 ]);

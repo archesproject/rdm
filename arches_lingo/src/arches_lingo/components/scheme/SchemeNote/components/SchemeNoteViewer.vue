@@ -53,8 +53,8 @@ const metaStringLabel: MetaStringText = {
     >
         <template #name="{ rowData }">
             <NonLocalizedStringWidget
-                graph-slug="scheme"
                 node-alias="statement_content_n1"
+                :graph-slug="props.graphSlug"
                 :initial-value="rowData.statement_content_n1"
                 :mode="VIEW"
                 :hide-label="true"
@@ -62,8 +62,8 @@ const metaStringLabel: MetaStringText = {
         </template>
         <template #type="{ rowData }">
             <ReferenceSelectWidget
-                graph-slug="scheme"
                 node-alias="statement_type_n1"
+                :graph-slug="props.graphSlug"
                 :initial-value="rowData.statement_type_n1"
                 :mode="VIEW"
                 :hide-label="true"
@@ -71,8 +71,8 @@ const metaStringLabel: MetaStringText = {
         </template>
         <template #language="{ rowData }">
             <ReferenceSelectWidget
-                graph-slug="scheme"
                 node-alias="statement_language_n1"
+                :graph-slug="props.graphSlug"
                 :initial-value="rowData.statement_language_n1"
                 :mode="VIEW"
                 :hide-label="true"
@@ -80,14 +80,14 @@ const metaStringLabel: MetaStringText = {
         </template>
         <template #drawer="{ rowData }">
             <ResourceInstanceMultiSelectWidget
-                graph-slug="scheme"
                 node-alias="statement_data_assignment_object_used"
+                :graph-slug="props.graphSlug"
                 :initial-value="rowData.statement_data_assignment_object_used"
                 :mode="VIEW"
             />
             <ResourceInstanceMultiSelectWidget
-                graph-slug="scheme"
                 node-alias="statement_data_assignment_actor"
+                :graph-slug="props.graphSlug"
                 :initial-value="rowData.statement_data_assignment_actor"
                 :mode="VIEW"
             />

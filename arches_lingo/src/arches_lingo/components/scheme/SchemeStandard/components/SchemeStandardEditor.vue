@@ -12,8 +12,6 @@ import { EDIT } from "@/arches_lingo/constants.ts";
 import type { FormSubmitEvent } from "@primevue/forms";
 import type { SchemeCreation } from "@/arches_lingo/types.ts";
 
-const router = useRouter();
-
 const props = defineProps<{
     tileData: SchemeCreation | undefined;
     graphSlug: string;
@@ -23,6 +21,8 @@ const props = defineProps<{
     nodegroupAlias: string;
     tileId?: string;
 }>();
+
+const router = useRouter();
 
 const schemeEditorFormRef = inject<Ref<Component | null>>(
     "schemeEditorFormRef",
