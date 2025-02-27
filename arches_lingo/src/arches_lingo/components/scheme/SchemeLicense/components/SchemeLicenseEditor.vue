@@ -4,16 +4,19 @@ import { useRouter } from "vue-router";
 
 import { Form } from "@primevue/forms";
 
+import NonLocalizedStringWidget from "@/arches_component_lab/widgets/NonLocalizedStringWidget/NonLocalizedStringWidget.vue";
+import ReferenceSelectWidget from "@/arches_controlled_lists/widgets/ReferenceSelectWidget/ReferenceSelectWidget.vue";
 import ResourceInstanceMultiSelectWidget from "@/arches_component_lab/widgets/ResourceInstanceMultiSelectWidget/ResourceInstanceMultiSelectWidget.vue";
 
 import { createScheme, upsertLingoTile } from "@/arches_lingo/api.ts";
+
 import { EDIT } from "@/arches_lingo/constants.ts";
 
 import type { FormSubmitEvent } from "@primevue/forms";
-import type { SchemeCreation } from "@/arches_lingo/types.ts";
+import type { SchemeRights } from "@/arches_lingo/types";
 
 const props = defineProps<{
-    tileData: SchemeCreation | undefined;
+    tileData: SchemeRights | undefined;
     graphSlug: string;
     sectionTitle: string;
     resourceInstanceId: string | undefined;
@@ -83,9 +86,47 @@ async function save(e: FormSubmitEvent) {
         @submit="save"
     >
         <ResourceInstanceMultiSelectWidget
-            graph-slug="scheme"
-            node-alias="creation_sources"
-            :initial-value="props.tileData?.creation_sources"
+            node-alias="right_holder"
+            :graph-slug="props.graphSlug"
+            :initial-value="props.tileData?.right_holder"
+            :mode="EDIT"
+        />
+        <ReferenceSelectWidget
+            node-alias="right_type"
+            :graph-slug="props.graphSlug"
+            :initial-value="props.tileData?.right_type"
+            :mode="EDIT"
+        />
+        <NonLocalizedStringWidget
+            node-alias="right_statement_content"
+            :graph-slug="props.graphSlug"
+            :initial-value="
+                props.tileData?.right_statement?.right_statement_content
+            "
+            :mode="EDIT"
+        />
+        <ReferenceSelectWidget
+            node-alias="right_statement_language"
+            :graph-slug="props.graphSlug"
+            :initial-value="
+                props.tileData?.right_statement?.right_statement_language
+            "
+            :mode="EDIT"
+        />
+        <ReferenceSelectWidget
+            node-alias="right_statement_type"
+            :graph-slug="props.graphSlug"
+            :initial-value="
+                props.tileData?.right_statement?.right_statement_type
+            "
+            :mode="EDIT"
+        />
+        <ReferenceSelectWidget
+            node-alias="right_statement_type_metatype"
+            :graph-slug="props.graphSlug"
+            :initial-value="
+                props.tileData?.right_statement?.right_statement_type_metatype
+            "
             :mode="EDIT"
         />
     </Form>
