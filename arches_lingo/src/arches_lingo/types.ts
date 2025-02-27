@@ -1,9 +1,3 @@
-import SchemeNamespace from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeNamespace.vue";
-import SchemeLabel from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeLabel.vue";
-import SchemeLicense from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeLicense.vue";
-import SchemeStandard from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeStandard.vue";
-import SchemeNote from "@/arches_lingo/src/arches_lingo/components/scheme/report/SchemeNote.vue";
-
 import type { Ref } from "vue";
 import type { TreeNode } from "primevue/treenode";
 import type { Label } from "@/arches_vue_utils/types.ts";
@@ -75,29 +69,8 @@ export interface ResourceInstanceResult {
     resourceinstanceid: string;
     descriptors: { [key: string]: { name: string } };
 }
-interface ControlledListItemValue {
-    value: string;
-}
-
-export type SectionTypes =
-    | typeof SchemeLabel
-    | typeof SchemeNamespace
-    | typeof SchemeLicense
-    | typeof SchemeStandard
-    | typeof SchemeNote;
 
 export type DataComponentMode = typeof EDIT | typeof VIEW;
-
-export interface SchemeNamespaceUpdate {
-    namespace?: {
-        namespace_name: string;
-        namespace_type: ControlledListItemValue[] | ControlledListItem[];
-    };
-}
-
-export interface MetaString {
-    tileid: string;
-}
 
 export interface MetaStringText {
     name: string;
@@ -152,32 +125,10 @@ export interface SchemeRightStatement {
     right_statement_type_metatype?: ControlledListItem[];
 }
 
-export interface SchemeNamespace {
-    resourceinstance?: string;
-    tileid?: string;
-    namespace_name: string;
-    namespace_type: ControlledListItem[];
-}
-
 export interface SchemeCreation {
     resourceinstance?: string;
     tileid?: string;
     creation_sources: ResourceInstanceReference[];
-}
-
-export type SchemeTile =
-    | AppellativeStatus
-    | SchemeStatement
-    | SchemeNamespace
-    | SchemeCreation
-    | SchemeRights;
-
-export interface SchemeInstance {
-    namespace?: SchemeNamespace;
-    creation?: SchemeCreation;
-    appellative_status?: AppellativeStatus[];
-    statement?: SchemeStatement[];
-    rights?: SchemeRights;
 }
 
 export interface SchemeResource {
