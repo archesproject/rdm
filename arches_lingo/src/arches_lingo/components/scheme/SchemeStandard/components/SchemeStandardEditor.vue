@@ -4,18 +4,18 @@ import { useRouter } from "vue-router";
 
 import { Form } from "@primevue/forms";
 
-import NonLocalizedStringWidget from "@/arches_component_lab/widgets/NonLocalizedStringWidget/NonLocalizedStringWidget.vue";
+import ResourceInstanceMultiSelectWidget from "@/arches_component_lab/widgets/ResourceInstanceMultiSelectWidget/ResourceInstanceMultiSelectWidget.vue";
 
 import { createScheme, upsertLingoTile } from "@/arches_lingo/api.ts";
 import { EDIT } from "@/arches_lingo/constants.ts";
 
 import type { FormSubmitEvent } from "@primevue/forms";
-import type { SchemeNamespace } from "@/arches_lingo/types.ts";
+import type { SchemeCreation } from "@/arches_lingo/types.ts";
 
 const router = useRouter();
 
 const props = defineProps<{
-    tileData: SchemeNamespace | undefined;
+    tileData: SchemeCreation | undefined;
     graphSlug: string;
     sectionTitle: string;
     resourceInstanceId: string | undefined;
@@ -82,10 +82,10 @@ async function save(e: FormSubmitEvent) {
         ref="form"
         @submit="save"
     >
-        <NonLocalizedStringWidget
-            node-alias="namespace_name"
-            :graph-slug="props.graphSlug"
-            :initial-value="props.tileData?.namespace_name"
+        <ResourceInstanceMultiSelectWidget
+            graph-slug="scheme"
+            node-alias="creation_sources"
+            :initial-value="props.tileData?.creation_sources"
             :mode="EDIT"
         />
     </Form>

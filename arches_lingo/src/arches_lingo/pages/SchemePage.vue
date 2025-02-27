@@ -11,9 +11,9 @@ import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.v
 import SchemeLabel from "@/arches_lingo/components/scheme/SchemeLabel/SchemeLabel.vue";
 import SchemeNamespace from "@/arches_lingo/components/scheme/SchemeNamespace/SchemeNamespace.vue";
 import SchemeNote from "@/arches_lingo/components/scheme/SchemeNote/SchemeNote.vue";
+import SchemeStandard from "@/arches_lingo/components/scheme/SchemeStandard/SchemeStandard.vue";
+// import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
 
-import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
-import SchemeStandard from "@/arches_lingo/components/scheme/report/SchemeStandard.vue";
 import {
     CLOSED,
     EDIT,
@@ -67,7 +67,14 @@ const componentData = ref([
         nodegroupAlias: "statement",
         key: 0,
     },
-    // { component: SchemeStandard, sectionId: "standard", props: {} },
+    {
+        component: markRaw(SchemeStandard),
+        componentName: "SchemeStandard",
+        sectionTitle: $gettext("Scheme Standard"),
+        graphSlug: "scheme",
+        nodegroupAlias: "creation",
+        key: 0,
+    },
     // { component: SchemeLicense, sectionId: "license", props: {} },
 ]);
 
