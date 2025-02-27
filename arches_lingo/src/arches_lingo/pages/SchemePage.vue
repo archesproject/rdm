@@ -23,9 +23,6 @@ import {
     VIEW,
 } from "@/arches_lingo/constants.ts";
 
-provide("openEditor", openEditor);
-provide("forceSectionRefresh", forceSectionRefresh);
-
 const route = useRoute();
 const { $gettext } = useGettext();
 
@@ -106,7 +103,7 @@ function minimizeEditor() {
     editorState.value = MINIMIZED;
 }
 
-function forceSectionRefresh(componentName: string) {
+function refreshReportSection(componentName: string) {
     const componentDatum = componentData.value.find((componentDatum) => {
         return componentDatum.componentName === componentName;
     });
@@ -115,6 +112,9 @@ function forceSectionRefresh(componentName: string) {
         componentDatum.key += 1;
     }
 }
+
+provide("openEditor", openEditor);
+provide("refreshReportSection", refreshReportSection);
 </script>
 
 <template>

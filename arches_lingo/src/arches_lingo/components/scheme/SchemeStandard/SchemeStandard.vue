@@ -26,7 +26,7 @@ const props = defineProps<{
 }>();
 
 const isLoading = ref(false);
-const tileData = ref<SchemeCreation[]>([]);
+const tileData = ref<SchemeCreation>();
 
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 

@@ -42,12 +42,10 @@ const metaStringLabel: MetaStringText = {
     <div class="section-header">
         <h2>{{ props.sectionTitle }}</h2>
 
-        <div>
-            <Button
-                :label="$gettext('Add New Scheme Label')"
-                @click="openEditor!(props.componentName)"
-            ></Button>
-        </div>
+        <Button
+            :label="$gettext('Add New Scheme Label')"
+            @click="openEditor!(props.componentName)"
+        ></Button>
     </div>
 
     <MetaStringViewer

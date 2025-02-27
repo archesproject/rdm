@@ -35,7 +35,7 @@ function resetForm() {
 <template>
     <div class="container">
         <div class="header">
-            <h3>{{ $gettext("Editor Tools") }}</h3>
+            <h2>{{ $gettext("Editor Tools") }}</h2>
 
             <div>
                 <Button
