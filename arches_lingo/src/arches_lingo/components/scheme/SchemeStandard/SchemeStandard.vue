@@ -17,40 +17,42 @@ import type {
 
 const props = defineProps<{
     mode: DataComponentMode;
-    tileId?: string | null;
+    sectionTitle: string;
+    componentName: string;
     graphSlug: string;
-    nodeGroupAlias: string;
+    nodegroupAlias: string;
     resourceInstanceId: string | undefined;
+    tileId?: string;
 }>();
 
 const isLoading = ref(false);
-const schemeCreation = ref<SchemeCreation>();
+const tileData = ref<SchemeCreation[]>([]);
 
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
 onMounted(async () => {
-    if (!props.resourceInstanceId) return;
+    if (
+        props.resourceInstanceId &&
+        (props.mode === VIEW || !shouldCreateNewTile)
+    ) {
+        isLoading.value = true;
 
-    if (props.mode === VIEW || !shouldCreateNewTile) {
         const sectionValue = await getSectionValue();
+        tileData.value = sectionValue[props.nodegroupAlias];
 
-        schemeCreation.value = sectionValue.creation;
+        isLoading.value = false;
     }
 });
 
 async function getSectionValue() {
-    isLoading.value = true;
-
     try {
         return await fetchLingoResourcePartial(
             props.graphSlug,
             props.resourceInstanceId as string,
-            props.nodeGroupAlias,
+            props.nodegroupAlias,
         );
     } catch (error) {
         console.error(error);
-    } finally {
-        isLoading.value = false;
     }
 }
 </script>
@@ -64,11 +66,20 @@ async function getSectionValue() {
     <template v-else>
         <SchemeStandardViewer
             v-if="mode === VIEW"
-            :scheme-creation="schemeCreation"
+            :tile-data="tileData"
+            :graph-slug="props.graphSlug"
+            :component-name="props.componentName"
+            :section-title="props.sectionTitle"
         />
         <SchemeStandardEditor
             v-else-if="mode === EDIT"
-            :scheme-creation="schemeCreation"
+            :tile-data="shouldCreateNewTile ? undefined : tileData"
+            :section-title="props.sectionTitle"
+            :graph-slug="props.graphSlug"
+            :component-name="props.componentName"
+            :resource-instance-id="props.resourceInstanceId"
+            :nodegroup-alias="props.nodegroupAlias"
+            :tile-id="props.tileId"
         />
     </template>
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { inject, useTemplateRef, watch, type Component, type Ref } from "vue";
-
 import { useRouter } from "vue-router";
 
 import { Form } from "@primevue/forms";
+
 import NonLocalizedStringWidget from "@/arches_component_lab/widgets/NonLocalizedStringWidget/NonLocalizedStringWidget.vue";
 
 import { createScheme, upsertLingoTile } from "@/arches_lingo/api.ts";
@@ -56,11 +56,6 @@ async function save(e: FormSubmitEvent) {
             // console.log(updated);  // UPDATED DOES NOT RETURN A TILEID!
             // openEditor!("SchemeLabel", updated.appellative_status[0].tileid);
         } else {
-            console.log("!!!!!", {
-                resourceinstance: props.resourceInstanceId,
-                ...formData,
-                tileid: props.tileId,
-            });
             await upsertLingoTile(
                 props.graphSlug,
                 props.nodegroupAlias,
