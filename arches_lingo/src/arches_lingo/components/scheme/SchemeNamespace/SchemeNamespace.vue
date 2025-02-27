@@ -3,15 +3,14 @@ import { onMounted, ref } from "vue";
 
 import ProgressSpinner from "primevue/progressspinner";
 
-import SchemeLabelEditor from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelEditor.vue";
-import SchemeLabelViewer from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelViewer.vue";
+import SchemeNamespaceEditor from "@/arches_lingo/components/scheme/SchemeNamespace/components/SchemeNamespaceEditor.vue";
+import SchemeNamespaceViewer from "@/arches_lingo/components/scheme/SchemeNamespace/components/SchemeNamespaceViewer.vue";
 
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
-
 import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
 import type {
-    AppellativeStatus,
+    SchemeNamespace,
     DataComponentMode,
 } from "@/arches_lingo/types.ts";
 
@@ -25,10 +24,10 @@ const props = defineProps<{
     tileId?: string;
 }>();
 
-const isLoading = ref(false);
-const tileData = ref<AppellativeStatus[]>([]);
-
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
+
+const isLoading = ref(false);
+const tileData = ref<SchemeNamespace | undefined>();
 
 onMounted(async () => {
     if (
@@ -64,24 +63,21 @@ async function getSectionValue() {
     />
 
     <template v-else>
-        <SchemeLabelViewer
+        <SchemeNamespaceViewer
             v-if="mode === VIEW"
             :tile-data="tileData"
-            :section-title="props.sectionTitle"
             :graph-slug="props.graphSlug"
-            :nodegroup-alias="props.nodegroupAlias"
             :component-name="props.componentName"
+            :section-title="props.sectionTitle"
         />
-        <SchemeLabelEditor
+        <SchemeNamespaceEditor
             v-else-if="mode === EDIT"
-            :tile-data="
-                tileData.find((tileDatum) => tileDatum.tileid === props.tileId)
-            "
-            :component-name="props.componentName"
+            :tile-data="shouldCreateNewTile ? undefined : tileData"
             :section-title="props.sectionTitle"
             :graph-slug="props.graphSlug"
-            :nodegroup-alias="props.nodegroupAlias"
+            :component-name="props.componentName"
             :resource-instance-id="props.resourceInstanceId"
+            :nodegroup-alias="props.nodegroupAlias"
             :tile-id="props.tileId"
         />
     </template>

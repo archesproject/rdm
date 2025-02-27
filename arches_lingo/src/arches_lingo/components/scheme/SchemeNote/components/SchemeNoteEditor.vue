@@ -14,10 +14,11 @@ import { EDIT } from "@/arches_lingo/constants.ts";
 
 import type { Component, Ref } from "vue";
 import type { FormSubmitEvent } from "@primevue/forms";
-import type { AppellativeStatus } from "@/arches_lingo/types.ts";
+
+import type { SchemeStatement } from "@/arches_lingo/types.ts";
 
 const props = defineProps<{
-    tileData: AppellativeStatus | undefined;
+    tileData: SchemeStatement | undefined;
     componentName: string;
     sectionTitle: string;
     graphSlug: string;
@@ -88,80 +89,64 @@ async function save(e: FormSubmitEvent) {
     >
         <NonLocalizedStringWidget
             :graph-slug="props.graphSlug"
-            node-alias="appellative_status_ascribed_name_content"
+            node-alias="statement_content_n1"
+            :initial-value="props.tileData?.statement_content_n1"
+            :mode="EDIT"
+        />
+        <ReferenceSelectWidget
+            :graph-slug="props.graphSlug"
+            node-alias="statement_language_n1"
+            :initial-value="props.tileData?.statement_language_n1"
+            :mode="EDIT"
+        />
+        <ReferenceSelectWidget
+            :graph-slug="props.graphSlug"
+            node-alias="statement_type_n1"
+            :initial-value="props.tileData?.statement_type_n1"
+            :mode="EDIT"
+        />
+        <ReferenceSelectWidget
+            :graph-slug="props.graphSlug"
+            node-alias="statement_type_metatype_n1"
+            :initial-value="props.tileData?.statement_type_metatype_n1"
+            :mode="EDIT"
+        />
+        <DateWidget
+            :graph-slug="props.graphSlug"
+            node-alias="statement_data_assignment_timespan_begin_of_the_begin"
             :initial-value="
-                props.tileData?.appellative_status_ascribed_name_content
+                props.tileData
+                    ?.statement_data_assignment_timespan_begin_of_the_begin
             "
             :mode="EDIT"
         />
         <DateWidget
             :graph-slug="props.graphSlug"
-            node-alias="appellative_status_timespan_begin_of_the_begin"
+            node-alias="statement_data_assignment_timespan_end_of_the_end"
             :initial-value="
-                props.tileData?.appellative_status_timespan_begin_of_the_begin
-            "
-            :mode="EDIT"
-        />
-        <DateWidget
-            :graph-slug="props.graphSlug"
-            node-alias="appellative_status_timespan_end_of_the_end"
-            :initial-value="
-                props.tileData?.appellative_status_timespan_end_of_the_end
-            "
-            :mode="EDIT"
-        />
-
-        <ResourceInstanceMultiSelectWidget
-            :graph-slug="props.graphSlug"
-            node-alias="appellative_status_data_assignment_actor"
-            :initial-value="
-                props.tileData?.appellative_status_data_assignment_actor
+                props.tileData
+                    ?.statement_data_assignment_timespan_end_of_the_end
             "
             :mode="EDIT"
         />
         <ResourceInstanceMultiSelectWidget
             :graph-slug="props.graphSlug"
-            node-alias="appellative_status_data_assignment_object_used"
-            :initial-value="
-                props.tileData?.appellative_status_data_assignment_object_used
-            "
+            node-alias="statement_data_assignment_actor"
+            :initial-value="props.tileData?.statement_data_assignment_actor"
             :mode="EDIT"
         />
-
-        <ReferenceSelectWidget
+        <ResourceInstanceMultiSelectWidget
             :graph-slug="props.graphSlug"
-            node-alias="appellative_status_ascribed_name_language"
+            node-alias="statement_data_assignment_object_used"
             :initial-value="
-                props.tileData?.appellative_status_ascribed_name_language
-            "
-            :mode="EDIT"
-        />
-        <ReferenceSelectWidget
-            :graph-slug="props.graphSlug"
-            node-alias="appellative_status_ascribed_relation"
-            :initial-value="
-                props.tileData?.appellative_status_ascribed_relation
+                props.tileData?.statement_data_assignment_object_used
             "
             :mode="EDIT"
         />
         <ReferenceSelectWidget
             :graph-slug="props.graphSlug"
-            node-alias="appellative_status_status"
-            :initial-value="props.tileData?.appellative_status_status"
-            :mode="EDIT"
-        />
-        <ReferenceSelectWidget
-            :graph-slug="props.graphSlug"
-            node-alias="appellative_status_status_metatype"
-            :initial-value="props.tileData?.appellative_status_status_metatype"
-            :mode="EDIT"
-        />
-        <ReferenceSelectWidget
-            :graph-slug="props.graphSlug"
-            node-alias="appellative_status_data_assignment_type"
-            :initial-value="
-                props.tileData?.appellative_status_data_assignment_type
-            "
+            node-alias="statement_data_assignment_type"
+            :initial-value="props.tileData?.statement_data_assignment_type"
             :mode="EDIT"
         />
     </Form>

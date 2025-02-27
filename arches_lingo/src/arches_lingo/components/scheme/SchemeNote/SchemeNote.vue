@@ -3,16 +3,16 @@ import { onMounted, ref } from "vue";
 
 import ProgressSpinner from "primevue/progressspinner";
 
-import SchemeLabelEditor from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelEditor.vue";
-import SchemeLabelViewer from "@/arches_lingo/components/scheme/SchemeLabel/components/SchemeLabelViewer.vue";
+import SchemeNoteEditor from "@/arches_lingo/components/scheme/SchemeNote/components/SchemeNoteEditor.vue";
+import SchemeNoteViewer from "@/arches_lingo/components/scheme/SchemeNote/components/SchemeNoteViewer.vue";
 
 import { EDIT, VIEW } from "@/arches_lingo/constants.ts";
 
 import { fetchLingoResourcePartial } from "@/arches_lingo/api.ts";
 
 import type {
-    AppellativeStatus,
     DataComponentMode,
+    SchemeStatement,
 } from "@/arches_lingo/types.ts";
 
 const props = defineProps<{
@@ -26,7 +26,7 @@ const props = defineProps<{
 }>();
 
 const isLoading = ref(false);
-const tileData = ref<AppellativeStatus[]>([]);
+const tileData = ref<SchemeStatement[]>([]);
 
 const shouldCreateNewTile = Boolean(props.mode === EDIT && !props.tileId);
 
@@ -64,15 +64,15 @@ async function getSectionValue() {
     />
 
     <template v-else>
-        <SchemeLabelViewer
+        <SchemeNoteViewer
             v-if="mode === VIEW"
             :tile-data="tileData"
-            :section-title="props.sectionTitle"
             :graph-slug="props.graphSlug"
-            :nodegroup-alias="props.nodegroupAlias"
             :component-name="props.componentName"
+            :section-title="props.sectionTitle"
+            :nodegroup-alias="props.nodegroupAlias"
         />
-        <SchemeLabelEditor
+        <SchemeNoteEditor
             v-else-if="mode === EDIT"
             :tile-data="
                 tileData.find((tileDatum) => tileDatum.tileid === props.tileId)

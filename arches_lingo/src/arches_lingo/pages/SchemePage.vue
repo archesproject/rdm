@@ -6,14 +6,17 @@ import { useRoute } from "vue-router";
 
 import Splitter from "primevue/splitter";
 import SplitterPanel from "primevue/splitterpanel";
-import SchemeLabel from "@/arches_lingo/components/scheme/SchemeLabel/SchemeLabel.vue";
-import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
-import SchemeNote from "@/arches_lingo/components/scheme/report/SchemeNote.vue";
-import SchemeNamespace from "@/arches_lingo/components/scheme/report/SchemeNamespace.vue";
-import SchemeStandard from "@/arches_lingo/components/scheme/SchemeStandard/SchemeStandard.vue";
+
 import SchemeEditor from "@/arches_lingo/components/scheme/editor/SchemeEditor.vue";
+import SchemeLabel from "@/arches_lingo/components/scheme/SchemeLabel/SchemeLabel.vue";
+import SchemeNamespace from "@/arches_lingo/components/scheme/SchemeNamespace/SchemeNamespace.vue";
+import SchemeNote from "@/arches_lingo/components/scheme/SchemeNote/SchemeNote.vue";
+import SchemeStandard from "@/arches_lingo/components/scheme/SchemeStandard/SchemeStandard.vue";
+// import SchemeLicense from "@/arches_lingo/components/scheme/report/SchemeLicense.vue";
+
 import {
     CLOSED,
+    EDIT,
     MAXIMIZED,
     MINIMIZED,
     NEW,
@@ -43,23 +46,36 @@ const componentData = ref([
     {
         component: markRaw(SchemeLabel),
         componentName: "SchemeLabel",
-        name: $gettext("Scheme Label"),
+        sectionTitle: $gettext("Scheme Label"),
         graphSlug: "scheme",
-        nodeGroupAlias: "appellative_status",
+        nodegroupAlias: "appellative_status",
+        key: 0,
+    },
+    {
+        component: markRaw(SchemeNamespace),
+        componentName: "SchemeNamespace",
+        sectionTitle: $gettext("Scheme Namespace"),
+        graphSlug: "scheme",
+        nodegroupAlias: "namespace",
+        key: 0,
+    },
+    {
+        component: markRaw(SchemeNote),
+        componentName: "SchemeNote",
+        sectionTitle: $gettext("Scheme Note"),
+        graphSlug: "scheme",
+        nodegroupAlias: "statement",
         key: 0,
     },
     {
         component: markRaw(SchemeStandard),
         componentName: "SchemeStandard",
-        name: $gettext("Scheme Standard"),
+        sectionTitle: $gettext("Scheme Standard"),
         graphSlug: "scheme",
-        nodeGroupAlias: "creation",
+        nodegroupAlias: "creation",
         key: 0,
     },
-    // { component: SchemeNote, sectionId: "note", props: {}, key: 0 },
-    // { component: SchemeStandard, sectionId: "standard", props: {} },
     // { component: SchemeLicense, sectionId: "license", props: {} },
-    // { component: SchemeNamespace, sectionId: "namespace", props: {} },
 ]);
 
 function closeEditor() {
@@ -112,8 +128,10 @@ function forceSectionRefresh(componentName: string) {
                 v-for="componentDatum in componentData"
                 :key="componentDatum.componentName + '-' + componentDatum.key"
                 :graph-slug="componentDatum.graphSlug"
-                :node-group-alias="componentDatum.nodeGroupAlias"
+                :nodegroup-alias="componentDatum.nodegroupAlias"
                 :resource-instance-id="resourceInstanceId"
+                :section-title="componentDatum.sectionTitle"
+                :component-name="componentDatum.componentName"
                 :mode="VIEW"
             />
         </SplitterPanel>
@@ -125,16 +143,21 @@ function forceSectionRefresh(componentName: string) {
         >
             <SchemeEditor
                 :is-editor-maximized="editorState === MAXIMIZED"
-                :component="selectedComponentDatum.component"
-                :component-name="selectedComponentDatum.componentName"
-                :graph-slug="selectedComponentDatum.graphSlug"
-                :node-group-alias="selectedComponentDatum.nodeGroupAlias"
-                :resource-instance-id="resourceInstanceId"
-                :tile-id="editorTileId"
                 @maximize="maximizeEditor"
                 @minimize="minimizeEditor"
                 @close="closeEditor"
-            />
+            >
+                <component
+                    :is="selectedComponentDatum.component"
+                    :graph-slug="selectedComponentDatum.graphSlug"
+                    :nodegroup-alias="selectedComponentDatum.nodegroupAlias"
+                    :resource-instance-id="resourceInstanceId"
+                    :tile-id="editorTileId"
+                    :section-title="selectedComponentDatum.sectionTitle"
+                    :component-name="selectedComponentDatum.componentName"
+                    :mode="EDIT"
+                />
+            </SchemeEditor>
         </SplitterPanel>
     </Splitter>
 </template>
