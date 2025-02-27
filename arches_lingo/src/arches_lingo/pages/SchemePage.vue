@@ -90,7 +90,7 @@ function closeEditor() {
 }
 
 function openEditor(componentName: string, tileId?: string) {
-    closeEditor();
+    editorPanelKey.value += 1;
 
     selectedComponentDatum.value = componentData.value.find(
         (componentDatum) => {
