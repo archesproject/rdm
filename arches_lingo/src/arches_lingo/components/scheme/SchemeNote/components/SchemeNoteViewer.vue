@@ -57,7 +57,7 @@ const metaStringLabel: MetaStringText = {
                 :graph-slug="props.graphSlug"
                 :initial-value="rowData.statement_content_n1"
                 :mode="VIEW"
-                :hide-label="true"
+                :show-label="false"
             />
         </template>
         <template #type="{ rowData }">
@@ -66,7 +66,7 @@ const metaStringLabel: MetaStringText = {
                 :graph-slug="props.graphSlug"
                 :initial-value="rowData.statement_type_n1"
                 :mode="VIEW"
-                :hide-label="true"
+                :show-label="false"
             />
         </template>
         <template #language="{ rowData }">
@@ -75,7 +75,7 @@ const metaStringLabel: MetaStringText = {
                 :graph-slug="props.graphSlug"
                 :initial-value="rowData.statement_language_n1"
                 :mode="VIEW"
-                :hide-label="true"
+                :show-label="false"
             />
         </template>
         <template #drawer="{ rowData }">

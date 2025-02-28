@@ -63,7 +63,7 @@ const metaStringLabel: MetaStringText = {
                     rowData.appellative_status_ascribed_name_content
                 "
                 :mode="VIEW"
-                :hide-label="true"
+                :show-label="false"
             />
         </template>
         <template #type="{ rowData }">
@@ -72,7 +72,7 @@ const metaStringLabel: MetaStringText = {
                 node-alias="appellative_status_ascribed_relation"
                 :initial-value="rowData.appellative_status_ascribed_relation"
                 :mode="VIEW"
-                :hide-label="true"
+                :show-label="false"
             />
         </template>
         <template #language="{ rowData }">
@@ -83,7 +83,7 @@ const metaStringLabel: MetaStringText = {
                     rowData.appellative_status_ascribed_name_language
                 "
                 :mode="VIEW"
-                :hide-label="true"
+                :show-label="false"
             />
         </template>
         <template #drawer="{ rowData }">
