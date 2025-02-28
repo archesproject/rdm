@@ -50,9 +50,23 @@ async function save(e: FormSubmitEvent) {
             Object.entries(e.states).map(([key, state]) => [key, state.value]),
         );
 
+        // TODO: in future versions hit an API for expected shape &&
+        // recursively map the form data to the expected shape
+        const expectedTileShape = {
+            right_holder: formData.right_holder,
+            right_type: formData.right_type,
+            right_statement: {
+                right_statement_content: formData.right_statement_content,
+                right_statement_language: formData.right_statement_language,
+                right_statement_type: formData.right_statement_type,
+                right_statement_type_metatype:
+                    formData.right_statement_type_metatype,
+            },
+        };
+
         if (!props.resourceInstanceId) {
             const updated = await createScheme({
-                [props.nodegroupAlias]: formData,
+                [props.nodegroupAlias]: expectedTileShape,
             });
 
             await router.push({
@@ -70,7 +84,7 @@ async function save(e: FormSubmitEvent) {
                 props.nodegroupAlias,
                 {
                     resourceinstance: props.resourceInstanceId,
-                    ...formData,
+                    ...expectedTileShape,
                     tileid: props.tileId,
                 },
                 props.tileId,
