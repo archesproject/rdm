@@ -129,6 +129,7 @@ provide("refreshReportSection", refreshReportSection);
         <SplitterPanel
             v-show="editorState !== MAXIMIZED"
             :size="66"
+            style="overflow: auto"
         >
             <component
                 :is="componentDatum.component"
